@@ -1,7 +1,7 @@
 
   # 多人在线的动作游戏 
  
- 
+
  
   ## 技术特点:
   * 1.使用unity为服务器。<br/>
@@ -26,8 +26,7 @@
   
   ## 项目目录结构
   *  client 战斗服务器和游戏客户端
-  *  Doc 是相关策划文档已经迁移到了 [项目相关文档](https://drive.google.com/drive/folders/1yl8qRea4k8GfgQMEJbQq0JGRSVvwrRnv?usp=sharing)
-  
+  *  Doc 是相关策划文档已经迁移到了 
   *  Server 服务器目录
   *  Server/GServer/LoginServer 是中心账号服务器
   *  Server/GServer/GServer 是网关服务器用来承载用户数据
@@ -45,6 +44,12 @@
   ## 项目启动
   *  编译服务器 buildstart.sh 
   *  发布unity客户端 和 服务器配置相关服务器参数
+
+  ## 自动生成协议
+  ···
+    cd PublicTools 
+    docker build -t build-ci . && docker run --rm -it build-ci 
+  ···
   
   
   
