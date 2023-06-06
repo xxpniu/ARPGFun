@@ -1,4 +1,0 @@
-[
-	{"ID":1,"Name":"\u7981\u5FCC\u4E4B\u5730","MapID":1,"MapType":1,"LimitLevel":20,"Icon":"map/mission_img_kill","LevelName":"SiegeLevel","LimitTime":1200,"ElementConfigPath":"Level/SiegeLevel.json","Description":"\u7981\u5FCC\u4E4B\u5730\u7A81\u7136\u51FA\u73B0\uFF0C\u60CA\u73B0\u4E86\u9B54\u738B\u548C\u4ED6\u7684\u968F\u5904\u4EEC\u3002\u6740\u6B7B\u4ED6\u4EEC\u4F3C\u4E4E\u80FD\u5F97\u5230\u4E0D\u9519\u7684\u7269\u54C1\u3002"},
-	{"ID":2,"Name":"\u65B0\u624B\u64C2\u53F0","MapID":1,"MapType":2,"LimitLevel":20,"Icon":"map/mission_img_crown","LevelName":"Level1","LimitTime":300,"ElementConfigPath":"Level/level1.json","Description":"\u65B0\u624B\u5207\u78CB\u64C2\u53F0\uFF0C\u6740\u6B7B\u73A9\u5BB6\u5C06\u83B7\u5F97\u7ECF\u9A8C\u5956\u52B1\u3002"}
-]

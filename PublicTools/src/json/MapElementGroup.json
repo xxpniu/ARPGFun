@@ -1,5 +1,0 @@
-[
-	{"ID":1,"ElementID":"101","Nums":"1","Weight":"100","Count":1,"Repeat":0},
-	{"ID":2,"ElementID":"102","Nums":"1","Weight":"100","Count":1,"Repeat":0},
-	{"ID":3,"ElementID":"101|102","Nums":"1|1","Weight":"50|20","Count":2,"Repeat":1}
-]

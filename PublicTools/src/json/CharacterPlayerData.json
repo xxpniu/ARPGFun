@@ -1,7 +1,0 @@
-[
-	{"ID":1,"CharacterID":1,"Unlock":0,"Motion":"Attack","Description":"CharDesc_1"},
-	{"ID":2,"CharacterID":2,"Unlock":1,"Motion":"Cast Spell 02","Description":"CharDesc_2"},
-	{"ID":3,"CharacterID":3,"Unlock":2,"Motion":"Cast Spell 02","Description":"CharDesc_3"},
-	{"ID":4,"CharacterID":4,"Unlock":1,"Motion":"Attack 03","Description":"CharDesc_4"},
-	{"ID":5,"CharacterID":5,"Unlock":2,"Motion":"attack 02","Description":"CharDesc_5"}
-]
