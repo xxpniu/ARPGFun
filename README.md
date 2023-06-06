@@ -48,9 +48,8 @@
   ## 自动生成协议
   ···
     cd PublicTools 
-    docker build -t build-ci . && docker run --rm -it build-ci 
+    docker build -t build-ci . && docker run  --rm -it build-ci 
   ···
-  
   
   
   

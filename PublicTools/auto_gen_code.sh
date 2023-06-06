@@ -28,6 +28,11 @@ if [ "$?" -ne "0" ]; then
   echo "Sorry, compile error"
   exit 1
 fi
+
+cd ../../
+
+cp -af ./src/json ./output/json
+cp -af ./src/output ./output/dll
  
 python3 uploadzk.py --host 129.211.9.75:2181 --root /configs --dir ./src/json
 if [ "$?" -ne "0" ]; then

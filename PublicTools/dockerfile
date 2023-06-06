@@ -10,7 +10,6 @@ WORKDIR /tools
 
 COPY . .
 
-VOLUME ./src:./src
 
 #ENTRYPOINT [ "tail" ,"-f", "/dev/null" ] 
 ENTRYPOINT [ "sh" , "auto_gen_code.sh" ]
