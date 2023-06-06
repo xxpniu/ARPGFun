@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.1</Time>
+  <Points>
+    <TimePoint>
+      <GUID>dac7692e-3434-4719-b097-4d7578409726</GUID>
+      <Time>0.0771208256</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
+      <Time>0.0880462751</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>fd584289-cd71-450d-a4f5-cf37141b737e</GUID>
+      <Time>0.0404884331</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>dac7692e-3434-4719-b097-4d7578409726</GUID>
+      <resourcesPath>Sound/MagicSounds/General Spell/Magic Explosion 4.wav</resourcesPath>
+      <target>Target</target>
+      <fromBone>Body</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
+      <target>Target</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>8</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>fd584289-cd71-450d-a4f5-cf37141b737e</GUID>
+      <path>Effects/Rain/RainFire.prefab</path>
+      <fromTarget>Target</fromTarget>
+      <toTarget>Target</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Bottom</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>5</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>1</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

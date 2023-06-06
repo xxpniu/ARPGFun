@@ -1,0 +1,165 @@
+﻿syntax = "proto3";
+
+import "const.proto";
+import "excelconst.proto";
+import "google/protobuf/any.proto";
+package Proto;
+
+message Vector3
+{
+	 float x=1;
+	 float y=2;
+	 float z=3;
+}
+
+message GameServerInfo
+{
+	 string host=2;//主机地址
+	 int32 port=3;//主机端口
+	 int32 server_id=4;//服务器ID
+     int32 max_player_Count=5;//最大服务数
+	 int32 current_player_count = 6;//当前玩家数
+}
+
+message WearEquip
+{
+	 int32 ItemID=1;
+	 string GUID=2;
+	 EquipmentType Part=3; //部位
+}
+
+enum MagicType
+{
+	MT_Normal = 0;
+	MT_Normal_Append =1;
+	MT_Magic = 2;
+}
+
+message HeroMagic
+{
+	 int32 MagicKey=1;
+	 int32 Level =2;//level
+}
+
+//玩家角色
+message DHero
+{
+	int32 HeroID=1;//配置ID
+	int32 Level=2; //当前等级
+	int32 Exprices=3;//当前经验
+	repeated WearEquip Equips=4;//当前穿戴装备
+	repeated HeroMagic Magics=5;//英雄当前激活魔法
+	string Name = 6;
+	int32 HP = 7;
+	int32 MP = 8;
+}
+
+message EquipData
+{
+	int32 RefreshTime =1;
+	map<int32,int32> Values = 2;
+}
+
+//玩家道具
+message PlayerItem
+{
+	int32 ItemID=1;//配置ID
+	int32 Num=2;//拥有数量
+	string GUID=3;//唯一识别码
+	bool Locked=4; //是否锁定中
+	int32 Level =5;//等级 装备特有
+	EquipData Data= 6;
+}
+
+//玩家背包
+message PlayerPackage
+{
+	map<string, PlayerItem> Items=1;//道具列表
+	int32 MaxSize=2;//背包上限
+}
+
+//用户服务器映射
+message PlayerServerInfo
+{
+     string AccountUuid=1; //玩家ID
+     int32 ServerID=2; //所在服务器	
+     int32 ServicePort=3;
+     string ServiceHost=4;
+}
+
+message HeroProperty
+{
+	 HeroPropertyType Property=1;//属性
+	 int32 Value=2;//值
+}
+
+message HeroMagicData 
+{
+	 float CDCompletedTime=1;
+	 int32 MagicID=2;
+	 MagicType MType =3;
+	 int32 MPCost = 4;
+	 float CdTotalTime =5;
+}
+
+
+message ClientConfig
+{
+	string LoginServerHost=1;
+	int32 LoginServerPort=2;
+}
+
+
+enum ReleaserModeType
+{
+	RMT_NONE =0;
+	RMT_Magic =1;
+	RMT_NormalAttack =2;
+	RMT_Buff =4;
+}
+
+
+enum MapElementType
+{
+	MET_NONE = 0;
+	MET_MonsterGroup = 1; //对应Monstergroup ID
+	MET_ElementGroup = 2;    //对应Elementsgroup ID
+	MET_NPC  =3; //对应NPC
+	MET_PLAYER_INIT = 4;//角色初始化
+	MET_Monster = 5 ;//怪物表id
+	MET_Transport = 6 ;//传送点
+}
+
+message MapElement
+{
+	MapElementType Type = 1 [json_name="T"];//地图元素类型
+	Vector3 Forward = 2 [json_name="F"];//朝向
+	Vector3 Position = 3 [json_name="P"];//位置
+	int32 ConfigID = 4  [json_name="C"];   //配表ID
+	Vector3 LinkPos = 5[json_name="L"]; //关联位置
+	int32 GroupID = 6 [json_name="G"];//group id
+}
+
+message MapCongfig 
+{
+	repeated MapElement Elements = 1 [json_name="E"]; //元素
+}
+
+
+message ServiceAddress
+{
+    string IpAddress = 1;
+    int32 Port =2;
+}
+
+message MatchPlayer
+{
+	message MatchHero
+	{
+		int32 Level =1;
+		int32 HeroID =2;
+	}
+	string AccountID = 1;
+	string Name =2;
+    MatchHero Hero =3;
+}

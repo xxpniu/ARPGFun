@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1.2</Time>
+  <Points>
+    <TimePoint>
+      <GUID>b2e2f13f-92e0-4551-892f-09471d9430f8</GUID>
+      <Time>1.07969153</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>78164013-d316-4f24-90c1-e2218581082a</GUID>
+      <Time>0.12339332</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>0f640c11-a3c8-4eb8-86d3-13f07c768d53</GUID>
+      <Time>0.121850908</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>a4fa31fe-f794-464c-8cae-847da9238d6a</GUID>
+      <Time>0.00771208247</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>f7195cbd-19be-4844-b134-4c16447a18f3</GUID>
+      <Time>0.295629829</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>d2d1c883-5a40-49ec-9fe4-7841bdc147e9</GUID>
+      <Time>1.14755785</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>b2e2f13f-92e0-4551-892f-09471d9430f8</GUID>
+      <Time>0.0277634971</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>b2e2f13f-92e0-4551-892f-09471d9430f8</GUID>
+      <target>TargetPoistion</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>2</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>78164013-d316-4f24-90c1-e2218581082a</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>0f640c11-a3c8-4eb8-86d3-13f07c768d53</GUID>
+      <motionName>Cast Spell 03</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>a4fa31fe-f794-464c-8cae-847da9238d6a</GUID>
+      <path>Effects/Rain/RainWater.prefab</path>
+      <fromTarget>TargetPoistion</fromTarget>
+      <toTarget>TargetPoistion</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Bottom</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>LayoutTimeOut</destoryType>
+      <destoryTime>0</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>f7195cbd-19be-4844-b134-4c16447a18f3</GUID>
+      <resourcesPath>Sound/MagicSounds/Element Scholls/Shadow/Shadow Spell 13.wav</resourcesPath>
+      <target>Target</target>
+      <fromBone>Bottom</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="RepeatTimeLine">
+      <GUID>d2d1c883-5a40-49ec-9fe4-7841bdc147e9</GUID>
+      <RepeatCount>2</RepeatCount>
+      <ToTime>0.1</ToTime>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1</Time>
+  <Points>
+    <TimePoint>
+      <GUID>d3a3be22-881d-40d4-90af-669eb6b13429</GUID>
+      <Time>0.521079242</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>d3a3be22-881d-40d4-90af-669eb6b13429</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>3</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

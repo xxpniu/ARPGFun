@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSequence">
+  <childs>
+    <TreeNode xsi:type="TreeNodeLinkNode">
+      <childs />
+      <name>链接子树</name>
+      <guid>714c51bb-d9e5-494f-ad8f-f00ed71f8eca</guid>
+      <Path>AI/monster_idle.xml</Path>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeSequence">
+      <childs>
+        <TreeNode xsi:type="TreeNodeMoveCloseTarget">
+          <childs />
+          <name>靠近目标</name>
+          <guid>a19f165e-ee58-46bf-9d8e-884c309c762f</guid>
+          <valueOf>Value</valueOf>
+          <distance>
+            <min>300</min>
+            <max>100</max>
+            <type>Fixed</type>
+          </distance>
+        </TreeNode>
+        <TreeNode xsi:type="TreeNodeReleaseMagic">
+          <childs />
+          <name>释放技能</name>
+          <guid>b502b532-9540-426b-a4da-bdd6995e2d8b</guid>
+          <magicKey>Level01_archer_normal_att</magicKey>
+          <valueOf>MagicKey</valueOf>
+        </TreeNode>
+        <TreeNode xsi:type="TreeNodeWaitForSeconds">
+          <childs />
+          <name>等待时间</name>
+          <guid>af0f2e96-219e-4615-8b2c-efb11f013a10</guid>
+          <seconds>
+            <min>2000</min>
+            <max>3000</max>
+            <type>Range</type>
+          </seconds>
+        </TreeNode>
+        <TreeNode xsi:type="TreeNodeFindTarget">
+          <childs />
+          <name>查找目标</name>
+          <guid>2aa34f34-eb18-4175-8344-53ce1021258d</guid>
+          <valueOf>ViewDistance</valueOf>
+          <Distance>
+            <min>0</min>
+            <max>0</max>
+            <type>Fixed</type>
+          </Distance>
+          <View>
+            <min>360</min>
+            <max>360</max>
+            <type>Fixed</type>
+          </View>
+          <selectType>Nearest</selectType>
+          <filter>None</filter>
+          <useMagicConfig>false</useMagicConfig>
+          <teamType>Enemy</teamType>
+          <findNew>true</findNew>
+        </TreeNode>
+      </childs>
+      <name>处理攻击</name>
+      <guid>eb17c5fe-5c96-49be-9850-4e1d9e5b712d</guid>
+    </TreeNode>
+  </childs>
+  <name>顺序节点</name>
+  <guid>e5e5eb3a-412d-4ecf-97dc-f10bad28d08d</guid>
+</TreeNode>

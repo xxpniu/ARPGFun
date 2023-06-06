@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSequence">
+  <childs>
+    <TreeNode xsi:type="TreeNodeFindTarget">
+      <childs />
+      <name>查找目标</name>
+      <guid>81cb6b94-9a90-4fe7-ae13-bef19a406cb7</guid>
+      <valueOf>Value</valueOf>
+      <Distance>
+        <min>500</min>
+        <max>0</max>
+        <type>Fixed</type>
+      </Distance>
+      <View>
+        <min>360</min>
+        <max>360</max>
+        <type>Fixed</type>
+      </View>
+      <selectType>Nearest</selectType>
+      <filter>None</filter>
+      <useMagicConfig>false</useMagicConfig>
+      <teamType>OwnTeamWithOutSelf</teamType>
+      <findNew>true</findNew>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeReleaseMagic">
+      <childs />
+      <name>释放技能</name>
+      <guid>25f6b463-feda-48f7-86c4-9b94111b81df</guid>
+      <magicKey>wizard_spring_call</magicKey>
+      <valueOf>MagicKey</valueOf>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeWaitForSeconds">
+      <childs />
+      <name>等待时间</name>
+      <guid>4ef799a9-4291-4db8-b76c-c5fdc47e235a</guid>
+      <seconds>
+        <min>1500</min>
+        <max>1000</max>
+        <type>Fixed</type>
+      </seconds>
+    </TreeNode>
+  </childs>
+  <name>顺序节点</name>
+  <guid>323a771f-4152-40b9-8305-2d30c4a5028b</guid>
+</TreeNode>

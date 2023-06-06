@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-16"?>
+<MagicData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>mage_light_dot_buff</name>
+  <Containers>
+    <EventContainer>
+      <type>EVENT_TRIGGER</type>
+      <layoutPath>Layouts/mage_light_dot_buff_start_layout.xml</layoutPath>
+      <effectGroup>
+        <EffectGroup>
+          <effects>
+            <EffectBase xsi:type="NormalDamageEffect">
+              <valueOf>NormalAttack</valueOf>
+              <DamageValue>
+                <ValueForm>MagicLevelParam1</ValueForm>
+                <Value>-3000</Value>
+              </DamageValue>
+            </EffectBase>
+          </effects>
+          <key>001</key>
+        </EffectGroup>
+      </effectGroup>
+    </EventContainer>
+  </Containers>
+  <triggerTicksTime>1</triggerTicksTime>
+  <triggerDurationTime>10</triggerDurationTime>
+  <unique>false</unique>
+</MagicData>

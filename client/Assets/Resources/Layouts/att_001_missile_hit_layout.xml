@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1</Time>
+  <Points>
+    <TimePoint>
+      <GUID>aeb31811-091f-43ba-a4e5-34455150af7f</GUID>
+      <Time>0.00280898879</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>243438fc-927c-4db0-8823-5ae70a9bd014</GUID>
+      <Time>0.184438035</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>aeb31811-091f-43ba-a4e5-34455150af7f</GUID>
+      <target>EventTarget</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>243438fc-927c-4db0-8823-5ae70a9bd014</GUID>
+      <path>Effects/MissilesExplosions/Fire/FireExplosionTiny.prefab</path>
+      <fromTarget>Target</fromTarget>
+      <toTarget>Target</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Body</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>1</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

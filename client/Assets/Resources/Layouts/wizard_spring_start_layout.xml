@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1</Time>
+  <Points>
+    <TimePoint>
+      <GUID>73b222bd-e131-4da9-bd29-226f2b9149ad</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>2897a97a-93d0-41e4-bcd1-0e5a95b5bc3a</GUID>
+      <Time>0.667647064</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>520d1917-c302-4762-9513-ea532d2ce2cf</GUID>
+      <Time>0.5029412</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>73b222bd-e131-4da9-bd29-226f2b9149ad</GUID>
+      <motionName>Cast Spell 02</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="CallUnitLayout">
+      <GUID>2897a97a-93d0-41e4-bcd1-0e5a95b5bc3a</GUID>
+      <characterID>
+        <ValueForm>CurrentConfig</ValueForm>
+        <Value>99</Value>
+      </characterID>
+      <level>
+        <ValueForm>MagicLevelParam2</ValueForm>
+        <Value>1</Value>
+      </level>
+      <AIPath>AI/wizard_spring_call_ai.xml</AIPath>
+      <time>
+        <ValueForm>MagicLevelParam1</ValueForm>
+        <Value>0</Value>
+      </time>
+      <maxNum>1</maxNum>
+      <offset>
+        <x>0</x>
+        <y>0</y>
+        <z>2</z>
+      </offset>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>520d1917-c302-4762-9513-ea532d2ce2cf</GUID>
+      <path>Effects/Flames/LifeFlame.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Bottom</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>2</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>2</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

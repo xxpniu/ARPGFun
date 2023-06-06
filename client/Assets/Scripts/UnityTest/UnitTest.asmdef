@@ -1,0 +1,29 @@
+{
+    "name": "UnitTest",
+    "references": [
+        "GUID:0a77b5832b84b4aa9a8f126896ed8274",
+        "GUID:c0714e3101b644d28bc9124e6411f1fc",
+        "GUID:c3adc9405a60646d2bc9f4a5bb49fc14",
+        "GUID:2aabdf7acfca649068f34bec3c6dfdae",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:44a144b962a334644b339a90b234573b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "Google.Protobuf.dll",
+        "Xsoft.Proto.dll",
+        "XNet.Libs.dll",
+        "ZooKeeperNetEx.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

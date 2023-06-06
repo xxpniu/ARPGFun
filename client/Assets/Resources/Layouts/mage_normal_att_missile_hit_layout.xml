@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.3</Time>
+  <Points>
+    <TimePoint>
+      <GUID>247d17bf-4ebc-49fd-a2a5-b4b3d2f914ff</GUID>
+      <Time>0.06042781</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>8f4f64b4-453d-49e7-b05e-9b48c5d62dd7</GUID>
+      <Time>0.06417113</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>247d17bf-4ebc-49fd-a2a5-b4b3d2f914ff</GUID>
+      <target>EventTarget</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>8f4f64b4-453d-49e7-b05e-9b48c5d62dd7</GUID>
+      <motionName>Hit</motionName>
+      <targetType>Target</targetType>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

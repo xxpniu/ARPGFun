@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSelector">
+  <childs>
+    <TreeNode xsi:type="TreeNodeWaitForSeconds">
+      <childs />
+      <name>等待时间</name>
+      <guid>fbc89c79-2fa3-45d4-9ae4-834ed6fef9cd</guid>
+      <seconds>
+        <min>1000</min>
+        <max>1000</max>
+        <type>Fixed</type>
+      </seconds>
+    </TreeNode>
+  </childs>
+  <name>选择节点</name>
+  <guid>9b54c5a0-745b-4bf1-8a6c-e3c0d6aca420</guid>
+</TreeNode>

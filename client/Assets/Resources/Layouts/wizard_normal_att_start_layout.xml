@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.3</Time>
+  <Points>
+    <TimePoint>
+      <GUID>5c90bfb2-4853-4456-8132-0aa6596f0bb5</GUID>
+      <Time>0.284782618</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>36fe5c48-b3f5-4c4b-914a-3c889ce5e95c</GUID>
+      <Time>0.002173913</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>5245eb28-bee1-444e-b6c5-e1eaba207de9</GUID>
+      <Time>0</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MissileLayout">
+      <GUID>5c90bfb2-4853-4456-8132-0aa6596f0bb5</GUID>
+      <resourcesPath>Missiles/LightMissile.prefab</resourcesPath>
+      <movementType>Line</movementType>
+      <maxLifeTime>-1</maxLifeTime>
+      <maxDistance>-1</maxDistance>
+      <speed>10</speed>
+      <fromBone>Body</fromBone>
+      <toBone>Body</toBone>
+      <offset>
+        <x>0</x>
+        <y>0</y>
+        <z>1</z>
+      </offset>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>36fe5c48-b3f5-4c4b-914a-3c889ce5e95c</GUID>
+      <motionName>Melee Attack</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>5245eb28-bee1-444e-b6c5-e1eaba207de9</GUID>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

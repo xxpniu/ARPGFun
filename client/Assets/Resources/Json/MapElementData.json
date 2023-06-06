@@ -1,0 +1,12 @@
+[
+	{"ID":101,"NameKey":"","CharacterID":0,"HPMax":1,"METype":-1,"Params":[
+"",
+"",
+""]
+},
+	{"ID":102,"NameKey":"","CharacterID":900000,"HPMax":-1,"METype":1,"Params":[
+"transport",
+"",
+""]
+}
+]

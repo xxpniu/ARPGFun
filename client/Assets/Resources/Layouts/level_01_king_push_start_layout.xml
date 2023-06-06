@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>2</Time>
+  <Points>
+    <TimePoint>
+      <GUID>8aae561c-ae90-4fb8-8966-72f0bab9f7e7</GUID>
+      <Time>1.90231359</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>1b9b9cf2-0304-4009-a139-8003f75a541d</GUID>
+      <Time>0.119589977</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>fa642e01-8737-4154-9649-c080933c1bed</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>9445bfd3-3bf5-4852-8544-f7718a94ccf4</GUID>
+      <Time>0.392030835</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>1bd40a94-a894-4b60-9fab-14c6b7560a79</GUID>
+      <Time>1.81233931</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>fa642e01-8737-4154-9649-c080933c1bed</GUID>
+      <Time>1.61439586</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="LaunchSelfLayout">
+      <GUID>8aae561c-ae90-4fb8-8966-72f0bab9f7e7</GUID>
+      <speed>12</speed>
+      <reachType>MaxDistance</reachType>
+      <distance>8</distance>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>1b9b9cf2-0304-4009-a139-8003f75a541d</GUID>
+      <motionName>enrage</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>fa642e01-8737-4154-9649-c080933c1bed</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>9445bfd3-3bf5-4852-8544-f7718a94ccf4</GUID>
+      <resourcesPath>Sound/MagicSounds/General Spell/Cast 14.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Body</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>1bd40a94-a894-4b60-9fab-14c6b7560a79</GUID>
+      <path>Effects/Flames/ShadowFlame.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Top</toBoneName>
+      <Bind>true</Bind>
+      <destoryType>Normal</destoryType>
+      <destoryTime>0</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0.2</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

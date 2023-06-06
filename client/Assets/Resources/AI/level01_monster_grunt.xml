@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSequence">
+  <childs>
+    <TreeNode xsi:type="TreeNodeFindTarget">
+      <childs />
+      <name>查找目标</name>
+      <guid>d1dcc863-ae17-475a-8c07-e6a77f030171</guid>
+      <valueOf>Value</valueOf>
+      <Distance>
+        <min>1500</min>
+        <max>0</max>
+        <type>Fixed</type>
+      </Distance>
+      <View>
+        <min>360</min>
+        <max>360</max>
+        <type>Fixed</type>
+      </View>
+      <selectType>Nearest</selectType>
+      <filter>None</filter>
+      <useMagicConfig>false</useMagicConfig>
+      <teamType>Enemy</teamType>
+      <findNew>false</findNew>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeMoveCloseTarget">
+      <childs />
+      <name>靠近目标</name>
+      <guid>a39df93b-aca9-4b3e-873b-55351eff8308</guid>
+      <valueOf>Value</valueOf>
+      <distance>
+        <min>150</min>
+        <max>100</max>
+        <type>Fixed</type>
+      </distance>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeReleaseMagic">
+      <childs />
+      <name>释放技能</name>
+      <guid>b35a1958-70ce-41e9-a2d2-dc13be7c3987</guid>
+      <magicKey>level01_grunt_att</magicKey>
+      <valueOf>MagicKey</valueOf>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeWaitForSeconds">
+      <childs />
+      <name>等待时间</name>
+      <guid>6c25c68f-2af8-4c4b-8fd4-60f748757e68</guid>
+      <seconds>
+        <min>1000</min>
+        <max>3000</max>
+        <type>Fixed</type>
+      </seconds>
+    </TreeNode>
+  </childs>
+  <name>顺序节点</name>
+  <guid>25fc67da-f85c-4998-8b54-53f4ca81cd5f</guid>
+</TreeNode>

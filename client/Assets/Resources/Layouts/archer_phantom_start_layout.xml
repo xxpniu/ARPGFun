@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.35</Time>
+  <Points>
+    <TimePoint>
+      <GUID>44e1cfbc-5e89-45d2-b6dc-4764306a7e8d</GUID>
+      <Time>0.339130461</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>b2508d85-ce7c-4fb1-a6e5-8f91e9a0014a</GUID>
+      <Time>0.208695665</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>373d34ac-545c-4e1e-9186-8cbb55443ad3</GUID>
+      <Time>0.306426734</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="CallUnitLayout">
+      <GUID>44e1cfbc-5e89-45d2-b6dc-4764306a7e8d</GUID>
+      <characterID>
+        <ValueForm>MagicLevelParam2</ValueForm>
+        <Value>0</Value>
+      </characterID>
+      <level>
+        <ValueForm>MagicLevelParam1</ValueForm>
+        <Value>0</Value>
+      </level>
+      <AIPath />
+      <time>
+        <ValueForm>CurrentConfig</ValueForm>
+        <Value>-1</Value>
+      </time>
+      <maxNum>1</maxNum>
+      <offset>
+        <x>0</x>
+        <y>0</y>
+        <z>2</z>
+      </offset>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>b2508d85-ce7c-4fb1-a6e5-8f91e9a0014a</GUID>
+      <resourcesPath>Sound/MagicSounds/General Spell/Cast 03.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Body</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>373d34ac-545c-4e1e-9186-8cbb55443ad3</GUID>
+      <path>Effects/Flames/LifeFlame.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Bottom</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>0.5</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>2</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

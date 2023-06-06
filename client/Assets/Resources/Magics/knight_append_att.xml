@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-16"?>
+<MagicData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>knight normal attack</name>
+  <Containers>
+    <EventContainer>
+      <type>EVENT_START</type>
+      <layoutPath>Layouts/knight_append_att_start_layout.xml</layoutPath>
+      <effectGroup>
+        <EffectGroup>
+          <effects>
+            <EffectBase xsi:type="NormalDamageEffect">
+              <valueOf>NormalAttack</valueOf>
+              <DamageValue>0</DamageValue>
+            </EffectBase>
+            <EffectBase xsi:type="AddBufEffect">
+              <buffMagicKey>show_hit_buff</buffMagicKey>
+              <timeVauleOf>MagicConfig</timeVauleOf>
+              <durationTime>0</durationTime>
+            </EffectBase>
+          </effects>
+          <key>001</key>
+        </EffectGroup>
+      </effectGroup>
+    </EventContainer>
+  </Containers>
+  <triggerTicksTime>-1</triggerTicksTime>
+  <triggerDurationTime>-1</triggerDurationTime>
+</MagicData>

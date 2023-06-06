@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-16"?>
+<MagicData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>wizard_spring</name>
+  <Containers>
+    <EventContainer>
+      <type>EVENT_START</type>
+      <layoutPath>Layouts/wizard_spring_start_layout.xml</layoutPath>
+      <effectGroup />
+    </EventContainer>
+  </Containers>
+  <triggerTicksTime>-1</triggerTicksTime>
+  <triggerDurationTime>-1</triggerDurationTime>
+  <unique>true</unique>
+</MagicData>

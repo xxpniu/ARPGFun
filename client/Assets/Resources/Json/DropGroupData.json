@@ -1,0 +1,4 @@
+[
+	{"ID":10001,"DropPro":3000,"GoldMin":50,"GoldMax":100,"DropMinNum":1,"DropMaxNum":1,"Repeat":0,"DropItem":"1020211|1020212|1020213|1020202|1020203|1020204","DropNum":"1|1|1|1|1|1","Pro":"1|1|1|1|1|1"},
+	{"ID":10002,"DropPro":10000,"GoldMin":0,"GoldMax":0,"DropMinNum":1,"DropMaxNum":1,"Repeat":0,"DropItem":"1020311|1020312|1020313|1020302|1020303|1020304","DropNum":"1|1|1|1|1|1","Pro":"1|1|1|1|1|1"}
+]

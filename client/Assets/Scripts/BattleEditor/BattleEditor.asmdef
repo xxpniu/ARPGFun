@@ -1,0 +1,22 @@
+{
+    "name": "BattleEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c0714e3101b644d28bc9124e6411f1fc",
+        "GUID:2aabdf7acfca649068f34bec3c6dfdae",
+        "GUID:aa90c6be04d1e4848a8cedbf79ea8fd9",
+        "GUID:0a77b5832b84b4aa9a8f126896ed8274",
+        "GUID:44a144b962a334644b339a90b234573b",
+        "GUID:4b61c2a5cf5994155ae66eee400ac48a",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

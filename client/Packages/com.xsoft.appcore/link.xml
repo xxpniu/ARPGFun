@@ -1,0 +1,3 @@
+<linker>
+    <assembly fullname="Core" preserve="all" ></assembly>
+</linker>

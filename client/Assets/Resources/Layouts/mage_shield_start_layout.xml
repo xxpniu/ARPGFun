@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.5</Time>
+  <Points>
+    <TimePoint>
+      <GUID>e70e9f0e-a82e-4e30-9f65-049a65e7ac9f</GUID>
+      <Time>0.032352943</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>d2863b24-fb3b-42ba-8f5f-726c8423242e</GUID>
+      <Time>0.40625</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>f483e2e6-b902-4a68-9ae2-f68e7e855083</GUID>
+      <Time>0.229166672</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>e70e9f0e-a82e-4e30-9f65-049a65e7ac9f</GUID>
+      <motionName>Cast Spell 03</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>d2863b24-fb3b-42ba-8f5f-726c8423242e</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>OwnerTeam</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>f483e2e6-b902-4a68-9ae2-f68e7e855083</GUID>
+      <resourcesPath>Sound/MagicSounds/General Spell/Positive Effect 2.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Body</fromBone>
+      <value>1</value>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1</Time>
+  <Points>
+    <TimePoint>
+      <GUID>cf6ebe8a-f2f3-4a71-9983-b325837ea5e7</GUID>
+      <Time>0.0235294122</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>19d4327c-6120-40c5-8ad2-4c4127473bed</GUID>
+      <Time>0.0294117648</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>34f3432b-0ccb-41a8-ab24-16f344936b86</GUID>
+      <Time>0.620588243</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>9d678f81-e93c-4e97-95fc-6485477b8ff7</GUID>
+      <Time>0.182352945</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>cf6ebe8a-f2f3-4a71-9983-b325837ea5e7</GUID>
+      <motionName>Cast Spell 03</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>19d4327c-6120-40c5-8ad2-4c4127473bed</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>34f3432b-0ccb-41a8-ab24-16f344936b86</GUID>
+      <target>Target</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>OwnerTeam</fiterType>
+        <radius>2</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>9d678f81-e93c-4e97-95fc-6485477b8ff7</GUID>
+      <path>Effects/Enchant/LifeEnchant.prefab</path>
+      <fromTarget>Target</fromTarget>
+      <toTarget>Target</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Bottom</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>Normal</destoryType>
+      <destoryTime>0</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

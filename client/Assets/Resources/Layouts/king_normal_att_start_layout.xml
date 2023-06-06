@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.5</Time>
+  <Points>
+    <TimePoint>
+      <GUID>82977c37-156b-453c-9143-0dbf567163fe</GUID>
+      <Time>0.0036764706</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>0193aa8c-c223-47d7-be50-93cf9c184132</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>b0239091-a1fe-48e9-8b62-77c5ab341240</GUID>
+      <Time>0.4751838</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>6428b792-5271-462b-8ce1-824016213f71</GUID>
+      <Time>0.428020567</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>82977c37-156b-453c-9143-0dbf567163fe</GUID>
+      <motionName>attack 01</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>0193aa8c-c223-47d7-be50-93cf9c184132</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>b0239091-a1fe-48e9-8b62-77c5ab341240</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>2.3</radius>
+        <angle>20</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>-0.5</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>6428b792-5271-462b-8ce1-824016213f71</GUID>
+      <resourcesPath>Sound/MagicSounds/Medieval/Stab 2_2.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Bottom</fromBone>
+      <value>1</value>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

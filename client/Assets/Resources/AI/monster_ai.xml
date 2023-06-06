@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSelector">
+  <childs>
+    <TreeNode xsi:type="TreeNodeSequence">
+      <childs>
+        <TreeNode xsi:type="TreeNodeWaitForSeconds">
+          <childs />
+          <name>等待时间</name>
+          <guid>01edb59e-27f9-42e5-8cbe-7aa70012fd65</guid>
+          <seconds>
+            <min>3000</min>
+            <max>1000</max>
+            <type>Fixed</type>
+          </seconds>
+        </TreeNode>
+      </childs>
+      <name>巡逻</name>
+      <guid>04934227-ce1f-476d-b46a-e270edd5ba25</guid>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeSequence">
+      <childs>
+        <TreeNode xsi:type="TreeNodeFindTarget">
+          <childs />
+          <name>查找目标</name>
+          <guid>c10fd51e-9a65-4375-bccf-0fcee4100a75</guid>
+          <valueOf>ViewDistance</valueOf>
+          <Distance>
+            <min>0</min>
+            <max>0</max>
+            <type>Fixed</type>
+          </Distance>
+          <View>
+            <min>360</min>
+            <max>360</max>
+            <type>Fixed</type>
+          </View>
+          <selectType>Nearest</selectType>
+          <filter>None</filter>
+          <useMagicConfig>false</useMagicConfig>
+          <teamType>Enemy</teamType>
+          <findNew>false</findNew>
+        </TreeNode>
+      </childs>
+      <name>警戒</name>
+      <guid>eb3d28f2-5515-45e5-b881-0cadedc3ce02</guid>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeSequence">
+      <childs />
+      <name>追击</name>
+      <guid>d6789e71-300e-41a9-8867-bb8cdde44c27</guid>
+    </TreeNode>
+  </childs>
+  <name>选择节点</name>
+  <guid>b8ab37f3-b546-496a-bf28-633599165321</guid>
+</TreeNode>

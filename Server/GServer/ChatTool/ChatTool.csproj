@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServerUtility\ServerUtility.csproj" />
+    <ProjectReference Include="..\..\..\GameCore\XNet\XNet.Libs.csproj" />
+    <ProjectReference Include="..\..\..\PublicTools\src\csharp\Xsoft.Proto.csproj" />
+    <ProjectReference Include="..\..\..\PublicTools\toolssrc\JSON\Json.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="mongocsharpdriver" Version="2.10.4" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,51 @@
+【单机部分】
+丰富特殊物件
+	界面+数值
+定位道具系统的作用
+丰富游戏中的收集向道具（例如宝石、矿石等）
+
+【社交部分】
+增加可炫耀的元素
+	武器特效
+	脚底光环
+	名字title
+	出场仪式感
+
+
+1 save the merchant(tutor)
+2 locate the crystals(altar restore)
+3 rescue the instructor(designer/level card)
+
+starting hall
+1, merchant
+2, instructors
+3, random quests
+4. random altars
+
+level challenge - tickets 10/day
+
+players build:
+
+[offense]
+ - shield bash
+ - beam penatrate
+ - carriers
+ - minions
+ - traps
+ - gems drones
+ - normal attack
+
+[defense]
+ - immortal
+ - potion master
+ - mana shield
+ - diamond form
+ - hp drain
+
+[tactics]
+ - card master
+ - monster charm
+ - coins god
+ - mana drain
+
+腾讯云设计的不行呀!!

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1.2</Time>
+  <Points>
+    <TimePoint>
+      <GUID>f77113a4-577b-4c8c-8e8e-ed1045f89a9e</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>f143c33c-9278-4653-9239-fb2ce173be64</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>f143c33c-9278-4653-9239-fb2ce173be64</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>3393a9d0-3f83-4b7e-ad89-35efcec2f1eb</GUID>
+      <Time>1.08869565</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>f77113a4-577b-4c8c-8e8e-ed1045f89a9e</GUID>
+      <path>Effects/Glitter.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Body</fromBoneName>
+      <toBoneName>Body</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>LayoutTimeOut</destoryType>
+      <destoryTime>1</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>f143c33c-9278-4653-9239-fb2ce173be64</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>ALL</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="RepeatTimeLine">
+      <GUID>3393a9d0-3f83-4b7e-ad89-35efcec2f1eb</GUID>
+      <RepeatCount>5</RepeatCount>
+      <ToTime>-1</ToTime>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.6</Time>
+  <Points>
+    <TimePoint>
+      <GUID>87a34f1c-0aa6-4f76-b442-fb576eafc3e6</GUID>
+      <Time>0.455665022</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>773d4ee0-bca8-414a-96da-2c76532bc329</GUID>
+      <Time>0.495073885</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>b0678e3f-d4fa-4e4e-85ef-e6f5938f8bdd</GUID>
+      <Time>0.024630541</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>dab7e5ad-a6f3-4425-be23-0b135bc58d69</GUID>
+      <Time>0.421182275</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>87a34f1c-0aa6-4f76-b442-fb576eafc3e6</GUID>
+      <path>Effects/Nova/NovaFire.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Bottom</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>3</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>773d4ee0-bca8-414a-96da-2c76532bc329</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>2.8</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>b0678e3f-d4fa-4e4e-85ef-e6f5938f8bdd</GUID>
+      <motionName>Jump</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>dab7e5ad-a6f3-4425-be23-0b135bc58d69</GUID>
+      <resourcesPath>Sound/MagicSounds/Element Scholls/Shadow/Shadow Attack 1.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Body</fromBone>
+      <value>1</value>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

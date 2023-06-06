@@ -1,0 +1,150 @@
+﻿
+syntax = "proto3";
+package Proto;
+
+//防御类型
+enum DefanceType
+{
+	Normal = 0;//普通
+	Shield = 1;//盾牌
+	Armored =2 ;//重甲
+}
+//种族类型
+enum HeroCategory
+{
+	HC_Force =0 ;//力量
+	HC_Knowledge =1 ;//智力
+	HC_Agility = 2;//敏捷
+}
+
+//伤害类型
+enum DamageType
+{
+	Confusion =0;//混乱
+	Physical=1;//物理
+	Magic=2;//魔法
+}
+
+//解锁条件
+enum LevelUnlockType
+{
+	None = 0; //无需解锁
+	NeedCompleteLevel =1;//前置关卡
+	NeedItem =2;//需求道具
+	ConsumeItem =3;//消耗道具
+}
+
+//属性枚举
+enum HeroPropertyType
+{
+	HPT_None =0;
+	Damage = 1;//伤害
+	Defance = 2 ;//防御
+	MaxHP =3;//HP
+	MaxMP= 4;//魔法上限
+	Crt =5;//暴击率
+	Dodge =6 ;//闪避 dodge
+	CrtDamageRate = 7;//暴击伤害倍数 万分比
+	MoveSpeed = 8;//移动速度 cm/s
+	AttackSpeed = 9 ; //攻击速度 次数秒 * 1000 
+	CastSpeed = 10;//释法速度 毫秒
+	HitBack = 11;//攻击击退  cm
+	HitImmob = 12;//攻击硬直 毫秒
+	HitBurn= 13;//攻击燃烧
+	HitFreeze =14;//攻击冰冻
+	HPDrain = 15;//吸血等级  万分比
+	MpDrain= 16; //MP 吸取等级 万分比
+	VsBoss =17 ;//boss 伤害加成 万分比
+	VsElite =18;//精英 伤害加成 万分比
+	Hit = 19;//命中
+	ViewDistance =20;//视野范围
+}
+
+ //行为锁
+enum ActionLockType
+{
+    ALT_None = 0;
+	NO_SKILL = 1;//禁止释放主动技能
+	NO_MOVE  = 2;//禁止移动
+	NO_ATTACK = 4;//禁止攻击
+	NO_INHIDEN =8 ;//隐形 invisible
+	NO_Ai=16;//无ai
+}
+
+enum ItemType
+{
+    IT_None = 0;
+	IT_HPItem =1; //hp
+	IT_MPItem=2;
+	IT_Equip =3;    //装备
+	IT_Consume =4;  //消耗类道具 本身没有任何功能其他系统定义
+}
+
+
+enum MagicReleaseType
+{
+	MRT_NONE = 0;
+	MRT_NormalAttack =1;//普通攻击
+	MRT_BornMagic =2;//出生技能
+	MRT_Magic = 3;//魔法
+}
+
+enum MagicReleaseAITarget
+{
+	MAT_ALL=0 ;//所有
+	MAT_Enemy =1;//敌人
+	MAT_OwnTeam =2;//自己队友
+	MAT_OwnTeamWithOutSelf =3;//不包含自己
+	MAT_Own =4;//只有自己
+}
+
+enum EquipmentType
+{
+	ET_None =0;
+	
+	Arm = 1;//手
+	Body = 2 ;//衣服护驾
+	Head = 3;//头
+	Foot = 4; //脚
+}
+
+enum GetValueFrom
+{
+    CurrentConfig = 0;//获取当前配置值
+	MagicLevelParam1 = 1;//取魔法等级表数据参数1
+	MagicLevelParam2 = 2;//参数2
+	MagicLevelParam3 = 3;//参数3
+	MagicLevelParam4 = 4;//参数4
+	MagicLevelParam5 = 5;//参数5
+}
+
+enum TargetTeamType
+{
+	ALL=0 ;//所有
+	Enemy =1;//敌人
+	OwnTeam =2;//自己队友
+	OwnTeamWithOutSelf =3;//不包含自己
+	Own =4;//只有自己
+}
+
+enum StandType
+{
+	ST_NONE =0;
+	ST_Random = 1;//随机
+	ST_Around = 2;//围绕
+}
+
+enum MapType 
+{
+	MT_None =0;
+	Boss = 1;//boss挑战
+	PK =2; //玩家挑战
+}
+
+enum MapLevelElementType
+{
+	MLET_NONE = 0;
+	MLET_Transport = 1;//传送点
+	MLET_DropGroupElement =2;//掉落组物体
+	MLET_ChestBox =3;//宝箱
+}

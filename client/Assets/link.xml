@@ -1,0 +1,16 @@
+<linker>
+    <assembly fullname="Application" preserve="all"/>
+    <assembly fullname="App.BattleView" preserve="all"/>
+    <assembly fullname="App.GameLogic" preserve="all"/>
+    <assembly fullname="Google.Protobuf" preserve="all"/>
+    <assembly fullname="JSON" preserve="all"/>
+    <assembly fullname="XNet.Libs" preserve="all"/>
+    <assembly fullname="Xsoft.Proto" preserve="all"/>
+    <assembly fullname="App.Core" preserve="all"/>
+    <assembly fullname="Vuforia.UnityExtensions">
+        <namespace fullname="Vuforia" preserve="all"/>
+    </assembly>
+    <assembly fullname="System.Core">
+        <type fullname="System.Linq.Expressions.Interpreter.LightLambda" preserve="all" />
+    </assembly>
+</linker>

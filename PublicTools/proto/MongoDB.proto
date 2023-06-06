@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "excelconst.proto";
+
+package Proto.MongoDB;
+
+//game
+message GamePlayerEntity
+{
+    string uuid = 1;
+    string account_uuid = 2;
+    int32 coin = 3;
+    int32 gold = 4;
+    string last_ip = 5;
+}
+
+
+//hero
+message DBHeroMagic
+{
+    int32 level = 1;
+    int32 exp = 2;
+    bool actived = 3;
+}
+
+//用户当前的服务器信息
+message UserSessionInfoEntity
+{
+     string uuid = 1;
+     string account_uuid = 2;
+     int32 gate_server_id = 3;
+     int32 battle_server_id = 4 [deprecated=true];//use uuid
+     string token = 5; //token
+     int32 level_id = 6[deprecated=true]; //current level 
+     string battle_server_uuid = 7;
+
+}

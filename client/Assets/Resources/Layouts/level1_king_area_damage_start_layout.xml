@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>2</Time>
+  <Points>
+    <TimePoint>
+      <GUID>1786140b-bcaa-4c3d-8174-8296fdd6a09d</GUID>
+      <Time>0.04308797</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>d8df76c0-28c1-41ee-a72a-debb633268a0</GUID>
+      <Time>0.6965889</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>e05d2002-2c1b-480b-989d-c40308ef2e54</GUID>
+      <Time>0.6642729</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>5d3f3965-c406-4373-82f0-52c36af5041f</GUID>
+      <Time>0.0825852752</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>3353883b-71df-4b6b-bdcc-62c588a760e0</GUID>
+      <Time>1.551167</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>5ff6e8de-a0b3-4dfd-b4d6-eaaace2d37b0</GUID>
+      <Time>1.60861754</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>1786140b-bcaa-4c3d-8174-8296fdd6a09d</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>d8df76c0-28c1-41ee-a72a-debb633268a0</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>2</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>2</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>e05d2002-2c1b-480b-989d-c40308ef2e54</GUID>
+      <path>Effects/Missiles &amp; Explosions/-Generics/Explosions/MesmerizeExplosion.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <Bind>false</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>1</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0.2</y>
+        <z>2</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>5d3f3965-c406-4373-82f0-52c36af5041f</GUID>
+      <motionName>laugh</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>3353883b-71df-4b6b-bdcc-62c588a760e0</GUID>
+      <path>Effects/Missiles &amp; Explosions/-Generics/Explosions/MesmerizeExplosion.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <Bind>false</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>1</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0.2</y>
+        <z>5</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>5ff6e8de-a0b3-4dfd-b4d6-eaaace2d37b0</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>2</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0.2</y>
+          <z>5</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

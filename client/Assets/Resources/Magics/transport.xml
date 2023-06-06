@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-16"?>
+<MagicData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>transport</name>
+  <Containers>
+    <EventContainer>
+      <type>EVENT_START</type>
+      <layoutPath>Layouts/transport_start_layout.xml</layoutPath>
+      <effectGroup>
+        <EffectGroup>
+          <effects>
+            <EffectBase xsi:type="TransportEffect">
+              <ValueOf>ReleaseTargetPos</ValueOf>
+              <x>0</x>
+              <y>0</y>
+              <z>0</z>
+            </EffectBase>
+            <EffectBase xsi:type="AddBufEffect">
+              <DiType>0</DiType>
+              <buffMagicKey>transport_buff</buffMagicKey>
+              <durationTime>
+                <ValueForm>CurrentConfig</ValueForm>
+                <Value>1000</Value>
+              </durationTime>
+              <CopyParams>false</CopyParams>
+            </EffectBase>
+          </effects>
+          <key>001</key>
+        </EffectGroup>
+      </effectGroup>
+    </EventContainer>
+  </Containers>
+  <triggerTicksTime>-1</triggerTicksTime>
+  <unique>false</unique>
+</MagicData>

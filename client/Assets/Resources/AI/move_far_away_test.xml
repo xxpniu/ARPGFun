@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSequence">
+  <childs>
+    <TreeNode xsi:type="TreeNodeFindTarget">
+      <childs />
+      <name>查找目标</name>
+      <guid>84ec010e-ae11-4fb1-89f2-f20b5c48d25b</guid>
+      <valueOf>ViewDistance</valueOf>
+      <Distance>
+        <min>2000</min>
+        <max>0</max>
+        <type>Fixed</type>
+      </Distance>
+      <View>
+        <min>360</min>
+        <max>360</max>
+        <type>Fixed</type>
+      </View>
+      <selectType>Nearest</selectType>
+      <filter>None</filter>
+      <useMagicConfig>false</useMagicConfig>
+      <teamType>Enemy</teamType>
+      <findNew>true</findNew>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeFarFromTarget">
+      <childs />
+      <name>移动远离目标</name>
+      <guid>70bfa4de-ea0d-4a79-ba2b-185379642b89</guid>
+      <valueOf>Value</valueOf>
+      <distance>
+        <min>500</min>
+        <max>700</max>
+        <type>Range</type>
+      </distance>
+    </TreeNode>
+  </childs>
+  <name>顺序节点</name>
+  <guid>0372eec7-cf45-4fed-96d6-0d7ebc40f898</guid>
+</TreeNode>

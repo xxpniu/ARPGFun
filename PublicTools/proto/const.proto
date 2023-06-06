@@ -1,0 +1,56 @@
+
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+package Proto;
+
+//empty text
+message Void
+{
+}
+
+extend google.protobuf.EnumValueOptions 
+{
+     string langugage_key = 50005;
+}
+//错误码 考虑平台问题 不要尝试串码
+enum ErrorCode
+{	
+    Error = 0 [(langugage_key)="EC_Error"];//通用错误
+	OK = 1; //处理成功
+	LoginFailure = 2;//登陆失败
+	RegExistUserName = 3;//用户名重复
+	RegInputEmptyOrNull = 4;//输入为空
+	NoGamePlayerData = 5;//没有游戏角色信息
+	NoHeroInfo = 6 ;//英雄数据异常
+    NOFoundServerID = 7;//没有对应的serverID
+    NOFreeBattleServer =8;//没有空闲的战斗服务器
+    PlayerIsInBattle =9;//玩家已经在战斗中
+    BattleServerHasDisconnect =10;//战斗服务器已经断开连接
+    NOFoundUserOnBattleServer = 11;//没有申请战斗服务器
+    NOFoundUserBattleServer = 12;//没有战斗服务器
+    NOFoundUserAccount =13;//没有账号
+    MatchGroupIsFull = 14;//小组已经满了
+    NoFoundMatch =15;//不存在小组
+    InMatch = 16;
+
+    NOFoundItem =100; //没有道具
+    NOEnoughItem =101;//道具数量不足
+    IsWearOnHero =102;//穿戴中
+    NoEnoughtGold =103;//金币不足
+    NoFreeGateServer =104;//没有空闲网关服务器
+    NameOrPwdLeghtIncorrect = 105;//账号或者密码长度不好
+    NeedHeroLevel = 106;//需要英雄等级
+    NoItemsShop = 107;//没有道具商店
+    NoFoundItemInShop = 108;//商店中没有该道具
+    NoEnoughtCoin = 109 ;//钻石不足
+    PackageSizeLimit = 110;//背包上限
+    PlayerLevelLimit = 111;//等级过高
+    RefreshTimeLimit = 112;//超过了最大可刷新次数
+    NeedItemQuality = 113;//道具品质不够
+    NoPropertyToRefresh = 114;//属性不够无法刷新
+    MagicNoActicted = 115;//魔法没有激活
+    NeedEquipmentItem =116;//必须是装备才可以参与熔炼
+    NoFoundEquipmentConfig =117;//没有发现装备配置
+}
+

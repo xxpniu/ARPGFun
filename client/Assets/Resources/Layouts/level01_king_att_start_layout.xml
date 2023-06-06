@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1.2</Time>
+  <Points>
+    <TimePoint>
+      <GUID>f8212c8a-495e-455d-8a81-e6c8c6f40e0f</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>23ed93cf-319a-4e63-b41e-4ef55b872b35</GUID>
+      <Time>0.8611765</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>8cbb36f3-dce8-4cb4-aeeb-4ab0f300b94c</GUID>
+      <Time>0.00154241652</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>24b479fb-684c-4527-b1d5-05ac22a1d97e</GUID>
+      <Time>0.8390746</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>8cbb36f3-dce8-4cb4-aeeb-4ab0f300b94c</GUID>
+      <motionName>attack_cleave</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>f8212c8a-495e-455d-8a81-e6c8c6f40e0f</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>23ed93cf-319a-4e63-b41e-4ef55b872b35</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>2</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>2.5</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>24b479fb-684c-4527-b1d5-05ac22a1d97e</GUID>
+      <path>Effects/Missiles &amp; Explosions/Earth/EarthExplosionSmall.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Body</toBoneName>
+      <Bind>false</Bind>
+      <destoryType>LayoutTimeOut</destoryType>
+      <destoryTime>0</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>2.5</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

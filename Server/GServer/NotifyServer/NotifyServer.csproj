@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServerUtility\ServerUtility.csproj" />
+    <ProjectReference Include="..\..\..\PublicTools\src\csharp\Xsoft.Proto.csproj" />
+    <ProjectReference Include="..\..\..\GameCore\XNet\XNet.Libs.csproj" />
+    <ProjectReference Include="..\ChatTool\ChatTool.csproj" />
+  </ItemGroup>
+</Project>

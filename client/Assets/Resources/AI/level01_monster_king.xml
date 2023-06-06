@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSequence">
+  <childs>
+    <TreeNode xsi:type="TreeNodeLinkNode">
+      <childs />
+      <name>链接子树</name>
+      <guid>ec082a15-79f7-40a6-bf16-b2e27f1642ed</guid>
+      <Path>AI/monster_idle.xml</Path>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeSelector">
+      <childs>
+        <TreeNode xsi:type="TreeNodeSequence">
+          <childs>
+            <TreeNode xsi:type="TreeNodeDistancTarget">
+              <childs />
+              <name>判断目标距离</name>
+              <guid>9bf0649a-c7a4-499d-96fb-b00baac93e61</guid>
+              <valueOf>Value</valueOf>
+              <distance>
+                <min>300</min>
+                <max>100</max>
+                <type>Fixed</type>
+              </distance>
+              <compareType>Greater</compareType>
+            </TreeNode>
+            <TreeNode xsi:type="TreeNodeDistancTarget">
+              <childs />
+              <name>判断目标距离</name>
+              <guid>e46baa0c-b73a-4e8e-8994-1c5a9a6a24dc</guid>
+              <valueOf>Value</valueOf>
+              <distance>
+                <min>600</min>
+                <max>100</max>
+                <type>Fixed</type>
+              </distance>
+              <compareType>Less</compareType>
+            </TreeNode>
+            <TreeNode xsi:type="TreeNodeProbabilitySelector">
+              <childs>
+                <TreeNode xsi:type="TreeNodeProbabilityNode">
+                  <childs>
+                    <TreeNode xsi:type="TreeNodeReleaseMagic">
+                      <childs />
+                      <name>释放技能</name>
+                      <guid>5113874c-1988-46ba-a4e6-21a39d46e3e6</guid>
+                      <magicKey>level_01_pushmagic</magicKey>
+                      <valueOf>MagicKey</valueOf>
+                    </TreeNode>
+                  </childs>
+                  <name>分段概率子节点</name>
+                  <guid>9f97c003-20be-4c56-9fa6-6f64b7fbf007</guid>
+                  <probability>1</probability>
+                </TreeNode>
+                <TreeNode xsi:type="TreeNodeProbabilityNode">
+                  <childs>
+                    <TreeNode xsi:type="TreeNodeReleaseMagic">
+                      <childs />
+                      <name>释放技能</name>
+                      <guid>8e3c5426-fbc5-4183-9f71-ee9f8811c2e4</guid>
+                      <magicKey>level1_king_area_damage</magicKey>
+                      <valueOf>MagicKey</valueOf>
+                    </TreeNode>
+                  </childs>
+                  <name>分段概率子节点</name>
+                  <guid>f1cd014e-1328-4284-9676-f8713f26f596</guid>
+                  <probability>1</probability>
+                </TreeNode>
+              </childs>
+              <name>分段概率选择节点</name>
+              <guid>be3dcb9d-7442-41e6-af7b-2cf7e27e8ae2</guid>
+            </TreeNode>
+            <TreeNode xsi:type="TreeNodeWaitForSeconds">
+              <childs />
+              <name>等待时间</name>
+              <guid>2910dc02-0b5c-4704-aa41-b44ce2bd9881</guid>
+              <seconds>
+                <min>1000</min>
+                <max>3000</max>
+                <type>Range</type>
+              </seconds>
+            </TreeNode>
+          </childs>
+          <name>顺序节点</name>
+          <guid>66942237-84d3-442b-8e6d-dfe847b2d000</guid>
+        </TreeNode>
+        <TreeNode xsi:type="TreeNodeSequence">
+          <childs>
+            <TreeNode xsi:type="TreeNodeDistancTarget">
+              <childs />
+              <name>判断目标距离</name>
+              <guid>0f59d8b5-84f9-45d4-b461-e0a53bfbc447</guid>
+              <valueOf>Value</valueOf>
+              <distance>
+                <min>600</min>
+                <max>100</max>
+                <type>Fixed</type>
+              </distance>
+              <compareType>Greater</compareType>
+            </TreeNode>
+            <TreeNode xsi:type="TreeNodeReleaseMagic">
+              <childs />
+              <name>释放技能</name>
+              <guid>6014ea24-ea1b-4ad6-8237-a4406c21700a</guid>
+              <magicKey>level_01_pushmagic</magicKey>
+              <valueOf>MagicKey</valueOf>
+            </TreeNode>
+            <TreeNode xsi:type="TreeNodeWaitForSeconds">
+              <childs />
+              <name>等待时间</name>
+              <guid>54e6e39a-9451-4244-b0cc-b47e8b07fd37</guid>
+              <seconds>
+                <min>500</min>
+                <max>2000</max>
+                <type>Fixed</type>
+              </seconds>
+            </TreeNode>
+          </childs>
+          <name>顺序节点</name>
+          <guid>fd870566-db87-4b92-987e-df3308db323f</guid>
+        </TreeNode>
+        <TreeNode xsi:type="TreeNodeSequence">
+          <childs>
+            <TreeNode xsi:type="TreeNodeProbabilitySelector">
+              <childs>
+                <TreeNode xsi:type="TreeNodeProbabilityNode">
+                  <childs>
+                    <TreeNode xsi:type="TreeNodeSequence">
+                      <childs>
+                        <TreeNode xsi:type="TreeNodeMoveCloseTarget">
+                          <childs />
+                          <name>靠近目标</name>
+                          <guid>89b0cfdc-2006-4d2f-8aa0-07bd623cc865</guid>
+                          <valueOf>Value</valueOf>
+                          <distance>
+                            <min>300</min>
+                            <max>300</max>
+                            <type>Fixed</type>
+                          </distance>
+                        </TreeNode>
+                        <TreeNode xsi:type="TreeNodeReleaseMagic">
+                          <childs />
+                          <name>释放技能</name>
+                          <guid>f5c8bdc2-2066-4a64-abcd-4ca8048cd5ec</guid>
+                          <magicKey>level01_king_att</magicKey>
+                          <valueOf>MagicKey</valueOf>
+                        </TreeNode>
+                      </childs>
+                      <name>顺序节点</name>
+                      <guid>245f203e-92b4-4fca-b143-5c4672102cb9</guid>
+                    </TreeNode>
+                  </childs>
+                  <name>分段概率子节点</name>
+                  <guid>0f199e8c-da78-4722-9f2c-eb48cc4e0d1a</guid>
+                  <probability>80</probability>
+                </TreeNode>
+                <TreeNode xsi:type="TreeNodeProbabilityNode">
+                  <childs>
+                    <TreeNode xsi:type="TreeNodeReleaseMagic">
+                      <childs />
+                      <name>释放技能</name>
+                      <guid>cbc1bd64-32fa-4203-a93b-a62a14ee1499</guid>
+                      <magicKey>level01_king_call</magicKey>
+                      <valueOf>MagicKey</valueOf>
+                    </TreeNode>
+                  </childs>
+                  <name>分段概率子节点</name>
+                  <guid>e40d493d-1a4c-4674-b0a7-f48234b0c73e</guid>
+                  <probability>20</probability>
+                </TreeNode>
+              </childs>
+              <name>分段概率选择节点</name>
+              <guid>a315dbe0-3cfb-48b7-8072-b178521478b0</guid>
+            </TreeNode>
+            <TreeNode xsi:type="TreeNodeWaitForSeconds">
+              <childs />
+              <name>等待时间</name>
+              <guid>5b21eaf4-fa48-470b-be92-3c1e85a9499e</guid>
+              <seconds>
+                <min>1000</min>
+                <max>2000</max>
+                <type>Range</type>
+              </seconds>
+            </TreeNode>
+          </childs>
+          <name>顺序节点</name>
+          <guid>8cd2c654-be54-4bd9-a46b-f58c2b5f44f8</guid>
+        </TreeNode>
+      </childs>
+      <name>选择节点</name>
+      <guid>2afbdcbc-4e13-4e56-b1f7-da3686aafcef</guid>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeFindTarget">
+      <childs />
+      <name>查找目标</name>
+      <guid>f460643c-c73a-459a-ab4e-b07b907ea9cd</guid>
+      <valueOf>Value</valueOf>
+      <Distance>
+        <min>500</min>
+        <max>0</max>
+        <type>Fixed</type>
+      </Distance>
+      <View>
+        <min>360</min>
+        <max>360</max>
+        <type>Fixed</type>
+      </View>
+      <selectType>Nearest</selectType>
+      <filter>None</filter>
+      <useMagicConfig>false</useMagicConfig>
+      <teamType>Enemy</teamType>
+      <findNew>true</findNew>
+    </TreeNode>
+  </childs>
+  <name>顺序节点</name>
+  <guid>95378cd5-4de1-410f-9bd2-17b575808431</guid>
+</TreeNode>

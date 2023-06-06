@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>1</Time>
+  <Points>
+    <TimePoint>
+      <GUID>ecdd81bf-bce8-4940-b98a-f6033b24c459</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>94ab3fc6-e11e-4676-aa3c-34734ad05cc5</GUID>
+      <Time>0.4826087</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>b0084ed2-fd73-4de5-b9ae-07824ca5446f</GUID>
+      <Time>0.5543478</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>c5749da2-0ab4-4de6-baf2-62e9aefea0fa</GUID>
+      <Time>0.394117653</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>c243fd67-5a88-4b25-8866-6acd004b209f</GUID>
+      <Time>0</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>ecdd81bf-bce8-4940-b98a-f6033b24c459</GUID>
+      <motionName>Cast Spell 01</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>94ab3fc6-e11e-4676-aa3c-34734ad05cc5</GUID>
+      <path>Effects/Flames/LightFlame.prefab</path>
+      <fromTarget>Target</fromTarget>
+      <toTarget>Target</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Bottom</toBoneName>
+      <Bind>true</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>1</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>b0084ed2-fd73-4de5-b9ae-07824ca5446f</GUID>
+      <target>Target</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>c5749da2-0ab4-4de6-baf2-62e9aefea0fa</GUID>
+      <resourcesPath>Sound/MagicSounds/General Spell/Cast 17.wav</resourcesPath>
+      <target>Target</target>
+      <fromBone>Body</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>c243fd67-5a88-4b25-8866-6acd004b209f</GUID>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

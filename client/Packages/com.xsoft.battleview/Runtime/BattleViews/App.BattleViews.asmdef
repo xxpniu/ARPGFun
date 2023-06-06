@@ -1,0 +1,19 @@
+{
+    "name": "App.BattleViews",
+    "references": [
+        "GUID:84651a3751eca9349aac36a66bba901b",
+        "GUID:9e24947de15b9834991c9d8411ea37cf",
+        "GUID:44a144b962a334644b339a90b234573b",
+        "GUID:4b61c2a5cf5994155ae66eee400ac48a",
+        "GUID:0a77b5832b84b4aa9a8f126896ed8274"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.5</Time>
+  <Points>
+    <TimePoint>
+      <GUID>74e1b1c6-e60a-4304-a442-84cc7fd460bf</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>5a2daf9a-0508-45ef-8de3-c6d1a2a4cbdd</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>d2eef92f-f35d-4ace-888f-a60da93e6725</GUID>
+      <Time>0.0257069413</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="LaunchSelfLayout">
+      <GUID>74e1b1c6-e60a-4304-a442-84cc7fd460bf</GUID>
+      <speed>15</speed>
+      <reachType>MaxDistance</reachType>
+      <distance>4.5</distance>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>5a2daf9a-0508-45ef-8de3-c6d1a2a4cbdd</GUID>
+      <path>Effects/Flames/LightningFlame.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <Bind>true</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>0.5</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>d2eef92f-f35d-4ace-888f-a60da93e6725</GUID>
+      <resourcesPath>Sound/Impact/lightningimpact.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Bottom</fromBone>
+      <value>1</value>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

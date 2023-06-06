@@ -1,0 +1,7 @@
+[
+	{"ID":1,"Quality":1,"CostGold":100,"Pro":5000,"NeedQuality":1,"MaxRefreshTimes":20,"NeedItemCount":3,"PropertyAppendMin":1,"PropertyAppendMax":1,"PropertyAppendCountMin":1,"PropertyAppendCountMax":2},
+	{"ID":2,"Quality":2,"CostGold":1500,"Pro":8000,"NeedQuality":2,"MaxRefreshTimes":15,"NeedItemCount":3,"PropertyAppendMin":1,"PropertyAppendMax":2,"PropertyAppendCountMin":1,"PropertyAppendCountMax":2},
+	{"ID":3,"Quality":3,"CostGold":10000,"Pro":10000,"NeedQuality":3,"MaxRefreshTimes":15,"NeedItemCount":3,"PropertyAppendMin":2,"PropertyAppendMax":3,"PropertyAppendCountMin":1,"PropertyAppendCountMax":2},
+	{"ID":4,"Quality":4,"CostGold":40000,"Pro":10000,"NeedQuality":4,"MaxRefreshTimes":10,"NeedItemCount":4,"PropertyAppendMin":2,"PropertyAppendMax":4,"PropertyAppendCountMin":1,"PropertyAppendCountMax":2},
+	{"ID":5,"Quality":5,"CostGold":50000,"Pro":10000,"NeedQuality":4,"MaxRefreshTimes":15,"NeedItemCount":5,"PropertyAppendMin":2,"PropertyAppendMax":4,"PropertyAppendCountMin":2,"PropertyAppendCountMax":3}
+]

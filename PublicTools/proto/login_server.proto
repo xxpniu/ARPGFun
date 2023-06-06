@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+import "data.proto";
+import "const.proto";
+import "excelconst.proto";
+
+
+
+package Proto;
+
+//登陆
+message C2L_Login
+{
+     int32 Version = 1;
+	 string UserName =2; //登陆token
+	 string Password =3; 
+}
+
+//登陆返回
+message L2C_Login
+{
+	 ErrorCode Code = 1;
+     string UserID = 2;
+	 string Session =3; //session
+	 GameServerInfo GateServer =4; //所属服务器
+	 GameServerInfo ChatServer =5; //分配到的chat server
+
+}
+//注册用户
+message C2L_Reg
+{
+     int32 Version = 1;
+	 string UserName =2;
+	 string Password =3;
+}
+//注册返回
+message L2C_Reg
+{
+     ErrorCode Code =1;
+	 string Session =2;
+	 string UserID =3;
+	 GameServerInfo GateServer =4;
+	 GameServerInfo ChatServer =6; //分配到的chat server
+}
+
+//检查session是否有效
+message S2L_CheckSession
+{
+	 string UserID=1;//玩家ID
+	 string Session=2;//当前登陆信息
+}
+
+//返回检查session结果
+message L2S_CheckSession
+{
+	 ErrorCode Code=1;
+	 ServiceAddress GateServerInnerHost = 2;
+}
+
+service LoginServerService
+{
+    rpc Login(C2L_Login) returns(L2C_Login){};//1
+    rpc Reg(C2L_Reg) returns(L2C_Reg){};//2
+}
+
+service LoginBattleGameServerService
+{
+	rpc CheckSession(S2L_CheckSession) returns (L2S_CheckSession);//5
+}
+

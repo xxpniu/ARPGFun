@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "const.proto";
+import "data.proto";
+import "notify_push_message.proto";
+
+import "google/protobuf/any.proto";
+
+package Proto;
+
+
+
+
+//创建战斗服务器
+message S2N_RouteSendNotify
+{
+    repeated NotifyMsg msg = 1;
+}
+
+message N2S_RouteSendNotify
+{
+    ErrorCode Code = 1;
+}
+
+service NotifyServices
+{
+   rpc RouteSendNotify (S2N_RouteSendNotify) returns (N2S_RouteSendNotify);
+}

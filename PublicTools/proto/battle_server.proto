@@ -1,0 +1,385 @@
+﻿syntax = "proto3";
+import "const.proto";
+import "excelconst.proto";
+import "data.proto";
+import "google/protobuf/any.proto";
+package Proto;
+
+
+message C2B_JoinBattle
+{
+	 int32 MapID =1;
+	 string Session=2;
+	 string AccountUuid=3;
+	 int32 Version=4;
+}
+
+message B2C_JoinBattle
+{
+	 ErrorCode Code=1;
+}
+
+message C2B_ExitBattle
+{
+	 string AccountUuid = 1;
+}
+
+message B2C_ExitBattle
+{
+	 ErrorCode Code=1;
+}
+
+message C2B_ViewPlayerHero
+{
+	string AccountUuid = 1;
+}
+
+message B2C_ViewPlayerHero
+{
+	ErrorCode Code = 1;
+	string Name = 2;
+	int32 Level =3;
+	int32 HeroID = 4;
+	repeated PlayerItem WaerEquips = 5;
+	repeated HeroMagic Magics = 6; 
+}
+
+message Action_CollectItem
+{
+	int32 Index =1;
+}
+//点击释放技能
+message Action_ClickSkillIndex
+{
+	 int32 MagicId = 1;//技能id
+	 Vector3 Rotation = 3;
+	 Vector3 Position =4;
+}
+//自动寻敌
+message Action_AutoFindTarget
+{
+	 bool Auto =1;
+}
+
+message Action_MoveJoystick
+{
+	Vector3 WillPos =1; // 400ms 后位置
+	Vector3 Position = 2;//当前位置
+}
+
+message Action_StopMove
+{
+	Vector3 StopPos = 1;//结束位置
+}
+
+message Action_NormalAttack
+{
+
+}
+
+message Action_UseItem
+{
+	int32 ItemId =1;
+}
+
+message Action_LookRotation
+{
+	float LookRotationY =1; //
+}
+
+message Action_Relive
+{
+	
+}
+//notify action
+
+//元素退出场景
+message Notify_ElementExitState
+{
+	 int32 Index=1;
+}
+
+//创建一个释放者
+message Notify_CreateReleaser
+{
+    int32 Index=1;
+	int32 ReleaserIndex=2;
+	int32 TargetIndex=3;
+	string MagicKey=4;
+	Vector3 Position = 5;
+	ReleaserModeType RMType = 6;
+	Vector3 OPostion = 7; //释放者当前位置
+	Vector3 ORotation =8;//释放者当前朝向
+}
+
+//战斗中的角色
+message Notify_CreateBattleCharacter
+{
+	 int32 Index=1;
+	 string AccountUuid=2;//用户ID
+	 int32 ConfigID=3; //配表ID
+	 int32 TeamIndex=4; //阵营ID
+	 Vector3 Position=5;//位置
+	 Vector3 Forward=6;//朝向
+	 int32 Level=7; //等级
+	 int32 Hp =8;
+	 int32 Mp = 9;
+	 string Name=14; //名字
+	 repeated HeroMagicData Cds = 16;
+	 int32 OwnerIndex =19;
+	 repeated HeroProperty Properties =20;
+}
+
+//创建一个飞行物
+message Notify_CreateMissile
+{
+	int32 Index =1;
+	int32 ReleaserIndex=2;
+	string ResourcesPath=3;
+	float Speed=4;//速度
+	string FromBone=6;
+	string ToBone=7;
+	Vector3 Offset=8;
+	int32 MType =9;
+	float MaxDis = 10;
+	float MaxLifeTime =11;
+	int32 TargetIndex =12;//目标
+}
+
+
+message Notify_CharacterSetPosition
+{
+	 int32 Index=1;
+	 Vector3 Position = 2;//
+}
+
+message Notify_CharacterSpeed
+{
+	int32 Index =1 ;
+	float Speed = 2;
+}
+message Notify_LookAtCharacter
+{
+	 int32 Index=1;//源
+	 int32 Target=2;//目标
+	 bool Force = 3;//强制
+}
+
+message Notify_CharacterMoveTo
+{
+	int32 Index = 1;
+	Vector3 Position=2;
+	Vector3 Target = 3;
+	float StopDis = 4;
+}
+
+message Notify_CharacterStopMove
+{
+	int32 Index = 1;
+	Vector3 Position=2;
+}
+
+message Notify_CharacterDeath
+{
+	int32 Index =1;
+}
+
+message Notify_CharacterPriorityMove
+{
+	int32 Index =1;
+	float PriorityMove =2;
+}
+
+message Notify_CharacterSetScale
+{
+	int32 Index =1;
+    float Scale =2;
+}
+
+message Notify_CharacterAttachMagic
+{	
+	int32 Index  =1;
+	int32 MagicId =2;
+	float CompletedTime = 3;
+	MagicType mType = 4;
+	float CdTime =5;
+}
+
+//属性修改
+message Notify_PropertyValue
+{
+	 int32 Index=1;
+	 HeroPropertyType Type=2;
+	 int32 FinallyValue=3;
+}
+
+//广播血量变化
+message Notify_HPChange
+{
+	 int32 Index=1; 
+	 int32 Hp=2; //最终HP 
+	 int32 Cur=3;//HP变化值
+	 int32 Max=4;
+}
+
+
+message Notify_MPChange
+{
+	 int32 Index=1; 
+	 int32 Mp=2; //最终MP 
+	 int32 Cur=3;//MP变化值
+	 int32 Max=4;
+}
+
+
+message Notify_DamageResult
+{
+	 int32 Index=1;
+	 int32 TargetIndex=2;
+	 bool IsMissed=3;
+	 int32 Damage=4;
+	 int32 CrtMult = 5;//暴击
+}
+
+message Notify_Drop
+{
+	 int32 Index = 1;
+	 PlayerItem Item = 2;
+	 int32 TeamIndex = 3;
+	 int32 GroupIndex=4;
+	 Vector3 Pos = 5;
+}
+
+message Notify_PlayerJoinState
+{
+     string AccountUuid=1;
+     float TimeNow=2;
+	 int32 Gold=3;
+	 PlayerPackage Package=4;//道具列表
+	 DHero Hero = 5;
+}
+
+message Notify_CharacterLock
+{
+	int32 Index =1;
+	int32 Lock = 2;
+}
+
+message Notify_CharacterPush
+{
+	int32 Index =1;
+	Vector3 Length =2;
+	Vector3 Speed =3;
+	Vector3 StartPos= 4;
+}
+
+message Notify_CharacterRelive
+{
+	int32 Index =1;
+}
+
+message Notify_CharacterLevel
+{
+	int32 Index =1 ;
+	int32 Level =2;
+}
+
+message Notify_BattleItemChangeGroupIndex
+{
+	int32 Index =1 ;
+	int32 GroupIndex =2;
+}
+
+message Notify_DropGold
+{
+	int32 TotalGold=1;
+	int32 Gold=2;
+}
+
+message Notify_PlayTimeLine
+{
+	int32 Index = 1;
+	int32 PathIndex = 2; 
+	int32 TargetIndex =3;
+	int32 Type =4; //事件类型
+	int32 PlayIndex =5;
+}
+
+message Notify_CancelTimeLine
+{
+	int32 Index =1;
+	int32 PlayIndex =2;
+}
+
+message Notify_SyncServerTime
+{
+	float ServerNow = 1;
+}
+
+message Notify_CharacterRotation
+{
+	int32 Index=1;
+	float RotationY =2;
+}
+
+message Notify_CharacterExp
+{
+	int32 Exp = 1;
+	int32 OldExp = 2;
+	int32 Level = 3;
+	int32 OldLeve = 4;
+}
+
+message Notify_CharacterTeamIndex
+{
+	int32 Index = 1;
+	int32 TeamIndex = 2;
+	int32 OwnerIndex =3;
+}
+
+message Notify_BattleEnd
+{
+	int32 EndTime = 1;//结束时间
+}
+
+message M2B_StartBattle
+{
+	repeated string players = 1;
+	int32 levelID =2;
+}
+
+message B2M_StartBattle
+{
+	ErrorCode Code = 1;
+}
+
+message M2B_KillUser
+{
+	string UserID = 1;
+}
+
+message B2M_KillUer
+{
+	ErrorCode Code =1;
+}
+
+
+//战斗对外服务器
+service BattleServerService
+{
+	//退出战斗
+	rpc ExitBattle(C2B_ExitBattle)returns(B2C_ExitBattle){};
+	//加入战斗
+	rpc JoinBattle(C2B_JoinBattle) returns (B2C_JoinBattle){};
+	//查看英雄信息
+	rpc ViewPlayerHero(C2B_ViewPlayerHero) returns (B2C_ViewPlayerHero){};
+	//解决
+	rpc BattleChannel (stream google.protobuf.Any) returns (stream google.protobuf.Any);
+}
+
+//开始战斗
+service BattleInnerServices
+{
+	rpc StartBatle(M2B_StartBattle) returns(B2M_StartBattle);//请求开始战斗
+	rpc KillUser (M2B_KillUser) returns (B2M_KillUer);//killuser
+}

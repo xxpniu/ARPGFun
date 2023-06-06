@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.3</Time>
+  <Points>
+    <TimePoint>
+      <GUID>d74f9442-792d-411f-89c3-d9a7f0b8c325</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>cd07f3e7-3b84-41ed-905b-3868f6a75749</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>113437cc-c08e-4b1b-9a27-d83d7ad568b3</GUID>
+      <Time>0.2521851</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>d74f9442-792d-411f-89c3-d9a7f0b8c325</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>cd07f3e7-3b84-41ed-905b-3868f6a75749</GUID>
+      <motionName>Attack01</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>113437cc-c08e-4b1b-9a27-d83d7ad568b3</GUID>
+      <target>Target</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

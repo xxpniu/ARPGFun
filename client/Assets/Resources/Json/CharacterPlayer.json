@@ -1,0 +1,7 @@
+[
+	{"ID":1,"CharacterID":1,"NormalAttack":1,"NormalAttackAppend":2,"Description":"\u4F20\u7EDF\u6734\u5B9E\u7684\u5F13\u7BAD\u624B"},
+	{"ID":2,"CharacterID":2,"NormalAttack":6,"NormalAttackAppend":7,"Description":"\u52A9\u4EBA\u4E3A\u4E50\u7684\u5976\u5988"},
+	{"ID":3,"CharacterID":3,"NormalAttack":11,"NormalAttackAppend":12,"Description":"\u957F\u76F8\u81ED\u7684\u6CD5\u5E08"},
+	{"ID":4,"CharacterID":4,"NormalAttack":16,"NormalAttackAppend":17,"Description":"\u7A7F\u7740\u602A\u5F02\u6218\u58EB"},
+	{"ID":5,"CharacterID":5,"NormalAttack":21,"NormalAttackAppend":-1,"Description":"\u7687\u5BB6\u8840\u7EDF\u7684\u8C61\u5F81"}
+]

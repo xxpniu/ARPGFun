@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-16"?>
+<MagicData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>范围攻击</name>
+  <Containers>
+    <EventContainer>
+      <type>EVENT_START</type>
+      <layoutPath>Layouts/fanwei_start_layout.xml</layoutPath>
+      <effectGroup />
+    </EventContainer>
+  </Containers>
+  <triggerTicksTime>-1</triggerTicksTime>
+  <unique>false</unique>
+</MagicData>

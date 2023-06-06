@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TreeNode xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TreeNodeSequence">
+  <childs>
+    <TreeNode xsi:type="TreeNodeFindTarget">
+      <childs />
+      <name>查找目标</name>
+      <guid>6a8b9dfc-5fce-44d8-9fde-2f50d4d09924</guid>
+      <valueOf>Value</valueOf>
+      <Distance>
+        <min>10000</min>
+        <max>0</max>
+        <type>Fixed</type>
+      </Distance>
+      <View>
+        <min>360</min>
+        <max>360</max>
+        <type>Fixed</type>
+      </View>
+      <selectType>Nearest</selectType>
+      <filter>None</filter>
+      <useMagicConfig>false</useMagicConfig>
+      <teamType>Enemy</teamType>
+      <findNew>true</findNew>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeMoveCloseTarget">
+      <childs />
+      <name>靠近目标</name>
+      <guid>a7d97240-623d-4ba4-886c-528eb10ea7a5</guid>
+      <valueOf>Value</valueOf>
+      <distance>
+        <min>400</min>
+        <max>100</max>
+        <type>Fixed</type>
+      </distance>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeReleaseMagic">
+      <childs />
+      <name>释放技能</name>
+      <guid>21e49b05-beb2-44af-b331-8f7480158a7c</guid>
+      <magicKey>archer_normal_att</magicKey>
+      <valueOf>MagicKey</valueOf>
+    </TreeNode>
+    <TreeNode xsi:type="TreeNodeWaitForSeconds">
+      <childs />
+      <name>等待时间</name>
+      <guid>c99d1cee-21e6-4ee7-85e7-b978c84856cf</guid>
+      <seconds>
+        <min>2000</min>
+        <max>1000</max>
+        <type>Fixed</type>
+      </seconds>
+    </TreeNode>
+  </childs>
+  <name>顺序节点</name>
+  <guid>0986d3b4-8a98-47ae-bcdd-dd4ebe65d193</guid>
+</TreeNode>

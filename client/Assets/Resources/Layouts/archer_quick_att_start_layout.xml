@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.15</Time>
+  <Points>
+    <TimePoint>
+      <GUID>14bbd61a-9fa7-4185-a800-c3d4d4610b58</GUID>
+      <Time>0.07901908</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>cb63570f-7313-4062-9e7f-b8374f84e76a</GUID>
+      <Time>0.12724936</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>3d437044-9314-482b-be5e-0907049cf4e3</GUID>
+      <Time>0.0326975472</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>14bbd61a-9fa7-4185-a800-c3d4d4610b58</GUID>
+      <motionName>Attack</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="MissileLayout">
+      <GUID>cb63570f-7313-4062-9e7f-b8374f84e76a</GUID>
+      <resourcesPath>Missiles/Arrow-human-quick.prefab</resourcesPath>
+      <movementType>Follow</movementType>
+      <maxLifeTime>-1</maxLifeTime>
+      <maxDistance>20</maxDistance>
+      <speed>15</speed>
+      <fromBone>Body</fromBone>
+      <toBone>Body</toBone>
+      <offset>
+        <x>0</x>
+        <y>0</y>
+        <z>1</z>
+      </offset>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>3d437044-9314-482b-be5e-0907049cf4e3</GUID>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

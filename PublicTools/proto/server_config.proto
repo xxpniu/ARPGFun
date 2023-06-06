@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+import "data.proto";
+package Proto.ServerConfig;
+
+
+
+//登陆认证服务器
+message LoginServerConfig
+{
+    ServiceAddress ServicsHost =1;
+    ServiceAddress ListenHost = 2;
+    string DBHost = 3;
+    string DBName = 4;
+    bool Log = 5;
+    repeated string ZkServer = 6; //zk servers 
+    repeated string KafkaServer = 9 ;//kafka
+
+    string GateServersRoot = 10;  //gate Server list 
+    string LoginServerRoot = 11;  //login server list
+    string ChatServerRoot = 13;  //chat server list
+}
+
+//用户服务器
+message GateServerConfig
+{
+    ServiceAddress ListenHost =1; //for user 
+    ServiceAddress ServicsHost =2; //for services
+    repeated string ZkServer = 6; //zk servers
+
+    string GateServersRoot = 7;//gate Server list 
+    string LoginServerRoot =8 ;//login server
+    string MatchServerRoot = 9;//match server
+    string NotifyServerRoot= 10;//notify server root
+    repeated string KafkaServer = 11 ;//kafka
+
+    string ExcelRoot = 13;
+    string DBHost = 20;
+    string DBName =21;
+    int32 ServerID  = 22; //gate serverid
+    bool Log = 23;
+    bool EnableGM = 24;
+    int32 Player = 25 ;//5分钟上传允许用户数小规模超载 双分流策越
+    int32 MaxPlayer =26;
+    
+}
+
+//战斗服务器
+message BattleServerConfig
+{
+    int32 Level = 1; //config of map 
+    ServiceAddress ListenHost =2;
+    repeated string ZkServer = 4; //zk servers
+    ServiceAddress ServicsHost =6; //innner services
+    repeated string KafkaServer = 7 ;//kafka
+
+    string LoginServerRoot =8; //login server
+    string MatchServerRoot =9;
+
+    string ConfigRoot = 16; //configs 
+    string BattleServerRoot = 17;//zk battle 
+    int32 MaxPlayer =18;
+    string ServerID = 19;
+}
+
+message ChatServerConfig
+{
+    int32 ChatServerID = 1;//id
+    ServiceAddress ListenHost = 2;//对外服务端口 2200+
+    ServiceAddress ServicsHost = 3;//对内服务器端口
+    string LoginServerRoot =4; //login server
+    string DBHost = 5;//数据库地址 monogo
+    string DBName =6; //collection name
+    int32 Player = 7;//当前用户数 5分钟上传变更
+    int32 MaxPlayer =8 ;//最大承载用户
+    repeated string KafkaServer = 9 ;//kafka
+    repeated string ZkServer = 10; //zk servers
+    string ChatServerRoot = 11;//zk 目录
+
+}
+
+//通知服务器
+message NotifyServerConfig
+{
+    ServiceAddress ServicsHost = 1;//对内服务器端口
+    string DBHost = 2;//数据库地址 monogo
+    string DBName = 3; //collection name
+    repeated string KafkaServer = 9 ;//kafka
+    repeated string ZkServer = 10; //zk servers
+    string ChatServerRoot = 11;//zk 目录
+    string NotifyServerRoot = 12;
+}
+
+//配对服务器
+message MatchServerConfig
+{
+    ServiceAddress ServicsHost = 1;//对内服务器端口
+    string DBHost = 2;//数据库地址 monogo
+    string DBName = 3; //collection name
+
+    repeated string KafkaServer = 9 ;//kafka
+    repeated string ZkServer = 10; //zk servers
+    string NotifyServerRoot = 11;//对内服务器端口
+    string BattleServerRoot =12;  //battle server list
+    string MatchServerRoot = 13;
+}

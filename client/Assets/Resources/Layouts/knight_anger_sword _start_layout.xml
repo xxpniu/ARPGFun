@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.5</Time>
+  <Points>
+    <TimePoint>
+      <GUID>dd62bd79-5ec3-407a-a24d-7f6ea6362c1c</GUID>
+      <Time>0.05109489</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>919ad489-3fa8-486e-a113-8b7225e2d6b2</GUID>
+      <Time>0.383676082</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>5d5ad594-1b69-461b-bae9-c5e2ed09172a</GUID>
+      <Time>0.425449878</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>cc819cab-52f5-4315-9c00-bc58d4543422</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>0a089397-1ebd-40ed-bb00-464220d6b044</GUID>
+      <Time>0.377892017</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>dd62bd79-5ec3-407a-a24d-7f6ea6362c1c</GUID>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>919ad489-3fa8-486e-a113-8b7225e2d6b2</GUID>
+      <resourcesPath>Sound/MagicSounds/Medieval/Whoosh 2_2.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Top</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>5d5ad594-1b69-461b-bae9-c5e2ed09172a</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Area</damageType>
+        <fiterType>EmenyTeam</fiterType>
+        <radius>2.5</radius>
+        <angle>160</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>cc819cab-52f5-4315-9c00-bc58d4543422</GUID>
+      <motionName>Attack 02</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>0a089397-1ebd-40ed-bb00-464220d6b044</GUID>
+      <path>Effects/Slash/FireSlash.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Body</fromBoneName>
+      <toBoneName>Body</toBoneName>
+      <Bind>true</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>3</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

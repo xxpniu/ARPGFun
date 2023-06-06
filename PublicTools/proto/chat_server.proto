@@ -1,0 +1,85 @@
+syntax = "proto3";
+import "const.proto";
+import "excelconst.proto";
+import "data.proto";
+
+import "notify_push_message.proto";
+
+import "google/protobuf/any.proto";
+
+package Proto;
+
+
+
+
+message C2CH_QueryPlayerState
+{
+    repeated string Accounts = 1;//玩家账号
+}
+
+message CH2C_QueryPlayerState
+{
+    repeated PlayerState States = 1;//offline will no in list;
+}
+
+message C2CH_Login
+{
+    string AccountID = 1;
+    string Token = 2;
+    string HeroName = 3;
+}
+
+
+message C2CH_LinkFriend
+{
+    string FriendId = 1;
+}
+
+message CH2C_LinkFriend
+{
+    ErrorCode Code = 1;
+}
+
+message C2CH_UnLinkFriend
+{
+    string FriendId = 1;
+}
+
+message CH2C_UnLinkFriend
+{
+    ErrorCode Code = 1;
+}
+
+message CH2C_QueryFriend
+{
+    ErrorCode Code = 1;
+    repeated PlayerState States = 2;//all user
+}
+
+message C2CH_Chat
+{
+    repeated Chat mesg = 1;
+}
+
+message CH2C_Chat
+{
+    ErrorCode Code = 1;
+}
+
+
+
+service ChatService
+{
+    rpc SendChat (C2CH_Chat) returns (CH2C_Chat);//聊天流 
+    rpc QueryPlayerState(C2CH_QueryPlayerState) returns (CH2C_QueryPlayerState);//玩家状态
+    rpc Login(C2CH_Login)returns(stream google.protobuf.Any);//push message
+    rpc LinkFrind(C2CH_LinkFriend) returns(CH2C_LinkFriend);//添加好友
+    rpc UnLinkFrind(C2CH_UnLinkFriend) returns (CH2C_UnLinkFriend);//删除好友
+    rpc QueryFriend(Void) returns (CH2C_QueryFriend);//当前好友
+}
+
+service ChatServerService
+{
+    rpc ChatRoute(Chat) returns(PlayerState) ;//push message
+    rpc CreateNotify (NotifyMsg) returns (Void);//状态广播
+}

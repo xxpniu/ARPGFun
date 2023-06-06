@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+import "data.proto";
+import "const.proto";
+import "excelconst.proto";
+import "notify_push_message.proto";
+
+
+package Proto;
+
+message S2M_StartMatch
+{
+    string GroupID = 1;
+    string Leader = 2;
+}
+
+message M2S_StartMatch
+{
+    ErrorCode Code = 1;
+}
+
+message S2M_TryToReJoinMatch
+{
+    string Account  =1;
+}
+
+message M2S_TryToReJoinMatch
+{
+    ErrorCode Code =1 ;
+}
+
+message S2M_CreateMatchGroup
+{
+    MatchPlayer Player =1 ; //创建人
+    int32 Level =2;
+}
+
+message M2S_CreateMatchGroup
+{
+    ErrorCode  Code =1;
+    string GroupID = 2;
+}
+
+message S2M_JoinMatchGroup
+{
+    MatchPlayer Player =1;
+    string GroupID =2;
+}
+
+message M2S_JoinMatchGroup
+{
+    ErrorCode Code =1;
+}
+
+message S2M_LeaveMatchGroup
+{
+    string AccountID =1;
+}
+
+message M2S_LeaveMatchGroup
+{
+    ErrorCode Code =1;
+}
+
+message S2M_FinishBattle
+{
+    string BattleServerID = 1;
+}
+
+message M2S_FinishBattle
+{
+    ErrorCode Code =1;
+}
+
+message S2M_KillUser
+{
+    string UserID = 1;
+}
+
+message M2S_KillUser
+{
+    ErrorCode Code =1;
+}
+
+message S2M_ExitBattle
+{
+    string UserID = 1;
+}
+
+message M2S_ExitBattle
+{
+    ErrorCode  Code =1;
+}
+
+service MatchServices
+{
+    rpc CreateMatchGroup (S2M_CreateMatchGroup) returns (M2S_CreateMatchGroup);//创建匹配
+    rpc StartMatch (S2M_StartMatch) returns (M2S_StartMatch);//开始启动战斗副本
+    rpc TryToReJoinMatch (S2M_TryToReJoinMatch) returns (M2S_TryToReJoinMatch);//加入战斗
+    rpc JoinMatchGroup (S2M_JoinMatchGroup) returns (M2S_JoinMatchGroup); //加入match
+    rpc LeaveMatchGroup (S2M_LeaveMatchGroup) returns (M2S_LeaveMatchGroup);//离开匹配
+    rpc FinishBattle(S2M_FinishBattle) returns(M2S_FinishBattle);//finished
+    rpc KllUser (S2M_KillUser) returns (M2S_KillUser);
+    rpc ExitBattle (S2M_ExitBattle) returns (M2S_ExitBattle);//退出战斗
+}

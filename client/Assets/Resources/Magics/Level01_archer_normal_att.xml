@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-16"?>
+<MagicData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <key>archer_normal_att</key>
+  <name>普通攻击</name>
+  <Containers>
+    <EventContainer>
+      <type>EVENT_START</type>
+      <layoutPath>Layouts/level01_archer_normal_att_layout_start.xml</layoutPath>
+      <effectGroup />
+    </EventContainer>
+    <EventContainer>
+      <type>EVENT_MISSILE_HIT</type>
+      <layoutPath>Layouts/att_001_missile_hit_layout.xml</layoutPath>
+      <effectGroup>
+        <EffectGroup>
+          <effects>
+            <EffectBase xsi:type="NormalDamageEffect">
+              <valueOf>NormalAttack</valueOf>
+              <DamageValue>0</DamageValue>
+            </EffectBase>
+          </effects>
+          <Des>普通攻击</Des>
+          <key>001</key>
+        </EffectGroup>
+      </effectGroup>
+    </EventContainer>
+  </Containers>
+  <triggerTicksTime>-1</triggerTicksTime>
+  <triggerDurationTime>-1</triggerDurationTime>
+</MagicData>

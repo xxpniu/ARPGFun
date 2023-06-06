@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-16"?>
+<MagicData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>wizard_control</name>
+  <Containers>
+    <EventContainer>
+      <type>EVENT_START</type>
+      <layoutPath>Layouts/wizard_control_start_layout.xml</layoutPath>
+      <effectGroup>
+        <EffectGroup>
+          <effects>
+            <EffectBase xsi:type="CharmEffect">
+              <ProValue>
+                <ValueForm>MagicLevelParam3</ValueForm>
+                <Value>10000</Value>
+              </ProValue>
+              <Level>
+                <ValueForm>MagicLevelParam1</ValueForm>
+                <Value>1</Value>
+              </Level>
+              <Time>
+                <ValueForm>MagicLevelParam2</ValueForm>
+                <Value>1000</Value>
+              </Time>
+            </EffectBase>
+          </effects>
+          <key>001</key>
+        </EffectGroup>
+      </effectGroup>
+    </EventContainer>
+  </Containers>
+  <triggerTicksTime>-1</triggerTicksTime>
+  <triggerDurationTime>-1</triggerDurationTime>
+  <unique>false</unique>
+</MagicData>

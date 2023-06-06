@@ -1,0 +1,381 @@
+syntax = "proto3";
+
+import "data.proto";
+import "const.proto";
+import "excelconst.proto";
+
+
+package Proto;
+
+message C2G_Login
+{
+	 int32 Version = 1;
+	 string Session =2;
+	 string UserID =3;
+}
+
+message G2C_Login
+{
+	 ErrorCode Code =1;
+	 bool HavePlayer=2;
+	 DHero Hero = 3;
+	 int32 Coin = 4;
+	 int32 Gold = 5;
+	 PlayerPackage Package =6;
+}
+
+//创建角色
+message C2G_CreateHero
+{
+	 int32 HeroID = 1;//选择的英雄ID
+	 string HeroName = 2; //名字
+}
+//创建角色
+message G2C_CreateHero
+{
+	 ErrorCode Code =1;
+}
+
+//开始启动游戏
+message C2G_BeginGame
+{
+	 string GroupID = 1;
+}
+
+message G2C_BeginGame
+{
+	 ErrorCode Code =1;
+}
+
+message C2G_BuyPackageSize
+{
+    int32 SizeCurrent =1;
+}
+
+message G2C_BuyPackageSize
+{
+	ErrorCode Code =1;
+	int32 PackageCount = 2;
+	int32 OldCount =3;
+}
+
+
+//同步包裹
+message Task_G2C_SyncPackage
+{
+	 PlayerPackage Package =1;
+	 int32 Gold =2;
+	 int32 Coin=3;
+}
+
+//同步角色
+message Task_G2C_SyncHero
+{
+	 DHero Hero=1;
+}
+
+//处理装备穿戴
+message C2G_OperatorEquip
+{
+	 string Guid=2;//装备guid
+	 EquipmentType Part=3; //部位
+	 bool IsWear=4;//是否是穿戴
+}
+
+//处理穿戴装备
+message G2C_OperatorEquip
+{
+	 ErrorCode Code=1;
+	 DHero Hero=2;
+}
+
+
+message C2G_SaleItem
+{
+	message SaleItem
+	{
+		string Guid=1;
+		int32 Num=2;
+	}
+	repeated SaleItem Items=1; //需要出售的道具
+}
+
+message G2C_SaleItem
+{
+	ErrorCode Code=1;
+	repeated PlayerItem Diff=2;//道具变更信息
+	int32 Gold=3; //金币最终值
+	int32 Coin=4; //钻石最终值
+}
+
+//装备升级 ＋
+message C2G_EquipmentLevelUp
+{
+	 string Guid=1;
+	 int32 Level=2;
+}
+
+//装备升级
+message G2C_EquipmentLevelUp
+{
+	 ErrorCode Code=1;
+	 int32 level= 2; //result level
+}
+
+message C2G_GMTool
+{
+	string GMCommand=1;
+}
+
+message G2C_GMTool
+{
+	ErrorCode Code=1;
+}
+
+
+message C2G_MagicLevelUp
+{
+	int32 MagicId = 1;
+	int32 Level =2;
+}
+
+message G2C_MagicLevelUp
+{
+	ErrorCode Code=1;
+}
+
+message C2G_BuyItem
+{
+	int32 ItemId =1;
+	int32 ShopId = 2;
+}
+
+message G2C_BuyItem
+{
+	ErrorCode Code=1;
+}
+
+
+message C2G_Shop
+{
+	
+}
+
+message ItemsShop
+{
+	enum CoinType
+	{
+	   Gold = 0;
+	   Coin = 1;
+	}
+	message ShopItem
+	{
+		CoinType CType = 1;
+		int32 item_id = 2;
+		int32 prices = 3;
+		int32 package_num = 4;
+	}
+
+	int32 ShopId = 1;
+	repeated ShopItem items = 2;
+
+}
+
+message G2C_Shop
+{
+	ErrorCode Code=1;
+	repeated ItemsShop Shops =2;
+}
+
+//请求获得玩家信息
+message B2G_GetPlayerInfo
+{
+	 string AccountUuid=1; //当前用户ID
+	 int32 ServiceServerID=2;//当前战斗服务器ID
+}
+
+//请求玩家信息返回
+message G2B_GetPlayerInfo
+{
+	 ErrorCode Code=1;//返回信息
+	 int32 Gold = 2;//金币
+	 DHero Hero=3;    //英雄数据
+	 PlayerPackage Package=4;//道具列表
+
+}
+
+//返回战斗数据
+message B2G_BattleReward
+{
+	string AccountUuid=1;			     //用户ID
+	int32 DiffGold=2;  			         //用户金币
+	int32 MapID=3; 			             //当前战斗地图
+	repeated PlayerItem ModifyItems=4;   //掉落物品
+	repeated PlayerItem RemoveItems =5;  //消耗完的物品
+	int32 Exp = 6;//经验
+	int32 Level = 7;//等级
+	int32 HP = 8;
+	int32 MP =9;
+}
+
+//返回战斗数据
+message G2B_BattleReward
+{
+	 ErrorCode Code=1;
+}
+
+message C2G_BuyGold
+{
+	int32 ShopId = 1;
+}
+
+message G2C_BuyGold
+{
+	ErrorCode Code = 1;
+	int32 Gold =2;
+	int32 Coin = 3; 
+	int32 ReceivedGold =4;
+}
+
+message C2G_RefreshEquip
+{
+	string EquipUuid = 1;
+	repeated string CoustomItem = 2;
+}
+
+message G2C_RefreshEquip
+{
+	ErrorCode Code = 1;
+}
+
+message Task_ModifyItem
+{
+	repeated PlayerItem ModifyItems = 1;
+	repeated PlayerItem RemoveItems = 2;
+}
+
+message Task_CoinAndGold
+{
+	int32 Coin = 1;
+	int32 Gold = 2;
+}
+message Task_PackageSize
+{
+	int32 Size= 1;
+}
+
+message C2G_ActiveMagic
+{
+	int32 MagicId = 1;
+}
+
+message G2C_ActiveMagic
+{
+	 ErrorCode Code =1;
+}
+
+message L2G_KillUser
+{
+	string uuid =1;
+}
+
+message C2G_SearchPlayer
+{
+	
+}
+
+message G2C_SearchPlayer
+{
+	message Player
+	{
+		string AccountUuid = 1;
+		string HeroName  =2;
+		int32 Level =3;
+	}
+
+	ErrorCode Code =1;
+	repeated Player Players = 2;
+}
+
+message C2G_CreateMatch
+{
+    int32 LevelID = 1;
+}
+
+message G2C_CreateMatch
+{
+	ErrorCode Code =1;
+	string GroupID =2;
+}
+
+message C2G_JoinMatch
+{
+	string GroupID = 1;
+}
+message G2C_JoinMatch
+{
+	ErrorCode Code =1;
+}
+
+message C2G_InviteJoinMatch
+{
+	string GroupID = 1;
+	string AccountUuid =2;
+	int32 LevelID =3;
+}
+
+message G2C_InviteJoinMatch
+{
+	ErrorCode  Code =1;
+}
+
+message C2G_LeaveMatchGroup
+{
+
+}
+
+message G2C_LeaveMatchGroup
+{
+	ErrorCode  Code =1;
+}
+
+message C2G_ReloadMatchState
+{
+
+}
+
+message G2C_ReloadMatchState
+{
+	ErrorCode Code =1;
+}
+
+service GateServerService
+{
+	rpc Login (C2G_Login) returns(G2C_Login){};//1
+	rpc CreateHero (C2G_CreateHero) returns (G2C_CreateHero){};//2
+	rpc BeginGame(C2G_BeginGame) returns (G2C_BeginGame){};//3
+	rpc OperatorEquip(C2G_OperatorEquip) returns(G2C_OperatorEquip){};//5
+	rpc SaleItem(C2G_SaleItem)returns(G2C_SaleItem){};//6
+	rpc EquipmentLevelUp(C2G_EquipmentLevelUp)returns(G2C_EquipmentLevelUp){};//7
+	rpc GMTool(C2G_GMTool)returns(G2C_GMTool){};//8
+	rpc BuyPackageSize(C2G_BuyPackageSize) returns (G2C_BuyPackageSize){};//9
+	rpc MagicLevelUp(C2G_MagicLevelUp) returns(G2C_MagicLevelUp){};//10
+	rpc QueryShop(C2G_Shop) returns (G2C_Shop){};//11
+	rpc BuyItem(C2G_BuyItem) returns (G2C_BuyItem){};//12
+	rpc BuyGold(C2G_BuyGold) returns (G2C_BuyGold){};//13
+	rpc RefreshEquip (C2G_RefreshEquip) returns (G2C_RefreshEquip){};//14
+	rpc ActiveMagic(C2G_ActiveMagic) returns(G2C_ActiveMagic){};//15
+	rpc SearchPlayer (C2G_SearchPlayer) returns (G2C_SearchPlayer);
+	rpc CreateMatch(C2G_CreateMatch) returns(G2C_CreateMatch);//create
+	rpc JoinMatch(C2G_JoinMatch) returns(G2C_JoinMatch); //join match
+	rpc InviteJoinMatch(C2G_InviteJoinMatch	) returns (G2C_InviteJoinMatch);
+	rpc LeaveMatchGroup (C2G_LeaveMatchGroup) returns (G2C_LeaveMatchGroup);
+	rpc ReloadMatchState (C2G_ReloadMatchState) returns (G2C_ReloadMatchState);
+}
+
+service GateServerInnerService
+{
+	rpc GetPlayerInfo(B2G_GetPlayerInfo) returns (G2B_GetPlayerInfo){};//1
+	rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
+	rpc KillUser (L2G_KillUser) returns (Void);
+}

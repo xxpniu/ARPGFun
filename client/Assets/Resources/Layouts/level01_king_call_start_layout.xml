@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.9</Time>
+  <Points>
+    <TimePoint>
+      <GUID>7cad425d-4502-4d26-bdeb-375249f775d4</GUID>
+      <Time>0.0289203078</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>f7c95c4f-9317-4671-8a9d-ae4ab7279005</GUID>
+      <Time>0.716066837</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>1874c492-4eff-4eba-a98f-50e62b80a55a</GUID>
+      <Time>0.5726221</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>ec6ffe8a-1824-4955-b4c4-a2da2ab12b31</GUID>
+      <Time>0.135347039</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>6bd8f21d-f6d5-4868-9e60-a558d00d0266</GUID>
+      <Time>0</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="CallUnitLayout">
+      <GUID>f7c95c4f-9317-4671-8a9d-ae4ab7279005</GUID>
+      <characterID>
+        <ValueForm>CurrentConfig</ValueForm>
+        <Value>10002</Value>
+      </characterID>
+      <level>
+        <ValueForm>CurrentConfig</ValueForm>
+        <Value>1</Value>
+      </level>
+      <AIPath />
+      <time>
+        <ValueForm>CurrentConfig</ValueForm>
+        <Value>-1</Value>
+      </time>
+      <maxNum>10</maxNum>
+      <offset>
+        <x>0</x>
+        <y>0</y>
+        <z>3</z>
+      </offset>
+    </LayoutBase>
+    <LayoutBase xsi:type="MotionLayout">
+      <GUID>7cad425d-4502-4d26-bdeb-375249f775d4</GUID>
+      <motionName>enrage</motionName>
+      <targetType>Releaser</targetType>
+    </LayoutBase>
+    <LayoutBase xsi:type="ParticleLayout">
+      <GUID>1874c492-4eff-4eba-a98f-50e62b80a55a</GUID>
+      <path>Effects/Flames/EarthFlame.prefab</path>
+      <fromTarget>Releaser</fromTarget>
+      <toTarget>Releaser</toTarget>
+      <fromBoneName>Bottom</fromBoneName>
+      <toBoneName>Body</toBoneName>
+      <Bind>true</Bind>
+      <destoryType>Time</destoryType>
+      <destoryTime>1</destoryTime>
+      <offet>
+        <x>0</x>
+        <y>0</y>
+        <z>3</z>
+      </offet>
+      <rotation>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </rotation>
+      <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>ec6ffe8a-1824-4955-b4c4-a2da2ab12b31</GUID>
+      <resourcesPath>Sound/MagicSounds/Element Scholls/Electric/Lightning Spelll 03.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Bottom</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="LookAtTarget">
+      <GUID>6bd8f21d-f6d5-4868-9e60-a558d00d0266</GUID>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>

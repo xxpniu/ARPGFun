@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Time>0.2</Time>
+  <Points>
+    <TimePoint>
+      <GUID>1396b6ca-5742-46f6-a67c-d4d13e1a2873</GUID>
+      <Time>0</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>1424e234-f361-402d-a4d0-893803c212b1</GUID>
+      <Time>0.03907455</Time>
+    </TimePoint>
+  </Points>
+  <Layouts>
+    <LayoutBase xsi:type="PlaySoundLayout">
+      <GUID>1396b6ca-5742-46f6-a67c-d4d13e1a2873</GUID>
+      <resourcesPath>Sound/MagicSounds/General Spell/Buff Defense 06.wav</resourcesPath>
+      <target>Releaser</target>
+      <fromBone>Body</fromBone>
+      <value>1</value>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>1424e234-f361-402d-a4d0-893803c212b1</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>ALL</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectType>EffectGroup</effectType>
+      <effectKey>001</effectKey>
+    </LayoutBase>
+  </Layouts>
+</TimeLine>
