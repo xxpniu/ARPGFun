@@ -9,11 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExcelConfig
 {
-    public class JSONConfigBase
-    {
-        public int ID { set; get; }
-    }
-    [AttributeUsage(AttributeTargets.Class)]
+     [AttributeUsage(AttributeTargets.Class)]
     public class ConfigFileAttribute : Attribute
     {
         public ConfigFileAttribute(string fileName, string tableName)
@@ -35,6 +31,12 @@ namespace ExcelConfig
         }
         public int Index { set; get; }
     }
+
+    public class JSONConfigBase
+    {
+        [ExcelConfigColIndex(0)]public int ID { set; get; }
+    }
+   
     public interface IConfigLoader
     {
         List<T> Deserialize<T>() where T : JSONConfigBase;
