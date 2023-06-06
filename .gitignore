@@ -214,4 +214,4 @@ obj/*
 bin/*
 #big files
 
-
+**/output/*
