@@ -46,10 +46,10 @@
   *  发布unity客户端 和 服务器配置相关服务器参数
 
   ## 自动生成协议
-  ···
+```shell
     cd PublicTools 
     docker build -t build-ci . && docker run --rm -it build-ci 
-  ···
+```
   
   
   
