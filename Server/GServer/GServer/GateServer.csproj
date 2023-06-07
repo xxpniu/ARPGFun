@@ -18,7 +18,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ServerUtility\ServerUtility.csproj" />
-    <ProjectReference Include="..\..\..\PublicTools\src\csharp\Xsoft.Proto.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.10.4" />
@@ -29,6 +28,11 @@
     <Folder Include="RPCResponser\" />
     <Folder Include="Utility\" />
     <Folder Include="MongoTool\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Xsoft.Proto">
+      <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

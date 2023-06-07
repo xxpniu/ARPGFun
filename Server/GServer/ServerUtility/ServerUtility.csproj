@@ -17,11 +17,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\GameCore\XNet\XNet.Libs.csproj" />
-    <ProjectReference Include="..\..\..\PublicTools\toolssrc\JSON\Json.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ZooKeeperNetEx" Version="3.4.12.4" />
     <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Xsoft.Proto">
+      <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

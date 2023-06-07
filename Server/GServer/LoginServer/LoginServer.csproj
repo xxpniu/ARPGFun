@@ -36,4 +36,9 @@
   <ItemGroup>
     <None Remove="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Xsoft.Proto">
+      <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

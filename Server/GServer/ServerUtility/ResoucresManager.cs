@@ -5,6 +5,7 @@ using ExcelConfig;
 using org.apache.zookeeper;
 using XNet.Libs.Utility;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace ServerUtility
 {
@@ -46,7 +47,7 @@ namespace ServerUtility
             if (!configs.TryGetValue(name, out var json)) return null;
             if (string.IsNullOrEmpty(json)) return null;
            
-            var res =  JsonTool.Deserialize<List<T>>(json);
+            var res =  JsonConvert.DeserializeObject<List<T>>(json);
 
             Debuger.DebugLog($"Load:{name} Table:{res.Count}");
             return res;

@@ -17,4 +17,9 @@
   <ItemGroup>
     <Folder Include="Services\" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Xsoft.Proto">
+      <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

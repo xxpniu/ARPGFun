@@ -40,9 +40,9 @@ namespace GServer.Managers
             return await FindHeroByPlayerId(player.Uuid);
         }
 
-        public async Task<string> ProcessBattleReward(string account_uuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> RemoveItems, int exp, int level, int gold,int hp, int mp)
+        public async Task<string> ProcessBattleReward(string accountUuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> RemoveItems, int exp, int level, int gold,int hp, int mp)
         {
-            var player = await FindPlayerByAccountId(account_uuid);
+            var player = await FindPlayerByAccountId(accountUuid);
             if (player == null) return null;
             var pupdate = Builders<GamePlayerEntity>.Update.Inc(t =>t.Gold, gold);
             await DataBase.S.Playes.UpdateOneAsync(t => t.Uuid== player.Uuid, pupdate);
@@ -214,7 +214,7 @@ namespace GServer.Managers
                 var equip =  ExcelToJSONConfigManager.GetId<EquipmentData>(data.InitEquip);
                 if (equip != null)
                 {
-                    await OperatorEquip(player.Uuid, add.FirstOrDefault().Uuid, (EquipmentType)equip.PartType, true);
+                    await OperatorEquip(player.Uuid, add.FirstOrDefault()!.Uuid, (EquipmentType)equip.PartType, true);
                 }
                 else
                 {

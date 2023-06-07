@@ -11,4 +11,10 @@
     <ProjectReference Include="..\..\..\GameCore\XNet\XNet.Libs.csproj" />
     <ProjectReference Include="..\ChatTool\ChatTool.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Xsoft.Proto">
+      <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

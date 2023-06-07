@@ -6,7 +6,7 @@ def gen_cs(table):
 /// [CLASS_DES]
 /// </summary>    
 [ConfigFile("[TABLE_FILE]","[TABLE_NAME]")]    
-class [TBALE_NAME] : JSONConfigBase
+public class [TBALE_NAME] : JSONConfigBase
 {
     [PROPERTIES]
 }  
