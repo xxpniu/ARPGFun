@@ -75,7 +75,7 @@ public class LevelSimulatorGate : UGate, IStateLoader,IBattleGate
         
         await ResourcesManager.S.LoadResourcesWithExName<TextAsset>(LevelData.ElementConfigPath, (rs) =>
         {
-            Config = rs.text.Parser<MapCongfig>();
+            Config = rs.text.Parser<MapConfig>();
         });
         _mCreator = new Server.Map.MapElementSpawn(this.Per, Config);
 
@@ -182,7 +182,7 @@ public class LevelSimulatorGate : UGate, IStateLoader,IBattleGate
 
     DHero IBattleGate.Hero => Hero;
 
-    public MapCongfig Config { get; private set; }
+    public MapConfig Config { get; private set; }
 
     StateType IBattleGate.State => StateType.Running;
 
@@ -273,7 +273,7 @@ public class LevelSimulatorGate : UGate, IStateLoader,IBattleGate
             var config = CM.GetId<ItemData>(i.Value.ItemID);
             if ((ItemType)config.ItemType != type) continue;
             var rTarget = new ReleaseAtTarget(_characterOwner, _characterOwner);
-            Per.CreateReleaser(config.Params[0], _characterOwner, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1);
+            Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1);
             return true;
         }
         return false;

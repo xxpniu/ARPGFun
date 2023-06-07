@@ -27,15 +27,18 @@ public class BattleGate : UGate,IBattleGate
 {
 
     public StateType state = StateType.None;
-    public StateType State { get { return state; } private set { state = value; } }
+    public StateType State { 
+        get => state;
+        private set => state = value;
+    }
 
-    float IBattleGate.TimeServerNow { get { return TimeServerNow; } }
+    float IBattleGate.TimeServerNow => TimeServerNow;
 
-    UPerceptionView IBattleGate.PreView { get { return PreView; } }
+    UPerceptionView IBattleGate.PreView => PreView;
 
-    Texture IBattleGate.LookAtView { get { return LookAtView; } }
+    Texture IBattleGate.LookAtView => LookAtView;
 
-    UCharacterView IBattleGate.Owner { get { return Owner; } }
+    UCharacterView IBattleGate.Owner => Owner;
 
     void IBattleGate.Exit()
     {
@@ -53,11 +56,11 @@ public class BattleGate : UGate,IBattleGate
 
     }
 
-    PlayerPackage IBattleGate.Package { get { return Package; } }
+    PlayerPackage IBattleGate.Package => Package;
 
-    DHero IBattleGate.Hero { get { return Hero; } }
+    DHero IBattleGate.Hero => Hero;
 
-    
+
     private void SetServer(ServiceAddress serverInfo, int levelID)
     {
         _battleServer = serverInfo;
@@ -258,7 +261,7 @@ public class BattleGate : UGate,IBattleGate
             {
                 
                 case StateType.Running:
-                    return Level.LimitTime - TimeServerNow;
+                    return 90 - TimeServerNow; //Level.LimitTime
                 case StateType.Ending:
                     return EndTime;
                 case StateType.None:

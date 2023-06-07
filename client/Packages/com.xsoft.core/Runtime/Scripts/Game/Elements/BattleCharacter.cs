@@ -41,7 +41,11 @@ namespace GameLogic.Game.Elements
         public float CdTime { get; set; } = 1f;
 
         public float CdCompletedTime { set; get; }
-        public string[] Params { get { return LevelData?.Param.ToArray(); } }
+
+        public string[] Params => new[]
+        {
+            LevelData?.Param1, LevelData?.Param2, LevelData?.Param3, LevelData?.Param4, LevelData?.Param5
+        };
 
         public bool IsCoolDown(float time)
         {

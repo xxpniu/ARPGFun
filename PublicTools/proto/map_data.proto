@@ -1,0 +1,26 @@
+
+syntax = "proto3";
+
+import "data.proto";
+import "const.proto";
+import "excelconst.proto";
+
+
+package Proto;
+
+enum MapElementType
+{
+    MET_NONE=0;
+    MET_PlayerInit =1;
+    MET_Transport =2;
+    MET_ElementGroup =3;
+    MET_Monster =4;
+    MET_MonsterGroup=5;
+    MET_Npc =6;
+}
+
+
+message MapConfig
+{
+   int32 ConfigID =1;
+}

@@ -36,14 +36,7 @@ public class MonsterGroupPositionEditor : Editor {
         Handles.ArrowHandleCap(1, t.transform.position, t.transform.rotation,1, EventType.MouseDrag);
         Handles.color = defaultColor;
     }
-
-    /*
-    MET_MonsterGroup = 1; //对应Monstergroup ID
-	MET_ElementGroup = 2;    //对应Elementsgroup ID
-	MET_NPC  =3; //对应NPC
-	MET_PLAYER_INIT = 4;//角色初始化
-	MET_Monster = 5 ;//怪物表id
-	MET_Transport = 6;//传送点*/
+    
 
     private readonly string[] Lables = new string[] { "NONE","怪物刷新组","地图元素刷新组" ,"NPC","玩家初始化位置","怪物表","传送点" };
 

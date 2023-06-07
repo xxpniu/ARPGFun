@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 public class MonsterGroupPosition : MonoBehaviour
 {
-    public MapElementType EType;
+    //public MapElementType EType;
 
     public int ConfigID = 0;
 
@@ -22,7 +22,7 @@ public class MonsterGroupPosition : MonoBehaviour
         Gizmos.color =Color.red;
 #if UNITY_EDITOR
         UnityEditor.Handles.BeginGUI();
-        UnityEditor.Handles.Label(this.transform.position, $"{EType} {ConfigID}");
+        UnityEditor.Handles.Label(this.transform.position, $"{ConfigID}");
         UnityEditor.Handles.EndGUI();
 #endif
 

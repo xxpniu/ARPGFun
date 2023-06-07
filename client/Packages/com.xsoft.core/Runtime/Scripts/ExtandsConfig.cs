@@ -38,7 +38,7 @@ namespace GameLogic
             var properties = new Dictionary<P, ComplexValue>();
             if (equip == null)
             {
-                Debug.LogError($"No found Equip By Id:{config.Params[0]}");
+                Debug.LogError($"No found Equip By Id:{config.Params1}");
                 return properties;
             }
             var level = ExcelToJSONConfigManager.First<EquipmentLevelUpData>(t => t.Level == pItem.Level && t.Quality == config.Quality);

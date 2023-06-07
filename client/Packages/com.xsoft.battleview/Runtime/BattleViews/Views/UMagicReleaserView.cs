@@ -151,7 +151,7 @@ namespace BattleViews.Views
                 MagicKey = MagicKey,
                 Position = TargetPos.ToPV3(),
                 RMType = RMType,
-                OPostion = transform.position.ToPV3(),
+                OPosition = transform.position.ToPV3(),
                 ORotation = transform.rotation.eulerAngles.ToPV3()
             };
             return createNotify;

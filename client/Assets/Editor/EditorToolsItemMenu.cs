@@ -62,10 +62,11 @@ public sealed class EditorToolsItemMenu
     public static void GoImportSceneConfig()
     {
 
+        /*
         var path = $"{Application.dataPath}/AssetRes/Level/";
         var file = EditorUtility.OpenFilePanelWithFilters("Import Map Config", path, new[] { "json config","json" });
         if (string.IsNullOrEmpty(file)) return;
-        var config = File.ReadAllText(file).Parser<Proto.MapCongfig>();
+        //var config = File.ReadAllText(file).Parser<Proto.MapCongfig>();
 
         var obj = GameObject.Find(EL_ROOT);
         if (obj) if (!EditorUtility.DisplayDialog("Elements Root Exsited", "Do you want import again?", "Yes", "No")) return;
@@ -86,14 +87,14 @@ public sealed class EditorToolsItemMenu
             l.transform.RestRTS();
             l.transform.position = i.LinkPos?.ToVer3() ?? c.transform.position;
             var group = c.GetComponent<MonsterGroupPosition>();
-            group.EType = i.Type;
+            //group.EType = i.Type;
             group.linkTarget = l.transform;
             group.ConfigID = i.ConfigID;
             group.GroupID = i.GroupID;
-        }
+        }*/
     }
 
-    [MenuItem("GAME/Map/Export &e")]
+    //[MenuItem("GAME/Map/Export &e")]
     public static void GoExportSceneConfig()
     {
 
@@ -102,8 +103,8 @@ public sealed class EditorToolsItemMenu
         if (string.IsNullOrEmpty(file)) return;
 
         var groups = GameObject.FindObjectsOfType<MonsterGroupPosition>();
-        var config = new Proto.MapCongfig();
-        foreach (var i in groups)
+        //var config = new Proto.MapCongfig();
+        /*foreach (var i in groups)
         {
             var el = new Proto.MapElement
             {
@@ -116,9 +117,9 @@ public sealed class EditorToolsItemMenu
             };
 
             config.Elements.Add(el);
-        }
+        }*/
 
-        File.WriteAllText(file, config.ToJson());
+        //File.WriteAllText(file, config.ToJson());
 
         var go = GameObject.Find(EL_ROOT);
         if (go)
