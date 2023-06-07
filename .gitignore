@@ -214,6 +214,6 @@ obj/*
 bin/*
 #big files
 
-**/output/*
+**/output/**
 
 .vs/**
