@@ -31,8 +31,8 @@ fi
 
 cd ../../
 
-cp -af ./src/json ./output/json
-cp -af ./src/output ./output/dll
+cp -af ./src/json /var/output/json
+cp -af ./src/output /var/output/dll
  
 python3 uploadzk.py --host 129.211.9.75:2181 --root /configs --dir ./src/json
 if [ "$?" -ne "0" ]; then

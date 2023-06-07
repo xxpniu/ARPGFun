@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using ExcelConfig;
 using org.apache.zookeeper;
-using org.vxwo.csharp.json;
 using XNet.Libs.Utility;
 using System.Text;
 
@@ -44,7 +43,7 @@ namespace ServerUtility
         public List<T> Deserialize<T>() where T : JSONConfigBase
         {
             var name = ExcelToJSONConfigManager.GetFileName<T>();
-            if (!configs.TryGetValue(name, out string json)) return null;
+            if (!configs.TryGetValue(name, out var json)) return null;
             if (string.IsNullOrEmpty(json)) return null;
            
             var res =  JsonTool.Deserialize<List<T>>(json);
