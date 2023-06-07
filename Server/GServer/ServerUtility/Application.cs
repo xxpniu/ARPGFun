@@ -1,38 +1,43 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using XNet.Libs.Utility;
 
 namespace ServerUtility
 {
-    public class App:XSingleton<App>
+    public abstract class ServerApp<T> : XSingleton<T> where T : class, new()
     {
-        private volatile bool IsRunning;
+        protected abstract Task Start(CancellationToken token = default);
+        protected abstract Task Stop(CancellationToken token = default);
 
-        public async Task Startup(Func<App, Task> setup =null)
+        private CancellationTokenSource _source;
+
+        public async Task Run(CancellationToken token = default)
         {
-            IsRunning = true;
-            if (setup == null) return;
-            await setup.Invoke(this);
-        }
+            _source = new CancellationTokenSource();
+            var link = CancellationTokenSource.CreateLinkedTokenSource(_source.Token, token);
 
+            using var host = new HostBuilder()
+                .ConfigureLogging(l => l.AddConsole()).Build();
+            host.Start();
 
-        public async Task Stop(Func<App, Task> stop =null)
-        {
-            IsRunning = false;
-            if (stop == null) return;
-            await stop.Invoke(this);
-        }
-
-
-        public async Task Tick(Func<App, Task> tick = null,int tickDelay = 100)
-        {
-            while (IsRunning)
+            await Start(link.Token);
+            try
             {
-                if (tick != null)
-                {
-                    await tick.Invoke(this);
-                }
-                await Task.Delay(tickDelay);
+                await host.WaitForShutdownAsync(token: token);
+                Debuger.Log("Shutting down gracefully.");
             }
+            catch (Exception e)
+            {
+                Debuger.LogError(e.ToString());
+            }
+
+            // ReSharper disable once MethodSupportsCancellation
+            await Stop();
+            Debuger.Log("Exited");
+
         }
     }
 }

@@ -34,7 +34,7 @@ namespace LoginServer
             };
             if (args.Length > 0)
             {
-                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, args[0]);
+                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, args[0]);
                 var json = await File.ReadAllTextAsync(file, new UTF8Encoding(false));
                 config = json.TryParseMessage<LoginServerConfig>();
             }

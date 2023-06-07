@@ -19,8 +19,8 @@ namespace ChatServer
             ChatServerConfig config;
             if (args.Length > 0)
             {
-                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, args[0]);
-                var json = File.ReadAllText(file, new UTF8Encoding(false));
+                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, args[0]);
+                var json = await File.ReadAllTextAsync(file, new UTF8Encoding(false));
                 config = json.TryParseMessage<ChatServerConfig>();
             }
             else
@@ -52,7 +52,7 @@ namespace ChatServer
             await app.Start(config);
             await app.Tick();
             await app.Stop();
-            Debuger.Log("Appliaction had exited!");
+            Debuger.Log("Application had exited!");
             
         }
     }

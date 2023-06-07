@@ -9,7 +9,7 @@ class TableCol:
     col_des: str
     value_type: str 
     def __str__(self):
-        return f"[{self.index}]{self.col_name}[{self.value_type}]:{self.col_des}"
+        return f"{self.index}.{self.col_name} {self.value_type} {self.col_des}"
     def __repr__(self):
         return self.__str__()
     

@@ -12,7 +12,6 @@ namespace ChatTool
 {
     public class DataBase : XSingleton<DataBase>
     {
-
         public class UserEntity
         {
             public string AcountID { set; get; }

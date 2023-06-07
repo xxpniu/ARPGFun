@@ -111,7 +111,7 @@ namespace Utility
         public string Token { get;  set; }
         public string SessionKey { set; get; }
 
-        public LogChannel(ServiceAddress addres) : this($"{addres.IpAddress}:{addres.Port}", ChannelCredentials.Insecure)
+        public LogChannel(ServiceAddress address) : this($"{address.IpAddress}:{address.Port}", ChannelCredentials.Insecure)
         { }
 
         public LogChannel(string target, ChannelCredentials credentials) : base(target, credentials)

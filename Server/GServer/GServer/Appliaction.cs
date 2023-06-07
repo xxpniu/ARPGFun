@@ -1,4 +1,5 @@
-﻿using XNet.Libs.Utility;
+﻿using System;
+using XNet.Libs.Utility;
 using ServerUtility;
 using GateServer;
 using ExcelConfig;
@@ -8,14 +9,19 @@ using Proto.ServerConfig;
 using Grpc.Core;
 using org.apache.zookeeper;
 using System.Text;
+using System.Threading;
 using static org.apache.zookeeper.ZooDefs;
 using Utility;
 
 namespace GServer
 {
-    public class Application:XSingleton<Application>
+    public class Application:ServerApp<Application>
     {
-
+        public Application Create(GateServerConfig config)
+        {
+            this.Config = config;
+            return this;
+        }
         public static ConstantValue Constant { private set; get; }
 
         public GateServerConfig Config { get; private set; }
@@ -25,22 +31,21 @@ namespace GServer
         private LogServer ServiceServer;
         //zk
         private ZooKeeper Zk;
-        public volatile bool IsRunning;
-        private ResourcesLoader loader;
+        private volatile bool _isRunning;
+        private ResourcesLoader _loader;
         public StreamServices StreamService { private set; get; }
 
         public WatcherServer<string,LoginServerConfig> LoginServers { get; private set; }
         public WatcherServer<string,NotifyServerConfig> NotifyServers { get; private set; }
         public WatcherServer<string,MatchServerConfig> MatchServers { get; private set; }
+        
 
-        public async Task Start(GateServerConfig config)
+        protected override async Task Start(CancellationToken token = default)
         {
-            if (IsRunning) return;
-
-            this.Config = config;
-            IsRunning = true;
-            loader = new ResourcesLoader();
-            await loader.LoadAllConfig(this.Config.ZkServer, Config.ExcelRoot);
+           if (_isRunning) return;
+           _isRunning = true;
+            _loader = new ResourcesLoader();
+            await _loader.LoadAllConfig(this.Config.ZkServer, Config.ExcelRoot);
             Constant =  ExcelToJSONConfigManager.GetId<ConstantValue>(1);
             StreamService = new StreamServices();
             Debuger.Log($"Start Listen: {Config.ListenHost}");
@@ -54,12 +59,9 @@ namespace GServer
             ListenServer.Interceptor.SetAuthCheck((c) =>
             {
                 if (!c.GetHeader("session-key", out string value)) return false;
-                if (ListenServer.CheckSession(value, out string userid))
-                {
-                    c.RequestHeaders.Add("user-key", userid);
-                    return true;
-                }
-                return false;
+                if (!ListenServer.CheckSession(value, out string userid)) return false;
+                c.RequestHeaders.Add("user-key", userid);
+                return true;
             });
 
             ListenServer.Start();
@@ -99,26 +101,42 @@ namespace GServer
                 .RefreshData();
         }
 
-        public async Task Stop()
+        protected override async Task Stop(CancellationToken token = default)
         {
-            if (!IsRunning)  return;
-            await loader?.Close();
+            if (!_isRunning)  return;
+            await _loader?.Close()!;
             await Zk.closeAsync();
-            IsRunning = false;
+            _isRunning = false;
             
             await ListenServer.ShutdownAsync();
             await ServiceServer.ShutdownAsync();
             Debuger.Log("Server had stop");
         }
+    }
+    
+    public class App:ServerApp<App>
+    {
 
-        public async Task Tick()
+        private Func<App,Task> _s, _t, _e;
+        public App Create(Func<App,Task> setup = default, Func<App,Task> tick =default, Func<App,Task> stop=default)
         {
-            while (IsRunning)
-            {
-                await Task.Delay(100);
-            }
+            _s = setup;
+            _t = tick;
+            _e = stop;
+            return this;
         }
 
+        protected override async Task Start(CancellationToken token = default)
+        {
+            if(_s==null) return;
+            await _s.Invoke(this);
+        }
+        
+        protected override async Task Stop(CancellationToken token = default)
+        {
+            if(_e ==null) return;
+            await _e?.Invoke(this)!;
+        }
     }
 }
 

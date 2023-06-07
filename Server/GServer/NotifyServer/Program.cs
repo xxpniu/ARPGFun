@@ -15,10 +15,8 @@ namespace NotifyServer
 {
     class Program
     {
-        public async static Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
-   
-
             var config = new NotifyServerConfig
             {
                 DBHost = "mongodb://127.0.0.1:27017/",
@@ -32,8 +30,8 @@ namespace NotifyServer
 
             if (args.Length > 0)
             {
-                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, args[0]);
-                var json = File.ReadAllText(file, new UTF8Encoding(false));
+                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, args[0]);
+                var json = await File.ReadAllTextAsync(file, new UTF8Encoding(false));
                 config = json.TryParseMessage<NotifyServerConfig>();
             }
             using var log = new DefaultLoger(config.KafkaServer, "Log", $"notify_server");
