@@ -52,5 +52,7 @@ enum ErrorCode
     MagicNoActicted = 115;//魔法没有激活
     NeedEquipmentItem =116;//必须是装备才可以参与熔炼
     NoFoundEquipmentConfig =117;//没有发现装备配置
+    NoenoughTP = 118;//没有足够的天赋点
+    NoActiveNeedTP = 119;
 }
 

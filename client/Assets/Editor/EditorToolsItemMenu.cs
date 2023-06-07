@@ -13,7 +13,7 @@ public sealed class EditorToolsItemMenu
 
     private static bool ShowSave()
     {
-        for (int i = 0; i < EditorSceneManager.loadedSceneCount; i++)
+        for (int i = 0; i < SceneManager.loadedSceneCount; i++)
         {
             var s = SceneManager.GetSceneAt(i);
             if (s.isDirty)

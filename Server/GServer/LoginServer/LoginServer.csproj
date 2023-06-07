@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType></DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" />
@@ -21,19 +21,32 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ServerUtility\ServerUtility.csproj" />
-    <ProjectReference Include="..\..\..\PublicTools\src\csharp\Xsoft.Proto.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Confluent.Kafka" Version="1.6.3" />
+    <PackageReference Include="Grpc" Version="2.37.0" />
+    <PackageReference Include="Grpc.Core" Version="2.37.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.37.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.10.4" />
     <PackageReference Include="mongocsharpdriver" Version="2.10.4" />
-    <PackageReference Include="Google.Protobuf" Version="3.12.3" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.8" />
     <PackageReference Include="ZooKeeperNetEx" Version="3.4.12.4" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="RPCResponsers\" />
+    <Folder Include="RPCResponser\" />
     <Folder Include="MongoTool\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.config" />
+    <None Update="dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="enterpoint.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

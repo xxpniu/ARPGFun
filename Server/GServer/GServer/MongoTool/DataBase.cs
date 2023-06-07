@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
-using Google.Protobuf.Collections;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Options;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Proto;
 using Proto.MongoDB;
 using ServerUtility;
 
-namespace GateServer
+namespace GServer.MongoTool
 {
     public class DataBase : XSingleton<DataBase>
     {
@@ -40,7 +37,7 @@ namespace GateServer
             public int Num { set; get; }
 
             public bool IsLock { set; get; }
-
+            
             public PackageEquip EquipData { set; get; }
         }
 
@@ -85,18 +82,27 @@ namespace GateServer
             public string PlayerUuid { set; get; }
             public int Exp { set; get; }
             public int Level { set; get; }
+            
             [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfDocuments)]
             public Dictionary<int, DBHeroMagic> Magics { set; get; }
+            
             [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfDocuments)]
             public Dictionary<int, string> Equips { set; get; }
+            
+            [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfDocuments)]
+            public Dictionary<int,DBHeroTalent> Talents { set; get; }
+            
             public string HeroName { set; get; }
             public int HeroId { set; get; }
             public int HP { set; get; }
             public int MP { set; get; }
+            
+            public int TalentPoint { set; get; }
             public GameHeroEntity()
             {
                 Magics = new Dictionary<int, DBHeroMagic>();
                 Equips = new Dictionary<int, string>();
+                Talents = new Dictionary<int, DBHeroTalent>();
             }
         }
 
@@ -123,10 +129,10 @@ namespace GateServer
             });
         }
 
-        public const string PLAYER = "Player";
-        public const string HERO = "Hero";
-        public const string PACKAGE = "Package";
-        public const string WEARROOM = "Wareroom";
+        private const string PLAYER = "Player";
+        private const string HERO = "Hero";
+        private const string PACKAGE = "Package";
+        private const string WAREROOM = "Wareroom";
 
         public IMongoCollection<GamePlayerEntity> Playes { get; private set; }
         public IMongoCollection<GameHeroEntity> Heros { get; private set; }
@@ -140,7 +146,7 @@ namespace GateServer
             Playes = db.GetCollection<GamePlayerEntity>(PLAYER);
             Heros = db.GetCollection<GameHeroEntity>(HERO);
             Packages = db.GetCollection<GamePackageEntity>(PACKAGE);
-            Warerooms = db.GetCollection<GameWareroom>(WEARROOM);
+            Warerooms = db.GetCollection<GameWareroom>(WAREROOM);
         }
     }
 }

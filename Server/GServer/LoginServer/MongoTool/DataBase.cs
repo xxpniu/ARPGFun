@@ -1,17 +1,15 @@
-﻿using System;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
-using Proto;
 using Proto.MongoDB;
 using ServerUtility;
 
-namespace MongoTool
+namespace LoginServer.MongoTool
 {
     public class DataBase : XSingleton<DataBase>
     {
-        public const string GATE_SERVER = "GateServer";
         public const string ACCOUNT = "Account";
         public const string SESSION = "Session";
 
@@ -32,13 +30,14 @@ namespace MongoTool
              });
         }
 
-        public async Task Init(string connectString, string db)
+        public async Task Init(string connectString, string db, CancellationToken token = default)
         {
             Client = new MongoClient(connectString);
             Data = Client.GetDatabase(db);
             Account = Data.GetCollection<AccountEntity>(ACCOUNT);
             Session = Data.GetCollection<UserSessionInfoEntity>(SESSION);
-            await Session.DeleteManyAsync(Builders<UserSessionInfoEntity>.Filter.Exists(t => t.AccountUuid, true));
+            await Session.DeleteManyAsync(Builders<UserSessionInfoEntity>
+                .Filter.Exists(t => t.AccountUuid, true), token);
         }
 
         public  bool GetSessionInfo(string userID, out UserSessionInfoEntity serverInfo)

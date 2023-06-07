@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using ExcelConfig;
 using org.apache.zookeeper;
-using org.vxwo.csharp.json;
 using XNet.Libs.Utility;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace ServerUtility
 {
@@ -24,32 +24,50 @@ namespace ServerUtility
             Debuger.DebugLog($"root->{configRoot[0]} Path:{path}");
             Manager = new ExcelToJSONConfigManager(this);
             zoo = new ZooKeeper(configRoot[0], 30000, this, true);
-            await Reload();
+            while (!(await Reload()))
+            {
+                await Task.Delay(2000);
+            }
         }
 
-        private async Task Reload()
+        private async Task<bool> Reload()
         {
-            var res = await zoo.getChildrenAsync(prefixPath,this);
-            foreach (var c in res.Children)
+            Debuger.Log($"Load:{prefixPath}");
+            try
             {
-                var p = $"{prefixPath}/{c}";
-                var data = await zoo.getDataAsync(p);
-                configs.TryRemove(c, out _);
-                configs.TryAdd(c, Encoding.UTF8.GetString(data.Data));
-                Debuger.Log($"Load:{p}");
+                var res = await zoo.getChildrenAsync(prefixPath, this);
+                foreach (var c in res.Children)
+                {
+                    var p = $"{prefixPath}/{c}";
+                    var data = await zoo.getDataAsync(p);
+                    configs.TryRemove(c, out _);
+                    configs.TryAdd(c, Encoding.UTF8.GetString(data.Data));
+                    Debuger.Log($"Load:{p}");
+                }
+
+                Manager.Clear();
+                return true;
             }
-            Manager.Clear();
+            catch (KeeperException.NoNodeException)
+            {
+                Debuger.LogError($"Node not found:{prefixPath}");
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public List<T> Deserialize<T>() where T : JSONConfigBase
         {
             var name = ExcelToJSONConfigManager.GetFileName<T>();
-            if (!configs.TryGetValue(name, out string json)) return null;
-            if (string.IsNullOrEmpty(json)) return null;
+            if (!configs.TryGetValue(name, out var json)) return null!;
+            if (string.IsNullOrEmpty(json)) return null!;
            
-            var res =  JsonTool.Deserialize<List<T>>(json);
+            var res =  JsonConvert.DeserializeObject<List<T>>(json);
 
-            Debuger.DebugLog($"Load:{name} Table:{res.Count}");
+            Debuger.DebugLog($"Load:{name} Table:{res!.Count}");
             return res;
         }
 
@@ -68,7 +86,7 @@ namespace ServerUtility
 
         public async Task Close()
         {
-            await zoo?.closeAsync();
+            await zoo?.closeAsync()!;
         }
     }
 }

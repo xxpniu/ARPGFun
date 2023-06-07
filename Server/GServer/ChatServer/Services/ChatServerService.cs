@@ -11,7 +11,7 @@ namespace ChatServer
     //消息转发
     public class ChatServerService:Proto.ChatServerService.ChatServerServiceBase
     {
-        public async override Task<PlayerState> ChatRoute(Chat request, ServerCallContext context)
+        public override async Task<PlayerState> ChatRoute(Chat request, ServerCallContext context)
         {
 
             var succes = await Application.S.ChatService
@@ -25,7 +25,7 @@ namespace ChatServer
            
         }
 
-        public async override Task<Proto.Void> CreateNotify(NotifyMsg request, ServerCallContext context)
+        public override async Task<Proto.Void> CreateNotify(NotifyMsg request, ServerCallContext context)
         {
             await Application.S.ChatService.NotifyFriendStateChange(request.AccountID, request.AnyNotify.ToArray());
             return new Proto.Void();

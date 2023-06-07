@@ -39,6 +39,7 @@ message HeroMagic
 {
 	 int32 MagicKey=1;
 	 int32 Level =2;//level
+	 int32 Exp = 3; //exp
 }
 
 //玩家角色
@@ -49,9 +50,15 @@ message DHero
 	int32 Exprices=3;//当前经验
 	repeated WearEquip Equips=4;//当前穿戴装备
 	repeated HeroMagic Magics=5;//英雄当前激活魔法
-	string Name = 6;
-	int32 HP = 7;
-	int32 MP = 8;
+	repeated HeroMagic Talents = 6; // 天赋
+	
+
+	string Name = 10;
+	int32 HP = 11;
+	int32 MP = 12;
+
+    int32 TalentPoint = 13;//天赋点
+	
 }
 
 message EquipData
@@ -118,32 +125,6 @@ enum ReleaserModeType
 	RMT_Buff =4;
 }
 
-
-enum MapElementType
-{
-	MET_NONE = 0;
-	MET_MonsterGroup = 1; //对应Monstergroup ID
-	MET_ElementGroup = 2;    //对应Elementsgroup ID
-	MET_NPC  =3; //对应NPC
-	MET_PLAYER_INIT = 4;//角色初始化
-	MET_Monster = 5 ;//怪物表id
-	MET_Transport = 6 ;//传送点
-}
-
-message MapElement
-{
-	MapElementType Type = 1 [json_name="T"];//地图元素类型
-	Vector3 Forward = 2 [json_name="F"];//朝向
-	Vector3 Position = 3 [json_name="P"];//位置
-	int32 ConfigID = 4  [json_name="C"];   //配表ID
-	Vector3 LinkPos = 5[json_name="L"]; //关联位置
-	int32 GroupID = 6 [json_name="G"];//group id
-}
-
-message MapCongfig 
-{
-	repeated MapElement Elements = 1 [json_name="E"]; //元素
-}
 
 
 message ServiceAddress

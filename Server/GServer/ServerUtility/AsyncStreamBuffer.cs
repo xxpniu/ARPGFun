@@ -29,21 +29,26 @@ namespace ServerUtility
             Resume();
         }
 
-        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(0, 1);
+        private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(0, 1);
 
         private void Resume()
         {
-            semaphoreSlim.Release();
+            _semaphoreSlim.Release();
         }
 
         
         public async IAsyncEnumerable<TData> TryPullAsync([EnumeratorCancellation] CancellationToken token)
         {
-
             while (IsWorking)
             {
-                while (TryPull(out TData data)) yield return data;
-                await semaphoreSlim.WaitAsync(cancellationToken: token);
+                while (TryPull(out var data))
+                {
+                    token.ThrowIfCancellationRequested();
+                    yield return data;
+                }
+
+                token.ThrowIfCancellationRequested();
+                await _semaphoreSlim.WaitAsync(cancellationToken: token);
             }
         }
     }

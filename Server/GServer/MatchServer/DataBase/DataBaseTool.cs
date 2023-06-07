@@ -40,11 +40,11 @@ namespace DataBase
 
     public class DataBaseTool:ServerUtility.XSingleton<DataBaseTool>
     {
-        public const string BATTLEMATCH = "BattleMatch";
-        public const string MATCHGROUP = "MatchGroup";
+        private const string BATTLEMATCH = "BattleMatch";
+        private const string MATCHGROUP = "MatchGroup";
 
-        public IMongoCollection<BattleMatchInfo> MatchInfos { private set; get; }
-        public IMongoCollection<MatchGroupEntity> MatchGroups { private set; get; }
+        private IMongoCollection<BattleMatchInfo> MatchInfos { set; get; }
+        private IMongoCollection<MatchGroupEntity> MatchGroups { set; get; }
 
         public async void Init(string connectString, string dbName)
         {
@@ -61,7 +61,7 @@ namespace DataBase
         {
             var filter = Builders<MatchGroupEntity>.Filter.ElemMatch(t => t.Players, i => i.AccountID == player.AccountID);
             var query = await MatchGroups.FindAsync(filter);
-            if (query.Any())
+            if (await query.AnyAsync())
             {
                 return (false, null);
             }
@@ -82,7 +82,7 @@ namespace DataBase
         {
             var filter = Builders<MatchGroupEntity>.Filter.ElemMatch(t => t.Players, i => i.AccountID == player.AccountID);
             var query = await MatchGroups.FindAsync(filter);
-            if (query.Any())
+            if (await query.AnyAsync())
             {
                 return (false, null);
             }
@@ -95,68 +95,67 @@ namespace DataBase
 
         public async Task<(BattleServerConfig config, int levelID)> QueryMatchByPlayer(string player)
         {
-            var fiter = Builders<BattleMatchInfo>.Filter.AnyEq(t => t.Players, player);
-            var rest = await MatchInfos.FindAsync(fiter);
+            var filter = Builders<BattleMatchInfo>.Filter.AnyEq(t => t.Players, player);
+            var rest = await MatchInfos.FindAsync(filter);
             var res = await rest.FirstOrDefaultAsync();
 
             return (res?.BattleServer, res?.LevelID ?? 0);
         }
 
-        public async Task<BattleMatchInfo> CreateMatch(IList<string> players, BattleServerConfig config,int levelID)
+        public async Task<BattleMatchInfo> CreateMatch(IList<string> players, BattleServerConfig config,int levelId)
         {
-            await RemoveMatchByServerID(config.ServerID);
+            await RemoveMatchByServerId(config.ServerID);
             var entity = new BattleMatchInfo
             {
                 BattleServer = config,
                 ServerID = config.ServerID,
                 Players = new List<string>(players),
-                LevelID = levelID
+                LevelID = levelId
             };
             await MatchInfos.InsertOneAsync(entity);
             return entity;
         }
 
-        public async Task<bool> RemoveMatchByServerID(string serverID)
+        public async Task<bool> RemoveMatchByServerId(string serverId)
         {
-            var rs = await MatchInfos.FindOneAndDeleteAsync(t => t.ServerID == serverID);
+            var rs = await MatchInfos.FindOneAndDeleteAsync(t => t.ServerID == serverId);
             return true;
         }
 
-        public async Task<bool> ExitsMatchByServerId(string serverID)
+        public async Task<bool> ExitsMatchByServerId(string serverId)
         {
-            var fiter = Builders<BattleMatchInfo>.Filter.Eq(t => t.ServerID, serverID);
-            return (await MatchInfos.FindAsync(fiter)).Any();
+            var filter = Builders<BattleMatchInfo>.Filter.Eq(t => t.ServerID, serverId);
+            return await (await MatchInfos.FindAsync(filter)).AnyAsync();
         }
 
-        public async Task<MatchGroupEntity> QueryMatchGroup(string groupID)
+        public async Task<MatchGroupEntity> QueryMatchGroup(string groupId)
         {
-            var query = await MatchGroups.FindAsync(t => t.Uuid == groupID);
+            var query = await MatchGroups.FindAsync(t => t.Uuid == groupId);
             return query.FirstOrDefault();
         }
 
         public async Task<(bool,MatchGroupEntity)> QueryMatchGroupByPlayer(string account)
         {
-            var fiter = Builders<MatchGroupEntity>.Filter.ElemMatch(t => t.Players, i => i.AccountID == account);
-            var query = await MatchGroups.FindAsync(fiter);
+            var filter = Builders<MatchGroupEntity>.Filter.ElemMatch(t => t.Players, i => i.AccountID == account);
+            var query = await MatchGroups.FindAsync(filter);
 
             var group = query.FirstOrDefault();
-            if (group ==null) return (false, null);
-            return (true,group);
+            return @group ==null ? (false, null) : (true,@group);
         }
 
-        internal async Task<(bool, MatchGroupEntity)> QuitMatchGroupByPlayer(string accountID)
+        internal async Task<(bool, MatchGroupEntity)> QuitMatchGroupByPlayer(string accountId)
         {
             var b = Builders<MatchGroupEntity>.Filter;
-            var fiter = b.ElemMatch(t => t.Players, x => x.AccountID == accountID);
-            var query = (await MatchGroups.FindAsync(fiter)).FirstOrDefault();
+            var filter = b.ElemMatch(t => t.Players, x => x.AccountID == accountId);
+            var query = (await MatchGroups.FindAsync(filter)).FirstOrDefault();
 
             if (query == null)
             {
                 return (false, null);
             }
 
-            var update = Builders<MatchGroupEntity>.Update.PullFilter(t => t.Players, t => t.AccountID == accountID);
-            query = await MatchGroups.FindOneAndUpdateAsync(fiter, update);
+            var update = Builders<MatchGroupEntity>.Update.PullFilter(t => t.Players, t => t.AccountID == accountId);
+            query = await MatchGroups.FindOneAndUpdateAsync(filter, update);
 
             if (query != null) Debuger.Log($"{query.Uuid}:{query.Players}");
 
@@ -165,19 +164,19 @@ namespace DataBase
                 await MatchGroups.DeleteOneAsync(t => t.Uuid == query.Uuid);
             }
             var matchgroup = (await MatchGroups.FindAsync(t => t.Uuid == query.Uuid)).FirstOrDefault();
-            await ExitBattleServer(accountID);
+            await ExitBattleServer(accountId);
             return (matchgroup != null, matchgroup);
         }
 
-        public async Task<bool> ExitBattleServer(string accountID)
+        public async Task<bool> ExitBattleServer(string accountId)
         {
             try
             {
-                var filter = Builders<BattleMatchInfo>.Filter.AnyEq(t => t.Players, accountID);
+                var filter = Builders<BattleMatchInfo>.Filter.AnyEq(t => t.Players, accountId);
                 var match =( await MatchInfos.FindAsync(filter)).FirstOrDefault();
-                Debuger.Log($"{accountID} Exit {match?.LevelID} by {match?.Uuid}");
+                Debuger.Log($"{accountId} Exit {match?.LevelID} by {match?.Uuid}");
 
-                var bUpdate = Builders<BattleMatchInfo>.Update.Pull(t => t.Players,accountID);
+                var bUpdate = Builders<BattleMatchInfo>.Update.Pull(t => t.Players,accountId);
                 var modify = await MatchInfos.UpdateOneAsync(t=>t.Uuid == match.Uuid, bUpdate);
                 return modify.ModifiedCount > 0;
             }

@@ -28,9 +28,17 @@ if [ "$?" -ne "0" ]; then
   echo "Sorry, compile error"
   exit 1
 fi
+
+cd ../../
+
+cp -af ./src/json /var/output/json
+cp -af ./src/output /var/output/dll
  
-python3 uploadzk.py --host 129.211.9.75:2181 --root /configs --dir ./src/json
+
+#python3 uploadzk.py --host 129.211.9.75:2181 --root /configs --dir ./src/json
 if [ "$?" -ne "0" ]; then
-  echo "Sorry, upload to zk failure"
+  echo "Sorry, Copy failure!"
   exit 1
 fi
+
+echo "Copy to out dll"

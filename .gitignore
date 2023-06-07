@@ -215,3 +215,5 @@ bin/*
 #big files
 
 **/output/*
+
+.vs/**

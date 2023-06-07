@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
-using org.vxwo.csharp.json;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using XNet.Libs.Utility;
+using Object = UnityEngine.Object;
 
 namespace Core
 {
@@ -17,25 +18,23 @@ namespace Core
 	{
 		OnDebug IConfigLoader.Printer => Debuger.LogWaring;
 
+		[Obsolete("JsonTool.Deserialize<List<T>>")]
 		List<T> IConfigLoader.Deserialize<T>()
 		{
-			var name = ExcelToJSONConfigManager.GetFileName<T>();
-			string json = LoadText("Json/" + name);
-			if (json == null)
-			{
-				Debuger.LogError($"Nofound :{name}");
-				return null;
-			}
-			var table = JsonTool.Deserialize<List<T>>(json);
-			return table;
+			var fileName = ExcelToJSONConfigManager.GetFileName<T>();
+			var json = LoadText("Json/" + fileName);
+			if (json != null) return null;
+			Debuger.LogError($"Not found :{fileName}");
+			return null;
+			//var table = JsonTool.Deserialize<List<T>>(json);
+			//return table;
 		}
 
 		public delegate void CallBackDele<T>(T res);
 
 		public string LoadText(string path)
 		{
-			//Debuger.Log($"LoadText:{path}");
-			var exPath = path.Substring(0, path.LastIndexOf('.'));
+			var exPath = path[..path.LastIndexOf('.')];
 			var asst = Resources.Load<TextAsset>(exPath);
 			if (asst) return asst.text;
 			Debuger.LogError($"{exPath} no found");

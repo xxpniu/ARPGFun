@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommandLine;
+using DataBase;
 using Grpc.Core;
 using org.apache.zookeeper;
 using Proto;
@@ -15,28 +18,40 @@ namespace MatchServer
 {
     public class Program
     {
+        public class MatchOption:CustomOption
+        {
+            [Option('r',"zkroot", Required = true)]
+            public string ZKRoot { set; get; }
+            [Option('t',"zknotify", Required = true)]
+            public string ZKNotify { set; get; }
+            [Option('b',"zkbattle", Required = true)]
+            public string ZKBattle { set; get; }
+        }
         public static async Task Main(string[] args)
         {
-            var config = new MatchServerConfig
-            {
-                DBHost = "mongodb://127.0.0.1:27017/",
-                ServicsHost = new ServiceAddress { IpAddress = "localhost", Port = 1500 },
-                ZkServer = { "129.211.9.75:2181" },
-                DBName = "Match",
-                BattleServerRoot = "/battle",
-                NotifyServerRoot = "/notify",
-                MatchServerRoot = "/match",
-                KafkaServer = { "129.211.9.75:9092" }
-            };
+            var config = new MatchServerConfig();
 
-            if (args.Length > 0)
-            {
-                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, args[0]);
-                var json = File.ReadAllText(file, new UTF8Encoding(false));
-                config = json.TryParseMessage<MatchServerConfig>();
-            }
+            Parser.Default.ParseArguments<MatchOption>(args)
+                .WithParsed(o =>
+                {
+                    if (!string.IsNullOrEmpty(o.Config))
+                    {
+                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? string.Empty, o.Config);
+                        var json = File.ReadAllText(file, new UTF8Encoding(false));
+                        config = json.TryParseMessage<MatchServerConfig>();
+                    }
 
-            using var log = new DefaultLoger(config.KafkaServer, "Log", $"match_server");
+                    o.Kafka?.SplitInsert(config.KafkaServer);
+                    o.ZK.SplitInsert(config.ZkServer);
+                    o.ServiceHost?.SetAddress(a => config.ServicsHost = a);
+                    o.DBHost?.Set(s => config.DBHost = s);
+                    o.DBName?.Set(s => config.DBName = s);
+                    o.ZKBattle?.Set(s=>config.BattleServerRoot=s);
+                    o.ZKNotify?.Set(s=>config.NotifyServerRoot=s);
+                    o.ZKRoot?.Set(s=>config.MatchServerRoot=s);
+                });
+
+            using var log = new DefaultLogger(config.KafkaServer, "Log", $"match_server");
             Debuger.Loger = log;
             GrpcEnvironment.SetLogger(log);
 
@@ -45,8 +60,13 @@ namespace MatchServer
 
             var zk = new ZooKeeper(GRandomer.RandomList(config.ZkServer), 3000, new DefaultWatcher());
 
-            var battleWatcher = new WatcherServer<string, BattleServerConfig>(zk, config.BattleServerRoot, (s) => s.ServerID);
+            var battleWatcher =
+                new WatcherServer<string, BattleServerConfig>(zk, config.BattleServerRoot, (s) => s.ServerID)
+                {
+                    OnChanged = OnBattleChanged
+                };
             await battleWatcher.RefreshData();
+            
             var notifyWatcher = await new WatcherServer<string, NotifyServerConfig>(zk, config.NotifyServerRoot, c => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}").RefreshData();
             var service = new MatchServerService(battleWatcher, notifyWatcher);
 
@@ -56,7 +76,7 @@ namespace MatchServer
             }.BindServices(Proto.MatchServices.BindService(service));
 
             server.Start();
-            var app = App.S;
+      
             if (await zk.existsAsync(config.MatchServerRoot) == null)
             {
                 await zk.createAsync(config.MatchServerRoot, new byte[] { 0 }, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
@@ -67,12 +87,21 @@ namespace MatchServer
 
             DataBase.DataBaseTool.S.Init(config.DBHost, config.DBName);
 
-            await app.Startup();
-            await app.Tick();
-            await app.Stop();
+            await App.S.Create().Run();
             await zk.closeAsync();
             await server.ShutdownAsync();
             Debuger.Log("Application had exited!");
+        }
+
+        private static async void OnBattleChanged(BattleServerConfig[] old, BattleServerConfig[] newList)
+        {
+            var newServerIds = newList.Select(t => t.ServerID);
+            var diff = old.Where(t => !newServerIds.Contains(t.ServerID)).Select(t=>t.ServerID).ToArray();
+            foreach (var d in diff)
+            {
+                Debuger.Log($"Remove Battle match:{d}");
+                await DataBaseTool.S.RemoveMatchByServerId(d);
+            }
         }
     }
 }

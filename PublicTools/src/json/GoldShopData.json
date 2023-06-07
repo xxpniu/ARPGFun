@@ -1,6 +1,0 @@
-[
-	{"ID":1,"Name":"\u5C0F\u5806\u91D1\u5E01","Icon":"shop/shop_img_coin_01","Prices":99,"ReceiveGold":20000,"CoinOfGold":202.020202636719},
-	{"ID":2,"Name":"\u5927\u5806\u91D1\u5E01","Icon":"shop/shop_img_coin_02","Prices":288,"ReceiveGold":68888,"CoinOfGold":239.194442749023},
-	{"ID":3,"Name":"\u5927\u888B\u91D1\u5E01","Icon":"shop/shop_img_coin_03","Prices":688,"ReceiveGold":188888,"CoinOfGold":274.546508789063},
-	{"ID":4,"Name":"\u91D1\u5E01\u5B9D\u7BB1","Icon":"shop/shop_img_coin_04","Prices":1888,"ReceiveGold":588888,"CoinOfGold":311.911010742188}
-]

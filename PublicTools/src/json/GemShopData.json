@@ -1,6 +1,0 @@
-[
-	{"ID":1,"Name":"\u94BB\u77F3\u5806","Icon":"shop/shop_img_gem_01","BundleId":"com.arpgfun.b6","Prices":6,"ReceiveCoin":60,"OneOfValue":10},
-	{"ID":2,"Name":"\u94BB\u77F3\u888B","Icon":"shop/shop_img_gem_02","BundleId":"com.arpgfun.b60","Prices":60,"ReceiveCoin":688,"OneOfValue":11.4666662216187},
-	{"ID":3,"Name":"\u94BB\u77F3\u5B9D\u7BB1","Icon":"shop/shop_img_gem_03","BundleId":"com.arpgfun.b288","Prices":288,"ReceiveCoin":3688,"OneOfValue":12.8055553436279},
-	{"ID":4,"Name":"\u94BB\u77F3\u6876","Icon":"shop/shop_img_gem_04","BundleId":"com.arpgfun.b688","Prices":688,"ReceiveCoin":9888,"OneOfValue":14.3720932006836}
-]

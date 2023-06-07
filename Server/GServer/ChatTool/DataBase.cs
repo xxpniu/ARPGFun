@@ -15,7 +15,7 @@ namespace ChatTool
 
         public class UserEntity
         {
-            public string AcountID { set; get; }
+            public string AccountId { set; get; }
             public bool Active { set; get; }
         }
 
@@ -42,36 +42,41 @@ namespace ChatTool
 
         }
 
-        public const string FRIEND = "Friend";
-        public const string PLAYERSTATE = "PlayerState";
+        private const string FRIEND = "Friend";
+        private const string PLAYER_STATE = "PlayerState";
 
 
-        public IMongoCollection<FriendEntity> Friends { get; private set; }
-        public IMongoCollection<OnlineStateEntity> States { get; private set; }
+        private IMongoCollection<FriendEntity> Friends { get; set; }
+        private IMongoCollection<OnlineStateEntity> States { get; set; }
 
         public void Init(string connectString, string dbName)
         {
             var mongo = new MongoClient(connectString);
             var db = mongo.GetDatabase(dbName);
             Friends = db.GetCollection<FriendEntity>(FRIEND);
-            States = db.GetCollection<OnlineStateEntity>(PLAYERSTATE);
+            States = db.GetCollection<OnlineStateEntity>(PLAYER_STATE);
             
         }
 
-        public async Task<bool> Online(string uuid, int ServerID,string heroname,string token)
+        public async Task<bool> Online(string uuid, int ServerID,string heroName,string token)
         {
             var update1 = Builders<OnlineStateEntity>.Update
                 .Set(t => t.IsOnline, true)
                 .Set(t => t.ChatServerID, ServerID)
-                .Set(t => t.HeroName, heroname)
+                .Set(t => t.HeroName, heroName)
                 .Set(t=>t.Token, token);
              
             var u = await this.States.FindOneAndUpdateAsync(t => t.AccountID == uuid, update1);
-            if (u == null)
+            if (u != null) return true;
+            u = new OnlineStateEntity
             {
-                u = new OnlineStateEntity { AccountID = uuid, ChatServerID = ServerID, IsOnline = true,HeroName = heroname };
-                await States.InsertOneAsync(u);
-            }
+                AccountID = uuid, 
+                ChatServerID = ServerID, 
+                IsOnline = true,
+                HeroName = heroName,
+                Token = token
+            };
+            await States.InsertOneAsync(u);
             return u !=null;
         }
 
@@ -80,7 +85,8 @@ namespace ChatTool
             var update1 = Builders<OnlineStateEntity>.Update
                 .Set(t => t.IsOnline, false)
                 .Set(t => t.ChatServerID, -1);
-            var u = await States.FindOneAndUpdateAsync((t) => t.AccountID == uuid && t.Token == token, update1);
+            var u = await States
+                .FindOneAndUpdateAsync((t) => t.AccountID == uuid, update1);
             return u!=null;
         }
 
@@ -92,24 +98,24 @@ namespace ChatTool
         /// <returns></returns>
         public async Task<bool> LinkFriend(string owner, string friend)
         {
-            var fitler = Builders<FriendEntity>.Filter;
+            var filter = Builders<FriendEntity>.Filter;
 
-            var query = (fitler.Eq(t => t.User1.AcountID, owner) & fitler.Eq(t => t.User2.AcountID, friend)) |
-                (fitler.Eq(t => t.User2.AcountID, owner) & fitler.Eq(t => t.User1.AcountID, friend));
+            var query = (filter.Eq(t => t.User1.AccountId, owner) & filter.Eq(t => t.User2.AccountId, friend)) |
+                (filter.Eq(t => t.User2.AccountId, owner) & filter.Eq(t => t.User1.AccountId, friend));
 
             var u = await Friends.FindAsync(query);
             var en = await u.FirstOrDefaultAsync();
             if (en != null)
             {
-                if (en.User1.AcountID == owner)
+                if (en.User1.AccountId == owner)
                 {
                     var update = Builders<FriendEntity>.Update.Set(t => t.User1.Active, true);
-                    await Friends.UpdateOneAsync(t => t.User1.AcountID == owner, update);
+                    await Friends.UpdateOneAsync(t => t.User1.AccountId == owner, update);
                 }
-                if (en.User2.AcountID == owner)
+                if (en.User2.AccountId == owner)
                 {
                     var update = Builders<FriendEntity>.Update.Set(t => t.User2.Active, true);
-                    await Friends.UpdateOneAsync(t => t.User2.AcountID == owner, update);
+                    await Friends.UpdateOneAsync(t => t.User2.AccountId == owner, update);
                 }
                 return true;
             }
@@ -117,8 +123,8 @@ namespace ChatTool
             {
                 var entity = new FriendEntity
                 {
-                    User1 = new UserEntity { AcountID = owner, Active = true },
-                    User2 = new UserEntity { AcountID = friend, Active = false }
+                    User1 = new UserEntity { AccountId = owner, Active = true },
+                    User2 = new UserEntity { AccountId = friend, Active = false }
                 };
                 await Friends.InsertOneAsync(entity);
                 return true;
@@ -135,8 +141,8 @@ namespace ChatTool
         {
             var fitler = Builders<FriendEntity>.Filter;
 
-            var query = (fitler.Eq(t => t.User1.AcountID, owner) & fitler.Eq(t => t.User2.AcountID, friend)) |
-                (fitler.Eq(t => t.User2.AcountID, owner) & fitler.Eq(t => t.User1.AcountID, friend));
+            var query = (fitler.Eq(t => t.User1.AccountId, owner) & fitler.Eq(t => t.User2.AccountId, friend)) |
+                (fitler.Eq(t => t.User2.AccountId, owner) & fitler.Eq(t => t.User1.AccountId, friend));
 
             var u = await Friends.FindAsync(query);
             var en = await u.FirstOrDefaultAsync();
@@ -144,13 +150,13 @@ namespace ChatTool
             {
 
                 //todo:当双方解绑可以删除记录
-                if (en.User1.AcountID == owner)
+                if (en.User1.AccountId == owner)
                 {
                     var update = Builders<FriendEntity>.Update.Set(t => t.User1.Active, false);
                     await Friends.UpdateOneAsync(t => t.Uuid == en.Uuid, update);
                 }
 
-                if (en.User2.AcountID == owner)
+                if (en.User2.AccountId == owner)
                 {
                     var update = Builders<FriendEntity>.Update.Set(t => t.User2.Active, false);
                     await Friends.UpdateOneAsync(t => t.Uuid == en.Uuid, update);
@@ -170,22 +176,22 @@ namespace ChatTool
         /// <returns></returns>
         public async Task<IList<PlayerState>> QueryFriend(string owner)
         {
-            var fitler = Builders<FriendEntity>.Filter;
-            var query = (fitler.Eq(t => t.User1.AcountID, owner) & fitler.Eq(t=>t.User1.Active,true))
-                |( fitler.Eq(t => t.User2.AcountID, owner) & fitler.Eq(t => t.User2.Active, true));
+            var filter = Builders<FriendEntity>.Filter;
+            var query = (filter.Eq(t => t.User1.AccountId, owner) & filter.Eq(t=>t.User1.Active,true))
+                |( filter.Eq(t => t.User2.AccountId, owner) & filter.Eq(t => t.User2.Active, true));
 
             var u = await Friends.FindAsync(query);
             var list = new List<string>();
 
             await u.ForEachAsync(t =>
             {
-                if (t.User1.AcountID == owner)
+                if (t.User1.AccountId == owner)
                 {
-                    list.Add(t.User2.AcountID);
+                    list.Add(t.User2.AccountId);
                 }
                 else
                 {
-                    list.Add(t.User1.AcountID);
+                    list.Add(t.User1.AccountId);
                 }
             });
             return  await FindPlayersByUuid(list);
@@ -193,23 +199,16 @@ namespace ChatTool
 
         public async Task<IList<PlayerState>> QueryNotifyFriend(string owner)
         {
-            var fitler = Builders<FriendEntity>.Filter;
-            var query = (fitler.Eq(t => t.User1.AcountID, owner) & fitler.Eq(t => t.User2.Active, true))
-                | (fitler.Eq(t => t.User2.AcountID, owner) & fitler.Eq(t => t.User1.Active, true));
+            var filter = Builders<FriendEntity>.Filter;
+            var query = (filter.Eq(t => t.User1.AccountId, owner) & filter.Eq(t => t.User2.Active, true))
+                | (filter.Eq(t => t.User2.AccountId, owner) & filter.Eq(t => t.User1.Active, true));
 
             var u = await Friends.FindAsync(query);
             var list = new List<string>();
 
             await u.ForEachAsync(t =>
             {
-                if (t.User1.AcountID == owner)
-                {
-                    list.Add(t.User2.AcountID);
-                }
-                else
-                {
-                    list.Add(t.User1.AcountID);
-                }
+                list.Add(t.User1.AccountId == owner ? t.User2.AccountId : t.User1.AccountId);
             });
             return await FindPlayersByUuid(list);
         }

@@ -17,8 +17,8 @@ namespace ChatServer
     {
         
         private ConcurrentDictionary<string, StreamBuffer<Any>> NotifyChannels { get; } = new ConcurrentDictionary<string, StreamBuffer<Any>>();
-     
-        public LogServer Server { get; }
+
+        private LogServer Server { get; }
 
         public ChatService(LogServer server)
         {
@@ -26,7 +26,7 @@ namespace ChatServer
         }
 
         [Auth]
-        public async override Task Login(C2CH_Login request, IServerStreamWriter<Any> responseStream, ServerCallContext context)
+        public override async Task Login(C2CH_Login request, IServerStreamWriter<Any> responseStream, ServerCallContext context)
         {
             var heroName = request.HeroName;
             var loginServer = Application.S.LoginServers.FirstOrDefault();
@@ -36,24 +36,33 @@ namespace ChatServer
                 return;
             }
 
+            //login server 
             Debuger.Log($"{request.AccountID} Join chat");
             var channel = new LogChannel(loginServer.ServicsHost);
-            var client = channel.CreateClient<LoginBattleGameServerService.LoginBattleGameServerServiceClient>();
+            var client = await channel.CreateClientAsync<LoginBattleGameServerService.LoginBattleGameServerServiceClient>();
             var r = await client.CheckSessionAsync(new S2L_CheckSession { UserID = request.AccountID, Session = request.Token });
             await channel.ShutdownAsync();
+            //check login session token
             if (r.Code != ErrorCode.Ok) return;
             //if (!Server.TryCreateSession(request.AccountID, out string session)) return;
-            await this.CloseChannel(request.AccountID);
+            await CloseChannel(request.AccountID);
 
-            if (!(await DataBase.S.Online(request.AccountID, Application.S.Config.ChatServerID, request.HeroName, request.Token))) return;
+            //update database states
+            if (!(await DataBase.S
+                .Online(
+                    request.AccountID, 
+                    Application.S.Config.ChatServerID,
+                    request.HeroName,
+                    request.Token))) return;
+            
 
             var account = request.AccountID;
-            var streamchannel = new AsyncStreamBuffer<Any>(200);
-            if (!NotifyChannels.TryAdd(account, streamchannel)) throw new Exception($"Acount:[{account}] had join chat");
+            var accountChannel = new AsyncStreamBuffer<Any>(200);
+            if (!NotifyChannels.TryAdd(account, accountChannel))
+                throw new Exception($"Account:[{account}] had join chat");
 
             if (!(await context.WriteSession(account, Server))) return;
-
-
+            
             await Application.S.NotifyStateForAllFriends(new PlayerState
             {
                 State = PlayerState.Types.StateType.Online,
@@ -68,12 +77,15 @@ namespace ChatServer
 
             try
             {
-                await foreach (var i in streamchannel.TryPullAsync(context.CancellationToken))
+                await foreach (var i in accountChannel.TryPullAsync(context.CancellationToken))
                 {
                     await responseStream.WriteAsync(i).ConfigureAwait(false);
                 }
             }
-            catch { }
+            catch
+            {
+                Debuger.Log($"Response Close");
+            }
 
             await DataBase.S.Offline(account, request.Token);
 
@@ -92,7 +104,7 @@ namespace ChatServer
             NotifyChannels.TryRemove(account, out _);
         }
 
-        public async override Task<CH2C_Chat> SendChat(C2CH_Chat request, ServerCallContext context)
+        public override async Task<CH2C_Chat> SendChat(C2CH_Chat request, ServerCallContext context)
         {
             var account = context.GetAccountId();
             foreach (var chat in request.Mesg)
@@ -105,7 +117,7 @@ namespace ChatServer
             return new  CH2C_Chat { Code = ErrorCode.Ok };
         }
 
-        public async override Task<CH2C_QueryPlayerState> QueryPlayerState(C2CH_QueryPlayerState request, ServerCallContext context)
+        public override async Task<CH2C_QueryPlayerState> QueryPlayerState(C2CH_QueryPlayerState request, ServerCallContext context)
         {
             var list = await DataBase.S.QueryFriend(context.GetAccountId());
             var res = new CH2C_QueryPlayerState();
@@ -119,7 +131,7 @@ namespace ChatServer
             return res;
         }
 
-        public async override Task<CH2C_LinkFriend> LinkFrind(C2CH_LinkFriend request, ServerCallContext context)
+        public override async Task<CH2C_LinkFriend> LinkFriend(C2CH_LinkFriend request, ServerCallContext context)
         {
             var account = context.GetAccountId();
             if (await DataBase.S.LinkFriend(account, request.FriendId))
@@ -129,39 +141,35 @@ namespace ChatServer
             return new CH2C_LinkFriend { Code = ErrorCode.Error };
         }
 
-        public async override Task<CH2C_UnLinkFriend> UnLinkFrind(C2CH_UnLinkFriend request, ServerCallContext context)
+        public override async Task<CH2C_UnLinkFriend> UnLinkFriend(C2CH_UnLinkFriend request, ServerCallContext context)
         {
-
             var account = context.GetAccountId();
-
             return new CH2C_UnLinkFriend
             {
                 Code = await DataBase.S.UnLinkFriend(account, request.FriendId) ? ErrorCode.Ok : ErrorCode.Error
             };
         }
 
-        public async Task CloseChannel(string account)
+        private async Task CloseChannel(string account)
         {
-            if (NotifyChannels.TryRemove(account, out  StreamBuffer<Any> notify))
-                notify.Close();
-
+            if (NotifyChannels.TryRemove(account, out var notify)) notify.Close();
             await Task.CompletedTask;
         }
 
         public async Task<bool> NotifyFriendStateChange(string account, params Any[] state)
         {
-            if (this.NotifyChannels.TryGetValue(account, out StreamBuffer<Any> chan))
+            if (this.NotifyChannels.TryGetValue(account, out var chan))
             {
                 foreach (var i in state) chan.Push(i);
                 return await Task.FromResult(true);
             }
             else {
-                Debuger.LogWaring($"Nofound {account} on chat server");
+                Debuger.LogWaring($"Not found {account} on chat server");
             }
             return await Task.FromResult(false);
         }
 
-        public async override Task<CH2C_QueryFriend> QueryFriend(Proto.Void request, ServerCallContext context)
+        public override async Task<CH2C_QueryFriend> QueryFriend(Proto.Void request, ServerCallContext context)
         {
             var list = await DataBase.S.QueryFriend(context.GetAccountId());
             return new CH2C_QueryFriend { Code = ErrorCode.Ok,  States = { list } };

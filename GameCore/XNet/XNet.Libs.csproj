@@ -18,11 +18,19 @@
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PublicTools\src\csharp\Xsoft.Proto.csproj" />
+    <PackageReference Include="Confluent.Kafka" Version="1.6.3" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.8" />
+    <PackageReference Include="Grpc" Version="2.37.0" />
+    <PackageReference Include="Grpc.Core" Version="2.37.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.37.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ZooKeeperNetEx" Version="3.4.12.4" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Grpc" Version="2.30.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.12.3" />
-    <PackageReference Include="Confluent.Kafka" Version="1.5.0" />
+    <Reference Include="Xsoft.Proto">
+      <HintPath>..\dll\Xsoft.Proto.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
