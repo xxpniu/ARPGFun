@@ -32,4 +32,6 @@ CLIENT_OUT_DIR=../client/Packages/com.xsoft.core/Runtime/plugins/CoreDll
 
 cp -af output/dll/Xsoft.Proto.* $CLIENT_OUT_DIR
 
+cp -af output/json/*.json ../client/Assets/Resources/Json
+
 docker rmi ${IMAGE}
