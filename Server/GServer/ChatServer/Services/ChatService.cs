@@ -26,7 +26,7 @@ namespace ChatServer
         }
 
         [Auth]
-        public async override Task Login(C2CH_Login request, IServerStreamWriter<Any> responseStream, ServerCallContext context)
+        public override async Task Login(C2CH_Login request, IServerStreamWriter<Any> responseStream, ServerCallContext context)
         {
             var heroName = request.HeroName;
             var loginServer = Application.S.LoginServers.FirstOrDefault();
@@ -92,7 +92,7 @@ namespace ChatServer
             NotifyChannels.TryRemove(account, out _);
         }
 
-        public async override Task<CH2C_Chat> SendChat(C2CH_Chat request, ServerCallContext context)
+        public override async Task<CH2C_Chat> SendChat(C2CH_Chat request, ServerCallContext context)
         {
             var account = context.GetAccountId();
             foreach (var chat in request.Mesg)
@@ -105,7 +105,7 @@ namespace ChatServer
             return new  CH2C_Chat { Code = ErrorCode.Ok };
         }
 
-        public async override Task<CH2C_QueryPlayerState> QueryPlayerState(C2CH_QueryPlayerState request, ServerCallContext context)
+        public override async Task<CH2C_QueryPlayerState> QueryPlayerState(C2CH_QueryPlayerState request, ServerCallContext context)
         {
             var list = await DataBase.S.QueryFriend(context.GetAccountId());
             var res = new CH2C_QueryPlayerState();
@@ -119,7 +119,7 @@ namespace ChatServer
             return res;
         }
 
-        public async override Task<CH2C_LinkFriend> LinkFrind(C2CH_LinkFriend request, ServerCallContext context)
+        public override async Task<CH2C_LinkFriend> LinkFrind(C2CH_LinkFriend request, ServerCallContext context)
         {
             var account = context.GetAccountId();
             if (await DataBase.S.LinkFriend(account, request.FriendId))
@@ -129,7 +129,7 @@ namespace ChatServer
             return new CH2C_LinkFriend { Code = ErrorCode.Error };
         }
 
-        public async override Task<CH2C_UnLinkFriend> UnLinkFrind(C2CH_UnLinkFriend request, ServerCallContext context)
+        public override async Task<CH2C_UnLinkFriend> UnLinkFrind(C2CH_UnLinkFriend request, ServerCallContext context)
         {
 
             var account = context.GetAccountId();
@@ -140,7 +140,7 @@ namespace ChatServer
             };
         }
 
-        public async Task CloseChannel(string account)
+        private async Task CloseChannel(string account)
         {
             if (NotifyChannels.TryRemove(account, out  StreamBuffer<Any> notify))
                 notify.Close();
@@ -156,12 +156,12 @@ namespace ChatServer
                 return await Task.FromResult(true);
             }
             else {
-                Debuger.LogWaring($"Nofound {account} on chat server");
+                Debuger.LogWaring($"Not found {account} on chat server");
             }
             return await Task.FromResult(false);
         }
 
-        public async override Task<CH2C_QueryFriend> QueryFriend(Proto.Void request, ServerCallContext context)
+        public override async Task<CH2C_QueryFriend> QueryFriend(Proto.Void request, ServerCallContext context)
         {
             var list = await DataBase.S.QueryFriend(context.GetAccountId());
             return new CH2C_QueryFriend { Code = ErrorCode.Ok,  States = { list } };

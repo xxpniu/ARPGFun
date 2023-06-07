@@ -9,7 +9,10 @@ class TableCol:
     col_des: str
     value_type: str 
     def __str__(self):
-        return f"[{self.index}] {self.col_name}[{self.value_type}] : {self.col_des} "
+        return f"[{self.index}]{self.col_name}[{self.value_type}]:{self.col_des}"
+    def __repr__(self):
+        return self.__str__()
+    
     def __init__(self,index,name,des,v_type):
         self.index = index
         self.col_name = name
@@ -74,7 +77,7 @@ class Sheet:
             t = Table(data.sheet_by_name(table_sheet),table_name, export_file, table_des)
             self.tables.append(t)
             print(f"[{i}] process:{t}")
-            for c in t.cols: print(f"\t {c}")
+            print(t.cols)
             #print(t.row_datas)    
         
 

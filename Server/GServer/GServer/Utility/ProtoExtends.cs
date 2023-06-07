@@ -74,14 +74,14 @@ namespace GateServer
                 ItemID = i.Id,
                 Locked = i.IsLock,
                 Num = i.Num,
-                Level = i.Level
-            };
-            item.Data = new EquipData
-            {
-                RefreshTime = i.EquipData?.RefreshCount ?? 0
+                Level = i.Level,
+                Data = new EquipData
+                {
+                    RefreshTime = i.EquipData?.RefreshCount ?? 0
+                }
             };
 
-            foreach (var pro in i.EquipData.Properties)
+            foreach (var pro in i.EquipData!.Properties)
             {
                 item.Data.Values.Add((int)pro.Key, pro.Value);
             }

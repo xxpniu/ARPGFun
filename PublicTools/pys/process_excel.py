@@ -49,7 +49,7 @@ namespace [NAMESPACE]
             file_data.write(json.dumps(t.row_datas))
             file_data.close()
    cs_file = cs_file_temp.replace("[NAMESPACE]",namespace).replace("[TABLES]",cs_class)
-   print(f"output:{output} \n {cs_file}")
+   print(f"output:{output}")
    file_object = open(output, 'w',encoding='utf-8')
    file_object.write(cs_file)
    file_object.close( )

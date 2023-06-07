@@ -218,12 +218,12 @@ namespace GServer.Managers
                 }
                 else
                 {
-                    Debuger.LogError($"Nofound equip {data.InitEquip}");
+                    Debuger.LogError($"Not found equip {data.InitEquip}");
                 }
             }
             else
             {
-                Debuger.LogError($"Nofound Item {data.InitEquip}");
+                Debuger.LogError($"Not found Item {data.InitEquip}");
             }
             
             await SyncToClient(userID, player.Uuid, true, true);
