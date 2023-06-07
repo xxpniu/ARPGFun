@@ -14,5 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: cd PublicTools \ sh runbuild.sh
+    - name: Build and Run Docker image
+      run: cd PublicTools && sh runbuild.sh
+    - name: Commit
+    
