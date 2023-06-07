@@ -4,10 +4,12 @@ import "data.proto";
 import "const.proto";
 import "excelconst.proto";
 
+import "google/protobuf/any.proto";
+
 package Proto;
 
 //"google/protobuf/any.proto";
 service ServerStreamService
 {
-    rpc ServerAnyStream(Void) returns(stream google.protobuf.Any);
+    rpc ServerAnyStream(Proto.Void) returns(stream google.protobuf.Any);
 }
