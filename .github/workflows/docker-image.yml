@@ -11,12 +11,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
     steps:
     - uses: actions/checkout@v3
-      with:
-        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of the personal access token.
-        fetch-depth: 0  # otherwise, there would be errors pushing refs to the destination repository.
     - name: Build Excel And Proto
       run:  cd PublicTools && sh runbuild.sh
     - name: push
