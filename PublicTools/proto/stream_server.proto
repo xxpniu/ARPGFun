@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "data.proto";
+import "const.proto";
+import "excelconst.proto";
+
+package Proto;
+
+//"google/protobuf/any.proto";
+service ServerStreamService
+{
+    rpc ServerAnyStream(Void) returns(stream google.protobuf.Any);
+}

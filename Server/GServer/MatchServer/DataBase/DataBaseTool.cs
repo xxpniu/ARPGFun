@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
-using org.vxwo.csharp.json;
 using Proto;
 using Proto.ServerConfig;
 using XNet.Libs.Utility;

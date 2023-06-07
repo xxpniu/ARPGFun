@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
-using org.vxwo.csharp.json;
 using ServerUtility;
 using XNet.Libs.Utility;
 using Proto.ServerConfig;
@@ -38,7 +37,7 @@ namespace LoginServer
                 {
                     if (!string.IsNullOrEmpty(o.Config))
                     {
-                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, o.Config);
+                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, o.Config);
                         var json = File.ReadAllText(file, new UTF8Encoding(false));
                         config = json.TryParseMessage<LoginServerConfig>();
                     }

@@ -144,3 +144,4 @@ message MatchPlayer
 	string Name =2;
     MatchHero Hero =3;
 }
+

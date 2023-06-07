@@ -55,7 +55,7 @@ namespace GServer
                 {
                     if (!string.IsNullOrEmpty(o.Config))
                     {
-                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, o.Config);
+                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, o.Config);
                         var json = File.ReadAllText(file, new UTF8Encoding(false));
                         config = json.TryParseMessage<GateServerConfig>();
                     }

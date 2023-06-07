@@ -49,11 +49,14 @@ namespace GServer.RPCResponsor
                         var mc = new LogChannel(matchSever.ServicsHost);
                         var mQuery = await mc.CreateClientAsync<MatchServices.MatchServicesClient>();
                         await mQuery.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = id },
-                            cancellationToken:mc.ShutdownToken);
+                            cancellationToken: mc.ShutdownToken);
                         await mc.ShutdownAsync();
                     }
                 }
-                catch { }
+                catch
+                {
+                    //ignore
+                }
 
                 try
                 {

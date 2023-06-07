@@ -34,4 +34,9 @@
       <Link>.dockerignore</Link>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Xsoft.Proto">
+      <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
