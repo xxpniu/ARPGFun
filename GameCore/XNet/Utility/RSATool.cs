@@ -5,15 +5,15 @@ namespace Utility
 {
     public static class RSATool
     {
-        static public byte[] Decryption(byte[] Data, RSAParameters RSAKey, bool DoOAEPPadding)
+        public static byte[] Decryption(byte[] Data, RSAParameters RSAKey, bool DoOAEPPadding)
         {
             try
             {
                 byte[] decryptedData;
-                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                using (var rsa = new RSACryptoServiceProvider())
                 {
-                    RSA.ImportParameters(RSAKey);
-                    decryptedData = RSA.Decrypt(Data, DoOAEPPadding);
+                    rsa.ImportParameters(RSAKey);
+                    decryptedData = rsa.Decrypt(Data, DoOAEPPadding);
                     
                 }
                 return decryptedData;
@@ -25,15 +25,15 @@ namespace Utility
             }
         }
 
-        static public byte[] Encryption(byte[] Data, RSAParameters RSAKey, bool DoOAEPPadding)
+        public static byte[] Encryption(byte[] Data, RSAParameters RSAKey, bool DoOAEPPadding)
         {
             try
             {
                 byte[] encryptedData;
-                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                using (var rsa = new RSACryptoServiceProvider())
                 {
-                    RSA.ImportParameters(RSAKey);
-                    encryptedData = RSA.Encrypt(Data, DoOAEPPadding);
+                    rsa.ImportParameters(RSAKey);
+                    encryptedData = rsa.Encrypt(Data, DoOAEPPadding);
                 }
                 return encryptedData;
             }

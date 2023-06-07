@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CommandLine;
 using org.vxwo.csharp.json;
 using ServerUtility;
 using XNet.Libs.Utility;
@@ -17,39 +18,50 @@ namespace LoginServer
 {
     class Program
     {
+        public class LoginOption:CustomOption
+        {
+            [Option('r',"zkroot", Required = true)]
+            public string ZKRoot { set; get; }
+            [Option('g',"zkgate", Required = true)]
+            public string ZKGate { set; get; }
+            [Option('h',"zkchat", Required = true)]
+            public string ZKChat { set; get; }
+        }
+
         public static async Task Main(string[] args)
         {
 
-            var config = new LoginServerConfig
-            {
-                DBHost = "mongodb://127.0.0.1:27017/",
-                ServicsHost = new ServiceAddress { IpAddress = "localhost", Port = 1800 },
-                GateServersRoot = "/gate",
-                ZkServer = { "129.211.9.75:2181" },
-                DBName = "CenterAccount",
-                ListenHost = new ServiceAddress { IpAddress = "localhost", Port = 1900 },
-                Log = true,
-                LoginServerRoot = "/login",
-                KafkaServer = { "129.211.9.75:9092" }
-            };
-            if (args.Length > 0)
-            {
-                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, args[0]);
-                var json = await File.ReadAllTextAsync(file, new UTF8Encoding(false));
-                config = json.TryParseMessage<LoginServerConfig>();
-            }
+            LoginServerConfig config = new LoginServerConfig();
 
-            using var log = new DefaultLoger(config.KafkaServer, "Log", $"login_server");
+            Parser.Default.ParseArguments<LoginOption>(args)
+                .WithParsed(o =>
+                {
+                    if (!string.IsNullOrEmpty(o.Config))
+                    {
+                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, o.Config);
+                        var json = File.ReadAllText(file, new UTF8Encoding(false));
+                        config = json.TryParseMessage<LoginServerConfig>();
+                    }
+
+                    o.Kafka?.SplitInsert(config.KafkaServer);
+                    o.ZK?.SplitInsert(config.ZkServer);
+                    o.ListenHost?.SetAddress((add) => config.ListenHost = add);
+                    o.ServiceHost?.SetAddress(a => config.ServicsHost = a);
+                    o.DBHost?.Set(s => config.DBHost = s);
+                    o.DBName?.Set(s => config.DBName = s);
+                    o.ZKRoot?.Set(s => config.LoginServerRoot = s);
+                    o.ZKChat?.Set(s => config.ChatServerRoot = s);
+                    o.ZKGate?.Set(s => config.GateServersRoot = s);
+                });
+            if (config == null) return;
+
+            using var log = new DefaultLogger(config.KafkaServer, "Log", $"login_server");
             Debuger.Loger = log;
             GrpcEnvironment.SetLogger(log);
 
             NetProtoTool.EnableLog = config.Log;
             Debuger.Log(config);
-
-            var app = Appliaction.S;
-            await app.Start(config);
-            await app.Tick();
-            await app.Stop();
+            await Application.S.Create(config).Run();
             await GrpcEnvironment.ShutdownChannelsAsync();
             Debuger.Log("Application had exited!");
         }

@@ -15,7 +15,7 @@ namespace XNet.Libs.Utility
             return GetMd5Hash(Encoding.UTF8.GetBytes(input));
         }
 
-        private static string GetMd5Hash(byte[] input, bool upperCase = false)
+        public static string GetMd5Hash(byte[] input, bool upperCase = false)
         {
             MD5 md5Hash = MD5.Create();
             byte[] data = md5Hash.ComputeHash(input);

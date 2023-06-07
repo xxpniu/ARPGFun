@@ -55,6 +55,7 @@ message Action_ClickSkillIndex
 	 Vector3 Rotation = 3;
 	 Vector3 Position =4;
 }
+
 //自动寻敌
 message Action_AutoFindTarget
 {
@@ -108,7 +109,7 @@ message Notify_CreateReleaser
 	string MagicKey=4;
 	Vector3 Position = 5;
 	ReleaserModeType RMType = 6;
-	Vector3 OPostion = 7; //释放者当前位置
+	Vector3 OPosition = 7; //释放者当前位置
 	Vector3 ORotation =8;//释放者当前朝向
 }
 
@@ -271,6 +272,7 @@ message Notify_CharacterPush
 	Vector3 Length =2;
 	Vector3 Speed =3;
 	Vector3 StartPos= 4;
+	bool FrozenForward = 5;
 }
 
 message Notify_CharacterRelive

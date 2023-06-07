@@ -1,7 +1,5 @@
 ﻿using XNet.Libs.Utility;
 using ServerUtility;
-using MongoTool;
-using RPCResponsers;
 using Grpc.Core;
 using System.Threading.Tasks;
 using Proto.ServerConfig;
@@ -12,30 +10,33 @@ using System.Collections.Concurrent;
 using System;
 using Utility;
 using System.Linq;
+using System.Threading;
+using LoginServer.MongoTool;
+using LoginServer.RPCResponser;
 
 namespace LoginServer
 {
-    public class Appliaction:XSingleton<Appliaction>
+    public class Application:ServerApp<Application>
     {
   
-        public  LoginServerConfig Config { get; private set; }
+        private  LoginServerConfig Config { get;  set; }
         private ZooKeeper zk;
         private LogServer Server;
         private LogServer ServiceServer;
         private WatcherServer<int, GateServerConfig> GateWatcher;
         private WatcherServer<int, ChatServerConfig> ChatWatcher;
 
-        public volatile bool IsRunning = false;
-
-        public async Task Start(LoginServerConfig con)
+        public Application Create(LoginServerConfig con)
         {
-            if (IsRunning) return;
+            Config = con;
+            return this;
+        }
 
-            this.Config = con;
+        protected override async Task Start(CancellationToken token)
+        {
             NetProtoTool.EnableLog = Config.Log;
 
-            IsRunning = true;
-
+   
             
             Debuger.Log($"Start Login server");
 
@@ -50,14 +51,15 @@ namespace LoginServer
 
             Server.Start();
 
-            Debuger.Log($"Start Logininner server");
+            Debuger.Log($"Start Login server");
             ServiceServer = new LogServer
             {
                 Ports = { new ServerPort("0.0.0.0", Config.ServicsHost.Port, ServerCredentials.Insecure) }
-            }.BindServices(Proto.LoginBattleGameServerService.BindService(new LoginBattleGameServerService()));
+            }.BindServices(
+                Proto.LoginBattleGameServerService.BindService(new LoginBattleGameServerService()));
 
             ServiceServer.Start();
-            await DataBase.S.Init(Config.DBHost, Config.DBName);
+            await DataBase.S.Init(Config.DBHost, Config.DBName,token:token);
             Debuger.Log($"Init db server");
             zk = new ZooKeeper(Config.ZkServer[0], 3000, new DefaultWatcher());
             if ((await zk.existsAsync(Config.LoginServerRoot)) == null )
@@ -79,7 +81,6 @@ namespace LoginServer
             }
             else
             {
-                this.IsRunning = false;
                 return;
             }
 
@@ -88,6 +89,7 @@ namespace LoginServer
                 (s)=>s.ServerID).RefreshData();
             this.ChatWatcher = await new WatcherServer<int, ChatServerConfig>(zk,
                 Config.ChatServerRoot, (s) => s.ChatServerID).RefreshData();
+    
         }
 
         public GateServerConfig FindFreeGateServer()
@@ -96,28 +98,18 @@ namespace LoginServer
             return GRandomer.RandomList(free);
         }
 
-        public GateServerConfig FindGateServer(int serverid)
+        public GateServerConfig FindGateServer(int serverId)
         {
-            return GateWatcher.Find(serverid);
+            return GateWatcher.Find(serverId);
         }
 
-        public async Task Stop()
+        protected override async Task Stop(CancellationToken token)
         {
-            if (!IsRunning) return;
-           
-            IsRunning = false;
             await ServiceServer.ShutdownAsync();
             await Server.ShutdownAsync();
             await zk.closeAsync();
         }
-
-        public async Task Tick()
-        {
-            while (IsRunning)
-            {
-                await Task.Delay(100);
-            }
-        }
+        
 
         public ChatServerConfig FindFreeChatServer()
         {

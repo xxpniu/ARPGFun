@@ -1,0 +1,95 @@
+version: '3'
+
+services: 
+    zookeeper:
+        image: 'zookeeper'
+        ports:
+            - '2181:2181'
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+    kafka:
+        image: 'bitnami/kafka'
+        ports:
+            - '9092:9092'
+        environment:
+            - KAFKA_BROKER_ID=1
+            - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+            - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=${ADDRESS}:2181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+        depends_on:
+            - zookeeper
+    gamemongodb:
+        image: 'mongo' 
+        ports:
+            - "27017:27017"  
+    login:
+        image: 'game/login:lastest'
+        ports: 
+            - '9000:9000'
+            - '1800:1800'
+        environment: 
+            - DBHOST=mongodb://${ADDRESS}:27017/
+            - MAP_LOGIN_SERVICE_PORT=1800
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+        depends_on: 
+            - zookeeper    
+            - gamemongodb
+    gate:
+        image: 'game/gate:lastest'
+        ports:
+            - '2001:2001'
+            - '1700:1700'
+        environment:
+            - DBHOST=mongodb://${ADDRESS}:27017/
+            - DB_GATE=gate1
+            - SERVERGROUPID=1
+            - MAXPLAYER=10000
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+        depends_on:
+            - zookeeper
+            - gamemongodb
+    notify:
+        image: 'game/notify:lastest'
+        ports: 
+            - '1300:1300'
+        environment: 
+            - DBHOST=mongodb://${ADDRESS}:27017/   
+            - DB_CHAT=chat
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+        depends_on: 
+            - gamemongodb
+            - zookeeper
+    chat:
+        image: 'game/chat:lastest'
+        ports:  
+            - '2200:2200'
+            - '1522:1522'
+        environment: 
+            - DBHOST=mongodb://${ADDRESS}:27017/
+            - DB_CHAT=chat
+            - MAX_PLAYER=4000
+            - SERVERID=1000
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+        depends_on: 
+            - zookeeper
+            - gamemongodb
+            - notify 
+    match:
+        image: 'game/match:lastest'
+        ports: 
+            - '1500:1500'
+        environment: 
+            - DBHOST=mongodb://${ADDRESS}:27017/  
+            - DB_MATCH=match
+            - SERVICE_HOST=${ADDRESS} 
+            - HOST_NAME=${ADDRESS}
+        depends_on: 
+            - zookeeper
+            - gamemongodb
+   
+

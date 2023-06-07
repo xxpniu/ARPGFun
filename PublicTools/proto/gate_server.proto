@@ -274,6 +274,17 @@ message G2C_ActiveMagic
 	 ErrorCode Code =1;
 }
 
+message C2G_TalentActive
+{
+	int32 MagicId = 1;
+}
+
+message G2C_TalentActive
+{
+	 ErrorCode Code =1;
+}
+
+
 message L2G_KillUser
 {
 	string uuid =1;
@@ -371,6 +382,7 @@ service GateServerService
 	rpc InviteJoinMatch(C2G_InviteJoinMatch	) returns (G2C_InviteJoinMatch);
 	rpc LeaveMatchGroup (C2G_LeaveMatchGroup) returns (G2C_LeaveMatchGroup);
 	rpc ReloadMatchState (C2G_ReloadMatchState) returns (G2C_ReloadMatchState);
+	rpc TalentActive (C2G_TalentActive) returns (G2C_TalentActive);
 }
 
 service GateServerInnerService

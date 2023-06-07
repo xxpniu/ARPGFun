@@ -47,7 +47,7 @@ enum HeroPropertyType
 	CrtDamageRate = 7;//暴击伤害倍数 万分比
 	MoveSpeed = 8;//移动速度 cm/s
 	AttackSpeed = 9 ; //攻击速度 次数秒 * 1000 
-	CastSpeed = 10;//释法速度 毫秒
+	CastSpeed = 10;//释法速度 Cd 时间减免比例 万分比
 	HitBack = 11;//攻击击退  cm
 	HitImmob = 12;//攻击硬直 毫秒
 	HitBurn= 13;//攻击燃烧
@@ -58,6 +58,9 @@ enum HeroPropertyType
 	VsElite =18;//精英 伤害加成 万分比
 	Hit = 19;//命中
 	ViewDistance =20;//视野范围
+	AmplifyDamageRate = 21 ;//伤害加深 万分比
+	MpCostReductionRate= 22;//mp消耗减免比例 万分比
+	AmplifyBeCrtRate = 23;//加深被暴击的比例 万分比
 }
 
  //行为锁
@@ -69,6 +72,11 @@ enum ActionLockType
 	NO_ATTACK = 4;//禁止攻击
 	NO_INHIDEN =8 ;//隐形 invisible
 	NO_Ai=16;//无ai
+	NO_HitBack = 32;//不能被击退
+	NO_CalDefance = 64;//不计算防御的
+	NO_InBuff = 128;//无增益效果
+	NO_DeBuff = 256;//无减益效果
+	NO_Damage = 512;//无伤害，伤害免疫
 }
 
 enum ItemType
@@ -147,4 +155,28 @@ enum MapLevelElementType
 	MLET_Transport = 1;//传送点
 	MLET_DropGroupElement =2;//掉落组物体
 	MLET_ChestBox =3;//宝箱
+}
+
+enum  GameBuffType 
+{
+   GBT_None =0 ;
+   GBT_InBuff = 1; //增益buff 
+   GBT_DeBuff = 2;  //减益 buff
+   GBT_Normal = 3; //一般
+}
+
+enum GameBuffOvrrideType 
+{
+    GBOT_None = 0;
+    GBOT_AddDuration = 1; //添加持续时间
+	GBOT_Reset = 2;  //重制时间
+	GBOT_Ignore = 3; //无法覆盖，后续buff丢弃
+}
+
+enum TalentReleaseType
+{
+    TRT_Node = 0; 
+    TRT_GameStart = 1;  //游戏启动的时候
+	TRT_BeHurt = 2;   //被攻击
+	TRT_OnAttack = 3;   //攻击时候
 }

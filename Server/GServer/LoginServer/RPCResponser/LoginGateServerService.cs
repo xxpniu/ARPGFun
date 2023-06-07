@@ -1,22 +1,17 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Grpc.Core;
-using LoginServer;
-using MongoDB.Driver;
-using MongoTool;
+using LoginServer.MongoTool;
 using Proto;
-using Proto.MongoDB;
-using Utility;
 
-namespace RPCResponsers
+namespace LoginServer.RPCResponser
 {
    
     public class LoginBattleGameServerService :  Proto.LoginBattleGameServerService.LoginBattleGameServerServiceBase
     {
         public override async Task<L2S_CheckSession> CheckSession(S2L_CheckSession req, ServerCallContext context)
         {
-            if (!DataBase.S.GetSessionInfo(req.UserID, out UserSessionInfoEntity info)) return new L2S_CheckSession();
-            var gate = Appliaction.S.FindGateServer(info.GateServerId);
+            if (!DataBase.S.GetSessionInfo(req.UserID, out var info)) return new L2S_CheckSession();
+            var gate = Application.S.FindGateServer(info.GateServerId);
             if (gate != null) {
                 return await Task.FromResult(new L2S_CheckSession
                 {

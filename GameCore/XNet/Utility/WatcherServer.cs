@@ -7,6 +7,7 @@ using System.Text;
 using XNet.Libs.Utility;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 namespace Utility
 {
@@ -18,20 +19,22 @@ namespace Utility
         }
     }
 
-    public class WatcherServer<Key, TServer> : IEnumerable<TServer>
+    public class WatcherServer<TKey, TServer> : IEnumerable<TServer>
         where TServer : IMessage, new()
     {
-        public class ZKWatcher : Watcher
+        
+        public delegate void WatchChanged(TServer[] old, TServer[] newList);
+        private class ZkWatcher : Watcher
         {
 
-            public ZKWatcher(WatcherServer<Key, TServer> server)
+            public ZkWatcher(WatcherServer<TKey, TServer> server)
             {
-                this.WatherServer = server;
+                _watcherServer = server;
             }
 
-            private readonly WatcherServer<Key, TServer> WatherServer;
+            private readonly WatcherServer<TKey, TServer> _watcherServer;
 
-            public async override Task process(WatchedEvent @event)
+            public override async Task process(WatchedEvent @event)
             {
                 if (@event == null) return;
                 switch (@event.get_Type())
@@ -39,59 +42,77 @@ namespace Utility
                     case Event.EventType.NodeChildrenChanged:
                     case Event.EventType.NodeCreated:
                     case Event.EventType.NodeDeleted:
-                        await WatherServer.RefreshData();
+                        await _watcherServer.RefreshData();
                         break;
                 }
             }
         }
 
-        private readonly Func<TServer, Key> KeyHandler;
-        private readonly ZKWatcher watcher;
+        private readonly Func<TServer, TKey> _keyHandler;
+        private readonly ZkWatcher _watcher;
 
-        public ZooKeeper ZK { get; }
-        public string Root { get; }
+        private ZooKeeper Zk { get; }
+        private string Root { get; }
 
-        public WatcherServer(ZooKeeper zk, string root, Func<TServer, Key> handler)
+        public WatcherServer(ZooKeeper zk, string root, Func<TServer, TKey> handler, bool autoGen = true)
         {
-            watcher = new ZKWatcher(this);
-            this.ZK = zk;
-            this.Root = root;
-            this.KeyHandler = handler;
+            AutoGen = autoGen;
+            _watcher = new ZkWatcher(this);
+            Zk = zk;
+            Root = root;
+            _keyHandler = handler;
         }
 
-        readonly ConcurrentDictionary<Key, TServer> ServerConfigs = new ConcurrentDictionary<Key, TServer>();
+        private bool AutoGen { get; }
+
+        private readonly ConcurrentDictionary<TKey, TServer> _serverConfigs = new ConcurrentDictionary<TKey, TServer>();
 
         private async Task<bool> LoadServerAsync(string path)
         {
-            var node = await ZK.getDataAsync(path).ConfigureAwait(false);
+            var node = await Zk.getDataAsync(path).ConfigureAwait(false);
             var json = Encoding.UTF8.GetString(node.Data);
             var server = json.TryParseMessage<TServer>();
-            var key = KeyHandler(server);
-            ServerConfigs.AddOrUpdate(key, server, (k, v) => server);
+            var key = _keyHandler(server);
+            _serverConfigs.AddOrUpdate(key, server, (k, v) => server);
             return true;
         }
 
-        public TServer Find(Key key)
+        public TServer Find(TKey key)
         {
-            if (ServerConfigs.TryGetValue(key, out TServer server))
-            {
-                return server;
-            }
-            return default;
+            return _serverConfigs.TryGetValue(key, out var server) ? server : default;
         }
 
         public async Task ForEach(Func<TServer, Task<bool>> each)
         {
-            foreach (var i in this.ServerConfigs)
+            foreach (var i in this._serverConfigs)
             {
                 if (await each(i.Value)) break;
             }
         }
 
-        public async Task<WatcherServer<Key, TServer>> RefreshData()
+        public async Task<WatcherServer<TKey, TServer>> RefreshData()
         {
-            var childs = await ZK.getChildrenAsync(Root, watcher);
-            foreach (var i in childs.Children)
+            Debuger.Log($"Watcher Refresh Data:{Root} ");
+
+            var s = await Zk.existsAsync(Root);
+            if (s == null)
+            {
+                if (AutoGen)
+                {
+                    await Zk.createAsync(Root, new byte[] {0}, ZooDefs.Ids.OPEN_ACL_UNSAFE,
+                        CreateMode.PERSISTENT);
+                }
+                else
+                {
+                    Debuger.LogError($"Not found :{Root}");
+                    return this;
+                }
+            }
+
+            var old = _serverConfigs.Values.ToArray();
+
+            var children = await Zk.getChildrenAsync(Root, _watcher);
+            foreach (var i in children.Children)
             {
                 var path = $"{Root}/{i}";
                 Debuger.Log($"Load:{path}");
@@ -99,12 +120,15 @@ namespace Utility
             }
 
             OnRefreshed?.Invoke();
+            var newList = _serverConfigs.Values.ToArray();
+            
+            OnChanged?.Invoke(old,newList);
             return this;
         }
 
         public IEnumerator<TServer> GetEnumerator()
         {
-            return this.ServerConfigs.Values.GetEnumerator();
+            return this._serverConfigs.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -113,5 +137,6 @@ namespace Utility
         }
 
         public Action OnRefreshed;
+        public WatchChanged OnChanged;
     }
 }

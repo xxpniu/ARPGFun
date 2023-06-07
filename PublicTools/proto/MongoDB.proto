@@ -25,6 +25,13 @@ message DBHeroMagic
     bool actived = 3;
 }
 
+message DBHeroTalent 
+{
+    int32 level = 1;
+    int32 exp = 2;
+    bool activied=3;
+}
+
 //用户当前的服务器信息
 message UserSessionInfoEntity
 {

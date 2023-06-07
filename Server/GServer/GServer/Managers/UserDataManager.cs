@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
-using GateServer;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using GServer.MongoTool;
+using GServer.Utility;
 using MongoDB.Driver;
 using Proto;
 using Proto.MongoDB;
 using ServerUtility;
 using XNet.Libs.Utility;
-using static GateServer.DataBase;
+using static GServer.MongoTool.DataBase;
 using static Proto.ItemsShop.Types;
 
 namespace GServer.Managers
@@ -40,9 +42,9 @@ namespace GServer.Managers
             return await FindHeroByPlayerId(player.Uuid);
         }
 
-        public async Task<string> ProcessBattleReward(string accountUuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> RemoveItems, int exp, int level, int gold,int hp, int mp)
+        public async Task<string> ProcessBattleReward(string account_uuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> RemoveItems, int exp, int level, int gold,int hp, int mp)
         {
-            var player = await FindPlayerByAccountId(accountUuid);
+            var player = await FindPlayerByAccountId(account_uuid);
             if (player == null) return null;
             var pupdate = Builders<GamePlayerEntity>.Update.Inc(t =>t.Gold, gold);
             await DataBase.S.Playes.UpdateOneAsync(t => t.Uuid== player.Uuid, pupdate);
@@ -65,10 +67,9 @@ namespace GServer.Managers
             GamePlayerEntity player;
             if (string.IsNullOrEmpty(playerUuid))
             {
-                 player = await FindPlayerByAccountId(accountId);
+                player = await FindPlayerByAccountId(accountId);
                 if (player == null) return false;
                 playerUuid = player.Uuid;
-
             }
             else
             {
@@ -89,15 +90,13 @@ namespace GServer.Managers
 
             }
 
-            if (syncPlayer)
+            if (!syncPlayer) return true;
+            var h = (await FindHeroByPlayerId(playerUuid)).ToDHero(p);
+            var hTask = new Task_G2C_SyncHero
             {
-                var h = (await FindHeroByPlayerId(playerUuid)).ToDhero(p);
-                var hTask = new Task_G2C_SyncHero
-                {
-                    Hero = h
-                };
-                Application.S.StreamService.Push(accountId, hTask);
-            }
+                Hero = h
+            };
+            Application.S.StreamService.Push(accountId, hTask);
 
             return true;
         }
@@ -137,7 +136,7 @@ namespace GServer.Managers
             };
         }
 
-        public async Task<GamePlayerEntity> FindPlayerById(string player_uuid)
+        private async Task<GamePlayerEntity> FindPlayerById(string player_uuid)
         {
             var filter = Builders<GamePlayerEntity>.Filter.Eq(t => t.Uuid, player_uuid);
             var query = await DataBase.S.Playes.FindAsync(filter);
@@ -166,8 +165,8 @@ namespace GServer.Managers
             var character = ExcelToJSONConfigManager.First<CharacterPlayerData>(t => t.CharacterID == heroID);
             if (character == null) return new G2C_CreateHero { Code = ErrorCode.NoHeroInfo };
 
-            var fiter = Builders<GamePlayerEntity>.Filter.Eq(t => t.AccountUuid, userID);
-            var fiterHero = Builders<GameHeroEntity>.Filter.Eq(t => t.HeroName, heroName);
+            Builders<GamePlayerEntity>.Filter.Eq(t => t.AccountUuid, userID);
+            Builders<GameHeroEntity>.Filter.Eq(t => t.HeroName, heroName);
             if(
                /*user create*/ (await DataBase.S.Playes.FindAsync(Builders<GamePlayerEntity>.Filter.Eq(t => t.AccountUuid, userID))).Any() ||
                /*hero name  */ (await DataBase.S.Heros.FindAsync(Builders<GameHeroEntity>.Filter.Eq(t => t.HeroName, heroName))).Any()
@@ -214,16 +213,16 @@ namespace GServer.Managers
                 var equip =  ExcelToJSONConfigManager.GetId<EquipmentData>(data.InitEquip);
                 if (equip != null)
                 {
-                    await OperatorEquip(player.Uuid, add.FirstOrDefault()!.Uuid, (EquipmentType)equip.PartType, true);
+                    await OperatorEquip(player.Uuid, add.FirstOrDefault().Uuid, (EquipmentType)equip.PartType, true);
                 }
                 else
                 {
-                    Debuger.LogError($"Not found equip {data.InitEquip}");
+                    Debuger.LogError($"Nofound equip {data.InitEquip}");
                 }
             }
             else
             {
-                Debuger.LogError($"Not found Item {data.InitEquip}");
+                Debuger.LogError($"Nofound Item {data.InitEquip}");
             }
             
             await SyncToClient(userID, player.Uuid, true, true);
@@ -339,19 +338,19 @@ namespace GServer.Managers
             return await Task.FromResult( Application.S.StreamService.Push(accountId, task));
         }
 
-        internal async Task<G2C_BuyGold> BuyGold( string accountUuid, int shopId)
+        internal async Task<G2C_BuyGold> BuyGold(string accountUuid, int shopId)
         {
-            var item =  ExcelToJSONConfigManager.GetId<GoldShopData>(shopId);
-            if (item == null) return new G2C_BuyGold { Code = ErrorCode.NofoundItem };
+            var item = ExcelToJSONConfigManager.GetId<GoldShopData>(shopId);
+            if (item == null) return new G2C_BuyGold {Code = ErrorCode.NofoundItem};
             var player = await FindPlayerByAccountId(accountUuid);
-            if (player.Coin < item.Prices) return new G2C_BuyGold { Code = ErrorCode.NoEnoughtCoin };
+            if (player.Coin < item.Prices) return new G2C_BuyGold {Code = ErrorCode.NoEnoughtCoin};
 
             var update = Builders<GamePlayerEntity>.Update
-                .Inc(t => t.Coin, - item.Prices)
-                .Inc(t => t.Gold,  item.ReceiveGold);
-            await DataBase.S.Playes.FindOneAndUpdateAsync(t=>t.Uuid == player.Uuid, update);
+                .Inc(t => t.Coin, -item.Prices)
+                .Inc(t => t.Gold, item.ReceiveGold);
+            await DataBase.S.Playes.FindOneAndUpdateAsync(t => t.Uuid == player.Uuid, update);
 
-           await  SyncCoinAndGold(accountUuid, player.Coin - item.Prices, player.Gold + item.ReceiveGold);
+            await SyncCoinAndGold(accountUuid, player.Coin - item.Prices, player.Gold + item.ReceiveGold);
 
             return new G2C_BuyGold
             {
@@ -361,14 +360,14 @@ namespace GServer.Managers
                 ReceivedGold = item.ReceiveGold
             };
         }
-        
-        internal async Task<G2C_ActiveMagic> ActiveMadic( string accountUuid, int magicId)
+
+        internal async Task<G2C_ActiveMagic> ActiveMagic( string accountUuid, int magicId)
         {
             var player = await FindPlayerByAccountId(accountUuid);
             var hero = await FindHeroByPlayerId(player.Uuid);
             var config =  ExcelToJSONConfigManager.GetId<CharacterMagicData>(magicId);
             if (config.CharacterID != hero.HeroId) return new G2C_ActiveMagic { Code = ErrorCode.Error };
-            if (!hero.Magics.TryGetValue(magicId, out DBHeroMagic magic))
+            if (!hero.Magics.TryGetValue(magicId, out var magic))
             {
                 magic = new DBHeroMagic { Actived = true, Exp = 0, Level = 1 };
                 hero.Magics.Add(magicId, magic);
@@ -397,10 +396,8 @@ namespace GServer.Managers
             if (levelConfig.NeedLevel > hero.Level) return new G2C_MagicLevelUp { Code = ErrorCode.NeedHeroLevel };
             if (levelConfig.NeedGold > player.Gold) return new G2C_MagicLevelUp { Code = ErrorCode.NoEnoughtGold };
 
-           
-            var models = new List<WriteModel<GameHeroEntity>>();
-
-            if (!hero.Magics.TryGetValue(magicId, out DBHeroMagic magic))
+            
+            if (!hero.Magics.TryGetValue(magicId, out var magic))
             {
                 return new G2C_MagicLevelUp { Code = ErrorCode.MagicNoActicted };
             }
@@ -583,7 +580,7 @@ namespace GServer.Managers
             var pa_filter = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, player_uuid);
             var package = (await DataBase.S.Packages.FindAsync(pa_filter)).Single();
 
-            if (!package.TryGetItem(equip_uuid, out PackageItem item)) return false;
+            if (!package.TryGetItem(equip_uuid, out var item)) return false;
 
             var config =  ExcelToJSONConfigManager.GetId<ItemData>(item.Id);
             if (config == null) return false;
@@ -743,7 +740,7 @@ namespace GServer.Managers
             var player = await FindPlayerByAccountId(accountId);
             var package = await FindPackageByPlayerID(player.Uuid);
 
-            if (!package.TryGetItem(equipUuid, out PackageItem equip)) return new G2C_RefreshEquip { Code = ErrorCode.NofoundItem };
+            if (!package.TryGetItem(equipUuid, out var equip)) return new G2C_RefreshEquip { Code = ErrorCode.NofoundItem };
 
             var config =  ExcelToJSONConfigManager.GetId<ItemData>(equip.Id);
             if (config == null) return new G2C_RefreshEquip { Code = ErrorCode.Error };
@@ -793,6 +790,7 @@ namespace GServer.Managers
                 var selected = GRandomer.RandomList(values.Keys.ToList());
                 var val =  ExcelToJSONConfigManager.GetId<RefreshPropertyValueData>((int)selected);
                 var appendValue = val.Value * property;
+                //Debug.Assert(equip.EquipData != null, "equip.EquipData != null");
                 if (equip.EquipData.Properties.ContainsKey(selected))
                 {
                     equip.EquipData.Properties[selected] += appendValue;
@@ -831,6 +829,66 @@ namespace GServer.Managers
             await SyncCoinAndGold(accountId, player.Coin, player.Gold - refreshData.CostGold);
             await SyncModifyItems(accountId, new[] { equip.ToPlayerItem() }, removes.Select(t => t.ToPlayerItem()).ToArray());
             return new G2C_RefreshEquip { Code = ErrorCode.Ok };
+        }
+
+        public async Task<G2C_TalentActive> ActiveTalent(int talentId, string accountId)
+        {
+            var player = await FindHeroByAccountId(accountId);
+            var hero = await FindHeroByPlayerId(player.Uuid);
+            var config = ExcelToJSONConfigManager.GetId<TalentData>(talentId);
+            var ids = config.NeedTalentID.SplitToInt();
+            foreach (var id in ids)
+            {
+                if (id <= 0) continue;
+                if (!hero.Talents.ContainsKey(id))
+                {
+                    return new G2C_TalentActive
+                    {
+                        Code = ErrorCode.NoActiveNeedTp
+                    };
+                }
+            }
+            
+            if (hero.TalentPoint < config.TpCost)
+            {
+                return new G2C_TalentActive
+                {
+                    Code = ErrorCode.NoenoughTp
+                };
+            }
+            
+            hero.Talents.Add(config.ID,new DBHeroTalent
+            {
+                Activied =  true,
+                Exp =  0, Level = 0
+            });
+            
+
+            var update = Builders<GameHeroEntity>.Update;
+            var inc = update
+                .Inc(t => t.TalentPoint, -config.TpCost)
+                .Set(h=>h.Talents,hero.Talents);
+            //need todo 
+            var doc = await DataBase.S.Heros.FindOneAndUpdateAsync(
+                h => h.Uuid == hero.Uuid && h.TalentPoint == hero.TalentPoint,
+                inc);
+
+            return new G2C_TalentActive
+            {
+                Code = ErrorCode.Ok
+            };
+        }
+
+        public async Task<bool> AddTalentPoint(string playerUuid, int tp)
+        {
+            var hero = await FindHeroByPlayerId(playerUuid);
+            var update = Builders<GameHeroEntity>.Update;
+            var inc = update
+                .Inc(t => t.TalentPoint, tp);
+            var doc = await DataBase.S.Heros.FindOneAndUpdateAsync(
+                h => h.Uuid == hero.Uuid,
+                inc);
+            return doc != null;
         }
     }
 }

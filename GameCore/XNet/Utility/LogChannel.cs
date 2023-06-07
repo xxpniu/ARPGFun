@@ -96,8 +96,8 @@ namespace Utility
                 context = new ClientInterceptorContext<TRequest, TResponse>(context.Method, context.Host, options);
             }
             var time = $"{DateTime.Now.Ticks}{Channel.Token}";
-            headers.Add("caller-user", Environment.UserName);
-            headers.Add("caller-machine", Environment.MachineName);
+            //headers.Add("caller-user", Environment.UserName);
+            //headers.Add("caller-machine", Environment.MachineName);
             headers.Add("caller-os", Environment.OSVersion.ToString());
             headers.Add("call-key", Md5Tool.GetTokenKey(time));
             headers.Add("call-token", time);
@@ -113,10 +113,13 @@ namespace Utility
 
         public LogChannel(ServiceAddress address) : this($"{address.IpAddress}:{address.Port}", ChannelCredentials.Insecure)
         { }
+        
+        
 
         public LogChannel(string target, ChannelCredentials credentials) : base(target, credentials)
         {
-
+            Debuger.Log($"LogChannel:{target}");
+            
         }
 
         private CallInvoker CreateLogCallInvoker()
@@ -124,9 +127,19 @@ namespace Utility
             return this.Intercept(new ClientLoggerInterceptor(this));
         }
 
+        public async Task<T> CreateClientAsync<T>(DateTime? deadline = default) where T : ClientBase
+        {
+            if (deadline == null) deadline = DateTime.UtcNow.AddSeconds(10);
+            await this.ConnectAsync(deadline);
+
+            return CreateClient<T>();
+        }
+
         public T CreateClient<T>() where T : ClientBase
         {
-            return System.Activator.CreateInstance(typeof(T),this.CreateLogCallInvoker()) as T;
+            return  Activator.CreateInstance(typeof(T), this.CreateLogCallInvoker()) as T;
         }
+
+
     }
 }

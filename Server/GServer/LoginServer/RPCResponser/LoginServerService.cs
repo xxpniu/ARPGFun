@@ -1,16 +1,14 @@
 ﻿using System;
-using Proto;
-using Proto.MongoDB;
-using LoginServer;
-using MongoDB.Driver;
-using MongoTool;
-using XNet.Libs.Utility;
 using System.Threading.Tasks;
 using Grpc.Core;
-using System.Diagnostics;
+using LoginServer.MongoTool;
+using MongoDB.Driver;
+using Proto;
+using Proto.MongoDB;
 using Utility;
+using XNet.Libs.Utility;
 
-namespace RPCResponsers
+namespace LoginServer.RPCResponser
 {
     /// <summary>
     /// Login server handle client request
@@ -30,13 +28,13 @@ namespace RPCResponsers
             if (user == null) return new L2C_Login { Code = ErrorCode.NofoundUserAccount };
             if (user.Password != pwd) return new L2C_Login { Code = ErrorCode.LoginFailure };
 
-            if (DataBase.S.GetSessionInfo(user.Uuid, out UserSessionInfoEntity info))
+            if (DataBase.S.GetSessionInfo(user.Uuid, out var info))
             {
                 try
                 {
-                    var s = Appliaction.S.FindGateServer(info.GateServerId);
+                    var s = Application.S.FindGateServer(info.GateServerId);
                     var channel = new LogChannel($"{s.ServicsHost.IpAddress}:{s.ServicsHost.Port}", ChannelCredentials.Insecure);
-                    var client = channel.CreateClient<GateServerInnerService.GateServerInnerServiceClient>();
+                    var client = await channel.CreateClientAsync<GateServerInnerService.GateServerInnerServiceClient>();
                     await client.KillUserAsync(new L2G_KillUser { Uuid = user.Uuid });
                     await channel.ConnectAsync();
                 }
@@ -51,7 +49,7 @@ namespace RPCResponsers
             await DataBase.S.Session.DeleteManyAsync(s_filter);
 
             Debuger.Log($"Server:{user.ServerID}");
-            var gate = Appliaction.S.FindGateServer(user.ServerID);
+            var gate = Application.S.FindGateServer(user.ServerID);
             if (gate == null)  return new L2C_Login { Code = ErrorCode.NofoundServerId };
 
             //创建session
@@ -61,11 +59,11 @@ namespace RPCResponsers
                 .Set(u => u.LastLoginTime, DateTime.Now)
                 .Set(t => t.LoginCount, user.LoginCount);
 
-            var upFilter = Builders<AccountEntity>.Filter.Eq(t => t.Uuid, user.Uuid);
-            await users.UpdateOneAsync(upFilter, update);
+            var upfilter = Builders<AccountEntity>.Filter.Eq(t => t.Uuid, user.Uuid);
+            await users.UpdateOneAsync(upfilter, update);
 
 
-            var chat = Appliaction.S.FindFreeChatServer();
+            var chat = Application.S.FindFreeChatServer();
             GameServerInfo chats = null;
             if (chat != null)
             {
@@ -96,7 +94,7 @@ namespace RPCResponsers
             };
         }
 
-        private string SaveSession(string uuid,int gateServer)
+        private static string SaveSession(string uuid,int gateServer)
         {
             var session = Md5Tool.GetMd5Hash(DateTime.UtcNow.Ticks.ToString());
             var us = new UserSessionInfoEntity
@@ -122,7 +120,7 @@ namespace RPCResponsers
             var users = DataBase.S.Account;
             var filter = Builders<AccountEntity>.Filter.Eq(t=>t.UserName, request.UserName);
             if (await (await users.FindAsync(filter)).AnyAsync()) return new L2C_Reg{Code = ErrorCode.RegExistUserName };
-            var data = Appliaction.S.FindFreeGateServer();
+            var data = Application.S.FindFreeGateServer();
             if (data == null) return new L2C_Reg() { Code = ErrorCode.NoFreeGateServer };
             var serverID = data.ServerID;
             var pwd = Md5Tool.GetMd5Hash(request.Password);
@@ -139,7 +137,7 @@ namespace RPCResponsers
             await users.InsertOneAsync(acc);
             var session = SaveSession(acc.Uuid, acc.ServerID);
 
-            var chat = Appliaction.S.FindFreeChatServer();
+            var chat = Application.S.FindFreeChatServer();
             GameServerInfo chats = null;
             if (chat != null)
             {

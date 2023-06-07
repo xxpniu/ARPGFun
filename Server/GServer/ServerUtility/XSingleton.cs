@@ -7,16 +7,22 @@ namespace ServerUtility
 
         private class InnerClass
         {
-            public static T Inst = new T();
+            public static T inst = new T();
             internal static void Reset()
             {
-                Inst = new T();
+                inst = new T();
             }
         }
 
-        private static T Singleton => InnerClass.Inst;
+        public static T Singleton
+        {
+            get
+            {
+                return InnerClass.inst;
+            }
+        }
 
-        public static T S => Singleton;
+        public static T S { get { return Singleton; } }
 
         public static void ResetSingle()
         {

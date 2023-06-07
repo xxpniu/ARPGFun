@@ -1,0 +1,1 @@
+dotnet GateServer.dll --l $HOST_NAME:$MAP_GATE_PORT --s $SERVICE_HOST:$MAP_GATE_SERVICE_PORT --d $DBHOST --n $DB_GATE --z $ZK_SERVER_LIST --k $KFK_SERVER_LIST --serverid $SERVERGROUPID --zklogin $ZKLOINGROOT --zkroot $ZKROOT --zknotify $ZKNOTIFYROOT --zkmatch $ZKMATCHROOT --zkeconfig $ZKCONFIG --maxplayer $MAXPLAYER --gm $GMENABLE

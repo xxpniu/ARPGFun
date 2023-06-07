@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
 using EConfig;
-using Grpc.Core;
 using Proto;
-using Proto.MongoDB;
-using static GateServer.DataBase;
+using static GServer.MongoTool.DataBase;
 using static Proto.ItemsShop.Types;
 
-namespace GateServer
+namespace GServer.Utility
 {
     public static class ProtoExtends
     {
-        public static DHero ToDhero(this GameHeroEntity entity, GamePackageEntity package)
+        public static DHero ToDHero(this GameHeroEntity entity, GamePackageEntity package)
         {
             var h = new DHero
             {
@@ -19,13 +17,27 @@ namespace GateServer
                 Level = entity.Level,
                 Name = entity.HeroName,
                 HP = entity.HP,
-                MP = entity.MP
+                MP = entity.MP,
+                TalentPoint =  entity.TalentPoint
             };
 
 
             foreach (var i in entity.Magics)
             {
-                h.Magics.Add(new HeroMagic { MagicKey = i.Key, Level = i.Value.Level });
+                h.Magics.Add(new HeroMagic
+                {
+                    MagicKey = i.Key,
+                    Level = i.Value.Level, Exp = i.Value.Exp
+                });
+            }
+
+            foreach (var talent in entity.Talents)
+            {
+                h.Talents.Add(new HeroMagic
+                {
+                    MagicKey = talent.Key,
+                    Level = talent.Value.Level, Exp = talent.Value.Exp
+                });
             }
 
             foreach (var i in entity.Equips)
@@ -55,13 +67,11 @@ namespace GateServer
                 Uuid = item.GUID
             };
 
-            if (item.Data != null)
+            if (item.Data == null) return pItem;
+            pItem.EquipData.RefreshCount = item.Data.RefreshTime;
+            foreach (var i in item.Data.Values)
             {
-                pItem.EquipData.RefreshCount = item.Data.RefreshTime;
-                foreach (var i in item.Data.Values)
-                {
-                    pItem.EquipData.Properties.Add((HeroPropertyType)i.Key, i.Value);
-                }
+                pItem.EquipData.Properties.Add((HeroPropertyType)i.Key, i.Value);
             }
             return pItem;
         }
@@ -75,13 +85,10 @@ namespace GateServer
                 Locked = i.IsLock,
                 Num = i.Num,
                 Level = i.Level,
-                Data = new EquipData
-                {
-                    RefreshTime = i.EquipData?.RefreshCount ?? 0
-                }
+                Data = new EquipData {RefreshTime = i.EquipData?.RefreshCount ?? 0}
             };
 
-            foreach (var pro in i.EquipData!.Properties)
+            foreach (var pro in i.EquipData.Properties)
             {
                 item.Data.Values.Add((int)pro.Key, pro.Value);
             }
@@ -92,12 +99,10 @@ namespace GateServer
         public static PlayerPackage ToPackage(this GamePackageEntity entity)
         {
             var p = new PlayerPackage { MaxSize = entity.PackageSize };
-            if (entity.Items != null)
+            if (entity.Items == null) return p;
+            foreach (var i in entity.Items)
             {
-                foreach (var i in entity.Items)
-                {
-                    p.Items.Add(i.Uuid,i.ToPlayerItem());
-                }
+                p.Items.Add(i.Uuid,i.ToPlayerItem());
             }
 
             return p;

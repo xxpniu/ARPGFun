@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using GServer;
 using GServer.Managers;
+using GServer.Utility;
 using Proto;
 using Utility;
 
-namespace GateServer
+namespace GServer.RPCResponsor
 {
 
     public class GateBattleServerService : GateServerInnerService.GateServerInnerServiceBase
@@ -15,8 +14,6 @@ namespace GateServer
 
         public override async Task<G2B_BattleReward> BattleReward(B2G_BattleReward request, ServerCallContext context)
         {
-            ErrorCode code = ErrorCode.Ok;
-
             var uuid = await UserDataManager.S.ProcessBattleReward(
                 request.AccountUuid,
                 request.ModifyItems,
@@ -29,7 +26,7 @@ namespace GateServer
 
             if (string.IsNullOrEmpty(uuid)) return new G2B_BattleReward { Code = ErrorCode.Error };
             await UserDataManager.S.SyncToClient(request.AccountUuid, uuid, true, true);
-            return new G2B_BattleReward { Code = code };
+            return new G2B_BattleReward { Code = ErrorCode.Ok };
         }
      
         public override async Task<G2B_GetPlayerInfo> GetPlayerInfo(B2G_GetPlayerInfo request, ServerCallContext context)
@@ -37,9 +34,9 @@ namespace GateServer
             return await GetPlayer(request.AccountUuid);
         }
 
-        private  async Task<G2B_GetPlayerInfo> GetPlayer(string accountID)
+        private  async Task<G2B_GetPlayerInfo> GetPlayer(string accountId)
         {
-            var player = await UserDataManager.S.FindPlayerByAccountId(accountID);
+            var player = await UserDataManager.S.FindPlayerByAccountId(accountId);
 
             if (player == null)
             {
@@ -56,7 +53,7 @@ namespace GateServer
                 Code = ErrorCode.Ok,
                 Gold = player.Gold,
                 Package = package.ToPackage(),
-                Hero = hero.ToDhero(package)
+                Hero = hero.ToDHero(package)
             };
         }
 
@@ -66,12 +63,11 @@ namespace GateServer
 
             {
                 var match = Application.S.MatchServers.FirstOrDefault();
-                if (match != null)
-                {
-                    var chn = new LogChannel(match.ServicsHost);
-                    await chn.CreateClient<MatchServices.MatchServicesClient>().KllUserAsync(new S2M_KillUser { UserID = request.Uuid });
-                    await chn.ShutdownAsync();
-                }
+                if (match == null) return await Task.FromResult(new Void());
+                var chn = new LogChannel(match.ServicsHost);
+                var client = await chn.CreateClientAsync<MatchServices.MatchServicesClient>();
+                client.KllUserAsync(new S2M_KillUser {UserID = request.Uuid});
+                await chn.ShutdownAsync();
             }
 
             return await Task.FromResult(new Void());

@@ -1,0 +1,1 @@
+dotnet NotifyServer.dll --s $SERVICE_HOST:$MAP_NOTIFY_SERVICE_PORT --d $DBHOST --n $DB_CHAT --z $ZK_SERVER_LIST --k $KFK_SERVER_LIST --zkchat $CHAT_ROOT --r $ZK_ROOT 

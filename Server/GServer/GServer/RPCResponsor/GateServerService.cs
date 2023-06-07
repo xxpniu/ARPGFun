@@ -1,30 +1,31 @@
 ﻿#define USEGM
 
 #pragma warning disable CS1998
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
-using GServer;
+using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using GServer.Managers;
+using GServer.MongoTool;
+using GServer.Utility;
 using MongoDB.Driver;
 using Proto;
 using Proto.MongoDB;
-using static GateServer.DataBase;
-using static Proto.ItemsShop.Types;
-using Grpc.Core;
-using XNet.Libs.Utility;
 using Utility;
-using System.Linq;
-using System;
-using Google.Protobuf;
-using Google.Protobuf.WellKnownTypes;
+using XNet.Libs.Utility;
+using static GServer.MongoTool.DataBase;
+using static Proto.ItemsShop.Types;
 
-namespace GateServer
+namespace GServer.RPCResponsor
 {
     public class GateServerService : Proto.GateServerService.GateServerServiceBase
     {
 
-        private async Task<bool> SendNotify(IMessage notify, params string[] player)
+        private static async Task<bool> SendNotify(IMessage notify, params string[] player)
         {
             var notifyServer = Application.S.NotifyServers.FirstOrDefault();
             if (notifyServer == null)
@@ -43,8 +44,8 @@ namespace GateServer
 
 
             var chn = new LogChannel(notifyServer.ServicsHost);
-            var query = chn.CreateClient<NotifyServices.NotifyServicesClient>();//
-            var res = await query.RouteSendNotifyAsync(rnotify);
+            var query = await chn.CreateClientAsync<NotifyServices.NotifyServicesClient>();//
+            var res = await query.RouteSendNotifyAsync(rnotify,cancellationToken:chn.ShutdownToken);
             await chn.ShutdownAsync();
             if (res.Code == ErrorCode.Ok)
             {
@@ -57,7 +58,7 @@ namespace GateServer
             }
         }
 
-        public async override Task<G2C_InviteJoinMatch> InviteJoinMatch(C2G_InviteJoinMatch request, ServerCallContext context)
+        public override async Task<G2C_InviteJoinMatch> InviteJoinMatch(C2G_InviteJoinMatch request, ServerCallContext context)
         {
             var hero = await UserDataManager.S.FindHeroByAccountId(context.GetAccountId());
             var player = new MatchPlayer
@@ -76,18 +77,18 @@ namespace GateServer
             return new G2C_InviteJoinMatch { Code = res ? ErrorCode.Ok : ErrorCode.Error };
         }
 
-        public async override Task<G2C_JoinMatch> JoinMatch(C2G_JoinMatch request, ServerCallContext context)
+        public override async Task<G2C_JoinMatch> JoinMatch(C2G_JoinMatch request, ServerCallContext context)
         {
 
             var matchServer = Application.S.MatchServers.FirstOrDefault();
             if (matchServer == null)
             {
-                Debuger.LogError($"Nofound match server");
+                Debuger.LogError($"No found match server");
                 return new G2C_JoinMatch();
             }
 
             var chan = new LogChannel(matchServer.ServicsHost);
-            var query = chan.CreateClient<MatchServices.MatchServicesClient>();
+            var query = await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
             var hero = await UserDataManager.S.FindHeroByAccountId(context.GetAccountId());
             var player = new MatchPlayer
             {
@@ -105,17 +106,18 @@ namespace GateServer
             return new G2C_JoinMatch { Code = match.Code };
         }
 
-        public async override Task<G2C_CreateMatch> CreateMatch(C2G_CreateMatch request, ServerCallContext context)
+        public override async Task<G2C_CreateMatch> CreateMatch(C2G_CreateMatch request, ServerCallContext context)
         {
             var matchServer = Application.S.MatchServers.FirstOrDefault();
             if (matchServer == null)
             {
-                Debuger.LogError($"Nofound match server");
+                Debuger.LogError($"No found match server");
                 return new G2C_CreateMatch { Code = ErrorCode.Error };
             }
 
             var chan = new LogChannel(matchServer.ServicsHost);
-            var query = chan.CreateClient<MatchServices.MatchServicesClient>();
+            await chan.ConnectAsync(DateTime.UtcNow.AddSeconds(3));
+            var query = await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
 
             var hero = await UserDataManager.S.FindHeroByAccountId(context.GetAccountId());
             var player = new MatchPlayer
@@ -140,17 +142,17 @@ namespace GateServer
             return new G2C_CreateMatch { Code = match.Code, GroupID = match.GroupID };
         }
 
-        public async override Task<G2C_LeaveMatchGroup> LeaveMatchGroup(C2G_LeaveMatchGroup request, ServerCallContext context)
+        public override async Task<G2C_LeaveMatchGroup> LeaveMatchGroup(C2G_LeaveMatchGroup request, ServerCallContext context)
         {
             var matchServer = Application.S.MatchServers.FirstOrDefault();
             if (matchServer == null)
             {
-                Debuger.LogError($"Nofound match server");
+                Debuger.LogError($"No found match server");
                 return new  G2C_LeaveMatchGroup { Code = ErrorCode.Error };
             }
 
             var chan = new LogChannel(matchServer.ServicsHost);
-            var query = chan.CreateClient<MatchServices.MatchServicesClient>();
+            var query = await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
 
             var quit = await query.LeaveMatchGroupAsync( new S2M_LeaveMatchGroup {  AccountID = context.GetAccountId()});
             await chan.ShutdownAsync();
@@ -160,28 +162,22 @@ namespace GateServer
 
         public override async Task<G2C_BeginGame> BeginGame(C2G_BeginGame request, ServerCallContext context)
         {
-            var userID = context.GetAccountId();
+            var userId = context.GetAccountId();
             var matchServer = Application.S.MatchServers.FirstOrDefault();
             if (matchServer == null)
             {
-                Debuger.LogError($"Nofound match server");
+                Debuger.LogError($"No found match server");
                 return new G2C_BeginGame { Code = ErrorCode.Ok };
             }
 
             try
             {
                 var chan = new LogChannel(matchServer.ServicsHost);
-                var query = chan.CreateClient<MatchServices.MatchServicesClient>();
-                var match = await query.StartMatchAsync(new S2M_StartMatch { GroupID = request.GroupID, Leader = userID });
+                
+                var query =await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
+                var match = await query.StartMatchAsync(new S2M_StartMatch { GroupID = request.GroupID, Leader = userId });
                 await chan.ShutdownAsync();
-                if (match.Code == ErrorCode.Ok)
-                {
-                    return new G2C_BeginGame { Code = ErrorCode.Ok };
-                }
-                else
-                {
-                    return new G2C_BeginGame { Code = match.Code };
-                }
+                return match.Code == ErrorCode.Ok ? new G2C_BeginGame { Code = ErrorCode.Ok } : new G2C_BeginGame { Code = match.Code };
             }
             catch (Exception ex)
             {
@@ -193,22 +189,22 @@ namespace GateServer
 
         public override async Task<G2C_BuyPackageSize> BuyPackageSize(C2G_BuyPackageSize req , ServerCallContext context)
         {
-            var AccountUuid = context.GetAccountId();
-            return await UserDataManager.S.BuyPackageSize(AccountUuid, req.SizeCurrent);
+            var accountUuid = context.GetAccountId();
+            return await UserDataManager.S.BuyPackageSize(accountUuid, req.SizeCurrent);
         }
 
         public override async Task<G2C_CreateHero> CreateHero(C2G_CreateHero request, ServerCallContext context)
         {
-            var AccountUuid = context.GetAccountId();
+            var accountUuid = context.GetAccountId();
             
             return await UserDataManager.S
-                .TryToCreateUser( AccountUuid, request.HeroID, request.HeroName);
+                .TryToCreateUser( accountUuid, request.HeroID, request.HeroName);
         }
 
         public override async Task<G2C_EquipmentLevelUp> EquipmentLevelUp(C2G_EquipmentLevelUp request, ServerCallContext context)
         {
-            var AccountUuid = context.GetAccountId();
-             return await UserDataManager.S.EquipLevel( AccountUuid, request.Guid, request.Level);
+            var accountUuid = context.GetAccountId();
+             return await UserDataManager.S.EquipLevel( accountUuid, request.Guid, request.Level);
         }
 
         public override  async Task<G2C_GMTool> GMTool(C2G_GMTool request, ServerCallContext context)
@@ -222,40 +218,54 @@ namespace GateServer
             switch (args[0].ToLower())
             {
                 case "level":
+                {
+                    if (int.TryParse(args[1], out int level))
                     {
-                        if (int.TryParse(args[1], out int level))
-                        {
-                            var update = Builders<GameHeroEntity>.Update.Set(t => t.Level, level);
-                            await DataBase.S.Heros.FindOneAndUpdateAsync(t=>t.PlayerUuid == player.Uuid, update);
-                        }
+                        var update = Builders<GameHeroEntity>.Update.Set(t => t.Level, level);
+                        await DataBase.S.Heros.FindOneAndUpdateAsync(t => t.PlayerUuid == player.Uuid, update);
                     }
+                }
                     break;
                 case "make":
-                    {
-                        int id = int.Parse(args[1]);
-                        var num = 1;
-                        if (args.Length > 2) num = int.Parse(args[2]);
-                        await UserDataManager.S.AddItems(player.Uuid, new PlayerItem { ItemID = id, Num = num });
-                    }
+                {
+                    int id = int.Parse(args[1]);
+                    var num = 1;
+                    if (args.Length > 2) num = int.Parse(args[2]);
+                    await UserDataManager.S.AddItems(player.Uuid, new PlayerItem {ItemID = id, Num = num});
+                }
                     break;
                 case "addgold":
-                    {
-                        var gold = int.Parse(args[1]);
-                        await UserDataManager.S.AddGoldAndCoin(player.Uuid, 0, gold);//.Wait();
-                    }
+                {
+                    var gold = int.Parse(args[1]);
+                    await UserDataManager.S.AddGoldAndCoin(player.Uuid, 0, gold); //.Wait();
+                }
                     break;
                 case "addcoin":
-                    {
-                        var coin = int.Parse(args[1]);
-                        await UserDataManager.S.AddGoldAndCoin(player.Uuid, coin, 0);//.Wait();
-                    }
+                {
+                    var coin = int.Parse(args[1]);
+                    await UserDataManager.S.AddGoldAndCoin(player.Uuid, coin, 0); //.Wait();
+                }
                     break;
                 case "addexp":
-                    {
-                        var exp = int.Parse(args[1]);
-                        await UserDataManager.S.HeroGetExprise(player.Uuid, exp);
-                    }
+                {
+                    var exp = int.Parse(args[1]);
+                    await UserDataManager.S.HeroGetExprise(player.Uuid, exp);
+                }
+
                     break;
+                case "addtp":
+                {
+                    var tp = int.Parse(args[1]);
+                    await UserDataManager.S.AddTalentPoint(player.Uuid, tp);
+                }
+                    break;
+                case "actp":
+                {
+                    var tp = int.Parse(args[1]);
+                    await UserDataManager.S.ActiveTalent(tp, account);
+                }
+                    break;
+
             }
 
             await UserDataManager.S.SyncToClient(account,player.Uuid, true, true);
@@ -281,13 +291,16 @@ namespace GateServer
             var loginServer = Application.S.LoginServers.FirstOrDefault();
             if (loginServer == null)
             {
-                Debuger.LogError($"nofound login server");
+                Debuger.LogError($"no found login server");
                 return new G2C_Login();
             }
 
+            //check login token
             var chn = new LogChannel(loginServer.ServicsHost);
-            var client = chn.CreateClient<LoginBattleGameServerService.LoginBattleGameServerServiceClient>();// (chn.CreateLogCallInvoker());
-            var req = await client.CheckSessionAsync(check);
+            await chn.ConnectAsync(DateTime.UtcNow.AddSeconds(10));
+            var client = await chn.CreateClientAsync<LoginBattleGameServerService.LoginBattleGameServerServiceClient>();// (chn.CreateLogCallInvoker());
+            var req = await client.CheckSessionAsync(check,
+                cancellationToken:context.CancellationToken);
             await chn.ShutdownAsync();
 
             if (req.Code != ErrorCode.Ok)
@@ -306,7 +319,7 @@ namespace GateServer
             {
                 var hero = await UserDataManager.S.FindHeroByPlayerId(player.Uuid);
                 var package = await UserDataManager.S.FindPackageByPlayerID(player.Uuid);
-                dHero = hero.ToDhero(package);
+                dHero = hero.ToDHero(package);
                 playerPackage = package.ToPackage();
             }
 
@@ -326,13 +339,19 @@ namespace GateServer
             return await UserDataManager.S.MagicLevelUp( req.MagicId, req.Level, context.GetAccountId());
         }
 
+        public  override async Task<G2C_TalentActive> TalentActive(C2G_TalentActive request, ServerCallContext context)
+        {
+            return await UserDataManager.S.ActiveTalent(request.MagicId, context.GetAccountId());
+        }
+
+   
         public override async Task< G2C_OperatorEquip> OperatorEquip(C2G_OperatorEquip request, ServerCallContext context)
         {
-            var AccountUuid = context.GetAccountId();
-            var player = await UserDataManager.S.FindPlayerByAccountId(AccountUuid);
+            var accountUuid = context.GetAccountId();
+            var player = await UserDataManager.S.FindPlayerByAccountId(accountUuid);
             if (player == null)  return new G2C_OperatorEquip { Code = ErrorCode.NoGamePlayerData };
             var result = await UserDataManager.S.OperatorEquip(player.Uuid, request.Guid, request.Part, request.IsWear);
-            if (result) UserDataManager.S.SyncToClient(AccountUuid, player.Uuid,true).Wait();
+            if (result) await UserDataManager.S.SyncToClient(accountUuid, player.Uuid,true);
             return new G2C_OperatorEquip
             {
                 Code = !result ? ErrorCode.Error : ErrorCode.Ok,
@@ -364,11 +383,9 @@ namespace GateServer
             ShopItem item = null;
             foreach (var i in itemShop.Items)
             {
-                if (i.ItemId == req.ItemId)
-                {
-                    item = i;
-                    break;
-                }
+                if (i.ItemId != req.ItemId) continue;
+                item = i;
+                break;
             }
             if (item == null) return new G2C_BuyItem { Code = ErrorCode.NoFoundItemInShop };
 
@@ -398,12 +415,12 @@ namespace GateServer
 
         public override async Task<G2C_ActiveMagic> ActiveMagic(C2G_ActiveMagic req,ServerCallContext context)
         {
-            return await UserDataManager.S.ActiveMadic(context.GetAccountId(), req.MagicId);
+            return await UserDataManager.S.ActiveMagic(context.GetAccountId(), req.MagicId);
         }
 
-        public async override Task<G2C_SearchPlayer> SearchPlayer(C2G_SearchPlayer request, ServerCallContext context)
+        public override async Task<G2C_SearchPlayer> SearchPlayer(C2G_SearchPlayer request, ServerCallContext context)
         {
-            var pleyers = await UserDataManager.S.QueryPlayers(context.GetAccountId());
+            var players = await UserDataManager.S.QueryPlayers(context.GetAccountId());
 
             static async Task<G2C_SearchPlayer.Types.Player> GetPlayer(GamePlayerEntity entity)
             {
@@ -420,14 +437,14 @@ namespace GateServer
             {
                 Code = ErrorCode.Ok
             };
-            foreach (var i in pleyers)
+            foreach (var i in players)
             {
                 res.Players.Add(await GetPlayer(i));
             }
             return res;
         }
 
-        public async override Task<G2C_ReloadMatchState> ReloadMatchState(C2G_ReloadMatchState request, ServerCallContext context)
+        public override async Task<G2C_ReloadMatchState> ReloadMatchState(C2G_ReloadMatchState request, ServerCallContext context)
         {
             try
             {
@@ -435,12 +452,16 @@ namespace GateServer
                 if (matchSever != null)
                 {
                     var mc = new LogChannel(matchSever.ServicsHost);
-                    var mQuery = mc.CreateClient<MatchServices.MatchServicesClient>();
-                    await mQuery.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = context.GetAccountId() });
+                    var mQuery = await mc.CreateClientAsync<MatchServices.MatchServicesClient>();
+                     await mQuery.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = context.GetAccountId() });
                     await mc.ShutdownAsync();
                 }
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
+
             return new G2C_ReloadMatchState { Code = ErrorCode.Ok };
         }
     }

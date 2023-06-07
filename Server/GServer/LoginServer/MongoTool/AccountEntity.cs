@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
-namespace MongoTool
+namespace LoginServer.MongoTool
 {
 
     public class AccountEntity

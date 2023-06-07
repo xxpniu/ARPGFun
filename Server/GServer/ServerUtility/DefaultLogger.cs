@@ -12,12 +12,12 @@ namespace ServerUtility
     /// <summary>
     /// Console 日志记录、默认
     /// </summary>
-    public class DefaultLoger : Loger, ILogger, IDisposable
+    public class DefaultLogger : Loger, ILogger, IDisposable
     {
 
         public string Topic { get; }
 
-        public DefaultLoger(IList<string> kafka, string topic,string clientID)
+        public DefaultLogger(IList<string> kafka, string topic,string clientID)
         {
             var sb = new StringBuilder();
             sb.AppendJoin(',', kafka);
@@ -31,7 +31,7 @@ namespace ServerUtility
             //Producer = new ProducerBuilder<Null, string>(config).Build();
         }
 
-        public IProducer<Null, string> Producer { get; }
+        private IProducer<Null, string> Producer { get; } = null!;
 
         public void Debug(string message)
         {

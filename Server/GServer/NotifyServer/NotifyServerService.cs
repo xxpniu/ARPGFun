@@ -40,25 +40,25 @@ namespace NotifyServer
         {
             if (ChatServers.TryGetValue(c.ChatServerID, out ChatChannel channel))
             {
-                if (channel.Config == c) return false;
+                if (channel.Config.Equals(c)) return false;
                 await channel.Channel.ShutdownAsync();
                 ChatServers.TryRemove(c.ChatServerID, out _);
             }
 
             var ch = new LogChannel(c.ServicsHost);
-            var client = ch.CreateClient<Proto.ChatServerService.ChatServerServiceClient>();
+            var client = await ch.CreateClientAsync<Proto.ChatServerService.ChatServerServiceClient>();
             channel = new ChatChannel { Channel = ch, Client = client, Config = c };
             return ChatServers.TryAdd(c.ChatServerID, channel);
         }
 
-        public async override Task<N2S_RouteSendNotify> RouteSendNotify(S2N_RouteSendNotify request, ServerCallContext context)
+        public override async Task<N2S_RouteSendNotify> RouteSendNotify(S2N_RouteSendNotify request, ServerCallContext context)
         {
             var user = request.Msg.Select(t => t.AccountID).Distinct().ToList();
             
             var players = await DataBase.S.FindPlayersByUuid(user);
             var dic = new Dictionary<string, PlayerState>();
             foreach (var i in players)
-                dic.Add(i.User.Uuid, i);
+            { dic.Add(i.User.Uuid, i);}
             foreach (var i in request.Msg)
             {
                 if (dic.TryGetValue(i.AccountID, out PlayerState ps))

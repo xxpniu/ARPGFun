@@ -10,18 +10,20 @@ using static org.apache.zookeeper.ZooDefs;
 using XNet.Libs.Utility;
 using Proto;
 using System.Collections.Concurrent;
+using System.Threading;
 using Google.Protobuf.WellKnownTypes;
 using ChatTool;
 
 namespace ChatServer
 {
-    public class Application:XSingleton<Application>
+    public class Application : ServerApp<Application>
     {
-        private readonly ConcurrentDictionary<int, ChatServer> ChatServers = new ConcurrentDictionary<int, ChatServer>();
+        private readonly ConcurrentDictionary<int, ChatServer>
+            ChatServers = new ConcurrentDictionary<int, ChatServer>();
 
         private class ChatWatcher : Watcher
         {
-            public async override Task process(WatchedEvent @event)
+            public override async Task process(WatchedEvent @event)
             {
                 Debuger.Log($"{@event}");
                 var path = @event?.getPath();
@@ -50,24 +52,16 @@ namespace ChatServer
                 var json = Encoding.UTF8.GetString(res.Data);
                 var config = json.TryParseMessage<ChatServerConfig>();
                 Debuger.Log($"Load Chat server:{config}");
-                if (config.ChatServerID == Config.ChatServerID) return;//self
+                if (config.ChatServerID == Config.ChatServerID) return; //self
                 await RemoveChannel(config.ChatServerID);
                 var add = $"{config.ServicsHost.IpAddress}:{config.ServicsHost.Port}";
                 Debuger.Log($"Listen:{add}");
-                var logChannel =new LogChannel(add, ChannelCredentials.Insecure);
+                var logChannel = new LogChannel(add, ChannelCredentials.Insecure);
                 var ser = new ChatServer(logChannel);
                 ChatServers.TryAdd(config.ChatServerID, ser);
             }
         }
-
-        internal async Task Tick()
-        {
-            while (IsRunning)
-            {
-                await Task.Delay(100);
-            }
-        }
-
+        
         private async Task RemoveChat(string path)
         {
             var id = path.Remove(0, Config.ChatServerRoot.Length);
@@ -84,6 +78,7 @@ namespace ChatServer
                 await ser.Channel.ShutdownAsync();
             }
         }
+
         //event
         private async Task RefreshChatServer(Watcher w)
         {
@@ -94,26 +89,26 @@ namespace ChatServer
             }
         }
 
-        public struct ChatServer
+        private readonly struct ChatServer
         {
-            public LogChannel Channel;
+            public readonly LogChannel Channel;
 
             public Proto.ChatServerService.ChatServerServiceClient Call { get; }
 
-            public ChatServer(LogChannel channel)
+            public  ChatServer(LogChannel channel)
             {
                 this.Channel = channel;
-                Call = channel.CreateClient<Proto.ChatServerService.ChatServerServiceClient>();
+                Call =  channel.CreateClient<Proto.ChatServerService.ChatServerServiceClient>();
             }
         }
 
         public ChatServerConfig Config { get; private set; }
-        public LogServer ListenServer { get; private set; }
-        public LogServer ServiceServer { get; private set; }
-        public ZooKeeper Zk { get; private set; }
+        private LogServer ListenServer { get; set; }
+        private LogServer ServiceServer { get; set; }
+        private ZooKeeper Zk { get; set; }
 
-        public WatcherServer<string,LoginServerConfig> LoginServers { private set; get; }
-     
+        public WatcherServer<string, LoginServerConfig> LoginServers { private set; get; }
+
         //广播状态改变
         internal async Task NotifyStateForAllFriends(PlayerState state)
         {
@@ -131,11 +126,12 @@ namespace ChatServer
                     var nmsg = new NotifyMsg
                     {
                         AccountID = i.User.Uuid,
-                        AnyNotify = { Any.Pack(state) }
+                        AnyNotify = {Any.Pack(state)}
                     };
                     await ser.Call.CreateNotifyAsync(nmsg);
                 }
             }
+
             await Task.CompletedTask;
         }
 
@@ -151,16 +147,18 @@ namespace ChatServer
             }
         }
 
-        public async Task Start(ChatServerConfig config)
+        public Application Create(ChatServerConfig config)
         {
-            if (IsRunning) throw new Exception("Started");
-            this.Config = config;
-            IsRunning = true;
+            Config = config;
+            return this;
+        }
 
+        protected override async Task Start(CancellationToken token)
+        {
             DataBase.S.Init(Config.DBHost, Config.DBName);
             ListenServer = new LogServer
             {
-                Ports = { new ServerPort("0.0.0.0", Config.ListenHost.Port, ServerCredentials.Insecure) }
+                Ports = {new ServerPort("0.0.0.0", Config.ListenHost.Port, ServerCredentials.Insecure)}
             };
 
             ChatService = new ChatService(ListenServer);
@@ -179,19 +177,20 @@ namespace ChatServer
 
             Debuger.Log("ListenServer Start!");
 
-            ServiceServer = new LogServer {
-                Ports = { new ServerPort("0.0.0.0", Config.ServicsHost.Port, ServerCredentials.Insecure) }
+            ServiceServer = new LogServer
+            {
+                Ports = {new ServerPort("0.0.0.0", Config.ServicsHost.Port, ServerCredentials.Insecure)}
             }.BindServices(Proto.ChatServerService.BindService(new ChatServerService()));
             ServiceServer.Start();
 
 
             Debuger.Log("Services Start!");
 
-            Zk = new ZooKeeper(Config.ZkServer[0],3000,new DefaultWatcher());
+            Zk = new ZooKeeper(Config.ZkServer[0], 3000, new DefaultWatcher());
 
             if (await Zk.existsAsync(Config.ChatServerRoot) == null)
             {
-                await Zk.createAsync(Config.ChatServerRoot,new byte[] { 0} ,
+                await Zk.createAsync(Config.ChatServerRoot, new byte[] {0},
                     Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                 Debuger.Log($"create:{Config.ChatServerRoot}");
             }
@@ -202,33 +201,32 @@ namespace ChatServer
             if (await Zk.existsAsync(root) != null)
             {
                 Debuger.Log("Reg Chat server failure it exist");
-                await Stop();
                 return;
             }
 
-            await Zk.createAsync(root, Encoding.UTF8.GetBytes(Config.ToJson()), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+            await Zk.createAsync(root, Encoding.UTF8.GetBytes(Config.ToJson()), Ids.OPEN_ACL_UNSAFE,
+                CreateMode.EPHEMERAL);
 
-            LoginServers = await new WatcherServer<string, LoginServerConfig>(Zk, config.LoginServerRoot, (c) => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
+            LoginServers = await new WatcherServer<string, LoginServerConfig>(Zk, 
+                    Config.LoginServerRoot,
+                    (c) => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
                 .RefreshData();
 
-            await RefreshChatServer( new ChatWatcher());
+            await RefreshChatServer(new ChatWatcher());
 
-            
+
         }
 
-        public bool IsRunning { private set; get; }
         public ChatService ChatService { get; private set; }
 
-        public async Task Stop()
+        protected override async Task Stop(CancellationToken token)
         {
-            IsRunning = false;
-
             await Zk.closeAsync();
             foreach (var i in ChatServers) await i.Value.Channel.ShutdownAsync();
             await ListenServer.ShutdownAsync();
             await ServiceServer.ShutdownAsync();
             await GrpcEnvironment.ShutdownChannelsAsync();
-            
+
         }
     }
 }

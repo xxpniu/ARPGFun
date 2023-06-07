@@ -5,6 +5,7 @@ using XNet.Libs.Utility;
 using Proto.ServerConfig;
 using System.IO;
 using System.Text;
+using CommandLine;
 using Utility;
 using Grpc.Core;
 using org.apache.zookeeper;
@@ -13,28 +14,39 @@ using Proto;
 
 namespace NotifyServer
 {
-    class Program
+    internal static class Program
     {
+        public class NotifyOption : CustomOption
+        {
+            [Option('r',"zkroot", Required = true)]
+            public string ZkRoot { set; get; }
+            [Option('h',"zkchat", Required = true)]
+            public string ZkChatRoot { set; get; }
+        }
+
         public static async Task Main(string[] args)
         {
-            var config = new NotifyServerConfig
-            {
-                DBHost = "mongodb://127.0.0.1:27017/",
-                ServicsHost = new ServiceAddress { IpAddress = "localhost", Port = 1300 },
-                ZkServer = { "129.211.9.75:2181" },
-                DBName = "Chat",
-                ChatServerRoot = "/Chat",
-                NotifyServerRoot = "/notify",
-                KafkaServer = { "129.211.9.75:9092" }
-            };
+            var config = new NotifyServerConfig();
+            Parser.Default.ParseArguments<NotifyOption>(args)
+                .WithParsed(o =>
+                {
+                    if (!string.IsNullOrEmpty(o.Config))
+                    {
+                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, o.Config);
+                        var json = File.ReadAllText(file, new UTF8Encoding(false));
+                        config = json.TryParseMessage<NotifyServerConfig>();
+                    }
 
-            if (args.Length > 0)
-            {
-                var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, args[0]);
-                var json = await File.ReadAllTextAsync(file, new UTF8Encoding(false));
-                config = json.TryParseMessage<NotifyServerConfig>();
-            }
-            using var log = new DefaultLoger(config.KafkaServer, "Log", $"notify_server");
+                    o.Kafka?.SplitInsert(config.KafkaServer);
+                    o.ZK.SplitInsert(config.ZkServer);
+                    o.ServiceHost?.SetAddress(a => config.ServicsHost = a);
+                    o.DBHost?.Set(s => config.DBHost = s);
+                    o.DBName?.Set(s => config.DBName = s);
+                    o.ZkRoot?.Set(s => config.NotifyServerRoot = s);
+                    o.ZkChatRoot?.Set(s => config.ChatServerRoot = s);
+                });
+
+            using var log = new DefaultLogger(config.KafkaServer, "Log", $"notify_server");
             Debuger.Loger = log;
             GrpcEnvironment.SetLogger(log);
             Debuger.Log($"{config}");
@@ -47,25 +59,27 @@ namespace NotifyServer
             await chat.RefreshData();
             var server = new LogServer()
             {
-                Ports = { new ServerPort("0.0.0.0", config.ServicsHost.Port, ServerCredentials.Insecure) }
+                Ports = {new ServerPort("0.0.0.0", config.ServicsHost.Port, ServerCredentials.Insecure)}
             }.BindServices(Proto.NotifyServices.BindService(service));
             server.Start();
 
-            var app = App.S;
+
 
             if (await zk.existsAsync(config.NotifyServerRoot) == null)
             {
-                await zk.createAsync(config.NotifyServerRoot, new byte[] { 0 }, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                await zk.createAsync(config.NotifyServerRoot, new byte[] {0}, Ids.OPEN_ACL_UNSAFE,
+                    CreateMode.PERSISTENT);
             }
+
             await zk.createAsync($"{config.NotifyServerRoot}/{config.ServicsHost.IpAddress}:{config.ServicsHost.Port}",
                 Encoding.UTF8.GetBytes(config.ToJson()), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-            await app.Startup(async (a)=>
+
+
+            await App.S.Create(setup: async (a) =>
             {
                 ChatTool.DataBase.S.Init(config.DBHost, config.DBName);
                 await Task.CompletedTask;
-            });
-            await app.Tick();
-            await app.Stop();
+            }).Run();
 
             await server.ShutdownAsync();
             await GrpcEnvironment.ShutdownChannelsAsync();

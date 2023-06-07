@@ -1,41 +1,33 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
-using System.Collections.Concurrent;
-using XNet.Libs.Utility;
 using ServerUtility;
-using Google.Protobuf.WellKnownTypes;
-using GServer.Managers;
-using Grpc.Core.Utils;
-using System.Linq;
-using System.Collections.Generic;
 using Utility;
-using GServer;
+using XNet.Libs.Utility;
 
-namespace GateServer
+namespace GServer.RPCResponsor
 {
     public class StreamServices:Proto.ServerStreamService.ServerStreamServiceBase
     {
-
         public bool Push(string account, IMessage message)
         {
-            if (workers.TryGetValue(account, out StreamBuffer<Any> channel))
-            {
-                Debuger.Log($"{account}-{message}");
-                return channel.Push(Any.Pack(message));
-            }
-            return false;
+            if (!workers.TryGetValue(account, out var channel)) return false;
+            Debuger.Log($"{account}-{message}");
+            return channel.Push(Any.Pack(message));
         }
 
         private readonly ConcurrentDictionary<string, StreamBuffer<Any>> workers = new ConcurrentDictionary<string, StreamBuffer<Any>>();
 
-        public async override Task ServerAnyStream(Proto.Void request, IServerStreamWriter<Any> responseStream, ServerCallContext context)
+        public override async Task ServerAnyStream(Proto.Void request, IServerStreamWriter<Any> responseStream, ServerCallContext context)
         {
             var channel = new AsyncStreamBuffer<Any>(20);
-            string id = context.GetAccountId();
-            if (workers.TryGetValue(id, out StreamBuffer<Any> c))
+            var id = context.GetAccountId();
+            if (workers.TryGetValue(id, out var c))
             {
                 c.Close();
                 workers.TryRemove(id,out _);
@@ -55,16 +47,26 @@ namespace GateServer
                     if (matchSever != null)
                     {
                         var mc = new LogChannel(matchSever.ServicsHost);
-                        var mQuery = mc.CreateClient<MatchServices.MatchServicesClient>();
-                        await mQuery.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = id });
+                        var mQuery = await mc.CreateClientAsync<MatchServices.MatchServicesClient>();
+                        await mQuery.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = id },
+                            cancellationToken:mc.ShutdownToken);
                         await mc.ShutdownAsync();
                     }
                 }
                 catch { }
 
-                await foreach (var res in channel.TryPullAsync(context.CancellationToken))
+                try
                 {
-                    await responseStream.WriteAsync(res).ConfigureAwait(false);
+                    
+                    await foreach (var res in channel.TryPullAsync(context.CancellationToken))
+                    {
+                        Debuger.Log($"SendTo:{id} by {res}");
+                        await responseStream.WriteAsync(res).ConfigureAwait(false);
+                    }
+                }
+                catch
+                {
+                    // ignore
                 }
 
             }
@@ -84,7 +86,7 @@ namespace GateServer
 
         internal void TryClose(string uuid)
         {
-            if (workers.TryGetValue(uuid, out StreamBuffer<Any> channel))
+            if (workers.TryGetValue(uuid, out var channel))
             {
                 channel.Close();
             }
