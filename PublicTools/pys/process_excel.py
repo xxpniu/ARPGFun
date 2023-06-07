@@ -5,10 +5,6 @@ import os
 import argparse
 import json
 
-
-
-
-
 parser = argparse.ArgumentParser(
                 prog='process execl',
                 description='excel 解析 to cs',
@@ -45,7 +41,7 @@ namespace [NAMESPACE]
         s = Sheet(f"{relevant_path}{file}")
         for t in s.tables:
             cs_class = cs_class + gen_cs(t)
-            file_data = open(f"{file_path}/{t.file}", 'w', encoding='utf-8')
+            file_data = open(f"{file_path}{t.file}", 'w', encoding='utf-8')
             file_data.write(json.dumps(t.row_datas))
             file_data.close()
    cs_file = cs_file_temp.replace("[NAMESPACE]",namespace).replace("[TABLES]",cs_class)
