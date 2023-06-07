@@ -3,9 +3,8 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 as SDK
 RUN ["apt" ,"update"]
 RUN ["apt", "install", "-y", "protobuf-compiler"]
 RUN ["apt", "install", "-y", "protobuf-compiler-grpc"]
-RUN ["apt" ,"update"]
 RUN ["apt", "install", "-y",  "python3"]
-RUN ["apt", "install", "-y",  "python3-pip"]
+RUN ["apt", "install", "-y",  "python3-pip"]  
 RUN ["pip", "install", "kazoo" , "xlrd==1.2.0" ,"argparse"]
 #RUN mkdir /var/output
 
@@ -17,6 +16,10 @@ COPY ./src ./src
 COPY ./pys ./pys
 COPY ./auto_gen_code.sh ./auto_gen_code.sh
 
+#RUN ["chmod", "+x", "./auto_gen_code.sh"]
+
+#RUN ["./auto_gen_code.sh"]
 
 #ENTRYPOINT [ "tail" ,"-f", "/dev/null" ] 
+
 ENTRYPOINT [ "sh" , "auto_gen_code.sh" ]
