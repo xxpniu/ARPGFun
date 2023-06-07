@@ -25,7 +25,7 @@ namespace MatchServer
             var notifyServer = this.NotifyServers.FirstOrDefault();
             if (notifyServer == null)
             {
-                Debuger.LogError($"nofound notify server");
+                Debuger.LogError($"not found notify server");
                 return false;
             }
 
