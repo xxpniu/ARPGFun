@@ -36,12 +36,15 @@ namespace [NAMESPACE]
     [TABLES]
 }
    '''
+   print(os.getcwd())
+   
    cs_class=""
    for file in file_names:
         s = Sheet(f"{relevant_path}{file}")
         for t in s.tables:
             cs_class = cs_class + gen_cs(t)
-            file_data = open(f"{file_path}{t.file}", 'w', encoding='utf-8')
+            file_url = os.path.join(file_path,t.file)
+            file_data = open(file_url, 'w', encoding='utf-8')
             file_data.write(json.dumps(t.row_datas))
             file_data.close()
    cs_file = cs_file_temp.replace("[NAMESPACE]",namespace).replace("[TABLES]",cs_class)
