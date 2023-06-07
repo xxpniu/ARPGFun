@@ -22,7 +22,7 @@ jobs:
       uses: github-actions-x/commit@v2.9
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        push-branch: 'auto-ci/job-${{ github.job }}'
+        push-branch: 'auto-ci/job-${{ github.run_number }}'
         commit-message: 'build proto and json'
         force-add: 'true'
         files: .
