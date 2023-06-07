@@ -17,10 +17,14 @@ jobs:
     - name: Build Excel And Proto
       run:  cd PublicTools && sh runbuild.sh
     - name: push
-      uses: actions-x/commit@v6
+      uses: github-actions-x/commit@v2.9
       with:
-        email: andrew-auto@github.com
-        name: GitHub Actions Autocommitter
-        branch: master-ci
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        push-branch: 'master-ci'
+        commit-message: 'build proto and json'
+        force-add: 'true'
+        files: .
+        name: commiter name
+        email: noreplay.github@email.com 
 
     
