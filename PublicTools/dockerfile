@@ -16,6 +16,8 @@ COPY ./src ./src
 COPY ./pys ./pys
 COPY ./auto_gen_code.sh ./auto_gen_code.sh
 
+RUN mkdir ./src/json
+
 #RUN ["chmod", "+x", "./auto_gen_code.sh"]
 
 #RUN ["./auto_gen_code.sh"]
