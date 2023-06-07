@@ -3,8 +3,8 @@ name: Auto Build Proto And Excel
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+ #pull_request:
+ #   branches: [ "master" ]
 
 jobs:
 
@@ -22,7 +22,7 @@ jobs:
       uses: github-actions-x/commit@v2.9
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        push-branch: 'auto-ci/${{github.GITHUB_JOB}}'
+        push-branch: 'auto-ci/job-${{ github.job }}'
         commit-message: 'build proto and json'
         force-add: 'true'
         files: .

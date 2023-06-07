@@ -16,26 +16,26 @@ namespace GServer.RPCResponsor
     {
         public bool Push(string account, IMessage message)
         {
-            if (!workers.TryGetValue(account, out var channel)) return false;
+            if (!_workers.TryGetValue(account, out var channel)) return false;
             Debuger.Log($"{account}-{message}");
             return channel.Push(Any.Pack(message));
         }
 
-        private readonly ConcurrentDictionary<string, StreamBuffer<Any>> workers = new ConcurrentDictionary<string, StreamBuffer<Any>>();
+        private readonly ConcurrentDictionary<string, StreamBuffer<Any>> _workers = new ConcurrentDictionary<string, StreamBuffer<Any>>();
 
         public override async Task ServerAnyStream(Proto.Void request, IServerStreamWriter<Any> responseStream, ServerCallContext context)
         {
             var channel = new AsyncStreamBuffer<Any>(20);
             var id = context.GetAccountId();
-            if (workers.TryGetValue(id, out var c))
+            if (_workers.TryGetValue(id, out var c))
             {
                 c.Close();
-                workers.TryRemove(id,out _);
+                _workers.TryRemove(id,out _);
             }
 
             try
             {
-                if (!workers.TryAdd(id, channel))
+                if (!_workers.TryAdd(id, channel))
                 {
                     Debuger.LogError($"Error add channel error!");
                     throw new Exception("add error");
@@ -79,17 +79,17 @@ namespace GServer.RPCResponsor
             }
 
             Debuger.Log($"Stop account ID:{id}");
-            workers.TryRemove(id,out _);
+            _workers.TryRemove(id,out _);
         }
 
         internal bool Exist(string accountId)
         {
-            return workers.ContainsKey(accountId);
+            return _workers.ContainsKey(accountId);
         }
 
         internal void TryClose(string uuid)
         {
-            if (workers.TryGetValue(uuid, out var channel))
+            if (_workers.TryGetValue(uuid, out var channel))
             {
                 channel.Close();
             }
