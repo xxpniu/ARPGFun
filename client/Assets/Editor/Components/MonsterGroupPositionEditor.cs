@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
-using org.vxwo.csharp.json;
+//using org.vxwo.csharp.json;
 using System.Collections.Generic;
 using System.Linq;
 using Proto;
@@ -153,18 +153,19 @@ public class MonsterGroupPositionEditor : Editor {
     }
 
 
+    [System.Obsolete("JsonTool.Deserialize<List<T>>")]
     public List<T> GetConfig<T>() where T : ExcelConfig.JSONConfigBase, new()
     {
         var name = ExcelConfig.ExcelToJSONConfigManager.GetFileName<T>();
         var json = LoadText($"Json/{name}");
         if (json == null) return default;
-        return JsonTool.Deserialize<List<T>>(json);
+        //return JsonTool.Deserialize<List<T>>(json);
+        return null;
     }
 
     public string LoadText(string path)
     {
-       // Debuger.Log($"LoadText:{path}");
-        var exPath = path.Substring(0, path.LastIndexOf('.'));
+        var exPath = path[..path.LastIndexOf('.')];
         var asst = Resources.Load<TextAsset>(exPath);
         if (asst) return asst.text;
         Debug.LogError($"{exPath} no found");
