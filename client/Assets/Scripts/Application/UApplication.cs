@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Core;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// 处理 App
@@ -18,7 +19,7 @@ using UnityEditor;
 public class UApplication : XSingleton<UApplication>
 {
     public bool localGame = false;
-    
+    public int localDataIndex = 2;
     public ServiceAddress LoginServer;
     public ServiceAddress GateServer;
     public ServiceAddress ChatServer;
@@ -125,7 +126,7 @@ public class UApplication : XSingleton<UApplication>
         if(!localGame) GotoLoginGate();
         {
             // Init(args[0] as DHero, args[1] as PlayerPackage, (int)args[2]);
-            var config = ExcelToJSONConfigManager.First<CharacterData>(t => t.ID > 0);
+            var config = ExcelToJSONConfigManager.GetId<CharacterData>(localDataIndex);
             var itemCfg = ExcelToJSONConfigManager.GetId<ItemData>(int.Parse(config.InitEquip));
             var item = new PlayerItem()
             {

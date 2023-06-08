@@ -60,7 +60,26 @@ namespace Core
 						}
 						else if (property.Info.PropertyType == typeof(int))
 						{
-							property.Info.SetValue(item, rawData[index].Value<int>());
+							var rawVal = rawData[index];
+							switch (rawVal.Type)
+							{
+								case JTokenType.Float:
+									property.Info.SetValue(item, (int)rawData[index]);
+									break;
+								case JTokenType.Integer:
+									property.Info.SetValue(item, rawVal.Value<int>());
+									break;
+								case JTokenType.String:
+								{
+									var str = rawVal.Value<string>();
+									if (!int.TryParse(str, out var v)) v = -1;
+									property.Info.SetValue(item, v);
+								}
+									
+									break;
+								default:
+									throw new InvalidCastException($"{rawVal.Type} can't case into int");
+							}
 						}
 						else if (property.Info.PropertyType == typeof(float))
 						{
