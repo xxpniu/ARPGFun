@@ -13,15 +13,15 @@ public class LayoutEditorWindow:EditorWindow
 	{
 		_layouts.Clear ();
 		var list = typeof(LayoutBase).Assembly.GetTypes ();
-		foreach (var i in list) {
-			if (i.IsSubclassOf (typeof(LayoutBase))) {
-				var attrs = i.GetCustomAttributes (typeof(EditorLayoutAttribute), false) as EditorLayoutAttribute[];
-				if (attrs.Length == 0)
-					continue;
+		foreach (var i in list)
+        {
+            if (!i.IsSubclassOf(typeof(LayoutBase))) continue;
+            var attrs = i.GetCustomAttributes (typeof(EditorLayoutAttribute), false) as EditorLayoutAttribute[];
+            if (attrs!.Length == 0)
+                continue;
 
-				_layouts.Add (i, attrs [0].Name);
-			}
-		}
+            _layouts.Add (i, attrs [0].Name);
+        }
     }
 
     [MenuItem("GAME/Editor/LayoutEditor &2")]

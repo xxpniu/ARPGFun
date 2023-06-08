@@ -132,7 +132,7 @@ public class MonsterGroupPositionEditor : Editor {
                 {
                     var config = GetConfig<EConfig.MapElementData>();
                     var languages = GetConfig<EConfig.LanguageData>();
-                    var list = config.Where(t=>t.METype == (int)(Proto.MapLevelElementType.MletTransport))
+                    var list = config.Where(t=>t.METype == (int)(MapLevelElementType.MletTransport))
                         .Select(t => new IdNameMapping { Index = t.ID,
                         Name = $"Trans{t.ID}:{languages.SingleOrDefault(s => s.Key == t.NameKey)?.ZH}" })
                         .OrderBy(t => t.Index).ToList();

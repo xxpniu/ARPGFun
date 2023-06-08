@@ -19,8 +19,13 @@ enum MapElementType
     MET_Npc =6;
 }
 
+message MapElement
+{
+
+}
 
 message MapConfig
 {
-   int32 ConfigID =1;
+   int32 ConfigID = 1;
+   repeated MapElement Elements = 2;
 }
