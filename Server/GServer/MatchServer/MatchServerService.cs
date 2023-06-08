@@ -248,7 +248,7 @@ namespace MatchServer
 
             var chn = new LogChannel(config.ServicsHost);
             var client = await chn.CreateClientAsync<BattleInnerServices.BattleInnerServicesClient>();
-            client.KillUserAsync(new M2B_KillUser {UserID = request.UserID});
+            await client.KillUserAsync(new M2B_KillUser {UserID = request.UserID});
             await chn.ShutdownAsync();
 
             return new M2S_KillUser {Code = ErrorCode.Ok};

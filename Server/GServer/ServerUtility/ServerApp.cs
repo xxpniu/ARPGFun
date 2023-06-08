@@ -12,7 +12,7 @@ namespace ServerUtility
         protected abstract Task Start(CancellationToken token = default);
         protected abstract Task Stop(CancellationToken token= default);
 
-        private  CancellationTokenSource _source;
+        private  CancellationTokenSource _source = null!;
         public async Task Run(CancellationToken token = default)
         {
             _source = new CancellationTokenSource();

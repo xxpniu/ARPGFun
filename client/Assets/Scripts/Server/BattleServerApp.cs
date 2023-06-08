@@ -23,7 +23,7 @@ using Extends = Utility.Extends;
 
 public class BattleServerApp : XSingleton<BattleServerApp>
 {
-    public class ZKWatcher : Watcher
+    private class ZkWatcher : Watcher
     {
         public override Task process(WatchedEvent @event)
         {
@@ -81,48 +81,52 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 
         await si.Begin(level, players);
         BattleSimulater = si;
-        si.OnEnd = async (force) =>
+        si.OnEnd = SiOnEnd;
+    }
+
+    private async void SiOnEnd(bool force)
+    {
+        Debuger.Log($"Process end!");
+        Debuger.Log($"Begin Process end task!");
+        try
         {
-            Debuger.Log($"Process end!");
-            Debuger.Log($"Begin Process end task!");
-            try
+            if (!force)
             {
-                if (!force)
-                {
-                    const int delay = 30;
-                    var end = new Notify_BattleEnd() { EndTime = delay };
-                    //send to client
-                    Services?.PushToAll(end);
-                    await UniTask.Delay(delay * 1000);
-                }
-
-                var matchServer = MatchServer.FirstOrDefault();
-                if(matchServer ==null) return;
-                
-                var chn = new LogChannel(matchServer.ServicsHost);
-                var query = chn.CreateClient<MatchServices.MatchServicesClient>();
-                await query.FinishBattleAsync(new S2M_FinishBattle { BattleServerID = Config.ServerID });
-                await chn.ShutdownAsync();
-                Services?.CloseAllChannel();
+                const int delay = 30;
+                var end = new Notify_BattleEnd() { EndTime = delay };
+                //send to client
+                Services?.PushToAll(end);
+                await UniTask.Delay(delay * 1000);
             }
-            catch(Exception ex)
-            {
-                Debuger.LogError(ex);
-            }
-            Invoke(() =>
-            {
-                if (BattleSimulater)
-                {
-                    Destroy(BattleSimulater);
-                    BattleSimulater = null;
-                }
-                SceneManager.LoadScene("null");
-            });
 
-            await UniTask.Delay(1000);
-            await RegBattleServer();
-            //on end by time default
-        };
+            var matchServer = MatchServer.FirstOrDefault();
+            if (matchServer == null) return;
+
+            var chn = new LogChannel(matchServer.ServicsHost);
+            var query = chn.CreateClient<MatchServices.MatchServicesClient>();
+            await query.FinishBattleAsync(new S2M_FinishBattle { BattleServerID = Config.ServerID });
+            await chn.ShutdownAsync();
+            Services?.CloseAllChannel();
+        }
+        catch (Exception ex)
+        {
+            Debuger.LogError(ex);
+        }
+
+        Invoke(() =>
+        {
+            if (BattleSimulater)
+            {
+                Destroy(BattleSimulater);
+                BattleSimulater = null;
+            }
+
+            SceneManager.LoadScene("null");
+        });
+
+        await UniTask.Delay(1000);
+        await RegBattleServer();
+        //on end by time default
     }
 
     public BattleSimulater BattleSimulater { private set; get; }
@@ -133,12 +137,12 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         Application.targetFrameRate = 30;
         var json = ResourcesManager.S.ReadStreamingFile("server.json");
 
-#if UNITY_SERVER
-       var CommandLine = Environment.CommandLine;
-        var CommandLineArgs = Environment.GetCommandLineArgs();
-        if (CommandLineArgs.Length >1)
+#if UNITY_SERVER && !UNITY_EDITOR
+        var CommandLine = Environment.CommandLine;
+        var commandLineArgs = Environment.GetCommandLineArgs();
+        if (commandLineArgs.Length >1)
         {
-            var file = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CommandLineArgs[1]);
+            var file = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, commandLineArgs[1]);
             json = System.IO.File.ReadAllText(file);
             Debuger.Log($"File:{file}");
         }
@@ -154,17 +158,14 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         Constant = CM.GetId<ConstantValue>(1);
     }
 
-    private void Start()
+    private async void Start()
     {
         var cts = new CancellationTokenSource();
         cts.CancelAfter(10000);
-        Task.Factory.StartNew(async () =>
-        {
-            Debuger.Log("Starting");
-            await StartServerAsync();
-            Debuger.Log($"Listen:{Config.ServicsHost}");
-
-        },cts.Token);
+        Debuger.Log("Starting");
+        await StartServerAsync(cts.Token);
+        Debuger.Log($"Listen:{Config.ServicsHost}");
+   
 
         Debuger.Log($"Start task finish:{cts.IsCancellationRequested}");
     }
@@ -183,7 +184,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     public LogServer ListenServer { get; private set; }
     public Server.BattleServerService Services { private set; get; }
 
-    private async Task StartServerAsync()
+    private async Task StartServerAsync(CancellationToken token = default) 
     {
         Debuger.Log($"StartServerAsync:{Config.ServicsHost}");
         ListenServer = new LogServer
@@ -195,12 +196,9 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         ListenServer.Interceptor.SetAuthCheck((c) =>
         {
             if (!c.GetHeader("session-key", out string value)) return false;
-            if (ListenServer.CheckSession(value, out string userid))
-            {
-                c.RequestHeaders.Add("user-key", userid);
-                return true;
-            }
-            return false;
+            if (!ListenServer.CheckSession(value, out string userid)) return false;
+            c.RequestHeaders.Add("user-key", userid);
+            return true;
         });
         ListenServer.Start();
 
@@ -214,7 +212,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 
 
         var zkHost = GRandomer.RandomList(Config.ZkServer.ToList());
-        Zk = new ZooKeeper(zkHost, 3000, new ZKWatcher());
+        Zk = new ZooKeeper(zkHost, 3000, new ZkWatcher());
 
         Debuger.Log($"Begin get login server:{zkHost} by path :{Config.LoginServerRoot}");
 
@@ -229,25 +227,25 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         {
             await Zk.createAsync(Config.BattleServerRoot, new byte[] { 0 }, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
-        serverRoot = $"{Config.BattleServerRoot}/{ServerID}";
+        _serverRoot = $"{Config.BattleServerRoot}/{ServerID}";
         await RegBattleServer();
 
     }
 
-    private string serverRoot;
+    private string _serverRoot;
 
-    public async Task<bool> UnRegBattleServer()
+    private async Task<bool> UnRegBattleServer()
     {
-        await Zk.deleteAsync(serverRoot);
-        Debuger.Log($"unreg server to zk:{serverRoot}");
+        await Zk.deleteAsync(_serverRoot);
+        Debuger.Log($"un reg server to zk:{_serverRoot}");
         return true;
     }
 
-    public async Task<bool> RegBattleServer()
+    private async Task<bool> RegBattleServer()
     {
         
-        await Zk.createAsync(serverRoot, Encoding.UTF8.GetBytes(Extends.ToJson(Config)), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-        Debuger.Log($"reg server to zk:{serverRoot}");
+        await Zk.createAsync(_serverRoot, Encoding.UTF8.GetBytes(Extends.ToJson(Config)), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        Debuger.Log($"reg server to zk:{_serverRoot}");
         return true;
     }
 

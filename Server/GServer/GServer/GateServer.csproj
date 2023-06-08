@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>GServer</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -38,14 +39,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="RPCResponsor\" />
+    <Folder Include="RPCResponser\" />
     <Folder Include="Utility\" />
     <Folder Include="MongoTool\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="dockerfile">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="enterpoint.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -54,6 +52,11 @@
     <Reference Include="Xsoft.Proto">
       <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

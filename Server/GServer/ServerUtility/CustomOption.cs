@@ -1,4 +1,6 @@
 using CommandLine;
+// ReSharper disable All
+#pragma warning disable CS8618
 
 namespace ServerUtility
 {

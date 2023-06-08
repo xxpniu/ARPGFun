@@ -1,5 +1,23 @@
-FROM mcr.microsoft.com/dotnet/runtime:3.1  as builder
+﻿FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS base
+WORKDIR /app
 
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+WORKDIR /src
+COPY ["GServer/GateServer.csproj", "GServer/"]
+COPY ["ServerUtility/ServerUtility.csproj", "ServerUtility/"]
+COPY ["../../GameCore/XNet/XNet.Libs.csproj", "../../GameCore/XNet/"]
+RUN dotnet restore "GServer/GateServer.csproj"
+COPY . .
+WORKDIR "/src/GServer"
+RUN dotnet build "GateServer.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "GateServer.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+COPY --from=publish /src/enterpoint.sh ./enterpoint.sh
 
 ENV DEV_HOST="192.168.1.29"
 # 当前镜像可访问IP 对外Ip
@@ -47,12 +65,9 @@ EXPOSE 2001  1700
 # 启动类型  1 
 
 
-COPY . /game/gserver
-WORKDIR /game/gserver
-
 # ENTRYPOINT
 ENTRYPOINT   [ "sh" , "enterpoint.sh" ]
-#dotnet GateServer.dll --l $HOST_NAME:$MAP_GATE_PORT --s $SERVICE_HOST:$MAP_GATE_SERVICE_PORT --d $DBHOST --n $DB_GATE --z $ZK_SERVER_LIST --k $KFK_SERVER_LIST --serverid $SERVERGROUPID --zklogin $ZKLOINGROOT --zkroot $ZKROOT --zknotify $ZKNOTIFYROOT --zkmatch $ZKMATCHROOT --zkeconfig $ZKCONFIG --maxplayer $MAXPLAYER --gm $GMENABLE
 
 
 
+#ENTRYPOINT ["dotnet", "GateServer.dll"]

@@ -17,6 +17,7 @@ RUN dotnet publish "MatchServer.csproj" -c Release -o /app/publish /p:UseAppHost
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=publish /src/enterpoint.sh ./enterpoint.sh
 
 ENV DEV_HOST="192.168.1.29"
 # 当前镜像可访问IP 对外Ip

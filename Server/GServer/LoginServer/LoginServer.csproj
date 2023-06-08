@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <StartupObject>LoginServer.Program</StartupObject>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,9 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.config" />
-    <None Update="dockerfile">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="enterpoint.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -53,5 +51,10 @@
     <Reference Include="Xsoft.Proto">
       <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 </Project>

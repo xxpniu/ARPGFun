@@ -46,7 +46,7 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 	private  async  void Start()
 	{
 		AIRunner.Current = this;
-		Debuger.Loger = new UnityLoger();
+		Debuger.Loger = new UnityLogger();
 
 		var excelToJsonConfigManager = new ExcelToJSONConfigManager(ResourcesManager.S); 
 		LanguageManager.S.AddLanguage(ExcelToJSONConfigManager.Find<LanguageData>());

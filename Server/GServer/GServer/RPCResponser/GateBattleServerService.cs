@@ -6,7 +6,7 @@ using GServer.Utility;
 using Proto;
 using Utility;
 
-namespace GServer.RPCResponsor
+namespace GServer.RPCResponser
 {
 
     public class GateBattleServerService : GateServerInnerService.GateServerInnerServiceBase
@@ -66,7 +66,7 @@ namespace GServer.RPCResponsor
                 if (match == null) return await Task.FromResult(new Void());
                 var chn = new LogChannel(match.ServicsHost);
                 var client = await chn.CreateClientAsync<MatchServices.MatchServicesClient>();
-                client.KllUserAsync(new S2M_KillUser {UserID = request.Uuid});
+                await client.KllUserAsync(new S2M_KillUser {UserID = request.Uuid});
                 await chn.ShutdownAsync();
             }
 

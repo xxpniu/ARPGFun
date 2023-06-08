@@ -127,7 +127,7 @@ public class UApplication : XSingleton<UApplication>
         {
             // Init(args[0] as DHero, args[1] as PlayerPackage, (int)args[2]);
             var config = ExcelToJSONConfigManager.GetId<CharacterData>(localDataIndex);
-            var itemCfg = ExcelToJSONConfigManager.GetId<ItemData>(int.Parse(config.InitEquip));
+            var itemCfg = ExcelToJSONConfigManager.GetId<ItemData>(config.InitEquip);
             var item = new PlayerItem()
             {
                 ItemID = itemCfg.ID,

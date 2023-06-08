@@ -3,13 +3,13 @@ using XNet.Libs.Utility;
 
 namespace BattleViews.Utility
 {
-    public class UnityLoger : Loger
+    public class UnityLogger : Loger
     {
         public override void WriteLog(DebugerLog log)
         {
 
 #if UNITY_SERVER
-        Console.WriteLine(log.ToString());
+        System.Console.WriteLine(log.ToString());
 #else
             switch (log.Type)
             {

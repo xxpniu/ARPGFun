@@ -19,7 +19,7 @@ public class StartType : MonoBehaviour
     private IEnumerator Start()
     {
         yield return Addressables.InitializeAsync();
-        Debuger.Loger = new UnityLoger();
+        Debuger.Loger = new UnityLogger();
 
         yield return SceneManager.LoadSceneAsync("Welcome", LoadSceneMode.Additive);
 
