@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -17,15 +20,58 @@ namespace Core
 	public class ResourcesManager : XSingleton<ResourcesManager>, IConfigLoader
 	{
 		OnDebug IConfigLoader.Printer => Debuger.LogWaring;
-
-		[Obsolete("JsonTool.Deserialize<List<T>>")]
 		List<T> IConfigLoader.Deserialize<T>()
 		{
 			var fileName = ExcelToJSONConfigManager.GetFileName<T>();
 			var json = LoadText("Json/" + fileName);
-			if (json != null) return null;
-			Debuger.LogError($"Not found :{fileName}");
-			return null;
+			if (json == null) return null;
+			var type = typeof(T);
+			//ExcelConfigColIndexAttribute
+			var properties = type.GetProperties(BindingFlags.Public)
+				.Where(t => t.GetCustomAttribute<ExcelConfigColIndexAttribute>() is not null)
+				.Select(t=> new
+				{
+					Index = t.GetCustomAttribute<ExcelConfigColIndexAttribute>(),
+					Info = t
+				})
+				.OrderBy(t=>t.Index.Index).ToArray()
+				;
+			var jArr =  Newtonsoft.Json.JsonConvert.DeserializeObject<JArray>(json);
+			var raw = jArr.Count;
+			var list = new List<T>();
+			for (var i = 0; i < raw; i++)
+			{
+				var item =  Activator.CreateInstance<T>();
+				var rawData = (JArray)jArr[i];
+				if (rawData.Count != properties.Length)
+				{
+					throw new ArgumentException($"raw != properties {rawData.Count} != {properties.Count()}");
+				}
+
+				var property = properties[i];
+
+				if (property.Info.PropertyType == typeof(string))
+				{
+					property.Info.SetValue(item, rawData[i].Value<string>());
+				}
+				else if (property.Info.PropertyType == typeof(int))
+				{
+					property.Info.SetValue(item, rawData[i].Value<int>());
+				}else if (property.Info.PropertyType == typeof(float))
+				{
+					property.Info.SetValue(item, rawData[i].Value<float>());
+				}
+				else
+				{
+					throw new InvalidCastException($"{property.Info.PropertyType} unsupported in type {typeof(T)}");
+				}
+
+				list.Add(item);
+			}
+
+			return list;
+
+			//jValue.Values()
 			//var table = JsonTool.Deserialize<List<T>>(json);
 			//return table;
 		}

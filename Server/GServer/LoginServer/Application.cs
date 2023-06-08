@@ -19,7 +19,7 @@ namespace LoginServer
     public class Application:ServerApp<Application>
     {
   
-        private  LoginServerConfig Config { get;  set; }
+        private LoginServerConfig Config { get;  set; }
         private ZooKeeper zk;
         private LogServer Server;
         private LogServer ServiceServer;
@@ -103,7 +103,7 @@ namespace LoginServer
             return GateWatcher.Find(serverId);
         }
 
-        protected override async Task Stop(CancellationToken token)
+        protected override async Task Stop(CancellationToken token = default)
         {
             await ServiceServer.ShutdownAsync();
             await Server.ShutdownAsync();

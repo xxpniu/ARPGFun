@@ -30,22 +30,22 @@ namespace GServer.RPCResponsor
             var notifyServer = Application.S.NotifyServers.FirstOrDefault();
             if (notifyServer == null)
             {
-                Debuger.LogError($"nofound notify server");
+                Debuger.LogError($"not found notify server");
                 return false;
             }
 
-            var rnotify = new S2N_RouteSendNotify { };
+            var rNotify = new S2N_RouteSendNotify { };
             var any = Any.Pack(notify);
             foreach (var i in player)
             {
                 var msg = new NotifyMsg { AccountID = i, AnyNotify = { any } };
-                rnotify.Msg.Add(msg);
+                rNotify.Msg.Add(msg);
             }
 
 
             var chn = new LogChannel(notifyServer.ServicsHost);
             var query = await chn.CreateClientAsync<NotifyServices.NotifyServicesClient>();//
-            var res = await query.RouteSendNotifyAsync(rnotify,cancellationToken:chn.ShutdownToken);
+            var res = await query.RouteSendNotifyAsync(rNotify,cancellationToken:chn.ShutdownToken);
             await chn.ShutdownAsync();
             if (res.Code == ErrorCode.Ok)
             {
