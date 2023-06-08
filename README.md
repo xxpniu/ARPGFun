@@ -1,7 +1,7 @@
 
   # 多人在线的动作游戏 
  
-
+ 
  
   ## 技术特点:
   * 1.使用unity为服务器。<br/>
@@ -12,6 +12,7 @@
   * 6.技能编辑可视化，基于layout/timeline<br/>
   * 7.基于状态同步的技术，反射注入的方式自动化完成协议链接<br/>
   * 8.基于zookeeper的服务器发现机制
+  * 9.全docker化
   
 
   ## 编辑效果查看
@@ -23,6 +24,7 @@
   *  Unity发布的server版本
   *  Gprc
   *  Zookeeper
+  *  docker
   
   ## 项目目录结构
   *  client 战斗服务器和游戏客户端
@@ -38,18 +40,11 @@
   *  PublicTools/econfigs 游戏的数据配表
   *  PublicTools/proto 游戏的网络协议
   *  PublicTools/src 自动编译工具源码输出目录
-  *  PublicTools/toolssrc 工具的源码
+ 
   
   
-  ## 项目启动
-  *  编译服务器 buildstart.sh 
-  *  发布unity客户端 和 服务器配置相关服务器参数
-
   ## 自动生成协议
-  ···
-    cd PublicTools 
-    docker build -t build-ci . && docker run  --rm -it build-ci 
-  ···
+   使用github CI 完成自动处理
   
   
   
