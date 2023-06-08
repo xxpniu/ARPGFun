@@ -32,5 +32,5 @@ message MapElement
 message MapConfig
 {
    int32 ConfigID = 1;
-   repeated MapElement Elements = 1 [json_name="E"]; 
+   repeated MapElement Elements = 2 [json_name="E"]; 
 }
