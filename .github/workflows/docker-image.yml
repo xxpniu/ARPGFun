@@ -2,7 +2,10 @@ name: Auto Build Proto And Excel
 
 on:
   push:
-    branches: [ "master" ]
+    #branches: [ "master" ]
+    paths:
+      - PublicTools/**
+      - !PublicTools/output/**
  #pull_request:
  #   branches: [ "master" ]
 
