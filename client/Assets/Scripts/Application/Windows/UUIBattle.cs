@@ -59,7 +59,7 @@ namespace Windows
                 if (view.TryGetMagicData(magicID, out HeroMagicData data))
                 {
                     var time = Mathf.Max(0, data.CDCompletedTime - now);
-                    this.Template.CDTime.text = time > 0 ? string.Format("{0:0.0}", time) : string.Empty;
+                    this.Template.CDTime.text = time > 0 ? $"{time:0.0}" : string.Empty;
                     cdTime = Mathf.Max(0.01f, data.CdTotalTime);
                     if (time > 0)
                     {
@@ -88,9 +88,9 @@ namespace Windows
             Map = new Texture2D(size, size, TextureFormat.RGBA32, false, true);
             var a = new Color(1, 1, 1, 0);
             Colors = new Color32[size * size];
-            for (int x =0; x< size; x++)
+            for (var x =0; x< size; x++)
             {
-                for (int y = 0; y < size; y++)
+                for (var y = 0; y < size; y++)
                 {
                     Colors[x + y* size] = a;
                 }
@@ -177,9 +177,9 @@ namespace Windows
 
         //private PlayerPackage Package;
 
-        internal void ShowWindow(IBattleGate gata)
+        internal void ShowWindow(IBattleGate gate)
         {
-            this.BattleGate = gata;
+            this.BattleGate = gate;
             ShowWindow();
         }
 
@@ -192,11 +192,11 @@ namespace Windows
                 var config = ExcelToJSONConfigManager.GetId<ItemData>(i.Value.ItemID);
                 if ((ItemType)config.ItemType == ItemType.ItHpitem)
                 {
-                    keyHp = config.Params[0];
+                    keyHp = config.Params1;
                 }
                 if ((ItemType)config.ItemType == ItemType.ItMpitem)
                 {
-                    keyMp = config.Params[0];
+                    keyMp = config.Params1;
                 }
             }
             InitCharacter(BattleGate.Owner);

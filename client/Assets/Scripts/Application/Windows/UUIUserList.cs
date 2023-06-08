@@ -73,19 +73,19 @@ namespace Windows
             }
         }
 
-        private void ClickItem(ContentTableModel obj)
+        private async void ClickItem(ContentTableModel obj)
         {
-            Task.Factory.StartNew(async () =>
+
+            var r = await ChatManager.S.ChatClient.LinkFriendAsync(new C2CH_LinkFriend
+                { FriendId = obj.Player.AccountUuid });
+            Invoke(() =>
             {
-                var r = await ChatManager.S.ChatClient.LinkFrindAsync(new C2CH_LinkFriend { FriendId = obj.Player.AccountUuid });
-                Invoke(() =>
-                {
-                    if (!r.Code.IsOk())
-                        UApplication.S.ShowError(r.Code);
-                    Debuger.Log($"{r.Code} {obj.Player.HeroName}");
-                });
+                if (!r.Code.IsOk())
+                    UApplication.S.ShowError(r.Code);
+                Debuger.Log($"{r.Code} {obj.Player.HeroName}");
             });
-           
+
+
         }
 
         protected override void OnHide()

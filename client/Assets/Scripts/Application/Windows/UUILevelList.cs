@@ -28,7 +28,7 @@ namespace Windows
                 Template.ButtonBrown.ActiveSelfObject(false);
                 Data = level;
                 this.Template.Name.text = $"{level.Name} Lvl:{level.LimitLevel}";
-                this.Template.Desc.text = $"{level.Description}";
+                this.Template.Desc.text = $"{level.Name}";
                 Template.missionImage.sprite = await  ResourcesManager.S.LoadIcon(level);
                 this.Template.ButtonGreen.SetKey("UUILevelList_Enter");
             }

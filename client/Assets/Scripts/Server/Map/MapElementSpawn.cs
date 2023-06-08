@@ -36,9 +36,9 @@ namespace Server.Map
     public class MapElementSpawn
     {
         public BattlePerception Per { get; }
-        public MapCongfig Config { get; }
+        public MapConfig Config { get; }
 
-        public MapElementSpawn(BattlePerception per, MapCongfig config )
+        public MapElementSpawn(BattlePerception per, MapConfig config )
         {
             this.Per = per;
             this.Config = config;

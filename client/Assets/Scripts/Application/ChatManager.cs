@@ -29,6 +29,7 @@ public class ChatManager : XSingleton<ChatManager>
     public string Host;
     public int Port;
 
+ 
     private  void ShowConnect()
     {
          Windows.UUIPopup.ShowConfirm("Chat_Disconnect".GetLanguageWord(),
@@ -38,7 +39,7 @@ public class ChatManager : XSingleton<ChatManager>
     }
 
     public ChatService.ChatServiceClient ChatClient { private set; get; }
-    public AsyncServerStreamingCall<Any> loginCall { get; private set; }
+    public AsyncServerStreamingCall<Any> LoginCall { get; private set; }
 
     public async Task<bool> TryConnectChatServer(ServiceAddress serviceAddress, string heroName)
     {
@@ -51,8 +52,8 @@ public class ChatManager : XSingleton<ChatManager>
         if (ChatChannel != null)
         {
             await ChatHandleChannel?.ShutDownAsync(false)!;
-            loginCall?.Dispose();
-            loginCall = null;
+            LoginCall?.Dispose();
+            LoginCall = null;
             await ChatChannel?.ShutdownAsync()!;
         }
 
@@ -61,13 +62,13 @@ public class ChatManager : XSingleton<ChatManager>
         ChatChannel = new LogChannel(serviceAddress);
         var chat = ChatChannel.CreateClient<ChatService.ChatServiceClient>();// (ChatChannel.CreateLogCallInvoker());
         ChatClient = chat;
-        loginCall = chat.Login(new C2CH_Login
+        LoginCall = chat.Login(new C2CH_Login
         {
             AccountID = UApplication.S.AccountUuid,
             HeroName = HeroName ?? string.Empty,
             Token = UApplication.S.SesssionKey
         }, cancellationToken: ChatChannel.ShutdownToken);
-        var header = await loginCall.ResponseHeadersAsync;
+        var header = await LoginCall.ResponseHeadersAsync;
         ChatChannel.SessionKey = header.Get("session-key")?.Value ?? string.Empty;
         Debuger.Log($"ChatChannel.SessionKey:{ChatChannel.SessionKey }");
 
@@ -98,7 +99,7 @@ public class ChatManager : XSingleton<ChatManager>
             return false;
         }
 
-        ChatHandleChannel = new ResponseChannel<Any>(loginCall.ResponseStream, true, tag: "ChatHandle")
+        ChatHandleChannel = new ResponseChannel<Any>(LoginCall.ResponseStream, true, tag: "ChatHandle")
         {
             OnReceived = (any) =>
             {
@@ -183,8 +184,8 @@ public class ChatManager : XSingleton<ChatManager>
     {
         //ChatPushChannel?.ShutDownAsync(false);
         ChatHandleChannel?.ShutDownAsync(false);
-        loginCall?.Dispose();
-        loginCall = null;
+        LoginCall?.Dispose();
+        LoginCall = null;
         _ = ChatChannel?.ShutdownAsync()!;
     }
 
