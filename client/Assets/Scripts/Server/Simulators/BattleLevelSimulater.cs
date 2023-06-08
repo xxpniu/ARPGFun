@@ -87,7 +87,7 @@ namespace Server
 
         public BattleState State { private set; get; }
         public GTime GetTime() { return timeSimulater.Now; }
-        public MapCongfig Config { private set; get; }
+        public MapConfig Config { private set; get; }
         public GTime TimeNow { get { return GetTime(); } }
         public float TotalTime = 0f;
 
@@ -100,7 +100,7 @@ namespace Server
             timeSimulater = PerView;
             AIRunner.Current = this;
             await ResourcesManager.S.LoadResourcesWithExName<TextAsset>(LevelData.ElementConfigPath,(res)=> {
-                Config = res.text?.Parser<MapCongfig>();
+                Config = res.text?.Parser<MapConfig>();
             });
 
             Debuger.Log($"Map:{Config}");
