@@ -10,22 +10,27 @@ package Proto;
 
 enum MapElementType
 {
-    MET_NONE=0;
-    MET_PlayerInit =1;
-    MET_Transport =2;
-    MET_ElementGroup =3;
-    MET_Monster =4;
-    MET_MonsterGroup=5;
-    MET_Npc =6;
+	MET_NONE = 0;
+	MET_MonsterGroup = 1; //对应Monstergroup ID
+	MET_ElementGroup = 2;    //对应Elementsgroup ID
+	MET_NPC  =3; //对应NPC
+	MET_PLAYER_INIT = 4;//角色初始化
+	MET_Monster = 5 ;//怪物表id
+	MET_Transport = 6 ;//传送点
 }
 
 message MapElement
 {
-
+	MapElementType Type = 1 [json_name="T"];//地图元素类型
+	Vector3 Forward = 2 [json_name="F"];//朝向
+	Vector3 Position = 3 [json_name="P"];//位置
+	int32 ConfigID = 4  [json_name="C"];   //配表ID
+	Vector3 LinkPos = 5[json_name="L"]; //关联位置
+	int32 GroupID = 6 [json_name="G"];//group id
 }
 
 message MapConfig
 {
    int32 ConfigID = 1;
-   repeated MapElement Elements = 2;
+   repeated MapElement Elements = 1 [json_name="E"]; 
 }

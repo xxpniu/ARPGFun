@@ -89,7 +89,7 @@ namespace Server.Map
         private void CreateTransport(MapElementData config, Vector3 pos, Vector3 forward, Vector3 linkPos)
         {
             //var st = Per.State as BattleState;
-            var ai = SpawnLogicUtil.CreateTransportAI(linkPos,config.Params[0]);
+            var ai = SpawnLogicUtil.CreateTransportAI(linkPos,config.Params01);
             var character = CM.GetId<CharacterData>(config.CharacterID);
             var properties = character.CreatePlayerProperties();
             var ch= Per.CreateCharacter(Per.AIControllor, 0, character, null, properties, -10, pos, forward, null, config.NameKey);
