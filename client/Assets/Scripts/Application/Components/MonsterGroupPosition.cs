@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 public class MonsterGroupPosition : MonoBehaviour
 {
-    //public MapElementType EType;
+    public MapElementType EType;
 
     public int ConfigID = 0;
 

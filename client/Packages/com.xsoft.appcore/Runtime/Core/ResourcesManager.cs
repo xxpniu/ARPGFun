@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -27,7 +28,7 @@ namespace Core
 			if (json == null) return null;
 			var type = typeof(T);
 			//ExcelConfigColIndexAttribute
-			var properties = type.GetProperties(BindingFlags.Public)
+			var properties = type.GetProperties(BindingFlags.Public| BindingFlags.Instance)
 				.Where(t => t.GetCustomAttribute<ExcelConfigColIndexAttribute>() is not null)
 				.Select(t=> new
 				{
@@ -36,34 +37,46 @@ namespace Core
 				})
 				.OrderBy(t=>t.Index.Index).ToArray()
 				;
-			var jArr =  Newtonsoft.Json.JsonConvert.DeserializeObject<JArray>(json);
+			var jArr =  JsonConvert.DeserializeObject<JArray>(json);
 			var raw = jArr.Count;
 			var list = new List<T>();
 			for (var i = 0; i < raw; i++)
 			{
-				var item =  Activator.CreateInstance<T>();
+				var item = Activator.CreateInstance<T>();
 				var rawData = (JArray)jArr[i];
 				if (rawData.Count != properties.Length)
 				{
 					throw new ArgumentException($"raw != properties {rawData.Count} != {properties.Count()}");
 				}
 
-				var property = properties[i];
-
-				if (property.Info.PropertyType == typeof(string))
+				for (var index = 0; index < rawData.Count; index++)
 				{
-					property.Info.SetValue(item, rawData[i].Value<string>());
-				}
-				else if (property.Info.PropertyType == typeof(int))
-				{
-					property.Info.SetValue(item, rawData[i].Value<int>());
-				}else if (property.Info.PropertyType == typeof(float))
-				{
-					property.Info.SetValue(item, rawData[i].Value<float>());
-				}
-				else
-				{
-					throw new InvalidCastException($"{property.Info.PropertyType} unsupported in type {typeof(T)}");
+					var property = properties[index];
+					try
+					{
+						if (property.Info.PropertyType == typeof(string))
+						{
+							property.Info.SetValue(item, rawData[index].Value<string>());
+						}
+						else if (property.Info.PropertyType == typeof(int))
+						{
+							property.Info.SetValue(item, rawData[index].Value<int>());
+						}
+						else if (property.Info.PropertyType == typeof(float))
+						{
+							property.Info.SetValue(item, rawData[index].Value<float>());
+						}
+						else
+						{
+							throw new InvalidCastException(
+								$"{property.Info.PropertyType} unsupported in type {typeof(T)}");
+						}
+					}
+					catch (Exception ex)
+					{
+						Debug.LogException(ex);
+						Debug.LogError($"{typeof(T)} {property.Info.PropertyType} {property.Info.Name} [{index}] of {rawData[index]} - {rawData}");
+					}
 				}
 
 				list.Add(item);

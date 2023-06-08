@@ -166,7 +166,7 @@ namespace Server.Map
             {
                 case StandType.StAround:
                     {
-                        var r = monsterGroup.StandParams[0];
+                        var r = monsterGroup.StandParams01;
                         var ang = 360 / maxCount;
                         for (var i = 0; i < maxCount; i++)
                         {
@@ -179,7 +179,7 @@ namespace Server.Map
                 case StandType.StRandom:
                 default:
                     {
-                        var r = (int)monsterGroup.StandParams[0];
+                        var r = (int)monsterGroup.StandParams01;
                         for (var i = 0; i < maxCount; i++)
                         {
                             var offset = new Vector3(GRandomer.RandomMinAndMax(-r, r), 0, GRandomer.RandomMinAndMax(-r, r));

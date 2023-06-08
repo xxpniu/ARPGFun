@@ -280,7 +280,7 @@ public class BattleSimulater : ComponentAsync
                         case ItemType.ItMpitem:
                             {
                                 var rTarget = new ReleaseAtTarget(i.Value.HeroCharacter, i.Value.HeroCharacter);
-                                if (Simulater.CreateReleaser(config.Params[0], i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
+                                if (Simulater.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
                                 {
                                     i.Value.ConsumeItem(useItem.ItemId);
                                     needNotifyPackage = true;
