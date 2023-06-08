@@ -3324,6 +3324,15 @@
             <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
             <param name="serviceImpl">An object implementing the server-side handling logic.</param>
         </member>
+        <member name="T:Proto.MapDataReflection">
+            <summary>Holder for reflection information generated from map_data.proto</summary>
+        </member>
+        <member name="P:Proto.MapDataReflection.Descriptor">
+            <summary>File descriptor for map_data.proto</summary>
+        </member>
+        <member name="F:Proto.MapConfig.ConfigIDFieldNumber">
+            <summary>Field number for the "ConfigID" field.</summary>
+        </member>
         <member name="T:Proto.MatchServerReflection">
             <summary>Holder for reflection information generated from match_server.proto</summary>
         </member>
@@ -5383,6 +5392,21 @@
         <member name="P:EConfig.BattleLevelData.BossEliteWeight">
             <summary>
             boss权重
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.LimitTime">
+            <summary>
+            最大挑战时间秒
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.ElementConfigPath">
+            <summary>
+            地图元素配置文件
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.Description">
+            <summary>
+            描述
             </summary>
         </member>
         <member name="T:EConfig.MonsterGroupData">
