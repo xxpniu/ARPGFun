@@ -217,3 +217,5 @@ bin/*
 **/output/**
 
 .vs/**
+
+serverout/**
