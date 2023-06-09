@@ -38,11 +38,6 @@ ENV DB_ACCOUNT="CenterAccount"
 EXPOSE 9000 1800
 
 
-#CMD [ "dotnet" , "" ]
-
-# 启动类型  1 
-
-
 COPY . /game/login
 WORKDIR /game/login
 
