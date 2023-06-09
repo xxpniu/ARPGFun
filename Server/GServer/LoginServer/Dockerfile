@@ -42,7 +42,7 @@ COPY . /game/login
 WORKDIR /game/login
 
 
-# ENTRYPOINT
+#game 
 ENTRYPOINT   [ "sh" , "enterpoint.sh" ]
 
 #ENTRYPOINT [ "tail", "-f", "dev/null" ]

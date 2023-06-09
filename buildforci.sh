@@ -17,7 +17,7 @@ docker build -t builder:${VERSION} .
 echo "Begin Build:docker run --rm -v ${OUTPUT}:/serveroutput  --name build${VERSION} builder:${VERSION} "
 docker run --rm --volume ${OUTPUT}:/serveroutput  --name build${VERSION} builder:${VERSION} 
 
-docker rm build${VERSION}
+#docker rm build${VERSION}
 
 docker rmi builder:${VERSION} 
 #
@@ -31,6 +31,8 @@ echo "Export images"
 #docker rmi game/battle:$VERSION
 
 echo 'Begin Building'
+
+echo "docker build --no-cache -t game/login:$VERSION ${OUTPUT}/LoginServer"
 
 docker build --no-cache -t game/login:$VERSION ${OUTPUT}/LoginServer
 docker build --no-cache -t game/gate:$VERSION ${OUTPUT}/GateServer
