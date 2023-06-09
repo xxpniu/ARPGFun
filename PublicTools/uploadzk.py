@@ -12,21 +12,22 @@ parser = argparse.ArgumentParser(
                 epilog='')
 
 parser.add_argument("-r","--root")
-parser.add_argument("-h","--host")
+parser.add_argument("-o","--host")
 parser.add_argument("-d","--dir")
 
 
 def upload(host, root, dir):
+    print(root,host,dir)
     zk = KazooClient(host, 3000)
     zk.start()
 
     zroot = zk.exists("%s" % root)
     if not zroot:
-        zk.create(root,"")
-
-    files = os.listdir(dir)
+        zk.create(root,b"")
+    dir_root = os.path.join(os.getcwd(),dir)
+    files = os.listdir(dir_root)
     for n in files:
-        f = open("%s/%s" % (dir, n), "rb")
+        f = open("%s/%s" % (dir_root, n), "rb")
         path = "%s/%s" % (root, n)
         exs = zk.exists(path)
         if exs:
@@ -42,8 +43,8 @@ def upload(host, root, dir):
 if __name__ == "__main__":
    args = parser.parse_args()
    root = args.root or "/configs"
-   dir = args.dir or "./src/json"
+   dir = args.dir or "./client/Assets/Resources/Json"
    host = args.host or "localhost:2181"
-
+   print(f"{args}")
    upload(host,root, dir)
  

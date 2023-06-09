@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using ExcelConfig;
 using org.apache.zookeeper;
 using XNet.Libs.Utility;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ServerUtility
 {
@@ -64,12 +69,86 @@ namespace ServerUtility
             var name = ExcelToJSONConfigManager.GetFileName<T>();
             if (!_configs.TryGetValue(name, out var json)) return null!;
             if (string.IsNullOrEmpty(json)) return null!;
-           
-            var res =  JsonConvert.DeserializeObject<List<T>>(json);
+    
+			var type = typeof(T);
+			//ExcelConfigColIndexAttribute
+			var properties = type.GetProperties(BindingFlags.Public| BindingFlags.Instance)
+				.Where(t => t.GetCustomAttribute<ExcelConfigColIndexAttribute>() is not null)
+				.Select(t=> new
+				{
+					Index = t.GetCustomAttribute<ExcelConfigColIndexAttribute>(),
+					Info = t
+				})
+				.OrderBy(t=>t.Index.Index).ToArray()
+				;
+			var jArr =  JsonConvert.DeserializeObject<JArray>(json);
+			var raw = jArr!.Count;
+			var list = new List<T>();
+			for (var i = 0; i < raw; i++)
+			{
+				var item = Activator.CreateInstance<T>();
+				var rawData = (JArray)jArr[i];
+				if (rawData.Count != properties.Length)
+				{
+					throw new ArgumentException($"raw != properties {rawData.Count} != {properties.Count()}");
+				}
 
-            Debuger.DebugLog($"Load:{name} Table:{res!.Count}");
-            return res;
+				for (var index = 0; index < rawData.Count; index++)
+				{
+					var property = properties[index];
+					try
+					{
+						if (property.Info.PropertyType == typeof(string))
+						{
+							property.Info.SetValue(item, rawData[index].Value<string>());
+						}
+						else if (property.Info.PropertyType == typeof(int))
+						{
+							var rawVal = rawData[index];
+							switch (rawVal.Type)
+							{
+								case JTokenType.Float:
+									property.Info.SetValue(item, (int)rawData[index]);
+									break;
+								case JTokenType.Integer:
+									property.Info.SetValue(item, rawVal.Value<int>());
+									break;
+								case JTokenType.String:
+								{
+									var str = rawVal.Value<string>();
+									if (!int.TryParse(str, out var v)) v = -1;
+									property.Info.SetValue(item, v);
+								}
+									
+									break;
+								default:
+									throw new InvalidCastException($"{rawVal.Type} can't case into int");
+							}
+						}
+						else if (property.Info.PropertyType == typeof(float))
+						{
+							property.Info.SetValue(item, rawData[index].Value<float>());
+						}
+						else
+						{
+							throw new InvalidCastException(
+								$"{property.Info.PropertyType} unsupported in type {typeof(T)}");
+						}
+					}
+					catch (Exception ex)
+					{
+						Debuger.LogError(ex);
+						Debuger.LogError($"{typeof(T)} {property.Info.PropertyType} {property.Info.Name} [{index}] of {rawData[index]} - {rawData}");
+					}
+				}
+
+				list.Add(item);
+			}
+
+			return list;
         }
+        
+        
 
         public override async Task process(WatchedEvent @event)
         {

@@ -7,7 +7,7 @@ services:
             - '9000:9000'
             - '1800:1800'
         environment: 
-            - DBHOST=mongodb://${MONGO}:27017/
+            - DBHOST=$MONGOURL
             - MAP_LOGIN_SERVICE_PORT=1800
             - SERVICE_HOST=${ADDRESS}
             - HOST_NAME=${ADDRESS}
@@ -19,7 +19,7 @@ services:
             - '2001:2001'
             - '1700:1700'
         environment:
-            - DBHOST=mongodb://${MONGO}:27017/
+            - DBHOST=$MONGOURL
             - DB_GATE=gate1
             - SERVERGROUPID=1
             - MAXPLAYER=10000
@@ -32,7 +32,7 @@ services:
         ports: 
             - '1300:1300'
         environment: 
-            - DBHOST=mongodb://${MONGO}:27017/   
+            - DBHOST=$MONGOURL
             - DB_CHAT=chat
             - SERVICE_HOST=${ADDRESS}
             - HOST_NAME=${ADDRESS}
@@ -44,7 +44,7 @@ services:
             - '2200:2200'
             - '1522:1522'
         environment: 
-            - DBHOST=mongodb://${MONGO}:27017/
+            - DBHOST=$MONGOURL
             - DB_CHAT=chat
             - MAX_PLAYER=4000
             - SERVERID=1000
@@ -53,13 +53,13 @@ services:
             - ZK_SERVER_LIST=${ZK}
             - KFK_SERVER_LIST=${KAFKA}
         depends_on: 
-            - notify 
+            - notify           
     match:
         image: 'game/match:latest'
         ports: 
             - '1500:1500'
         environment: 
-            - DBHOST=mongodb://${MONGO}:27017/  
+            - DBHOST=$MONGOURL
             - DB_MATCH=match
             - SERVICE_HOST=${ADDRESS} 
             - HOST_NAME=${ADDRESS}

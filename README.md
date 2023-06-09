@@ -1,6 +1,76 @@
 
-  # 多人在线的动作游戏 
+  # 部署流程
+  ### 需求环境
+  - docker & docker compose 
+      下载网址  https://docs.docker.com/get-docker/
  
+  - Unity 2022.3.1 +
+  - python3 & pip
+
+      ```
+       pip install kazoo
+      ```
+
+  ### 编译
+  - 使用 buildforci.sh  编译服务器代码
+
+    ```
+    cd arpgfun 
+    mkdir publish 
+    sh buildforci.sh 
+    ```
+  - 启动环境 mongo 和 zookeeper
+   docker-env/server-env中修改
+  ```
+  ADDRESS=localhost  #your ip
+  REMOTE=$ADDRESS
+  MONGO=$ADDRESS
+  ZK=$ADDRESS:2181
+  KAFKA=$ADDRESS:9092
+  ``` 
+
+  ```
+   cd docker-env/server-env
+   sh run.sh
+  ```
+  - 首次需要上传配置到zookeeper服务器
+```python
+if __name__ == "__main__":
+   args = parser.parse_args()
+   root = args.root or "/configs"
+   dir = args.dir or "./client/Assets/Resources/Json"
+   host = args.host or "localhost:2181"  # your zookeeper ip
+   print(f"{args}")
+   upload(host,root, dir)
+ 
+```
+
+   ```
+   cd PublicTools 
+   python3 uploadzk.py
+   ```
+
+- 同样是方式启动 server-nobattle
+
+- 修改文件
+  client/Assets/StreamingAssets/client.json
+
+  ```js
+  {
+    "LoginServerHost": "localhost",
+    "LoginServerPort": 9000
+  }
+
+  ```
+
+- 启动Unity打开client 
+- 打开场景 
+  client/Assets/Scenes/Launch.unity
+  ps:
+   需要注意模式 
+
+  # 多人在线的动作游戏 
+  
  
  
   ## 技术特点:
