@@ -45,5 +45,5 @@ WORKDIR /game/login
 # ENTRYPOINT
 ENTRYPOINT   [ "sh" , "enterpoint.sh" ]
 
-#CMD ["sh" , "taillog.sh"]
+#ENTRYPOINT [ "tail", "-f", "dev/null" ]
 
