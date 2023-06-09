@@ -10,13 +10,12 @@ fi
 if [ -z "$OUTPUT" ]; then
     OUTPUT=`pwd`/publish 
     echo "OUTPUT is empty use ${OUTPUT}"
-    
 fi
 
 docker build -t builder:${VERSION} .
 
-echo "Begin Build:docker run --rm -v /serveroutput:${OUTPUT}  --name build${VERSION} builder:${VERSION} "
-docker run --rm --volume ${OUTPUT}:/serveroutput:  --name build${VERSION} builder:${VERSION} 
+echo "Begin Build:docker run --rm -v ${OUTPUT}:/serveroutput  --name build${VERSION} builder:${VERSION} "
+docker run --rm --volume ${OUTPUT}:/serveroutput  --name build${VERSION} builder:${VERSION} 
 
 docker rm build${VERSION}
 
@@ -40,8 +39,8 @@ docker build --no-cache -t game/match:$VERSION ${OUTPUT}/MatchServer
 docker build --no-cache -t game/notify:$VERSION ${OUTPUT}/NotifyServer
 
 
-docker save game/login:$VERSION>${OUTDIR}/login.tar.gz
-docker save game/gate:$VERSION>${OUTDIR}/gate.tar.gz 
-docker save game/chat:$VERSION>${OUTDIR}/chat.tar.gz
-docker save game/match:$VERSION>${OUTDIR}/match.tar.gz 
-docker save game/notify:$VERSION>${OUTDIR}/notify.tar.gz 
+#docker save game/login:$VERSION>${OUTDIR}/login.tar.gz
+#docker save game/gate:$VERSION>${OUTDIR}/gate.tar.gz 
+#docker save game/chat:$VERSION>${OUTDIR}/chat.tar.gz
+#docker save game/match:$VERSION>${OUTDIR}/match.tar.gz 
+#docker save game/notify:$VERSION>${OUTDIR}/notify.tar.gz 

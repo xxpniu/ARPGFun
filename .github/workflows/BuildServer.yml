@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: build Server
-      run: sh buildforci.sh ${{github.run_number}} ./serverout
+      run: mkdir serverout && sh buildforci.sh ${{github.run_number}} ./serverout
 
 
     
