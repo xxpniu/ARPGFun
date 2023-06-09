@@ -3,43 +3,47 @@ import os
 import io
 import sys
 from kazoo.client import KazooClient
+import argparse
 
 
-HOST = "129.211.9.75:2181"
-DIR = "./src/json"
-ROOT = "/configs"
+parser = argparse.ArgumentParser(
+                prog='process execl',
+                description='excel 解析 to cs',
+                epilog='')
 
-i = 1
-while i < len(sys.argv):
-    if sys.argv[i] == '--root':
-        i += 1
-        ROOT = sys.argv[i]
-    elif sys.argv[i] == '--host':
-        i += 1
-        HOST = sys.argv[i]
-    elif sys.argv[i] == '--DIR':
-        i += 1
-        HTTP_HOST = sys.argv[i]
-    pass
-        
-    i += 1
-    pass
+parser.add_argument("-r","--root")
+parser.add_argument("-h","--host")
+parser.add_argument("-d","--dir")
 
-zk = KazooClient(HOST, 3000)
-zk.start()
 
-zroot = zk.exists("%s" % ROOT)
-if not zroot:
-    zk.create(ROOT,"")
+def upload(host, root, dir):
+    zk = KazooClient(host, 3000)
+    zk.start()
 
-files = os.listdir(DIR)
-for n in files:
-    f = open("%s/%s" % (DIR, n), "rb")
-    path = "%s/%s" % (ROOT, n)
-    exs = zk.exists(path)
-    if exs:
-        zk.set(path, f.read())
-    else:
-        zk.create(path, f.read())
-    print("Upload file:%s"%(path ))
-zk.stop()
+    zroot = zk.exists("%s" % root)
+    if not zroot:
+        zk.create(root,"")
+
+    files = os.listdir(dir)
+    for n in files:
+        f = open("%s/%s" % (dir, n), "rb")
+        path = "%s/%s" % (root, n)
+        exs = zk.exists(path)
+        if exs:
+            zk.set(path, f.read())
+        else:
+            zk.create(path, f.read())
+        print("Upload file:%s"%(path ))
+    zk.stop()
+
+
+ 
+
+if __name__ == "__main__":
+   args = parser.parse_args()
+   root = args.root or "/configs"
+   dir = args.dir or "./src/json"
+   host = args.host or "localhost:2181"
+
+   upload(host,root, dir)
+ 

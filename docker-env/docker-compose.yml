@@ -24,7 +24,7 @@ services:
         ports:
             - "27017:27017"  
     login:
-        image: 'game/login:lastest'
+        image: 'game/login:latest'
         ports: 
             - '9000:9000'
             - '1800:1800'
@@ -37,7 +37,7 @@ services:
             - zookeeper    
             - gamemongodb
     gate:
-        image: 'game/gate:lastest'
+        image: 'game/gate:latest'
         ports:
             - '2001:2001'
             - '1700:1700'
@@ -52,7 +52,7 @@ services:
             - zookeeper
             - gamemongodb
     notify:
-        image: 'game/notify:lastest'
+        image: 'game/notify:latest'
         ports: 
             - '1300:1300'
         environment: 
@@ -64,7 +64,7 @@ services:
             - gamemongodb
             - zookeeper
     chat:
-        image: 'game/chat:lastest'
+        image: 'game/chat:latest'
         ports:  
             - '2200:2200'
             - '1522:1522'
@@ -80,7 +80,7 @@ services:
             - gamemongodb
             - notify 
     match:
-        image: 'game/match:lastest'
+        image: 'game/match:latest'
         ports: 
             - '1500:1500'
         environment: 

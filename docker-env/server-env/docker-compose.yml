@@ -8,7 +8,17 @@ services:
             - '2181:2181'
         environment:
             - ALLOW_ANONYMOUS_LOGIN=yes
-    kafka:
+
+    gamemongodb:
+        image: 'mongo' 
+        restart: always
+        ports:
+            - "27017:27017"  
+        environment: 
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=xsoft123456    
+            
+     kafka:
         image: 'bitnami/kafka'
         restart: always
         ports:
@@ -21,14 +31,6 @@ services:
             - ALLOW_PLAINTEXT_LISTENER=yes
         depends_on:
             - zookeeper
-    gamemongodb:
-        image: 'mongo' 
-        restart: always
-        ports:
-            - "27017:27017"  
-        environment: 
-            - MONGO_INITDB_ROOT_USERNAME=root
-            - MONGO_INITDB_ROOT_PASSWORD=xsoft123456    
     
    
 
