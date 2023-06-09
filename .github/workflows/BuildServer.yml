@@ -2,7 +2,9 @@ name: Build Server Images
 
 on:
   push:
-    branches: [ "release" ]
+    #branches: [ "release/**" ]
+    paths:
+      - 'Server/**'
 
 jobs:
 
@@ -15,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: build Server
-      run:  cd PublicTools && sh runbuild.sh
+      run: sh buildforci.sh ${{github.run_number}} ./serverout
 
 
     

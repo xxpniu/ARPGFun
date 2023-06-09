@@ -1,23 +1,5 @@
-﻿FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS base
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/runtime:3.1  as builder
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-WORKDIR /src
-COPY ["MatchServer/MatchServer.csproj", "MatchServer/"]
-COPY ["ServerUtility/ServerUtility.csproj", "ServerUtility/"]
-COPY ["../../GameCore/XNet/XNet.Libs.csproj", "../../GameCore/XNet/"]
-RUN dotnet restore "MatchServer/MatchServer.csproj"
-COPY . .
-WORKDIR "/src/MatchServer"
-RUN dotnet build "MatchServer.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "MatchServer.csproj" -c Release -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-COPY --from=publish /src/enterpoint.sh ./enterpoint.sh
 
 ENV DEV_HOST="192.168.1.29"
 # 当前镜像可访问IP 对外Ip
@@ -51,7 +33,16 @@ ENV DB_MATCH="match"
 EXPOSE 1500 
  
 
+#CMD [ "dotnet" , "" ]
+
+# 启动类型  1 
+
+
+COPY . /game/match
+WORKDIR /game/match
+
 # ENTRYPOINT
 ENTRYPOINT   [ "sh" , "enterpoint.sh" ]
 
-#ENTRYPOINT ["dotnet", "MatchServer.dll"]
+#CMD ["sh" , "taillog.sh"]
+

@@ -249,9 +249,9 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         return true;
     }
 
-    private void OnDestroy()
+    private async void OnDestroy()
     {
-        Task.Factory.StartNew(async () => await Exit());
+        await Exit();
     }
 
     private volatile bool Exited = false;
