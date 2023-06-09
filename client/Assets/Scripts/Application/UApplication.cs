@@ -76,7 +76,10 @@ public class UApplication : XSingleton<UApplication>
     }
     private async Task<T> ChangeGate<T>(params object[] args) where T : UGate, new()
     {
+        
         var old = _gate;
+        var oType = _gate == null ? null : _gate.GetType();
+        Debug.Log($"from {oType} to {typeof(T)}");
         _gate = null;
         var nGate  = new T();
         await UGate.DoJoinGate(nGate, args);
@@ -124,6 +127,7 @@ public class UApplication : XSingleton<UApplication>
     private async void Start()
     {
         if(!localGame) GotoLoginGate();
+        else
         {
             // Init(args[0] as DHero, args[1] as PlayerPackage, (int)args[2]);
             var config = ExcelToJSONConfigManager.GetId<CharacterData>(localDataIndex);

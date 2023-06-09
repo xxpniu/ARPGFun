@@ -1,0 +1,69 @@
+version: '3'
+
+services: 
+    login:
+        image: 'game/login:latest'
+        ports: 
+            - '9000:9000'
+            - '1800:1800'
+        environment: 
+            - DBHOST=mongodb://${MONGO}:27017/
+            - MAP_LOGIN_SERVICE_PORT=1800
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+            - ZK_SERVER_LIST=${ZK}
+            - KFK_SERVER_LIST=${KAFKA}
+    gate:
+        image: 'game/gate:latest'
+        ports:
+            - '2001:2001'
+            - '1700:1700'
+        environment:
+            - DBHOST=mongodb://${MONGO}:27017/
+            - DB_GATE=gate1
+            - SERVERGROUPID=1
+            - MAXPLAYER=10000
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+            - ZK_SERVER_LIST=${ZK}
+            - KFK_SERVER_LIST=${KAFKA}
+    notify:
+        image: 'game/notify:latest'
+        ports: 
+            - '1300:1300'
+        environment: 
+            - DBHOST=mongodb://${MONGO}:27017/   
+            - DB_CHAT=chat
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+            - ZK_SERVER_LIST=${ZK}
+            - KFK_SERVER_LIST=${KAFKA}
+    chat:
+        image: 'game/chat:latest'
+        ports:  
+            - '2200:2200'
+            - '1522:1522'
+        environment: 
+            - DBHOST=mongodb://${MONGO}:27017/
+            - DB_CHAT=chat
+            - MAX_PLAYER=4000
+            - SERVERID=1000
+            - SERVICE_HOST=${ADDRESS}
+            - HOST_NAME=${ADDRESS}
+            - ZK_SERVER_LIST=${ZK}
+            - KFK_SERVER_LIST=${KAFKA}
+        depends_on: 
+            - notify 
+    match:
+        image: 'game/match:latest'
+        ports: 
+            - '1500:1500'
+        environment: 
+            - DBHOST=mongodb://${MONGO}:27017/  
+            - DB_MATCH=match
+            - SERVICE_HOST=${ADDRESS} 
+            - HOST_NAME=${ADDRESS}
+            - ZK_SERVER_LIST=${ZK}
+            - KFK_SERVER_LIST=${KAFKA}
+
+

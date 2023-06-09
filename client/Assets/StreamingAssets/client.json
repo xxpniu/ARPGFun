@@ -1,4 +1,4 @@
 {
-    "LoginServerHost": "129.211.9.75",
+    "LoginServerHost": "localhost",
     "LoginServerPort": 1900
 }
