@@ -7,29 +7,29 @@ namespace BattleViews.Components
     {
         private struct RevertShader
         {
-            public Renderer renderer;
-            public Shader shader;
+            public Renderer Renderer;
+            public Shader Shader;
         }
 
-        private readonly Queue<RevertShader> renders = new Queue<RevertShader>();
+        private readonly Queue<RevertShader> _renders = new Queue<RevertShader>();
 
         private void OnEnable()
         {
             var shader = Shader.Find("Shader Graphs/AlphaCharacter");
             foreach (var i in this.transform.GetComponentsInChildren<Renderer>())
             {
-                var r = new RevertShader { renderer = i, shader = i.material.shader };
-                renders.Enqueue(r);
-                r.renderer.material.shader = shader;
+                var r = new RevertShader { Renderer = i, Shader = i.material.shader };
+                _renders.Enqueue(r);
+                r.Renderer.material.shader = shader;
             }
         }
 
         private void OnDisable()
         {
-            while (renders.Count > 0)
+            while (_renders.Count > 0)
             {
-                var t = renders.Dequeue();
-                t.renderer.material.shader = t.shader;
+                var t = _renders.Dequeue();
+                t.Renderer.material.shader = t.Shader;
             }
         }
 

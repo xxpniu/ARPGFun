@@ -140,7 +140,6 @@ csx
 *.build.csdef
 
 # Windows Store app package directory
-AppPackages/
 
 # Others
 sql/
