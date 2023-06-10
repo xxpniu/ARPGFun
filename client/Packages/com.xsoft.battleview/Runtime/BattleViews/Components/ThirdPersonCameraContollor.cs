@@ -67,10 +67,17 @@ namespace BattleViews.Components
             return this;
         }
 
+        private Vector2 _xRange = new Vector2(5, 85);
+        public ThirdPersonCameraContollor SetClampX(float min, float max)
+        {
+            _xRange = new Vector2(min, max);
+            return this;
+        }
+
         public ThirdPersonCameraContollor RotationByX(float x)
         {
             rotationX += x;
-            rotationX = Mathf.Clamp(rotationX, 5, 85);
+            rotationX = Mathf.Clamp(rotationX, _xRange.x, _xRange.y);
             return this;
         }
 

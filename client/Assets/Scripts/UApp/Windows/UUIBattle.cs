@@ -122,8 +122,9 @@ namespace Windows
             swipeEv.OnSwiping.AddListener((v) =>
             {
                 v *= .5f;
-                //ThirdPersonCameraContollor.Current.RotationByX(v.y).RotationByY(v.x);
-                //BattleGate?.TrySendLookForward(false);
+                
+                ThirdPersonCameraContollor.Current.RotationByX(v.y).RotationByY(v.x);
+                BattleGate?.TrySendLookForward(false);
             });
 
             bt_normal_att.onClick.AddListener(() =>
@@ -148,6 +149,9 @@ namespace Windows
                 }
                 BattleGate?.SendUseItem(ItemType.ItMpitem);
             });
+
+            ThirdPersonCameraContollor.Current
+                .SetClampX(15, 80).SetForwardOffset(Vector3.up * 1.5f);
         }
 
         private string keyHp = string.Empty;
@@ -160,7 +164,7 @@ namespace Windows
             this.Username.text = $"{hero.Name}";
             var data = ExcelToJSONConfigManager.GetId<CharacterData>(hero.HeroID);
             //var character = ExcelToJSONConfigManager.Current.FirstConfig<CharacterPlayerData>(t => t.CharacterID == hero.HeroID);
-            normalAtt = data?.NormalAttack??-1;
+            _normalAtt = data?.NormalAttack??-1;
             this.Level_Number.text = $"{hero.Level}";
             this.Username.text = $"{hero.Name}";
             var leveUp = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == hero.Level + 1);
@@ -171,7 +175,7 @@ namespace Windows
             user_exp.fillAmount = v;
         }
 
-        private int normalAtt = -1;
+        private int _normalAtt = -1;
 
         //private PlayerPackage Package;
 
@@ -240,7 +244,7 @@ namespace Windows
                 i.Model.Update(view, BattleGate.TimeServerNow, BattleGate.PreView.HaveOwnerKey(i.Model.MagicData.MagicKey));
             }
             UpdateMap();
-            if (view.TryGetMagicData(normalAtt, out HeroMagicData att))
+            if (view.TryGetMagicData(_normalAtt, out HeroMagicData att))
             {
                 var time = Mathf.Max(0, att.CDCompletedTime - BattleGate.TimeServerNow);
                 var cdTime = Mathf.Max(0.01f, att.CdTotalTime);// view.AttackSpeed 
