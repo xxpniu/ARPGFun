@@ -44,11 +44,16 @@ namespace BattleViews.Views
         public int OwerTeamIndex { set; get; } = -1;
         private float startTime = 0;
 
+        private void Awake()
+        {
+            UScene = FindObjectOfType<UGameScene>();
+        }
+
         private async void  Start()
         {
             startTime = Time.timeSinceLevelLoad;
             now = new GTime( Time.timeSinceLevelLoad-startTime, Time.deltaTime);
-            UScene = FindObjectOfType<UGameScene>();
+           
             _magicData = new Dictionary<string, MagicData>();
             _timeLines = new Dictionary<string, TimeLine>();
 #if !UNITY_SERVER

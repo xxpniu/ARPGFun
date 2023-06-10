@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-16"?>
 <TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Time>0.1</Time>
+  <Time>3</Time>
   <Points>
     <TimePoint>
       <GUID>dac7692e-3434-4719-b097-4d7578409726</GUID>
@@ -8,11 +8,19 @@
     </TimePoint>
     <TimePoint>
       <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
-      <Time>0.0880462751</Time>
+      <Time>0.837288141</Time>
     </TimePoint>
     <TimePoint>
       <GUID>fd584289-cd71-450d-a4f5-cf37141b737e</GUID>
       <Time>0.0404884331</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
+      <Time>1.44406784</Time>
+    </TimePoint>
+    <TimePoint>
+      <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
+      <Time>2.39658451</Time>
     </TimePoint>
   </Points>
   <Layouts>

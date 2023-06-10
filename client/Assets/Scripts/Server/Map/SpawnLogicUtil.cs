@@ -10,7 +10,7 @@ namespace Server.Map
 {
     public static class SpawnLogicUtil
     {
-        public static TreeNode CreateTransportAI(Vector3 target,string transprotMagicKey)
+        public static TreeNode CreateTransportAI(Vector3 target,string transportMagicKey)
         {
             var root = new TreeNodeTick()
             {
@@ -27,7 +27,7 @@ namespace Server.Map
                                 Distance = 10000
                             }.Initialization(),
                             new TreeNodeTransport{ linkPos = target.ToLVer3() }.Initialization(),
-                            new TreeNodeReleaseMagic{  magicKey = transprotMagicKey, valueOf= MagicValueOf.MagicKey, ReleaseATPos = true }.Initialization()
+                            new TreeNodeReleaseMagic{  magicKey = transportMagicKey, valueOf= MagicValueOf.MagicKey, ReleaseATPos = true }.Initialization()
 
                         }
                 }.Initialization()
@@ -42,4 +42,5 @@ namespace Server.Map
         }
     }
 
+    
 }

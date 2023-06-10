@@ -79,6 +79,9 @@ namespace Server.Map
                     //case MapElementType.MetElementGroup:
                     //    CreateTransport(i.ConfigID, i.Position.ToUV3(), i.Forward.ToUV3(), i.LinkPos.ToUV3());
                     //    break;
+                    case MapElementType.MetNone:
+                    case MapElementType.MetPlayerInit:
+                    case MapElementType.MetTransport:
                     default:
                         break;
                 }
@@ -128,7 +131,7 @@ namespace Server.Map
             var nums = monsterGroup.Nums.SplitToInt();
             var p = monsterGroup.Weight.SplitToInt();
 
-            int count = monsterGroup.Count;
+            var count = monsterGroup.Count; 
             if (monsterGroup.Repeat == 1)
             {
                 while (count-- > 0)
@@ -171,8 +174,8 @@ namespace Server.Map
                         for (var i = 0; i < maxCount; i++)
                         {
                             var offset = Quaternion.Euler(0, ang * i, 0) *  forward * r;
-                            var forword = Quaternion.LookRotation(Quaternion.Euler(0, ang * i, 0) * Vector3.forward);
-                            standPos.Add(new BattleStandData { Pos = pos + offset, Forward = new Vector3(0, forword.eulerAngles.y, 0) });
+                            var f = Quaternion.LookRotation(Quaternion.Euler(0, ang * i, 0) * Vector3.forward);
+                            standPos.Add(new BattleStandData { Pos = pos + offset, Forward = new Vector3(0, f.eulerAngles.y, 0) });
                         }
                     }
                     break;
@@ -200,12 +203,12 @@ namespace Server.Map
             }
         }
 
-        private int alive = 0;
-
         public bool IsAllMonsterDeath()
         {
-            return alive == 0;
+            return AliveCount == 0;
         }
+
+        public int AliveCount { get; private set; } = 0;
 
         private void CreateMonster(int id, Vector3 pos,Vector3 forward)
         {
@@ -218,7 +221,7 @@ namespace Server.Map
             var data = CM.GetId<CharacterData>(monsterData.CharacterID);
             if (data == null)
             {
-                Debuger.LogError($"{monsterData.CharacterID} nofound in characterdata" );
+                Debuger.LogError($"{monsterData.CharacterID} not found in character data" );
                 return;
             }
             var magic = data.CreateHeroMagic(); ;
@@ -226,19 +229,19 @@ namespace Server.Map
 
             var append = data.CreateMonsterProperties(monsterData);
 
-            var Monster = Per.CreateCharacter(Per.AIControllor, monsterData.Level, data, magic, append, 2,
+            var monster = Per.CreateCharacter(Per.AIControllor, monsterData.Level, data, magic, append, 2,
                 pos, forward, string.Empty, mName);
-            Per.ChangeCharacterAI(data.AIResourcePath, Monster);
+            Per.ChangeCharacterAI(data.AIResourcePath, monster); 
             var drop = CM.GetId<DropGroupData>(monsterData.DropId);
             if (drop != null)
             {
-                Monster["__Drop"] = drop;
-                Monster["__Monster"] = monsterData;
+                monster["__Drop"] = drop;
+                monster["__Monster"] = monsterData;
             }
-            alive++;
-            Monster.OnDead = (el) =>
+            AliveCount++;
+            monster.OnDead = (el) =>
             {
-                alive--;
+                AliveCount--;
                 
                 Debuger.Log($"{LanguageManager.S[el.Name]} death!!");
                 GObject.Destroy(el, 3f);

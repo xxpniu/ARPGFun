@@ -43,7 +43,7 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 		}
 	}
 
-	private  async  void Start()
+	private  async void Start()
 	{
 		AIRunner.Current = this;
 		Debuger.Loger = new UnityLogger();
@@ -54,7 +54,7 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 		
 		await SceneManager.LoadSceneAsync("Welcome", LoadSceneMode.Additive);
 		tcamera = FindObjectOfType<ThirdPersonCameraContollor>();
-		isStarted = true;
+		
 		PerView = UPerceptionView.Create(ExcelToJSONConfigManager.GetId<ConstantValue>(1));
 		PerView.OnCreateCharacter = (c) => { c.TryAdd<HpTipShower>(); };
 		_curState = new BattleState(PerView, this, PerView);
@@ -63,18 +63,20 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 		PerView.UseCache = false;
 		await UUIManager.S.CreateWindowAsync<Windows.UUIBattleEditor>(ui => ui.ShowWindow());
 
+		isStarted = true;
 	}
 
 	private GState _curState;
 
-    private void OnDestroy()
+	protected override void OnDestroy()
     {
+	    base.OnDestroy();
 		_curState.Stop(Now);
 	}
 
     private void Tick()
 	{
-		if (_curState != null)
+		if (_curState != null && isStarted)
 		{
 			GState.Tick(_curState, Now);
 		}
@@ -107,9 +109,7 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 
 	public void ReplaceRelease(int level, CharacterData data, bool stay, bool ai)
 	{
-
-		if (!stay && this.releaser)
-			this.releaser.SubHP(this.releaser.HP, out _);
+		if (!stay && this.releaser) this.releaser.SubHP(this.releaser.HP, out _);
 		var per = _curState.Perception as BattlePerception;
 		var scene = PerView.UScene;
 		var magics = data.CreateHeroMagic(); // per.CreateHeroMagic(data.ID);
@@ -117,10 +117,9 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 			ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.CharacterID == data.ID && t.Level == level);
 		var properties = data.CreatePlayerProperties(levelData);
 
-		if (levelData != null)
-			properties.TryAddBase(levelData.Properties, levelData.PropertyValues);
+		if (levelData != null) properties.TryAddBase(levelData.Properties, levelData.PropertyValues);
 
-		releaser = per.CreateCharacter(per.StateControllor, level, data, magics, properties, 1,
+		releaser = per!.CreateCharacter(per.StateControllor, level, data, magics, properties, 1,
 			scene.startPoint.position + (UVector3.right * distanceCharacter / 2)
 			, new UVector3(0, 90, 0), string.Empty, data.Name);
 	

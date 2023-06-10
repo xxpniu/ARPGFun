@@ -275,9 +275,9 @@ namespace Windows
            
             if (!BattleGate.Owner) return;
             var a = new Color(1, 1, 1, 0);
-            for (int x = 0; x < size; x++)
+            for (var x = 0; x < size; x++)
             {
-                for (int y = 0; y < size; y++)
+                for (var y = 0; y < size; y++)
                 {
                     Colors[x+ y* size] =a;
                 }
@@ -286,7 +286,7 @@ namespace Windows
             var lookRotation = Quaternion.Euler(0, 0, ThirdPersonCameraContollor.Current.transform.rotation.eulerAngles.y);
             this.ViewForward.localRotation = lookRotation;
 
-            float r = size / 2;// 16;
+            var r = size / 2f;// 16; 
             BattleGate.PreView.Each<UCharacterView>(t =>
             {
                 var offset = t.transform.position - BattleGate.Owner.transform.position;
@@ -363,7 +363,6 @@ namespace Windows
             return data.ReleaseType == (int)MagicReleaseType.MrtMagic;
         }
 
-       
-       
+    
     }
 }

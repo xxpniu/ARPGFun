@@ -50,11 +50,9 @@ namespace UApp.GameGates
 
             var thirdCamera = FindObjectOfType<ThirdPersonCameraContollor>();
             thirdCamera.SetLookAt(characterView.GetBoneByName(UCharacterView.BottomBone), true);
-            thirdCamera.SetXY(0, 2.8f).SetDis(8.6f).SetForwardOffset(new Vector3(0,0.87f,0));
+            thirdCamera.SetXY(2.8f, 0).SetDis(9f).SetForwardOffset(new Vector3(0,0.87f,0));
             characterView.ShowName = false;
             characterView.LookView(LookAtView);
-        
-
             return characterView;
         }
 
@@ -80,11 +78,11 @@ namespace UApp.GameGates
         internal void RotationHero(float x)
         {
             characterView.targetLookQuaternion *= Quaternion.Euler(0, x, 0);
-            timeTO = Time.time + 2;
+            _timeTo = Time.time + 2;
         }
 
-        private float timeTO = -1f;
-        private GameGMTools gm;
+        private float _timeTo = -1f;
+        private GameGMTools _gm;
 
         protected override async Task JoinGate(params object[] args)
         {
@@ -101,13 +99,13 @@ namespace UApp.GameGates
             Client = new LogChannel(serverIP, ChannelCredentials.Insecure);
             GateFunction = Client.CreateClient<GateServerService.GateServerServiceClient>();
             await RequestPlayer();
-            gm = this.gameObject.AddComponent<GameGMTools>();
-            gm.ShowGM = true;
+            _gm = this.gameObject.AddComponent<GameGMTools>();
+            _gm.ShowGM = true;
         }
 
         public Proto.GateServerService.GateServerServiceClient GateFunction { private set; get; }
-        public AsyncServerStreamingCall<Any> Call { get; private set; }
-        public ResponseChannel<Any> HandleChannel { get; private set; }
+        private AsyncServerStreamingCall<Any> Call { get; set; }
+        private ResponseChannel<Any> HandleChannel { get; set; }
 
   
         private async Task RequestPlayer()
@@ -241,7 +239,7 @@ namespace UApp.GameGates
 
         }
 
-        private List<UCharacterView> _views = new List<UCharacterView>();
+        private List<UCharacterView> _views = new();
 
         private void RefreshMatchGroup(N_Notify_MatchGroup group)
         {
@@ -293,13 +291,13 @@ namespace UApp.GameGates
             if (Client != null)
                 await Client?.ShutdownAsync()!;
             Client = null;
-            Destroy(gm);
+            Destroy(_gm);
         }
 
         protected override void Tick()
         {
-            if (!(timeTO > 0) || !(timeTO < Time.time)) return;
-            timeTO = -1;
+            if (!(_timeTo > 0) || !(_timeTo < Time.time)) return;
+            _timeTo = -1;
             if (!characterView) return;
             var character = ExcelToJSONConfigManager.First<CharacterPlayerData>(t => t.CharacterID == hero.HeroID);
             if (!string.IsNullOrEmpty(character?.Motion))
@@ -307,7 +305,6 @@ namespace UApp.GameGates
                 characterView.PlayMotion(character?.Motion);
             }
             characterView.targetLookQuaternion = Quaternion.Euler(0, 180, 0);
-
         }
     }
 }

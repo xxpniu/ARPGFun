@@ -161,11 +161,18 @@ namespace UApp.GameGates
             //throw new System.NotImplementedException();
         }
 
+        private void TryToSpawnMonster()
+        {
+            if(!_mCreator.IsAllMonsterDeath()) return;
+            _mCreator.Spawn();
+        }
+
         protected override void Tick()
         {
             if (State == null) return;
             GState.Tick(State, _timeSimulator.Now);
             PerView.GetAndClearNotify();
+            TryToSpawnMonster();
         }
 
         float IBattleGate.TimeServerNow => _timeSimulator.Now.Time;

@@ -13,6 +13,7 @@ using Proto;
 using UGameTools;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
@@ -142,7 +143,6 @@ namespace BattleViews.Views
         #endregion
 
         public string AccoundUuid = string.Empty;
-        private  const string SpeedStr ="Speed";
         public const string TopBone = "Top";
         public const string BodyBone = "Body";
         public const string BottomBone = "Bottom";
@@ -242,7 +242,7 @@ namespace BattleViews.Views
         {
             vSpeed = speed;
             if (CharacterAnimator == null) return;
-            CharacterAnimator.SetFloat(SpeedStr, speed);
+            CharacterAnimator.SetFloat(SpeedHash, speed);
         }
 
         void Awake()
@@ -692,12 +692,14 @@ namespace BattleViews.Views
             return createNotity;
         }
 
-        public int LockValue = 0;
+        public int lockDataValue = 0;
+        private static readonly int SpeedHash = Animator.StringToHash("Speed");
+        private static readonly int IdleHash = Animator.StringToHash("Idle");
 
         void IBattleCharacter.SetLock(int lockValue)
         {
             if (!this) return;
-            LockValue = lockValue;
+            lockDataValue = lockValue;
 #if UNITY_SERVER || UNITY_EDITOR
             CreateNotify(new Notify_CharacterLock { Index = Index, Lock = lockValue });
 #endif
@@ -719,17 +721,17 @@ namespace BattleViews.Views
 
         public bool IsLock(ActionLockType type)
         {
-            return (LockValue &(1 << (int)type )) > 0;
+            return (lockDataValue &(1 << (int)type )) > 0;
         }
 
         //public AssetReferenceGameObject obj;
 
-        public void ShowRange(float r)
+        public async void ShowRange(float r)
         {
             if (range == null)
             {
                 range = new GameObject();
-                ResourcesManager.S.LoadResourcesWithExName<GameObject>("Range.prefab", (prefab) =>
+                await ResourcesManager.S.LoadResourcesWithExName<GameObject>("Range.prefab", (prefab) =>
                 {
                     if (range)  Destroy(range);
                     range = Instantiate(prefab, this.GetBoneByName(BottomBone));
@@ -748,7 +750,6 @@ namespace BattleViews.Views
             {
                 if (forward.magnitude > 0.01f)
                     ChangeState(new ForwardMove(this, forward));
-                else return;//no notity
             }
         }
 
@@ -764,8 +765,14 @@ namespace BattleViews.Views
             ChangeState(new PushMove(this, pushSpeed, pushLeftTime))
                 .OnExit = () =>
             {
-                if (GElement == null) return;
-                if (GElement is BattleCharacter c) c.EndPush();
+                switch (GElement)
+                {
+                    case null:
+                        return;
+                    case BattleCharacter c:
+                        c.EndPush();
+                        break;
+                }
             };
         }
 
@@ -784,7 +791,7 @@ namespace BattleViews.Views
             MP = mp; this.MpMax = mpMax;
         }
 
-        bool IBattleCharacter.IsMoving { get { return !(State is Empty); } }
+        bool IBattleCharacter.IsMoving =>!(State is Empty); 
 
         Vector3? IBattleCharacter.MoveTo(Proto.Vector3 position, Proto.Vector3 target, float stopDis)
         {
@@ -830,7 +837,7 @@ namespace BattleViews.Views
 #if !UNITY_SERVER 
             if (this.CharacterAnimator)
             {
-                this.CharacterAnimator.SetTrigger("Idle");
+                this.CharacterAnimator.SetTrigger(IdleHash);
             }
 #endif
         }
