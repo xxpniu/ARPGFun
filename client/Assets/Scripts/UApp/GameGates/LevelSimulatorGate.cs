@@ -116,7 +116,7 @@ namespace UApp.GameGates
             //var root = Per.ChangeCharacterAI(data.AIResourcePath, _characterOwner);
             //Debug.Log($"AI:{root.NodeRoot.name}"); 
             Owner = _characterOwner.CharacterView as UCharacterView;
-            PerView.OwerTeamIndex = Owner!.TeamId;
+            PerView.OwnerTeamIndex = Owner!.TeamId;
             PerView.OwnerIndex = Owner.Index;
             FindObjectOfType<ThirdPersonCameraContollor>()
                 .SetLookAt(Owner.GetBoneByName(UCharacterView.RootBone))

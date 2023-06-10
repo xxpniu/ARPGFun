@@ -35,6 +35,7 @@ namespace Layout
             switch (ValueForm)
             {
                 case GetValueFrom.CurrentConfig: return Value;
+                 
                 default:
                     return releaser.TryGetParams(ValueForm);
             }

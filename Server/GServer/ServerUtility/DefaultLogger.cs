@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using Confluent.Kafka;
 using Grpc.Core.Logging;
 using XNet.Libs.Utility;
+using Console = Colorful.Console;
 
 namespace ServerUtility
 {
@@ -97,22 +99,22 @@ namespace ServerUtility
 
         public override void WriteLog(DebugerLog log)
         {
+            var str = $"{Thread.CurrentThread.ManagedThreadId}->{log}";
             switch (log.Type)
             {
                 case LogerType.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(str,Color.Red );
                     break;
                 case LogerType.Waring:
                 case LogerType.Debug:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(str,Color.Yellow);
                     break;
                 default:
+                    Console.WriteLine(str);
                     break;
-            }
-            Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId}->{log}");
-            Console.ResetColor();
+            } 
 
-            //Producer.Produce(this.Topic, new Message<Null, string> { Value = log.ToString() });
+             
 
         }
     }

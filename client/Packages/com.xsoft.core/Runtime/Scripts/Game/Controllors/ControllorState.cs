@@ -59,7 +59,7 @@ namespace GameLogic.Game.Controllors
                     var key = data.Config.MagicKey;
                     if (!TryGetReleaserTarget(data.Config, character, out var target)) break;
                     if (!character.SubMP(data.MpCost)) break;
-                    if (TryReleaseMagic(target, character, key)) break;
+                    if (TryReleaseMagic(target, character, key, data.Params)) break;
                     character.IsCoolDown(skill.MagicId, time.Time, true);
                 }
                     break;
@@ -83,12 +83,12 @@ namespace GameLogic.Game.Controllors
 
         // private const string LastReleaser = "_LAST_INDEX_";
 
-        private bool TryReleaseMagic(IReleaserTarget target, BattleCharacter character, string key)
+        private bool TryReleaseMagic(IReleaserTarget target, BattleCharacter character, 
+            string key, string[] magicParams = default)
         {
-            var r = BattlePerception.CreateReleaser(key, character, target,
-                ReleaserType.Magic, ReleaserModeType.RmtMagic, -1, true);
-
-            return r;
+            return BattlePerception.CreateReleaser(key, character, target,
+                ReleaserType.Magic, ReleaserModeType.RmtMagic,
+                -1, true, magicParams);
         }
 
 

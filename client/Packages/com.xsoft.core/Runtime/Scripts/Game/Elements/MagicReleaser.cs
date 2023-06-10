@@ -58,7 +58,9 @@ namespace GameLogic.Game.Elements
             IReleaserTarget target,
             GControllor controllor,
             IMagicReleaser view,
-            ReleaserType type,float durtime, bool moveCancel)
+            ReleaserType type,float durTime, bool moveCancel ,
+            string[] magicParams = default
+            )
             : base(controllor, view)
         {
             MoveCancel = moveCancel;
@@ -68,7 +70,8 @@ namespace GameLogic.Game.Elements
             Magic = magic;
             RType = type;
             OnExitedState = ReleaseAll;
-            this.Durtime = type == ReleaserType.Buff? durtime:-1;
+            Durtime = type == ReleaserType.Buff? durTime:-1;
+            Params = magicParams;
         }
 
         public string MagicKey { private set; get; }
@@ -378,7 +381,7 @@ namespace GameLogic.Game.Elements
         protected override void OnExitState()
         {
             base.OnExitState();
-            Releaser.RemoveEventWathcer(this);
+            Releaser.RemoveEventWatcher(this);
         }
 
         void ICharacterWatcher.OnFireEvent(BattleEventType eventType, object args)
@@ -423,11 +426,11 @@ namespace GameLogic.Game.Elements
 
         internal int TryGetParams(GetValueFrom vF)
         {
-            int index =(int) vF - 1;
+            var index =(int) vF - 1;
             if (Params == null) return 0;
             if (this.Params.Length <= index) return 0;
             if (index < 0) return 0;
-            if (int.TryParse(this.Params[index], out int v)) return v;
+            if (int.TryParse(this.Params[index], out var v)) return v;
             return 0;
         }
     }

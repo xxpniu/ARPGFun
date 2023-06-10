@@ -21,29 +21,24 @@ using UGameTools;
 using UnityEngine;
 using UVector3 = UnityEngine.Vector3;
 
+
 namespace BattleViews.Views
 {
     public class UPerceptionView : MonoBehaviour, IBattlePerception, ITimeSimulater, IViewBase
     {
         public UGameScene UScene;
         public bool UseCache = true;
-
         public Action<UCharacterView> OnCreateCharacter;
-
         private TreeNode LoadTreeXml(string pathTree)
         {
             var xml = ResourcesManager.Singleton.LoadText(pathTree);
             var root = XmlParser.DeSerialize<TreeNode>(xml);
             return root;
         }
-
         public UCharacterView Owner => GetViewByIndex<UCharacterView>(OwnerIndex);
-
         public int OwnerIndex { set; get; } = -1;
-
-        public int OwerTeamIndex { set; get; } = -1;
-        private float startTime = 0;
-
+        public int OwnerTeamIndex { set; get; } = -1;
+        private float _startTime = 0;
         private void Awake()
         {
             UScene = FindObjectOfType<UGameScene>();
@@ -51,8 +46,8 @@ namespace BattleViews.Views
 
         private async void  Start()
         {
-            startTime = Time.timeSinceLevelLoad;
-            now = new GTime( Time.timeSinceLevelLoad-startTime, Time.deltaTime);
+            _startTime = Time.timeSinceLevelLoad;
+            _now = new GTime( Time.timeSinceLevelLoad-_startTime, Time.deltaTime);
            
             _magicData = new Dictionary<string, MagicData>();
             _timeLines = new Dictionary<string, TimeLine>();
@@ -126,11 +121,7 @@ namespace BattleViews.Views
             return null;
         }
 
-        void Update()
-        {
-       
-            now.TickTime(Time.deltaTime);
-        }
+        void Update() => _now.TickTime(Time.deltaTime);
 
         public int timeLineCount = 0;
         public int magicCount =0;
@@ -147,7 +138,7 @@ namespace BattleViews.Views
         public void DeAttachView(UElementView battleElement)
         {
             _attachElements.Remove(battleElement.Index);
-            if (!(battleElement is UMagicReleaserView r)) return;
+            if (battleElement is not UMagicReleaserView r) return;
             if (r.CharacterReleaser.Index == OwnerIndex)
             {
                 _ownerReleasers.Remove(r.Index);//, r);
@@ -157,13 +148,8 @@ namespace BattleViews.Views
         public void AttachView(UElementView battleElement)
         {
             _attachElements.Add(battleElement.Index, battleElement);
-            if (battleElement is UMagicReleaserView r)
-            {
-                if (r.CharacterReleaser.Index == OwnerIndex)
-                {
-                    _ownerReleasers.Add(r.Index, r);
-                }
-            }
+            if (battleElement is not UMagicReleaserView r) return;
+            if (r.CharacterReleaser.Index == OwnerIndex) _ownerReleasers.Add(r.Index, r);
         }
 
         public bool HaveOwnerKey(string key)
@@ -175,17 +161,14 @@ namespace BattleViews.Views
             return false;
         }
 
-        private readonly IMessage[] Empty = new IMessage[0];
+        private readonly IMessage[] _empty = Array.Empty<IMessage>();
 
         public IMessage[] GetAndClearNotify()
         {
-            if (_notify.Count > 0)
-            {
-                var list = _notify.ToArray();
-                _notify.Clear();
-                return list;
-            }
-            else  return Empty;
+            if (_notify.Count <= 0) return _empty;
+            var list = _notify.ToArray();
+            _notify.Clear();
+            return list;
         }
 
         public IMessage[] GetInitNotify()
@@ -208,23 +191,23 @@ namespace BattleViews.Views
 #endif
         }
 
-        private GTime now;
+        private GTime _now;
 
-        public GTime GetTime() { return now; }
+        public GTime GetTime() =>_now; 
 
         public static UPerceptionView Create(ConstantValue constValue)
         {
             var go = new GameObject("PreView");
             var u= go.AddComponent<UPerceptionView>();
-            u.constValue = constValue;
+            u._constValue = constValue;
             return u;
         }
 
         GTime ITimeSimulater.Now => GetTime();
 
-        ConstantValue constValue;
+        private ConstantValue _constValue;
 
-        ConstantValue IViewBase.GetConstant { get { return constValue; } }
+        ConstantValue IViewBase.GetConstant => _constValue;
 
         private TimeLine TryToLoad(string path)
         {
@@ -284,7 +267,7 @@ namespace BattleViews.Views
             if (crtmult > 1) {
                 GPUBillboardBuffer.S.
                     DisplayNumberRandom(num,
-                        new Vector2(.5f, .5f), pos, Color.red, true, _mulParam);
+                        new Vector2(.5f, .5f)*crtmult, pos, Color.red, true, _mulParam);
             }
             else
             {
@@ -298,11 +281,11 @@ namespace BattleViews.Views
 
         TimeLine IBattlePerception.GetTimeLineByPath(string path)
         {
-            if (UseCache && _timeLines.TryGetValue(path, out TimeLine line)) return line;
+            if (UseCache && _timeLines.TryGetValue(path, out var  line)) return line;
             line = TryToLoad(path);
             if (line == null)
             {
-                Debug.LogError($"Nofound:{path}");
+                Debug.LogError($"Not found:{path}");
             }
             return line;
         }
@@ -322,10 +305,7 @@ namespace BattleViews.Views
             return magic;
         }
 
-        bool IBattlePerception.ExistMagicKey (string key)
-        {
-            return TryLoadMagic(key) !=null;
-        }
+        bool IBattlePerception.ExistMagicKey (string key) => TryLoadMagic(key) !=null;
 
         IBattleCharacter IBattlePerception.CreateBattleCharacterView(string accountId,
             int config, int teamId, Proto.Vector3 pos, Proto.Vector3 forward,
@@ -368,7 +348,7 @@ namespace BattleViews.Views
 
         IMagicReleaser IBattlePerception.CreateReleaserView(Proto.Vector3 pos, Proto.Vector3 ration, int releaser, int target, string magicKey, Proto.Vector3 targetPos, Proto.ReleaserModeType rmType)
         {
-            var obj = new GameObject($"Rleaser:{magicKey}");
+            var obj = new GameObject($"Releaser:{magicKey}");
             obj.transform.SetParent(this.transform, false);
             obj.transform.position = pos.ToUV3();
             obj.transform.rotation = Quaternion.Euler(ration.ToUV3());
@@ -402,13 +382,13 @@ namespace BattleViews.Views
             var view = viewRoot.AddComponent<UParticlePlayer>();
             view.Path = layout.path;
             var viewRelease = releaser as UMagicReleaserView;
-            var viewTarget = viewRelease.CharacterTarget as UCharacterView;
+            var viewTarget = viewRelease!.CharacterTarget as UCharacterView;
             var characterView = viewRelease.CharacterReleaser as UCharacterView;
             var eventView = eventTarget as UCharacterView;
-            bool bind = layout.Bind;
+            var bind = layout.Bind;
             UCharacterView form =null;
             UVector3? formPos =UVector3.zero;
-            Quaternion rototion = Quaternion.identity;
+            var rotation = Quaternion.identity;
             switch (layout.fromTarget)
             {
                 case TargetType.EventTarget:
@@ -432,13 +412,13 @@ namespace BattleViews.Views
             if (form)
             {
                 formPos = form.GetBoneByName(layout.fromBoneName).position;
-                rototion = (form as IBattleCharacter).Rotation;
+                rotation = ((IBattleCharacter)form).Rotation;
             }
 
 
             if (bind)
             {
-                var bone = form.GetBoneByName(layout.fromBoneName);
+                var bone = form!.GetBoneByName(layout.fromBoneName);
                 if (bone) viewRoot.transform.SetParent(bone, false);
                 viewRoot.transform.RestRTS();
             }
@@ -449,31 +429,19 @@ namespace BattleViews.Views
                 viewRoot.transform.position = formPos.Value;
             }
 
-            viewRoot.transform.rotation = rototion *  Quaternion.Euler(layout.rotation.ToUV3());
+            viewRoot.transform.rotation = rotation *  Quaternion.Euler(layout.rotation.ToUV3());
             viewRoot.transform.position += viewRoot.transform.rotation * layout.offet.ToUV3();
             viewRoot.transform.localScale =  UVector3 .one* layout.localsize;
             return view;
         }
+
+        ITimeSimulater IBattlePerception.GetTimeSimulater() => this;
+
+        TreeNode IBattlePerception.GetAITree (string pathTree) =>LoadTreeXml(pathTree);
+
+        IBattlePerception IViewBase.Create(ITimeSimulater simulater) => this;
         
-        ITimeSimulater IBattlePerception.GetTimeSimulater ()
-        {
-            return this;
-        }
-
-        TreeNode IBattlePerception.GetAITree (string pathTree)
-        {
-            return LoadTreeXml(pathTree);
-        }
-
-        IBattlePerception IViewBase.Create(ITimeSimulater simulater)
-        {
-            return this;
-        }
-
-        TreeNode ITreeLoader.Load(string path)
-        {
-            return LoadTreeXml(path);
-        }
+        TreeNode ITreeLoader.Load(string path) =>LoadTreeXml(path);
 
         IBattleItem IBattlePerception.CreateDropItem(Proto.Vector3 pos, PlayerItem item, int teamIndex, int groupId)
         {

@@ -37,18 +37,19 @@ namespace GameLogic.Game.LayoutLogics
 		{
 			var type = typeof(LayoutBaseLogic);
 			var methods=type.GetMethods (BindingFlags.Public | BindingFlags.Static);
-			foreach (var i in methods) {
-                if (!(i.GetCustomAttributes(typeof(HandleLayoutAttribute), false) is HandleLayoutAttribute[] atts) || atts.Length == 0)
-                    continue;
-                _handler.Add (atts[0].HandleType, i);
+			foreach (var i in methods)
+			{
+				var att = i.GetCustomAttribute<HandleLayoutAttribute>(false);
+				if (att == null) continue;
+				Handler.Add(att.HandleType, i);
 			}
 		}
 
-		private static readonly Dictionary<Type,MethodInfo> _handler = new Dictionary<Type, MethodInfo> ();
+		private static readonly Dictionary<Type,MethodInfo> Handler = new();
 
 		public static void EnableLayout(LayoutBase layout, TimeLinePlayer player)
 		{
-            if (_handler.TryGetValue(layout.GetType(), out MethodInfo m))
+            if (Handler.TryGetValue(layout.GetType(), out MethodInfo m))
             {
                 m.Invoke(null, new object[] { player, layout });
             }
@@ -77,7 +78,7 @@ namespace GameLogic.Game.LayoutLogics
 		{
 			var layout = layoutBase as MissileLayout;
 			var per = linePlayer.Releaser.Controllor.Perception as BattlePerception;
-			var missile = per.CreateMissile(layout, linePlayer.Releaser);
+			var missile = per!.CreateMissile(layout, linePlayer.Releaser);
 			if (missile != null)
 				linePlayer.Releaser.AttachElement(missile);
 		}
@@ -91,29 +92,29 @@ namespace GameLogic.Game.LayoutLogics
 			var layout = layoutBase as DamageLayout;
 
 			UVector3? targetPos;
-			UnityEngine.Quaternion rototion = UnityEngine.Quaternion.identity;
-			BattleCharacter deTarget = releaser.Target;
-			switch (layout.target)
+			var rotation = UnityEngine.Quaternion.identity;
+			var deTarget = releaser.Target;
+			switch (layout!.target)
 			{
 				case Layout.TargetType.Releaser:
 					targetPos = releaser.Releaser.Position;
-					rototion = releaser.Releaser.Rototion;
+					rotation = releaser.Releaser.Rotation;
 					deTarget = releaser.Releaser;
 					break;
 				case Layout.TargetType.Target:
 					if (releaser.ReleaserTarget.ReleaserTarget == null) return;
 					targetPos = releaser.Target.Position;
-					rototion = releaser.Target.Rototion;
+					rotation = releaser.Target.Rotation;
 					deTarget = releaser.Target;
 					break;
 				case Layout.TargetType.EventTarget:
 					targetPos = linePlayer.EventTarget.Position;
-					rototion = linePlayer.EventTarget.Rototion;
+					rotation = linePlayer.EventTarget.Rotation;
 					deTarget = linePlayer.EventTarget;
 					break;
 				case Layout.TargetType.ReleaseInstance:
 					targetPos = linePlayer.Releaser.Position;
-					rototion = linePlayer.Releaser.Rotation;
+					rotation = linePlayer.Releaser.Rotation;
 					break;
 				default:
 					targetPos = releaser.ReleaserTarget.TargetPosition;
@@ -122,15 +123,15 @@ namespace GameLogic.Game.LayoutLogics
 
 			if (targetPos == null)
 			{
-				throw new Exception("Do not have target of orgin. type:" + layout.target.ToString());
+				throw new Exception("Do not have target of origin. type:" + layout.target.ToString());
 			}
 
 			var offsetPos = layout.RangeType.offsetPosition.ToUV3();
 			var per = releaser.Controllor.Perception as BattlePerception;
-			var targets = per.DamageFindTarget(
+			var targets = per!.DamageFindTarget(
 				deTarget,
 				targetPos.Value,
-				rototion,
+				rotation,
 				layout.RangeType.fiterType,
 				layout.RangeType.damageType,
 				layout.RangeType.radius,
@@ -139,7 +140,7 @@ namespace GameLogic.Game.LayoutLogics
 				offsetPos,
 				releaser.Releaser.TeamIndex);
 
-			releaser.ShowDamageRange(layout,targetPos.Value,rototion);
+			releaser.ShowDamageRange(layout,targetPos.Value,rotation);
 
 			if (string.IsNullOrEmpty(layout.effectKey))
 			{
@@ -166,34 +167,33 @@ namespace GameLogic.Game.LayoutLogics
 		{
 			var unitLayout = layoutBase as CallUnitLayout;
 			var releaser = linePlayer.Releaser;
-			var charachter = releaser.ReleaserTarget.Releaser;
+			var character = releaser.ReleaserTarget.Releaser;
 			var per = releaser.Controllor.Perception as BattlePerception;
-			int level = unitLayout.level.ProcessValue(linePlayer.Releaser);
+			var level = unitLayout!.level.ProcessValue(linePlayer.Releaser);
 			//判断是否达到上限
 			if (unitLayout.maxNum <= releaser.UnitCount) return;
-			int id = unitLayout.characterID.ProcessValue(releaser);
+			var id = unitLayout.characterID.ProcessValue(releaser);
 			var data = ExcelToJSONConfigManager.GetId<CharacterData>(id);
 			if (data == null)
 			{
-				Debuger.LogError($"Nofound call unit of {data.ID}");
+				Debuger.LogError($"Not found call unit of {id}");
 				return;
             }
 			var magics = data.CreateHeroMagic();
-			var unit = per.CreateCharacter(per.AIControllor,
+			var unit = per!.CreateCharacter(per.AIControllor,
 				level,
 				data,
 				magics,
 				null,
-				charachter.TeamIndex,
-				charachter.Position + charachter.Rototion * unitLayout.offset.ToUV3(),
-				charachter.Rototion.eulerAngles,
-				charachter.AcccountUuid,
+				character.TeamIndex,
+				character.Position + character.Rotation * unitLayout.offset.ToUV3(),
+				character.Rotation.eulerAngles,
+				character.AccountUuid,
                 data.Name,
                 releaser.Releaser.Index
 			);
 			//unit.ResetHPMP();
 			unit.LookAt(releaser.ReleaserTarget.ReleaserTarget);
-
 			releaser.AttachElement(unit, false, unitLayout.time.ProcessValue(releaser)/1000f);
 			releaser.OnEvent(Layout.EventType.EVENT_UNIT_CREATE,unit);
 			var ai = unitLayout.AIPath;
@@ -210,28 +210,26 @@ namespace GameLogic.Game.LayoutLogics
 		#region LaunchSelfLayout
 
 		[HandleLayout(typeof(LaunchSelfLayout))]
-		public static void LaunchSelftActive(TimeLinePlayer linePlayer, LayoutBase layoutBase)
+		public static void LaunchSelfActive(TimeLinePlayer linePlayer, LayoutBase layoutBase)
 		{
 			var launch = layoutBase as LaunchSelfLayout;
 			var releaser = linePlayer.Releaser;
 			var character = releaser.ReleaserTarget.Releaser;
-			var dis = launch.distance;
+			var dis = launch!.distance;
 			if (launch.reachType == TargetReachType.DistanceOfTaget)
 			{
 				dis = BattlePerception.Distance(character, releaser.ReleaserTarget.ReleaserTarget) + 2;
 			}
 
-			character.BeginLauchSelf(character.Rototion,
+			character.BeginLaunchSelf(character.Rotation,
 				dis,
 				launch.speed,
 				(hit, obj) =>
 				{
 					if (hit.IsDeath) return;
-					if (obj is MagicReleaser r)
-					{
-						if (hit.TeamIndex == r.ReleaserTarget.Releaser.TeamIndex) return;
-						if (r.TryHit(hit)) r.OnEvent(Layout.EventType.EVENT_MISSILE_HIT,hit);
-					}
+					if (obj is not MagicReleaser r) return;
+					if (hit.TeamIndex == r.ReleaserTarget.Releaser.TeamIndex) return;
+					if (r.TryHit(hit)) r.OnEvent(Layout.EventType.EVENT_MISSILE_HIT,hit);
 				},
 				releaser);
 		}

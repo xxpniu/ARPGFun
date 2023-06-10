@@ -48,7 +48,7 @@ namespace GameLogic.Game.AIBehaviorTree
             base.Stop(context);
             if (context is AITreeRoot r)
             {
-                r.Character.RemoveEventWathcer(this);
+                r.Character.RemoveEventWatcher(this);
             }
         }
 

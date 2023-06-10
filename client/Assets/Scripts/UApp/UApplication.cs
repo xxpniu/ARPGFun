@@ -115,8 +115,9 @@ namespace UApp
             GrpcEnvironment.SetLogger(new GrpcLoger());
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             StopChannel();
         }
 

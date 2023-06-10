@@ -36,7 +36,7 @@ namespace UApp
         {
             Windows.UUIPopup.ShowConfirm("Chat_Disconnect".GetLanguageWord(),
                 "Chat_Disconnect_content".GetLanguageWord(),
-                () => { _ = TryConnectChatServer(UApplication.S.ChatServer, HeroName); });
+                 async () => { await TryConnectChatServer(UApplication.S.ChatServer, HeroName); });
 
         }
 
@@ -179,18 +179,18 @@ namespace UApp
             ShowConnect();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            //ChatPushChannel?.ShutDownAsync(false);
+            base.OnDestroy();
             ChatHandleChannel?.ShutDownAsync(false);
             LoginCall?.Dispose();
             LoginCall = null;
             _ = ChatChannel?.ShutdownAsync()!;
         }
-
-        public void SendChat(params Chat[] msg)
+        public async void SendChat(params Chat[] msg)
         {
-            _= ChatClient.SendChatAsync(new C2CH_Chat { Mesg = { msg } });
+            var res =  await ChatClient.SendChatAsync(new C2CH_Chat { Mesg = { msg } });
+            if(!res.Code.IsOk()) UApplication.S.ShowError(res.Code);
         }
     }
 }

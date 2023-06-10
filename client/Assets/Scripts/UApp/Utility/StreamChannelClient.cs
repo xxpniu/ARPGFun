@@ -58,10 +58,7 @@ public class Stream : ComponentAsync
             if (!TryCancel()) return;
             await ShutDownProcessAsync();
             if (haveCallBack) OnDisconnect?.Invoke();
-            else
-            {
-                OnDisconnect = null;
-            }
+            else OnDisconnect = null;
             if (Com) Com.Invoke(() => { Destroy(Com.gameObject); });
         }
 

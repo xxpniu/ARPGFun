@@ -122,11 +122,10 @@ namespace GameLogic
                 if (level == null) continue;
                 list.Add(new BattleCharacterMagic(MagicType.MtMagic, i, GetMagicLevel(hero, i.ID)));
             }
-            if (data.NormalAttack > 0)
-            {
-                var config = ExcelToJSONConfigManager.GetId<CharacterMagicData>(data.NormalAttack);
-                list.Add(new BattleCharacterMagic(MagicType.MtNormal, config, GetMagicLevel(hero, data.NormalAttack)));
-            }
+
+            if (data.NormalAttack <= 0) return list;
+            var config = ExcelToJSONConfigManager.GetId<CharacterMagicData>(data.NormalAttack);
+            list.Add(new BattleCharacterMagic(MagicType.MtNormal, config, GetMagicLevel(hero, data.NormalAttack)));
 
             return list;
         }

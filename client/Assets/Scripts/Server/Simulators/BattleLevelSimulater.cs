@@ -135,7 +135,7 @@ namespace Server
             State.Each<BattleCharacter>(t =>
             {
                 if (!t.Enable) return false;
-                if (t.AcccountUuid == user.AccountId)
+                if (t.AccountUuid == user.AccountId)
                 {
                     character = t;
                     return true;

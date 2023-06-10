@@ -244,8 +244,9 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         return true;
     }
 
-    private async void OnDestroy()
+    protected override async void OnDestroy()
     {
+        base.OnDestroy();
         await Exit();
     }
 

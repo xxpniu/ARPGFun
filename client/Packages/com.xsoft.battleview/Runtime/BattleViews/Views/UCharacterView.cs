@@ -548,12 +548,9 @@ namespace BattleViews.Views
             last = Time.time;
             an.SetTrigger(motion);
         }
-
-  
-
+        
         public Action<UBattleItem> OnItemTrigger;
-
-
+        
         public Action OnDead;
 
         void IBattleCharacter.Death ()

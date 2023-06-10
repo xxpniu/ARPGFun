@@ -22,7 +22,7 @@ namespace GameLogic.Game.Elements
 
         public CharacterMagicData Config { private set; get; }
 
-        public int ConfigId { get { return Config.ID; } }
+        public int ConfigId => Config.ID;
 
         public BattleCharacterMagic(MagicType type, CharacterMagicData config, MagicLevelUpData lv = null, float? cdTime = null)
         {
@@ -34,11 +34,10 @@ namespace GameLogic.Game.Elements
             if (cdTime.HasValue) CdTime = cdTime.Value;
             else CdTime = config.TickTime / 1000f;
         }
-
-
+        
         private MagicLevelUpData LevelData { set; get; }
 
-        public float CdTime { get; set; } = 1f;
+        public float CdTime { get; set; }
 
         public float CdCompletedTime { set; get; }
 
@@ -66,15 +65,15 @@ namespace GameLogic.Game.Elements
 
     public class BattleCharacter : BattleElement<IBattleCharacter>
     {
-        private readonly Queue<IMessage> Actions = new Queue<IMessage>();
+        private readonly Queue<IMessage> _actions = new();
         
-        private readonly List<ICharacterWatcher> EventWatchers = new List<ICharacterWatcher>();
-        private readonly Dictionary<P, ComplexValue> Properties = new Dictionary<P, ComplexValue>();
+        private readonly List<ICharacterWatcher> _eventWatchers = new ();
+        private readonly Dictionary<P, ComplexValue> _properties = new ();
         private Dictionary<int, BattleCharacterMagic> Magics { set; get; }
-        private object tempObj;
+        private object _tempObj;
         public TreeNode DefaultTree { get; set; }
         public string DefaultTreePath { set; get; }
-        public string AcccountUuid { private set; get; }
+        public string AccountUuid { private set; get; }
         public HeroCategory Category { set; get; }
 
         public DefanceType TDefance { set; get; }
@@ -83,58 +82,42 @@ namespace GameLogic.Game.Elements
         public Dictionary<int, DamageWatch> Watch { get; } = new Dictionary<int, DamageWatch>();
 
         public int GroupIndex {set;get;}
-        public int MaxHP { get { return this[P.MaxHp]; } }
-        public int MaxMP { get { return this[P.MaxMp]; } }
-        public float NormalCdTime
-        {
-            get
-            {
-                return 1000f/ this[P.AttackSpeed] ;
-            }
-        }
+        public int MaxHP => this[P.MaxHp];
+        public int MaxMP => this[P.MaxMp];
+        public float NormalCdTime => 1000f/ this[P.AttackSpeed];
         public string Name { set; get; }
         public int TeamIndex { private set; get; }
         public int Level { set; get; }
         public HanlderEvent<BattleCharacter> OnDead;
         public int ConfigID { private set; get; }
         private ActionLock Lock {  set; get; }
-        public float Radius
-        {
-            get { return View.Radius; }
-        }
+        public float Radius => View.Radius;
 
-        private float BaseSpeed;
+        private float _baseSpeed;
         public float Speed
         {
             set
             {
-                BaseSpeed = value;
+                _baseSpeed = value;
                 View.SetSpeed(Speed);
             }
             get
             {
-                var speed =  BaseSpeed;
+                var speed =  _baseSpeed;
                 return Math.Min(BattleAlgorithm.MAX_SPEED, speed);
             }
         }
   
         public int HP { private set; get; }
         public int MP { private set; get; }
-        public bool IsDeath
-        {
-            get
-            {
-                return HP == 0;
-            }
-        }
+        public bool IsDeath => HP == 0;
         public AITreeRoot AiRoot { private set; get; }
         public UVector3 Position
         {
             get
             {
                 var t = View?.Transform;
-                if (!t) return UVector3.zero;
-                return t.position;
+                return !t ? UVector3.zero : t.position;
             }
             set
             {
@@ -151,11 +134,11 @@ namespace GameLogic.Game.Elements
                 return t.forward;
             }
         }
-        public bool IsMoving { get { return View.IsMoving; } }
-        public Quaternion Rototion { get { return View.Rotation; } }
-        public Transform Transform { get { return this.View.RootTransform; } }
+        public bool IsMoving => View.IsMoving;
+        public Quaternion Rotation => View.Rotation;
+        public Transform Transform => this.View.RootTransform;
         //property
-        public ComplexValue this[P type] { get { return Properties[type]; } }
+        public ComplexValue this[P type] => _properties[type];
         //call unit owner
         public int OwnerIndex { private set; get; } 
         public CharacterData Config { private set; get; }
@@ -167,13 +150,13 @@ namespace GameLogic.Game.Elements
             IList<BattleCharacterMagic> magics,
             GControllor controllor, 
             IBattleCharacter view, 
-            string account_uuid,int teamIndex,
+            string accountUuid,int teamIndex,
             Dictionary<P,ComplexValue> properties, int ownerIndex = -1):base(controllor,view)
 		{
             this.TeamIndex = teamIndex;
             this.OwnerIndex = ownerIndex;
             this.Config = data;
-            AcccountUuid = account_uuid;
+            AccountUuid = accountUuid;
 			HP = 0;
             
 			ConfigID = data.ID;
@@ -190,16 +173,16 @@ namespace GameLogic.Game.Elements
             {
                 var pr = (P)i;
                 var value = new ComplexValue();
-                Properties.Add(pr, value);
+                _properties.Add(pr, value);
 
             }
 
             foreach (var i in properties)
             {
-                Properties[i.Key].SetBaseValue(i.Value);
+                _properties[i.Key].SetBaseValue(i.Value);
             }
 
-            BaseSpeed = Properties[P.MoveSpeed]/100f;
+            _baseSpeed = _properties[P.MoveSpeed]/100f;
             Lock = new ActionLock();
             Lock.OnStateOnchanged += (s, e) =>
             {
@@ -219,12 +202,12 @@ namespace GameLogic.Game.Elements
 
         public void AddEventWatcher(ICharacterWatcher watcher)
         {
-            this.EventWatchers.Add(watcher);
+            this._eventWatchers.Add(watcher);
         }
 
-        public void RemoveEventWathcer(ICharacterWatcher watcher)
+        public void RemoveEventWatcher(ICharacterWatcher watcher)
         {
-            EventWatchers.Remove(watcher);
+            _eventWatchers.Remove(watcher);
         }
 
         public bool AddMagic(CharacterMagicData data)
@@ -244,34 +227,30 @@ namespace GameLogic.Game.Elements
             warpTarget = target;
             if (IsLock(ActionLockType.NoMove)) return false;
             var r = View.MoveTo(View.Transform.position.ToPV3(), target.ToPV3(), stopDis);
-            if (r.HasValue)
-            {
-                warpTarget = r.Value; 
-                FireEvent(BattleEventType.Move, this);
-            }
-            return r.HasValue;
+            if (!r.HasValue) return false;
+            warpTarget = r.Value; 
+            FireEvent(BattleEventType.Move, this);
+            return true;
         }
 
-        private Action<BattleCharacter,object> launchHitCallback;
+        private Action<BattleCharacter,object> _launchHitCallback;
 
-        internal void BeginLauchSelf(Quaternion rototion, float distance, float speed, Action<BattleCharacter,object> hitCallback, MagicReleaser releaser)
+        internal void BeginLaunchSelf(Quaternion rotation, float distance, float speed, Action<BattleCharacter,object> hitCallback, MagicReleaser releaser)
         {
-            if (TryStartPush(rototion, distance, speed))
+            if (!TryStartPush(rotation, distance, speed)) return;
+            PushEnd = () =>
             {
-                PushEnd = () =>
-                {
-                    launchHitCallback = null;
-                    releaser.DeAttachElement(this);
-                };
-                releaser.AttachElement(this, true);
-                tempObj = releaser;
-                launchHitCallback = hitCallback;
-            }
+                _launchHitCallback = null;
+                releaser.DeAttachElement(this);
+            };
+            releaser.AttachElement(this, true);
+            _tempObj = releaser;
+            _launchHitCallback = hitCallback;
         }
 
         public void HitOther(BattleCharacter character)
         {
-            launchHitCallback?.Invoke(character, tempObj);
+            _launchHitCallback?.Invoke(character, _tempObj);
         }
 
         public void StopMove(UVector3? pos =null)
@@ -308,7 +287,7 @@ namespace GameLogic.Game.Elements
 
         public Action PushEnd;
 
-        internal bool TryStartPush(Quaternion rotation, float distance, float speed)
+        private bool TryStartPush(Quaternion rotation, float distance, float speed)
         {
             if (Lock.IsLock(ActionLockType.NoMove)) return false;
             var dir = rotation * UVector3.forward;
@@ -386,16 +365,16 @@ namespace GameLogic.Game.Elements
 
         public T AddNetAction<T>(T action) where T : IMessage
         {
-            Actions.Enqueue(action);
-            if (Actions.Count > 20) Actions.Dequeue();
+            _actions.Enqueue(action);
+            if (_actions.Count > 20) _actions.Dequeue();
             return action;
         }
 
         public bool TryDequeueNetAction(out IMessage message)
         {
-            if (Actions.Count > 0)
+            if (_actions.Count > 0)
             {
-                message = Actions.Dequeue();
+                message = _actions.Dequeue();
                 return true;
             }
             message = null;
@@ -433,18 +412,16 @@ namespace GameLogic.Game.Elements
 			View.Death();
             OnDead?.Invoke(this);
             var per = this.Controllor.Perception as BattlePerception;
-            per.StopAllReleaserByCharacter(this);
+            per!.StopAllReleaserByCharacter(this);
             AiRoot?.BreakTree();
 		}
 
         public void AttachMagicHistory(int magicID, float now, float? cdTime =null)
         {
-            if (Magics.TryGetValue(magicID, out BattleCharacterMagic magic))
-            {
-                var cd = (cdTime ?? magic.CdTime);
-                magic.CdCompletedTime = now+ (cdTime ?? magic.CdTime);
-                View.AttachMagic(magic.Type, magic.ConfigId, magic.CdCompletedTime ,cd);
-            }
+            if (!Magics.TryGetValue(magicID, out BattleCharacterMagic magic)) return;
+            var cd = (cdTime ?? magic.CdTime);
+            magic.CdCompletedTime = now+ (cdTime ?? magic.CdTime);
+            View.AttachMagic(magic.Type, magic.ConfigId, magic.CdCompletedTime ,cd);
         }
 
         internal bool IsLock(ActionLockType type)
@@ -452,12 +429,12 @@ namespace GameLogic.Game.Elements
             return Lock.IsLock(type);
         }
 
-        public bool IsCoolDown(int magicID, float now, bool autoAttach = false,float? cdTime =null)
+        public bool IsCoolDown(int magicID, float now, bool autoAttach = false, float? cdTime = null)
         {
-            bool isOK = true;
-            if (Magics.TryGetValue(magicID, out BattleCharacterMagic h)) isOK = h.IsCoolDown(now);
-            if (autoAttach) AttachMagicHistory(magicID, now,cdTime);
-            return isOK;
+            var isOk = true;
+            if (Magics.TryGetValue(magicID, out BattleCharacterMagic h)) isOk = h.IsCoolDown(now);
+            if (autoAttach) AttachMagicHistory(magicID, now, cdTime);
+            return isOk;
         }
 
         public void ModifyValueAdd(P property, AddType addType, float resultValue)
@@ -496,11 +473,7 @@ namespace GameLogic.Game.Elements
 
         public bool TryGetActiveMagicById(int magicId, float time, out BattleCharacterMagic data)
         {
-            if (Magics.TryGetValue(magicId, out data))
-            {
-                return data.IsCoolDown(time);
-            }
-            return false;
+            return Magics.TryGetValue(magicId, out data) && data.IsCoolDown(time);
         }
 
         internal bool HaveMagicByType(MagicType ty)
@@ -528,7 +501,7 @@ namespace GameLogic.Game.Elements
 
         public void FireEvent(BattleEventType ev, object args)
         {
-            foreach (var i in EventWatchers)
+            foreach (var i in _eventWatchers)
             {
                 i.OnFireEvent(ev, args);
             }

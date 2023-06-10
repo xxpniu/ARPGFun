@@ -37,7 +37,7 @@ public class HpTipShower : MonoBehaviour
         if (!(Vector3.Distance(this.transform.position, ThirdPersonCameraContollor.Current.LookPos) < 20)) return;
         //player
         if ((!(showHpBarTime > Time.time) 
-             && view.TeamId != view.PerView.OwerTeamIndex) 
+             && view.TeamId != view.PerView.OwnerTeamIndex) 
             || view.IsDeath 
             || !ThirdPersonCameraContollor.Current) return;
         
@@ -45,7 +45,7 @@ public class HpTipShower : MonoBehaviour
         {
             //Debug.Log($"Print name");
             nameBar = UUITipDrawer.S.DrawUUITipNameBar(nameBar,view. Name,  view.Level,view.HP, view.HpMax,
-                view. TeamId == view.PerView.OwerTeamIndex,
+                view. TeamId == view.PerView.OwnerTeamIndex,
                 view. GetBoneByName(UCharacterView. TopBone).position + Vector3.up * .05f, ThirdPersonCameraContollor.Current.currentCamera);
         }
     }

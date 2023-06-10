@@ -76,7 +76,9 @@ namespace GameLogic.Game.Perceptions
         #endregion
 
         #region create Elements 
-        public MagicReleaser CreateReleaser(string key, BattleCharacter owner, IReleaserTarget target, ReleaserType ty, ReleaserModeType RMType, float durtime,bool canmoveCancel = false)
+        public MagicReleaser CreateReleaser(string key, BattleCharacter owner, 
+            IReleaserTarget target, ReleaserType ty,
+            ReleaserModeType rmType, float durTime,bool canMoveCancel = false, string[] magicParams = default)
         {
             var magic = View.GetMagicByKey(key);
             if (magic == null)
@@ -84,33 +86,29 @@ namespace GameLogic.Game.Perceptions
                 Debug.LogError($"{key} no found!");
                 return null;
             }
-            var releaser = CreateReleaser(key, owner, magic, target, ty, RMType, durtime,canmoveCancel);
+            var releaser = CreateReleaser(key, owner, magic, target, ty, rmType, durTime,canMoveCancel,magicParams);
             
             return releaser;
         }
 
-        public MagicReleaser CreateReleaser(string key, BattleCharacter owner, MagicData magic, IReleaserTarget target, ReleaserType ty, ReleaserModeType RMType, float durtime, bool canmoveCancel = false)
+        public MagicReleaser CreateReleaser(string key, BattleCharacter owner, MagicData magic, IReleaserTarget target, ReleaserType ty, 
+            ReleaserModeType rmType, float durTime, bool canMoveCancel = false, string[] magicParams = default)
         {
             if (magic.unique)
             {
-                bool have = false;
+                var have = false;
                 State.Each<MagicReleaser>(t =>
                 {
-                    if (t.Releaser.Index == owner.Index)
-                    {
-                        if (t.MagicKey == key)
-                        {
-                            have = true;
-                            return true;
-                        }
-                    }
-                    return false;
+                    if (t.Releaser.Index != owner.Index) return false;
+                    if (t.MagicKey != key) return false;
+                    have = true;
+                    return true;
                 });
                 if (have) return null;
             }
 
             var forward = target.TargetPosition - target.Releaser.Position;
-            var r = owner.Rototion;
+            var r = owner.Rotation;
             if (forward.magnitude > 0)
             {
                 r = Quaternion.LookRotation(forward);
@@ -118,11 +116,18 @@ namespace GameLogic.Game.Perceptions
 
             var view = View.CreateReleaserView(owner.Transform.position.ToPV3(),
                 r.eulerAngles.ToPV3(), target.Releaser.Index,
-                target.ReleaserTarget.Index, key, target.TargetPosition.ToPV3(), RMType);
+                target.ReleaserTarget.Index, key, target.TargetPosition.ToPV3(), rmType);
             view.MagicData = magic;
-            var mReleaser = new MagicReleaser(key, magic, owner, target, this.ReleaserControllor, view, ty, durtime,canmoveCancel);
-            if (RMType == ReleaserModeType.RmtMagic) owner.FireEvent(BattleEventType.Skill, mReleaser);
-            if (RMType == ReleaserModeType.RmtNormalAttack) owner.FireEvent(BattleEventType.NomarlAttack, mReleaser);
+            var mReleaser = new MagicReleaser(key, magic, owner, target, this.ReleaserControllor, view, ty, durTime,canMoveCancel, magicParams);
+            switch (rmType)
+            {
+                case ReleaserModeType.RmtMagic:
+                    owner.FireEvent(BattleEventType.Skill, mReleaser);
+                    break;
+                case ReleaserModeType.RmtNormalAttack:
+                    owner.FireEvent(BattleEventType.NomarlAttack, mReleaser);
+                    break;
+            }
 
             this.JoinElement(mReleaser);
             return mReleaser;
