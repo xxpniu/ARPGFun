@@ -105,13 +105,10 @@ if __name__ == "__main__":
   *  Server/GServer/ChatServer 是聊天服务器
   *  Server/GServer/NotifyServer 是通知推送服务器 用来服务器消息推送 再由每个聊天服务器负责广播转发
   *  Server/GServer/MatchServer 战斗副本匹配服务器
-  
   *  PublicTools 相关的工具目录
   *  PublicTools/econfigs 游戏的数据配表
   *  PublicTools/proto 游戏的网络协议
-  *  PublicTools/src 自动编译工具源码输出目录
  
-  
   
   ## 自动生成协议
    使用github CI 完成自动处理
