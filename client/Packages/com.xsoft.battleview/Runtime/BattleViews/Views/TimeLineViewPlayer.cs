@@ -20,15 +20,15 @@ namespace BattleViews.Views
             {
                 if (!(i.GetCustomAttributes(typeof(HandleLayoutAttribute), false) is HandleLayoutAttribute[] atts) || atts.Length == 0)
                     continue;
-                _handler.Add(atts[0].HandleType, i);
+                Handler.Add(atts[0].HandleType, i);
             }
         }
 
-        private static readonly Dictionary<Type, MethodInfo> _handler = new Dictionary<Type, MethodInfo>();
+        private static readonly Dictionary<Type, MethodInfo> Handler = new Dictionary<Type, MethodInfo>();
 
         private static void ActiveLayout(LayoutBase layout, TimeLineViewPlayer player)
         {
-            if (_handler.TryGetValue(layout.GetType(), out MethodInfo m))
+            if (Handler.TryGetValue(layout.GetType(), out MethodInfo m))
             {
                 m.Invoke(null, new object[] { player, layout });
             }
@@ -55,7 +55,7 @@ namespace BattleViews.Views
             var layout = layoutBase as ParticleLayout;
             var particle = player.RView.PerView.CreateParticlePlayer(player.RView, layout,player.EventTarget);
             if (particle == null) return;
-            switch (layout.destoryType)
+            switch (layout!.destoryType)
             {
                 case ParticleDestoryType.LayoutTimeOut:
                     player.AttachParticle(particle);
@@ -91,27 +91,27 @@ namespace BattleViews.Views
         public static void MotionActive(TimeLineViewPlayer player, LayoutBase layoutBase)
         {
             var layout = layoutBase as MotionLayout;
-            if (layout.targetType == Layout.TargetType.Releaser)
+            if (layout!.targetType == Layout.TargetType.Releaser)
             {
-                player.RView.CharacterReleaser?.PlayMotion(layout.motionName);
+                player.RView.CharacterReleaser.PlayMotion(layout.motionName);
             }
             else if (layout.targetType == Layout.TargetType.Target)
             {
-                player.RView.CharacterTarget?.PlayMotion(layout.motionName);
+                player.RView.CharacterTarget.PlayMotion(layout.motionName);
             }
             else if (layout.targetType == Layout.TargetType.EventTarget)
             {
-                player.EventTarget?.PlayMotion(layout.motionName);
+                player.EventTarget.PlayMotion(layout.motionName);
             }
         }
         #endregion
 
         #region PlaySoundLayout
         [HandleLayout(typeof(PlaySoundLayout))]
-        public static void PlaySoundLayout(TimeLineViewPlayer player, LayoutBase layoutBase)
+        public static async void PlaySoundLayout(TimeLineViewPlayer player, LayoutBase layoutBase)
         {
             var sound = layoutBase as PlaySoundLayout;
-            var tar = sound.target;
+            var tar = sound!.target;
             UnityEngine.Vector3? pos = null;
             switch (tar)
             {
@@ -147,7 +147,7 @@ namespace BattleViews.Views
 
             if (!pos.HasValue) return;
         
-            ResourcesManager.S.LoadResourcesWithExName<AudioClip>(sound.resourcesPath, (clip) =>
+            await ResourcesManager.S.LoadResourcesWithExName<AudioClip>(sound.resourcesPath, (clip) =>
             {
                 AudioSource.PlayClipAtPoint(clip, pos.Value, sound.value);
             });
@@ -161,7 +161,7 @@ namespace BattleViews.Views
             this.RView = view;
             this.EventTarget = eventTarget;
             this.EventType = ty;
-            if (this.RView.CharacterReleaser is UCharacterView character)
+            if (this.RView.CharacterReleaser is { } character)
             {
                 character.AttachLayoutView(this);
             }
@@ -174,9 +174,7 @@ namespace BattleViews.Views
         {
             if (LayoutBase.IsViewLayout(layout)) ActiveLayout(layout, this);
         }
-
-        private readonly List<IParticlePlayer> _players = new List<IParticlePlayer>();
-
+        private readonly List<IParticlePlayer> _players = new();
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -189,8 +187,7 @@ namespace BattleViews.Views
                 i.DestoryParticle();
             }
         }
-
-        public void AttachParticle(IParticlePlayer particle)
+        private void AttachParticle(IParticlePlayer particle)
         {
             _players.Add(particle);
         }

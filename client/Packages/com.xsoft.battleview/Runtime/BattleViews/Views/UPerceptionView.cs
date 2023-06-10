@@ -334,7 +334,7 @@ namespace BattleViews.Views
             view.Level = level;
             view.Speed = dic[HeroPropertyType.MoveSpeed]/100f;
             view.ConfigID = config;
-            view.AccoundUuid = accountId;
+            view.accoundUuid = accountId;
             view.Name = characterName;
             view.OwnerIndex  = owner;
             view.properties = properties;

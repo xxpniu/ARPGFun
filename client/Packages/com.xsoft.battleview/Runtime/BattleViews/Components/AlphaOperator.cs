@@ -5,8 +5,7 @@ namespace BattleViews.Components
 {
     public class AlphaOperator : MonoBehaviour
     {
-
-        public struct RevertShader
+        private struct RevertShader
         {
             public Renderer renderer;
             public Shader shader;
@@ -16,7 +15,7 @@ namespace BattleViews.Components
 
         private void OnEnable()
         {
-            var shader = Shader.Find("ARPG/alpha");
+            var shader = Shader.Find("Shader Graphs/AlphaCharacter");
             foreach (var i in this.transform.GetComponentsInChildren<Renderer>())
             {
                 var r = new RevertShader { renderer = i, shader = i.material.shader };

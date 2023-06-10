@@ -9,6 +9,7 @@ using System.Linq;
 using EConfig;
 using UVector3 = UnityEngine.Vector3;
 using EngineCore.Simulater;
+using Proto;
 using XNet.Libs.Utility;
 
 namespace GameLogic.Game.LayoutLogics
@@ -178,13 +179,15 @@ namespace GameLogic.Game.LayoutLogics
 			{
 				Debuger.LogError($"Not found call unit of {id}");
 				return;
-            }
+			}
+			var levelConfig = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level ==level);
+			var properties = data.CreatePlayerProperties(levelConfig);
 			var magics = data.CreateHeroMagic();
 			var unit = per!.CreateCharacter(per.AIControllor,
 				level,
 				data,
 				magics,
-				null,
+				properties,
 				character.TeamIndex,
 				character.Position + character.Rotation * unitLayout.offset.ToUV3(),
 				character.Rotation.eulerAngles,

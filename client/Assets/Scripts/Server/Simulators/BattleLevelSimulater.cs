@@ -135,25 +135,22 @@ namespace Server
             State.Each<BattleCharacter>(t =>
             {
                 if (!t.Enable) return false;
-                if (t.AccountUuid == user.AccountId)
-                {
-                    character = t;
-                    return true;
-                }
-                return false;
+                if (t.AccountUuid != user.AccountId) return false;
+                character = t;
+                return true;
             });
+            
             if (character != null) return character;
             var per = State.Perception as BattlePerception;
             var data = CM.GetId<CharacterData>(user.GetHero().HeroID);
-
-            Debuger.Log($"Hore:{user.GetHero()}");
-
+            var level = CM.First<CharacterLevelUpData>(t => t.Level == user.GetHero().Level);
+            var properties = data.CreatePlayerProperties(level);
+            
+            Debuger.Log($"Hero: {user.GetHero()}");
             var magic = user.GetHero().CreateHeroMagic();
             Debuger.Log($"Magic Count:{magic.Count}");
-
-            var level = CM.First<CharacterLevelUpData>(t => t.Level == user.GetHero().Level);
-
-            var properties = data.CreatePlayerProperties(level);
+            
+            
 
             foreach (var i in user.GetHero().Equips)
             {
@@ -175,7 +172,7 @@ namespace Server
             var playerBornPositions = Config.Elements.Where(t => t.Type == MapElementType.MetPlayerInit)
             .Select(t => t).ToArray();
             var pos = GRandomer.RandomArray(playerBornPositions);//.transform;//.position;        
-            character = per.CreateCharacter(per.StateControllor,
+            character = per!.CreateCharacter(per.StateControllor,
                 hero.Level,
                 data,
                 magic, properties,

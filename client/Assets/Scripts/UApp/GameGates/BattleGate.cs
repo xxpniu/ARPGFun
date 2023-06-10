@@ -137,7 +137,7 @@ namespace UApp.GameGates
                     var character = view as UCharacterView;
 
                     if (character==null ||character.OwnerIndex > 0) return;
-                    if (UApplication.S.AccountUuid != character.AccoundUuid) return;
+                    if (UApplication.S.AccountUuid != character.accoundUuid) return;
                     Owner = character;
                     //Owner.transform.SetLayer( LayerMask.NameToLayer("Player"));
                     Owner.ShowName = true;
