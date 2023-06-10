@@ -162,7 +162,7 @@ public class UUIManager:XSingleton<UUIManager>
 	private readonly Queue<UUIWindow> _delTemp = new Queue<UUIWindow> ();
 
   
-    public async Task<T> CreateWindowAsync<T>(Action<T> callBack, WRenderType wRender = WRenderType.Base) where T : UUIWindow, new()
+    public async Task<T> CreateWindowAsync<T>(Action<T> callBack = default, WRenderType wRender = WRenderType.Base) where T : UUIWindow, new()
     {
         return await CreateWindow(callBack,wRender);
     }
@@ -178,6 +178,7 @@ public class UUIManager:XSingleton<UUIManager>
             case WRenderType.Notify:
                 root = NotifyCanvas;
                 break;
+            case WRenderType.Base:
             default:
                 break;
         }
@@ -198,15 +199,15 @@ public class UUIManager:XSingleton<UUIManager>
             return id;
         }
 
-        var tIndex = index++;
-        if (index == int.MaxValue) index = 0;
+        var tIndex = _index++;
+        if (_index == int.MaxValue) _index = 0;
         _tips.Add(tIndex, null);
         StartCoroutine(CreateTipAsync<T>(world, tIndex, offset));
         tip = null;
         return tIndex;
     }
 
-    private int index = 0;
+    private int _index = 0;
 
     private IEnumerator CreateTipAsync<T>(bool world,int index, Vector3? offset) where T : UUITip, new()
     {

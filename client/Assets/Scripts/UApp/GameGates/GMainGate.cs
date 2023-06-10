@@ -20,6 +20,7 @@ using UnityEngine.SceneManagement;
 using Utility;
 using XNet.Libs.Utility;
 using static Stream;
+using Vector3 = UnityEngine.Vector3;
 
 namespace UApp.GameGates
 {
@@ -49,6 +50,7 @@ namespace UApp.GameGates
 
             var thirdCamera = FindObjectOfType<ThirdPersonCameraContollor>();
             thirdCamera.SetLookAt(characterView.GetBoneByName(UCharacterView.BottomBone), true);
+            thirdCamera.SetXY(0, 2.8f).SetDis(8.6f).SetForwardOffset(new Vector3(0,0.87f,0));
             characterView.ShowName = false;
             characterView.LookView(LookAtView);
         
