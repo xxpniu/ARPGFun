@@ -113,8 +113,8 @@ namespace UApp.GameGates
                 string.Empty,
                 Hero.Name);
             await UniTask.Delay(1000);
-            var root = Per.ChangeCharacterAI(data.AIResourcePath, _characterOwner);
-            Debug.Log($"AI:{root.NodeRoot.name}"); 
+            //var root = Per.ChangeCharacterAI(data.AIResourcePath, _characterOwner);
+            //Debug.Log($"AI:{root.NodeRoot.name}"); 
             Owner = _characterOwner.CharacterView as UCharacterView;
             PerView.OwerTeamIndex = Owner!.TeamId;
             PerView.OwnerIndex = Owner.Index;

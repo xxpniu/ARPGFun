@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using System.Threading.Tasks;
+using Core;
 using UGameTools;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace BattleViews.Components
 //NormalTime + FadeTime = LifeSpan
 //DelayTime + ScaleTime1 + ScaleTime2 = NormalTime
 	[System.Serializable]
-	public class DisplayNumerInputParam
+	public class DisplayNumberInputParam
 	{
 		public float RandomXInitialSpeedMin;
 		public float RandomXInitialSpeedMax;
@@ -30,19 +31,12 @@ namespace BattleViews.Components
 
 		public float NormalTime;
 		public float FadeTime;
-
-		public DisplayNumerInputParam(){}
 	}
 
 
+	[DestroyOnLoad]
 	public class GPUBillboardBuffer:XSingleton<GPUBillboardBuffer>
 	{
-
-		protected override void Awake()
-		{
-		
-		}
-
 		const int BC_VERTEX_EACH_BOARD = 4;
 		const int BC_INDICES_EACH_BOARD = 6;
 		const int BC_TEXTURE_ROW_COLUMN = 4;
@@ -94,15 +88,16 @@ namespace BattleViews.Components
 			mRenderer=null;
 		}
 
-		public void Init()
+		public async void Start()
 		{
 			GPUBillboardBufferInit();
-			ResourcesManager.S.LoadResourcesWithExName<Texture>("Number.png",
-				(t) =>
-				{
-					SetTexture(t);
-				});
+			var t = await ResourcesManager.S.LoadResourcesWithExName<Texture>("Number.png");
+			SetTexture(t);
+			print($"Load Texture:{t.name}");
+			IsReady = true;
 		}
+
+		public bool IsReady { private set; get; } = false;
 
 		private void GPUBillboardBufferInit()
 		{
@@ -204,63 +199,60 @@ namespace BattleViews.Components
 				mMesh.uv  = mUv;
 		
 				{
-					int[] Indices = new int[ maxBoardSize * BC_INDICES_EACH_BOARD ];
-					for( int i = 0 ; i < maxBoardSize ; ++ i )
+					var indices = new int[ maxBoardSize * BC_INDICES_EACH_BOARD ];
+					for( var i = 0 ; i < maxBoardSize ; ++ i )
 					{
-						int index = i*BC_INDICES_EACH_BOARD;
-						int vertex = i*BC_VERTEX_EACH_BOARD;
-						Indices[index  ] = vertex  ;
-						Indices[index+1] = vertex+1;
-						Indices[index+2] = vertex+2;
+						var index = i*BC_INDICES_EACH_BOARD;
+						var vertex = i*BC_VERTEX_EACH_BOARD;
+						indices[index  ] = vertex  ;
+						indices[index+1] = vertex+1;
+						indices[index+2] = vertex+2;
 					
-						Indices[index+3] = vertex+2;
-						Indices[index+4] = vertex+1;
-						Indices[index+5] = vertex+3;
+						indices[index+3] = vertex+2;
+						indices[index+4] = vertex+1;
+						indices[index+5] = vertex+3;
 					}
-					mMesh.triangles = Indices;
+					mMesh.triangles = indices;
 				}
 			}
 			mMesh.bounds = new Bounds( new Vector3(0,0,0), new Vector3( 100000, 100000, 100000 ) );
 		}
 
 		public void DisplayNumberRandom(string numString, Vector2 size, Vector3 center, Color clr, bool haveScale,
-			DisplayNumerInputParam inpuParam)
+			DisplayNumberInputParam inputParam)
 		{
 
-			float time = Time.timeSinceLevelLoad;
+			var time = Time.time; 
 			center += mPosOffset;
 
-			int numLength = numString.Length;
+			var numLength = numString.Length;
 
-			Vector2 halfSize = new Vector2(size.x * 0.5f, size.y * 0.5f);
-			float leftBio = -size.x * 0.5f * BC_FONT_WIDTH * numLength;
+			var halfSize = new Vector2(size.x * 0.5f, size.y * 0.5f);
+			var leftBio = -size.x * 0.5f * BC_FONT_WIDTH * numLength;
 
-			int inthaveScale = 1;
-			if (!haveScale)
+			var intakeScale = haveScale ? 1 : 0;
+
+
+			randomspeed.x = Random.Range(inputParam.RandomXInitialSpeedMin, inputParam.RandomXInitialSpeedMax);
+			randomspeed.y = Random.Range(inputParam.RandomYInitialSpeedMin, inputParam.RandomYInitialSpeedMax);
+			randomacceleration.x = Random.Range(inputParam.RandomXaccelerationMin, inputParam.RandomXaccelerationMax);
+			randomacceleration.y = Random.Range(inputParam.RandomYaccelerationMin, inputParam.RandomYaccelerationMax);
+
+			lifeParam.x = inputParam.NormalTime;
+			lifeParam.y = inputParam.FadeTime;
+			lifeParam.z = Random.Range(inputParam.RandomXaccelerationMin, inputParam.RandomXaccelerationMax);
+
+			for (var i = 0; i < numLength; ++i)
 			{
-				inthaveScale = 0;
-			}
-
-			randomspeed.x = Random.Range(inpuParam.RandomXInitialSpeedMin, inpuParam.RandomXInitialSpeedMax);
-			randomspeed.y = Random.Range(inpuParam.RandomYInitialSpeedMin, inpuParam.RandomYInitialSpeedMax);
-			randomacceleration.x = Random.Range(inpuParam.RandomXaccelerationMin, inpuParam.RandomXaccelerationMax);
-			randomacceleration.y = Random.Range(inpuParam.RandomYaccelerationMin, inpuParam.RandomYaccelerationMax);
-
-			lifeParam.x = inpuParam.NormalTime;
-			lifeParam.y = inpuParam.FadeTime;
-			lifeParam.z = Random.Range(inpuParam.RandomXaccelerationMin, inpuParam.RandomXaccelerationMax);
-
-			for (int i = 0; i < numLength; ++i)
-			{
-				uint indexPos = mBoardIndex * BC_VERTEX_EACH_BOARD;
+				var indexPos = mBoardIndex * BC_VERTEX_EACH_BOARD;
 				mPosXYLifeScale[indexPos].Set(-halfSize.x + leftBio + i * size.x * BC_FONT_WIDTH, halfSize.y, time,
-					inthaveScale);
+					intakeScale);
 				mPosXYLifeScale[indexPos + 1].Set(-halfSize.x + leftBio + i * size.x * BC_FONT_WIDTH, -halfSize.y, time,
-					inthaveScale);
+					intakeScale);
 				mPosXYLifeScale[indexPos + 2].Set(halfSize.x + leftBio + i * size.x * BC_FONT_WIDTH, halfSize.y, time,
-					inthaveScale);
+					intakeScale);
 				mPosXYLifeScale[indexPos + 3].Set(halfSize.x + leftBio + i * size.x * BC_FONT_WIDTH, -halfSize.y, time,
-					inthaveScale);
+					intakeScale);
 
 				mCenters[indexPos] = center;
 				mCenters[indexPos + 1] = center;
@@ -288,48 +280,21 @@ namespace BattleViews.Components
 				mLifeSpanParam[indexPos + 3] = lifeParam;
 
 				{
-					int eachNum;
 					//计算UV//
-					switch (numString[i])
+					var eachNum = numString[i] switch
 					{
-						case '-':
-						{
-							eachNum = 10;
-						}
-							break;
-						case 'M':
-						{
-							eachNum = 11;
-						}
-							break;
-						case 'I':
-						{
-							eachNum = 12;
-						}
-							break;
-						case 'S':
-						{
-							eachNum = 13;
-						}
-							break;
-						case '+':
-						{
-							eachNum = 14;
-						}
-							break;
-						case 'X':
-							eachNum = 15;
-							break;
-						default:
-						{
-							eachNum = numString[i] - '0';
-						}
-							break;
-					}
+						'-' => 10,
+						'M' => 11,
+						'I' => 12,
+						'S' => 13,
+						'+' => 14,
+						'X' => 15,
+						_ => numString[i] - '0'
+					};
 
-					int row = eachNum / BC_TEXTURE_ROW_COLUMN;
-					int col = eachNum % BC_TEXTURE_ROW_COLUMN;
-					Vector2 uvBegin = new Vector2(mUVIncrease.x * col, 1 - mUVIncrease.y * row);
+					var row = eachNum / BC_TEXTURE_ROW_COLUMN;
+					var col = eachNum % BC_TEXTURE_ROW_COLUMN;
+					var uvBegin = new Vector2(mUVIncrease.x * col, 1 - mUVIncrease.y * row);
 					mUv[indexPos] = uvBegin;
 					mUv[indexPos + 1].Set(uvBegin.x, uvBegin.y - mUVIncrease.y);
 					mUv[indexPos + 2].Set(uvBegin.x + mUVIncrease.x, uvBegin.y);

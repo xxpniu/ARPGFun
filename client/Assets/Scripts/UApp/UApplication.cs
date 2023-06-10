@@ -120,9 +120,8 @@ namespace UApp
             StopChannel();
         }
 
-        protected override void Update()
+        protected  void Update()
         {
-            base.Update();
             if (_gate == null) return;
             UGate.DoTick(_gate);
         }

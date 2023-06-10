@@ -607,7 +607,7 @@ namespace BattleViews.Views
             this.HP = cur;
             this.HpMax = max;
 #if !UNITY_SERVER
-            if (hp > 0) this.PerView.ShowHPCure(this.GetBoneByName(BodyBone).position, hp);
+            if (hp > 0) this.PerView.ShowHpCure(this.GetBoneByName(BodyBone).position, hp);
             else
                 SendMessage("OnHpChanged", SendMessageOptions.DontRequireReceiver);
 #endif
@@ -622,7 +622,7 @@ namespace BattleViews.Views
             CreateNotify(new Notify_MPChange { Cur = cur, Index = Index, Max = maxMP, Mp = mp });
 #endif
 #if !UNITY_SERVER
-            if (mp > 0) this.PerView.ShowMPCure(this.GetBoneByName(BodyBone).position, mp);
+            if (mp > 0) this.PerView.ShowMpCure(this.GetBoneByName(BodyBone).position, mp);
 #endif
         }
 

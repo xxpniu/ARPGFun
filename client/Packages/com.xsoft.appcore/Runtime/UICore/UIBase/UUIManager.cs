@@ -81,9 +81,9 @@ public class UUIManager:XSingleton<UUIManager>
 	private readonly Dictionary<string,UUIWindow> _window=new Dictionary<string, UUIWindow> ();
     private readonly Dictionary<int,UUITip> _tips= new Dictionary<int, UUITip> ();
 
-    protected override void Update()
+    protected  void Update()
     {
-        base.Update();
+        //base.Update();
         while (_addTemp.Count > 0) {
 			var t = _addTemp.Dequeue ();
 			_window.Add (t.GetType ().Name, t);

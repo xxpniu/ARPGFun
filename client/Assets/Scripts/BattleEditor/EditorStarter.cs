@@ -165,23 +165,20 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 	private ThirdPersonCameraContollor tcamera;
 
 	// Update is called once per frame
-	protected override void Update()
+	protected  void Update()
 	{
-		base.Update();
+ 
 		if (!isStarted) return;
 		Tick();
-
 		tcamera.SetXY(slider_y,ry);
 		tcamera.distance = distance;
-		if (isChanged)
-		{
-			var position = PerView.UScene.startPoint.position;
-			var left = position + (UVector3.left * distanceCharacter / 2);
-			var right = position + (UVector3.right * distanceCharacter / 2);
-			releaser.Position = left;
-			target.Position = right;
-			isChanged = false;
-		}
+		if (!isChanged) return;
+		var position = PerView.UScene.startPoint.position;
+		var left = position + (UVector3.left * distanceCharacter / 2);
+		var right = position + (UVector3.right * distanceCharacter / 2);
+		releaser.Position = left;
+		target.Position = right;
+		isChanged = false;
 	}
 
 	public bool isChanged = false;

@@ -112,18 +112,13 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         {
             Debuger.LogError(ex);
         }
-
-        Invoke(() =>
+        
+        if (BattleSimulater)
         {
-            if (BattleSimulater)
-            {
-                Destroy(BattleSimulater);
-                BattleSimulater = null;
-            }
-
-            SceneManager.LoadScene("null");
-        });
-
+            Destroy(BattleSimulater);
+            BattleSimulater = null;
+        }
+        SceneManager.LoadScene("null");
         await UniTask.Delay(1000);
         await RegBattleServer();
         //on end by time default

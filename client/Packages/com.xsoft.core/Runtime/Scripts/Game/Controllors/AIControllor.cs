@@ -10,10 +10,9 @@ namespace GameLogic.Game.Controllors
 
 		public override GAction GetAction(GTime time, GObject current)
 		{
-			if (current is BattleCharacter character)
-			{
-				if (!character.IsDeath) character?.TickAi();
-			}
+			if (current is not BattleCharacter character) return GAction.Empty;
+			if (character.IsDeath) return GAction.Empty;
+			character?.TickAi();
 			return GAction.Empty;
 		}
 	}

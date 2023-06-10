@@ -80,9 +80,9 @@ public class UUITipDrawer:XSingleton<UUITipDrawer>
     }
     #endregion
 
-    protected override void Update()
+    protected  void Update()
     {
-        base.Update();
+        //base.Update();
         foreach (var i in notifys)
         {
             i.ID = DrawUUINotify(i.ID, i.message);

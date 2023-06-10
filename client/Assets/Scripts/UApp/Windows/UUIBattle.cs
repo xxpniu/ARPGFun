@@ -37,14 +37,12 @@ namespace Windows
             public async void SetMagic(HeroMagicData  data,IBattleGate battle )
             {
                 Data = data;
-                if (magicID != data.MagicID)
-                {
-                    magicID = data.MagicID;
-                    MagicData = ExcelToJSONConfigManager.GetId<CharacterMagicData>(data.MagicID);
-                    var per = battle.PreView as IBattlePerception;
-                    LMagicData = per.GetMagicByKey(MagicData.MagicKey);
-                    Template.Icon.sprite =await ResourcesManager.S.LoadIcon(MagicData);
-                }
+                if (magicID == data.MagicID) return;
+                magicID = data.MagicID;
+                MagicData = ExcelToJSONConfigManager.GetId<CharacterMagicData>(data.MagicID);
+                var per = battle.PreView as IBattlePerception;
+                LMagicData = per.GetMagicByKey(MagicData.MagicKey);
+                Template.Icon.sprite =await ResourcesManager.S.LoadIcon(MagicData);
             }
             private int magicID = -1;
             public CharacterMagicData MagicData;
@@ -58,23 +56,21 @@ namespace Windows
                 if (LMagicData.unique)  Template.Button.interactable = !haveKey;
                 else  Template.Button.interactable = true;
 
-                if (view.TryGetMagicData(magicID, out HeroMagicData data))
+                if (!view.TryGetMagicData(magicID, out var data)) return;
+                var time = Mathf.Max(0, data.CDCompletedTime - now);
+                this.Template.CDTime.text = time > 0 ? $"{time:0.0}" : string.Empty;
+                cdTime = Mathf.Max(0.01f, data.CdTotalTime);
+                if (time > 0)
                 {
-                    var time = Mathf.Max(0, data.CDCompletedTime - now);
-                    this.Template.CDTime.text = time > 0 ? $"{time:0.0}" : string.Empty;
-                    cdTime = Mathf.Max(0.01f, data.CdTotalTime);
-                    if (time > 0)
-                    {
-                        lastTime = UnityEngine.Time.time;
-                    }
-                    if (cdTime > 0)
-                    {
-                        this.Template.ICdMask.fillAmount = time / cdTime;
-                    }
-                    else
-                    {
-                        this.Template.ICdMask.fillAmount = 0;
-                    }
+                    lastTime = UnityEngine.Time.time;
+                }
+                if (cdTime > 0)
+                {
+                    this.Template.ICdMask.fillAmount = time / cdTime;
+                }
+                else
+                {
+                    this.Template.ICdMask.fillAmount = 0;
                 }
             }
         }
@@ -126,7 +122,7 @@ namespace Windows
             swipeEv.OnSwiping.AddListener((v) =>
             {
                 v *= .5f;
-                //ThridPersionCameraContollor.Current.RotationByX(v.y).RotationByY(v.x);
+                //ThirdPersonCameraContollor.Current.RotationByX(v.y).RotationByY(v.x);
                 //BattleGate?.TrySendLookForward(false);
             });
 
@@ -223,6 +219,14 @@ namespace Windows
         protected override void OnUpdate()
         {
             base.OnUpdate();
+            
+            if (Input.GetKey(KeyCode.B))
+            {
+                BattleGate?.DoNormalAttack();
+            }
+            
+            
+
             var view = BattleGate?.Owner;
             if (!view) return;
             HPSilder.value = view.HP / (float)view.HpMax;
@@ -239,7 +243,7 @@ namespace Windows
             if (view.TryGetMagicData(normalAtt, out HeroMagicData att))
             {
                 var time = Mathf.Max(0, att.CDCompletedTime - BattleGate.TimeServerNow);
-                float cdTime = Mathf.Max(0.01f, att.CdTotalTime);// view.AttackSpeed 
+                var cdTime = Mathf.Max(0.01f, att.CdTotalTime);// view.AttackSpeed 
                 //if (cdTime < time) cdTime = time;
                 if (cdTime > 0)
                 {
@@ -255,15 +259,15 @@ namespace Windows
 
             //Debug.Log(BattleGate.LeftTime);
 
-            TimeSpan ltime = TimeSpan.FromSeconds(Mathf.Max(0, BattleGate.LeftTime));
-            lb_text.text = $"{(int)ltime.TotalMinutes}:{ltime.Seconds}";
+            var lTime = TimeSpan.FromSeconds(Mathf.Max(0, BattleGate.LeftTime));
+            lb_text.text = $"{(int)lTime.TotalMinutes}:{lTime.Seconds}"; 
           
         }
 
         private void UpdateMap()
         {
 
-            int wi = Map.width;
+            var wi = Map.width;
            
             if (!BattleGate.Owner) return;
             var a = new Color(1, 1, 1, 0);
@@ -290,16 +294,12 @@ namespace Windows
             Map.SetPixels32(Colors);
             Map.Apply();
         }
-
-        protected override void OnHide()
-        {
-            base.OnHide();
-        }
+        
 
         private async void InitCharacter(UCharacterView view)
         {
-            //var gata = UApplication.G<BattleGate>();
-            if (view.TryGetMagicsType(MagicType.MtMagic, out IList<HeroMagicData> list))
+            
+            if (view.TryGetMagicsType(MagicType.MtMagic, out var list))
             {
                 this.GridTableManager.Count = list.Count;
                 int index = 0;
@@ -322,8 +322,7 @@ namespace Windows
 
         private async void SetPackage(PlayerPackage package)
         {
-            int hp = 0;
-            int mp = 0;
+            int hp = 0, mp = 0;
 
             foreach (var i in package.Items)
             {
@@ -333,11 +332,10 @@ namespace Windows
                     hp += i.Value.Num;
                     hp_item_Icon.sprite= await ResourcesManager.S.LoadIcon(config);
                 }
-                if ((ItemType)config.ItemType == ItemType.ItMpitem)
-                {
-                    mp_item_Icon.sprite = await ResourcesManager.S.LoadIcon(config);
-                    mp += i.Value.Num;
-                }
+
+                if ((ItemType)config.ItemType != ItemType.ItMpitem) continue;
+                mp_item_Icon.sprite = await ResourcesManager.S.LoadIcon(config);
+                mp += i.Value.Num;
             }
 
             bt_hp.ActiveSelfObject(hp > 0);

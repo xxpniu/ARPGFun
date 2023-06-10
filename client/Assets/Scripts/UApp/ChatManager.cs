@@ -94,10 +94,7 @@ namespace UApp
             {
                 await ChatChannel.ShutdownAsync();
                 ChatChannel = null;
-                Invoke(() =>
-                {
-                    UApplication.S.ShowError(friend.Code);
-                });
+                UApplication.S.ShowError(friend.Code);
                 return false;
             }
 

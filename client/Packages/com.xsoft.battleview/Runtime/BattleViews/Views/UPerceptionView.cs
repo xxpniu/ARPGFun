@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BattleViews.Components;
 using Core;
+using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;
 using ExcelConfig;
@@ -36,19 +37,14 @@ namespace BattleViews.Views
             return root;
         }
 
-        public UCharacterView Owner
-        {
-            get
-            {
-                return GetViewByIndex<UCharacterView>(OwnerIndex);
-            }
-        }
+        public UCharacterView Owner => GetViewByIndex<UCharacterView>(OwnerIndex);
 
         public int OwnerIndex { set; get; } = -1;
 
         public int OwerTeamIndex { set; get; } = -1;
         private float startTime = 0;
-        void Awake()
+
+        private async void  Start()
         {
             startTime = Time.timeSinceLevelLoad;
             now = new GTime( Time.timeSinceLevelLoad-startTime, Time.deltaTime);
@@ -56,12 +52,14 @@ namespace BattleViews.Views
             _magicData = new Dictionary<string, MagicData>();
             _timeLines = new Dictionary<string, TimeLine>();
 #if !UNITY_SERVER
-            GPUBillboardBuffer.S.Init();
-            GPUBillboardBuffer.S.SetupBillboard(1000);
-            GPUBillboardBuffer.S.SetDisappear(1);
-            GPUBillboardBuffer.S.SetScaleParams(0f, 0.5f, 0.5f, 1f, 1f);
+            var g=  GPUBillboardBuffer.S;
 
-            param = new DisplayNumerInputParam()
+            await UniTask.WaitUntil(()=>g.IsReady);
+            g.SetupBillboard(1000);
+            g.SetDisappear(2);
+            g.SetScaleParams(0f, 0.5f, 0.5f, 1f, 1f);
+
+            _param = new DisplayNumberInputParam()
             {
                 RandomXInitialSpeedMin = 0f,
                 RandomXInitialSpeedMax = 0f,
@@ -79,7 +77,7 @@ namespace BattleViews.Views
 
             };
 
-            mulParam = new DisplayNumerInputParam()
+            _mulParam = new DisplayNumberInputParam()
             {
                 RandomXInitialSpeedMin = 0f,
                 RandomXInitialSpeedMax = 0f,
@@ -99,20 +97,20 @@ namespace BattleViews.Views
 #endif
         }
 
-        private DisplayNumerInputParam param;
-        private DisplayNumerInputParam mulParam;
+        private DisplayNumberInputParam _param;
+        private DisplayNumberInputParam _mulParam;
 
-        public void ShowHPCure(UVector3 pos, int hp)
+        internal void ShowHpCure(UVector3 pos, int hp)
         {
 #if !UNITY_SERVER
-            GPUBillboardBuffer.S.DisplayNumberRandom($"{hp}", new Vector2(.2f, .2f), pos, Color.green, true, param);
+            GPUBillboardBuffer.S.DisplayNumberRandom($"{hp}", new Vector2(.2f, .2f), pos, Color.green, true, _param);
 #endif
         }
 
-        internal void ShowMPCure(UVector3 pos, int mp)
+        internal void ShowMpCure(UVector3 pos, int mp)
         {
 #if !UNITY_SERVER
-            GPUBillboardBuffer.S.DisplayNumberRandom($"{mp}", new Vector2(.2f, .2f), pos, Color.blue, true, param);
+            GPUBillboardBuffer.S.DisplayNumberRandom($"{mp}", new Vector2(.2f, .2f), pos, Color.blue, true, _param);
 #endif
         }
 
@@ -238,14 +236,11 @@ namespace BattleViews.Views
 
         private MagicData TryLoadMagic(string key)
         {
-            if (!_magicData.TryGetValue(key, out MagicData magic))
-            {
-                var asset = ResourcesManager.S.LoadText($"Magics/{key}.xml");
-                if (string.IsNullOrEmpty(asset)) return null;
-                magic = XmlParser.DeSerialize<MagicData>(asset);
-                if(UseCache) _magicData.Add(key, magic);
-                return magic;
-            }
+            if (_magicData.TryGetValue(key, out var magic)) return magic;
+            var asset = ResourcesManager.S.LoadText($"Magics/{key}.xml");
+            if (string.IsNullOrEmpty(asset)) return null;
+            magic = XmlParser.DeSerialize<MagicData>(asset);
+            if(UseCache) _magicData.Add(key, magic);
             return magic;
         }
 
@@ -276,26 +271,21 @@ namespace BattleViews.Views
 
 #if !UNITY_SERVER
             var  chDisplay = GetViewByIndex<UCharacterView>(isMissed ? owner : target);
-            if (chDisplay)
+            if (!chDisplay) return true;
+            var num = (isMissed ? "MISS" : $"{damage}");
+            var bone = chDisplay.GetBoneByName(UCharacterView.TopBone);
+            if (!bone) return true;
+            var pos = bone.transform.position;
+            if (crtmult > 1) {
+                GPUBillboardBuffer.S.
+                    DisplayNumberRandom(num,
+                        new Vector2(.5f, .5f), pos, Color.red, true, _mulParam);
+            }
+            else
             {
-                var num = (isMissed ? "MISS" : $"{damage}");
-                var bone = chDisplay.GetBoneByName(UCharacterView.TopBone);
-                if (bone)
-                {
-                    var pos = bone.transform.position;
-                    if (crtmult > 1) {
-                        GPUBillboardBuffer.S.
-                            DisplayNumberRandom(num,
-                                new Vector2(.5f, .5f), pos, Color.red, true, mulParam);
-
-                    }
-                    else
-                    {
-                        GPUBillboardBuffer.S.
-                            DisplayNumberRandom(num,
-                                new Vector2(.2f, .2f), pos, Color.red, true, param);
-                    }
-                }
+                GPUBillboardBuffer.S.
+                    DisplayNumberRandom(num,
+                        new Vector2(.2f, .2f), pos, Color.red, true, _param);
             }
 #endif
             return true;
