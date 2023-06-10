@@ -4,6 +4,7 @@ using UnityEditor;
 //using org.vxwo.csharp.json;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Proto;
 
 [CustomEditor(typeof(MonsterGroupPosition))]
@@ -146,14 +147,12 @@ public class MonsterGroupPositionEditor : Editor {
     }
 
 
-    [System.Obsolete("JsonTool.Deserialize<List<T>>")]
+    
     public List<T> GetConfig<T>() where T : ExcelConfig.JSONConfigBase, new()
     {
-        var name = ExcelConfig.ExcelToJSONConfigManager.GetFileName<T>();
-        var json = LoadText($"Json/{name}");
-        if (json == null) return default;
-        //return JsonTool.Deserialize<List<T>>(json);
-        return null;
+        var fileName = ExcelConfig.ExcelToJSONConfigManager.GetFileName<T>();
+        var json = LoadText($"Json/{fileName}");
+        return json == null ? default : Extends.GetListData<T>(json);
     }
 
     public string LoadText(string path)

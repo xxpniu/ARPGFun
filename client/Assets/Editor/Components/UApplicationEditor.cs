@@ -1,6 +1,7 @@
 ﻿using System;
 using Proto;
 using Proto.ServerConfig;
+using UApp;
 using UnityEditor;
 using UnityEngine;
 

@@ -1,4 +1,4 @@
 {
     "LoginServerHost": "localhost",
-    "LoginServerPort": 1900
+    "LoginServerPort": 9000
 }

@@ -346,7 +346,7 @@ namespace BattleViews.Views
 
         private async Task Init(string path)
         {
-            var obj = await ResourcesManager.Singleton.LoadResourcesWithExName<GameObject>(path);
+            var obj = await ResourcesManager.S.LoadResourcesWithExName<GameObject>(path);
 
             var character = Instantiate(obj);
         
