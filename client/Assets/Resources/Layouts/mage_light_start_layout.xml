@@ -38,7 +38,6 @@
           <z>0</z>
         </offsetPosition>
       </RangeType>
-      <effectType>EffectGroup</effectType>
       <effectKey>001</effectKey>
     </LayoutBase>
     <LayoutBase xsi:type="MotionLayout">
@@ -49,7 +48,7 @@
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>069448f9-2d19-4532-a319-2fcad8dd338b</GUID>
       <path>Effects/Flames/LightFlame.prefab</path>
-      <fromTarget>Releaser</fromTarget>
+      <fromTarget>Target</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Top</fromBoneName>
       <toBoneName>Top</toBoneName>

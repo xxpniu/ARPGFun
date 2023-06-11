@@ -400,7 +400,7 @@ namespace BattleViews.Views
                 case TargetType.Target:
                     form = viewTarget;
                     break;
-                case TargetType.TargetPoistion:
+                case TargetType.TargetPosition:
                     bind = false;
                     formPos = viewRelease.TargetPos;
                     break;

@@ -7,7 +7,7 @@ namespace Layout
 		Releaser,//释放者
 		Target,//目标
         EventTarget,
-		TargetPoistion, //目标位置
+		TargetPosition, //目标位置
         ReleaseInstance //释放实列子
 	}
 }

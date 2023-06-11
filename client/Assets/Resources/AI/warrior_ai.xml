@@ -5,12 +5,17 @@
       <childs />
       <name>查找目标</name>
       <guid>169cb8a5-1630-42d0-852f-aee9184413c6</guid>
-      <valueOf>ViewDistance</valueOf>
+      <valueOf>Value</valueOf>
       <Distance>
-        <min>0</min>
+        <min>10000</min>
         <max>0</max>
         <type>Fixed</type>
       </Distance>
+      <ValueMul>
+        <min>10000</min>
+        <max>10000</max>
+        <type>Fixed</type>
+      </ValueMul>
       <View>
         <min>360</min>
         <max>360</max>
@@ -37,8 +42,9 @@
       <childs />
       <name>释放技能</name>
       <guid>d1320283-b528-4b78-8d53-06fc02879970</guid>
-      <magicKey>warrior_attack</magicKey>
       <valueOf>MagicKey</valueOf>
+      <magicKey>warrior_attack</magicKey>
+      <ReleaseATPos>false</ReleaseATPos>
     </TreeNode>
     <TreeNode xsi:type="TreeNodeWaitForSeconds">
       <childs />

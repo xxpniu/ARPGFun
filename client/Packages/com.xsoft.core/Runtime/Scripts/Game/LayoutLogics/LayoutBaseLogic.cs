@@ -180,6 +180,7 @@ namespace GameLogic.Game.LayoutLogics
 				Debuger.LogError($"Not found call unit of {id}");
 				return;
 			}
+			
 			var levelConfig = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level ==level);
 			var properties = data.CreatePlayerProperties(levelConfig);
 			var magics = data.CreateHeroMagic();

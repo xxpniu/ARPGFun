@@ -6,7 +6,7 @@ namespace BehaviorTree
 	{
 		GTime Time { get; }
         object UserState { get; }
-		void Chanage(Composite cur);
+		void Change(Composite cur);
 		bool IsDebug { get; }
 	}
 

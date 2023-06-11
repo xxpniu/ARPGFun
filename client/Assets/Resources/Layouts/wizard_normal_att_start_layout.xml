@@ -19,7 +19,7 @@
     <LayoutBase xsi:type="MissileLayout">
       <GUID>5c90bfb2-4853-4456-8132-0aa6596f0bb5</GUID>
       <resourcesPath>Missiles/LightMissile.prefab</resourcesPath>
-      <movementType>Line</movementType>
+      <movementType>Follow</movementType>
       <maxLifeTime>-1</maxLifeTime>
       <maxDistance>-1</maxDistance>
       <speed>10</speed>

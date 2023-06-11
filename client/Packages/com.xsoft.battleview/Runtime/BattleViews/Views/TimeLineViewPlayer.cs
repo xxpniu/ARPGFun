@@ -87,23 +87,25 @@ namespace BattleViews.Views
         #endregion
 
         #region MotionLayout
+
         [HandleLayout(typeof(MotionLayout))]
         public static void MotionActive(TimeLineViewPlayer player, LayoutBase layoutBase)
         {
             var layout = layoutBase as MotionLayout;
-            if (layout!.targetType == Layout.TargetType.Releaser)
+            switch (layout!.targetType)
             {
-                player.RView.CharacterReleaser.PlayMotion(layout.motionName);
-            }
-            else if (layout.targetType == Layout.TargetType.Target)
-            {
-                player.RView.CharacterTarget.PlayMotion(layout.motionName);
-            }
-            else if (layout.targetType == Layout.TargetType.EventTarget)
-            {
-                player.EventTarget.PlayMotion(layout.motionName);
+                case Layout.TargetType.Releaser:
+                    player.RView.CharacterReleaser.PlayMotion(layout.motionName);
+                    break;
+                case Layout.TargetType.Target:
+                    player.RView.CharacterTarget.PlayMotion(layout.motionName);
+                    break;
+                case Layout.TargetType.EventTarget:
+                    player.EventTarget.PlayMotion(layout.motionName);
+                    break;
             }
         }
+
         #endregion
 
         #region PlaySoundLayout

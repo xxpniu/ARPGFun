@@ -27,7 +27,7 @@
     <LayoutBase xsi:type="MissileLayout">
       <GUID>4f10c964-1e3f-42ff-a497-e405446bb6b5</GUID>
       <resourcesPath>Missiles/FireMissile.prefab</resourcesPath>
-      <movementType>Line</movementType>
+      <movementType>Follow</movementType>
       <maxLifeTime>-1</maxLifeTime>
       <maxDistance>-1</maxDistance>
       <speed>10</speed>

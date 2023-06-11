@@ -51,11 +51,11 @@ namespace GameLogic.Game.LayoutLogics
             }
             else
             {
-                throw new Exception(string.Format("Effect [{0}] no handler!!!", effect.GetType()));
+                throw new Exception($"Effect [{effect.GetType()}] no handler!!!");
             }
         }
 
-        private static int GetVauleBy(BattleCharacter owner, BattleCharacter target, ValueOf vOf, int value)
+        private static int GetValueBy(BattleCharacter owner, BattleCharacter target, ValueOf vOf, int value)
         {
             switch (vOf)
             {
@@ -75,7 +75,7 @@ namespace GameLogic.Game.LayoutLogics
         {
             var per = releaser.Controllor.Perception as BattlePerception;
             var effect = e as NormalDamageEffect;
-            int damage = GetVauleBy(releaser.Releaser, effectTarget, effect.valueOf, effect.DamageValue.ProcessValue(releaser));
+            int damage = GetValueBy(releaser.Releaser, effectTarget, effect!.valueOf, effect.DamageValue.ProcessValue(releaser));
             var result = BattleAlgorithm.GetDamageResult(releaser.Releaser, damage, releaser.Releaser.TDamage, effectTarget);
             if (releaser.ReleaserTarget.Releaser.TDamage != Proto.DamageType.Magic)
             {
@@ -89,7 +89,7 @@ namespace GameLogic.Game.LayoutLogics
             }
 
             if (!result.IsMissed) effectTarget.FireEvent(BattleEventType.Hurt, releaser.Releaser);
-            per.ProcessDamage(releaser.Releaser, effectTarget, result);
+            per!.ProcessDamage(releaser.Releaser, effectTarget, result);
         }
 
         //CureEffect
@@ -97,7 +97,7 @@ namespace GameLogic.Game.LayoutLogics
         public static void Cure(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as CureEffect;
-            int cure =  GetVauleBy(releaser.Releaser, effectTarget, effect.valueType, effect.value.ProcessValue(releaser));
+            int cure =  GetValueBy(releaser.Releaser, effectTarget, effect.valueType, effect.value.ProcessValue(releaser));
             if (cure > 0)
             {
                 effectTarget.AddHP(cure);
@@ -108,7 +108,7 @@ namespace GameLogic.Game.LayoutLogics
         public static void CureMP(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as CureMPEffect;
-            int cure = GetVauleBy(releaser.Releaser, effectTarget, effect.valueType, effect.value.ProcessValue(releaser));
+            int cure = GetValueBy(releaser.Releaser, effectTarget, effect.valueType, effect.value.ProcessValue(releaser));
             if (cure > 0) effectTarget.AddMP(cure);
         }
 
@@ -120,7 +120,7 @@ namespace GameLogic.Game.LayoutLogics
             var per = releaser.Controllor.Perception as BattlePerception;
 
             var rT = new ReleaseAtTarget(releaser.Releaser, effectTarget);
-            var r= per.CreateReleaser(effect.buffMagicKey, releaser.Releaser, rT, ReleaserType.Buff, Proto.ReleaserModeType.RmtBuff, effect.durationTime.ProcessValue(releaser)/1000f);
+            var r= per!.CreateReleaser(effect!.buffMagicKey, releaser.Releaser, rT, ReleaserType.Buff, Proto.ReleaserModeType.RmtBuff, effect.durationTime.ProcessValue(releaser)/1000f);
             if (effect.CopyParams) r.SetParam(releaser.Params);
             r.DisposeValue = effect.DiType;
         }
@@ -137,7 +137,7 @@ namespace GameLogic.Game.LayoutLogics
         public static void AddProperty(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as AddPropertyEffect;
-            effectTarget.ModifyValueAdd(effect.property, effect.addType, effect.addValue.ProcessValue(releaser));
+            effectTarget.ModifyValueAdd(effect!.property, effect.addType, effect.addValue.ProcessValue(releaser));
             if (effect.revertType == RevertType.ReleaserDeath)  releaser.RevertProperty(effectTarget, effect.property, effect.addType, effect.addValue.ProcessValue(releaser));
         }
 
@@ -145,7 +145,7 @@ namespace GameLogic.Game.LayoutLogics
         public static void ModifyLockEffect(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as ModifyLockEffect;
-            effectTarget.LockAction(effect.lockType);
+            effectTarget.LockAction(effect!.lockType);
             if (effect.revertType == RevertType.ReleaserDeath) releaser.RevertLock(effectTarget, effect.lockType);
         }
 
@@ -155,14 +155,21 @@ namespace GameLogic.Game.LayoutLogics
         public static void CharmEffect(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as CharmEffect;
-            if (effectTarget.Level > effect.Level.ProcessValue(releaser)) return;
-            if (GRandomer.Probability10000(effect.ProValue.ProcessValue(releaser)))
+            if (effectTarget.Level > effect!.Level.ProcessValue(releaser)) return;
+            if (!GRandomer.Probability10000(effect.ProValue.ProcessValue(releaser))) return;
+            effectTarget.Clear();
+            var re = releaser.Releaser;
+            effectTarget.SetTeamIndex(re.TeamIndex, re.Index);
+            releaser.AttachElement(effectTarget, false, effect.Time.ProcessValue(releaser) / 1000f);
+            var per = re.Controllor.Perception as BattlePerception;
+            var ai = effect.AIPath;
+            if (!string.IsNullOrEmpty(ai))
             {
-                effectTarget.Clear();
-                var re = releaser.Releaser;
-                effectTarget.SetTeamIndex(re.TeamIndex, re.Index);
-                releaser.AttachElement(effectTarget, false, effect.Time.ProcessValue(releaser) / 1000f);
+                per!.ChangeCharacterAI(ai, effectTarget);
             }
+
+            effectTarget.AiRoot?.ClearBlackBroad();
+            effectTarget.AiRoot?.BreakTree();
         }
 
         [EffectHandle(typeof(TransportEffect))]

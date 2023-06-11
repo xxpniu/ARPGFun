@@ -14,5 +14,9 @@ namespace Layout.LayoutEffects
 
         [Label("控制时间")]
         public ValueSourceOf Time =1000;
+        
+        [Label("AIPath(默认角色表AI)")]
+        [EditorStreamingPath]
+        public string AIPath;
     }
 }

@@ -13,7 +13,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
 		public override IEnumerable<RunStatus> Execute(ITreeRoot context)
 		{		
-			context.Chanage(this.DecoratedChild);
+			context.Change(this.DecoratedChild);
 			yield return RunStatus.Success;
 		}
 	}

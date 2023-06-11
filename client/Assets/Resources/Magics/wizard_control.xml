@@ -21,6 +21,7 @@
                 <ValueForm>MagicLevelParam2</ValueForm>
                 <Value>1000</Value>
               </Time>
+              <AIPath />
             </EffectBase>
           </effects>
           <key>001</key>
@@ -29,6 +30,5 @@
     </EventContainer>
   </Containers>
   <triggerTicksTime>-1</triggerTicksTime>
-  <triggerDurationTime>-1</triggerDurationTime>
   <unique>false</unique>
 </MagicData>

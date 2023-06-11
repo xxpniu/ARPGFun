@@ -47,7 +47,7 @@ namespace Layout.LayoutElements
 		public float localsize = 1;
 		public override string ToString ()
 		{
-			return string.Format ("资源{0}",path);
+			return $"资源{path}";
 		}
 
 	}

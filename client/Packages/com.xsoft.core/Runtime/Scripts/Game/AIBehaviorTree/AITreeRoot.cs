@@ -85,7 +85,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
         public ITimeSimulater TimeSimulater { private set; get; }
 
-        public BattlePerception Perception { get { return Character.Controllor.Perception as BattlePerception; } }
+        public BattlePerception Perception => Character.Controllor.Perception as BattlePerception;
 
         public BattleCharacter Character { get; private set; }
 
@@ -114,7 +114,7 @@ namespace GameLogic.Game.AIBehaviorTree
                 if (Current?.LastStatus == RunStatus.Running) Current.Stop(this);
             }
 
-            if (Current.LastStatus != RunStatus.Running)
+            if (Current!.LastStatus != RunStatus.Running)
             {
                 Current.Start(this);
             }
@@ -126,7 +126,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
         private Composite next;
 
-        public void Chanage(Composite cur)
+        public void Change(Composite cur)
         {
             next = cur;
         }
@@ -136,25 +136,27 @@ namespace GameLogic.Game.AIBehaviorTree
             NeedBreak = true;
         }
 
+        public void ClearBlackBroad()
+        {
+            _blackbroad.Clear();
+        }
+
         public GTime Time => TimeSimulater.Now;
 
 		public object this[string key] 
         { 
-			set {
+			set
+            {
                 if (value == null)
                 {
                     _blackbroad.Remove(key);
                     return;
                 }
-				if (_blackbroad.ContainsKey(key)) _blackbroad[key] = value;
-				else
-					_blackbroad.Add(key, value);
-			}
-			get {
-                if (_blackbroad.TryGetValue(key, out object v)) return v;
-                return null;
-			}
-		}
+
+                _blackbroad[key] = value;
+            }
+			get => _blackbroad.TryGetValue(key, out var v) ? v : null;
+        }
 
         public bool TryGet<T>(string key, out T v)
         {
@@ -178,8 +180,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
         public bool TryGetTargetPos(out Vector3 target)
         {
-            if (!TryGet(TARGET_POS, out target)) return false;
-            return true;
+            return TryGet(TARGET_POS, out target);
         }
 
         internal bool TryGetMagic(out CharacterMagicData magicData)

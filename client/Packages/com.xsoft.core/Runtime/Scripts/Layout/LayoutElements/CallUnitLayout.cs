@@ -25,12 +25,12 @@ namespace Layout.LayoutElements
         [Label("召唤物最大数量")]
         public int maxNum;
 
-        [Label("偏移")]
-        public Vector3 offset = new Vector3(0,0,1);
+        [Label("相对于释放者偏移")]
+        public Vector3 offset = new(0,0,1);
 
         public override string ToString()
         {
-            return string.Format("time:{0} ID:{1}", time, characterID);
+            return $"time:{time} ID:{characterID}";
         }
     }
 }
