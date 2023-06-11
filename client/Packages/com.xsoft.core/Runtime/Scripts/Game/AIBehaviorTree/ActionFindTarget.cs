@@ -20,7 +20,7 @@ namespace GameLogic.Game.AIBehaviorTree
 		{
 			var root = context as AITreeRoot;
 
-			var per = root.Perception;
+			var per = root!.Perception;
 
 			var distance = Node.Distance / 100f;
 
@@ -39,10 +39,9 @@ namespace GameLogic.Game.AIBehaviorTree
 			//是否保留之前目标
 			if (!Node.findNew)
 			{
-				root.TryGetTarget(out BattleCharacter targetCharacter);
+				root.TryGetTarget(out var targetCharacter); 
 				if (targetCharacter && !targetCharacter.IsDeath)
 				{
-                    
 					if (BattlePerception.InviewSide(root.Character, targetCharacter, distance, view))
 					{
 						yield return RunStatus.Success;
@@ -56,7 +55,7 @@ namespace GameLogic.Game.AIBehaviorTree
 			//处理使用魔法目标
 			if (Node.useMagicConfig)
 			{
-				if (!root.TryGetMagic(out CharacterMagicData data))
+				if (!root.TryGetMagic(out var data)) 
 				{
 					yield return RunStatus.Failure;
 					yield break;
@@ -67,11 +66,11 @@ namespace GameLogic.Game.AIBehaviorTree
 			var target = per.FindTarget(root.Character, type, distance, view, true, Node.selectType, Node.filter);
 			if (!target)
 			{
-				if (root.IsDebug) Attach("failure", "nofound");
+				if (root.IsDebug) Attach("failure", "not found");
 				yield return RunStatus.Failure;
 				yield break;
 			}
-			if (context.IsDebug) Attach("Tagert", target);
+			if (context.IsDebug) Attach("Target", target);
 			root[AITreeRoot.TARGET_INDEX] = target.Index;
 			yield return RunStatus.Success;
 		}

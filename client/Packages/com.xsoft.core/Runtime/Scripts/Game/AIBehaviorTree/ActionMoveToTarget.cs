@@ -5,6 +5,7 @@ using EngineCore;
 using GameLogic.Game.Elements;
 using GameLogic.Game.Perceptions;
 using Layout.AITree;
+using Proto;
 using UVector3 = UnityEngine.Vector3;
 
 namespace GameLogic.Game.AIBehaviorTree
@@ -18,17 +19,17 @@ namespace GameLogic.Game.AIBehaviorTree
 		public override IEnumerable<RunStatus> Execute(ITreeRoot context)
 		{
 			var root = context as AITreeRoot;
-			if (!root.TryGetTarget(out BattleCharacter target))
+			if (!root!.TryGetTarget(out var target))
 			{
-				if (context.IsDebug) Attach("failure", $"nofound target by target");
+				if (context.IsDebug) Attach("failure", $"not found target by target");
 				yield return RunStatus.Failure;
 				yield break;
 			}
 
-			if (!root.GetDistanceByValueType(Node.valueOf, Node.distance/100f, out float stopDistance))
+			if (!root.GetDistanceByValueType(Node.valueOf, Node.distance/100f, out var stopDistance)) 
 			{
 				if (context.IsDebug)
-					Attach("failure", $"nofound stop distance");
+					Attach("failure", $"not found stop distance");
 				yield return RunStatus.Failure;
 				yield break;
 			}
@@ -36,9 +37,9 @@ namespace GameLogic.Game.AIBehaviorTree
 
 			while (true)
 			{
-				if (!target || target.IsDeath)
+				if (!target || target.IsDeath || target.IsLock(ActionLockType.NoInhiden) )
 				{
-					if (root.IsDebug) Attach("failure", "target is death");
+					if (root.IsDebug) Attach("failure", $"target is isDeath:{target.IsDeath} InHidden:{target.IsLock(ActionLockType.NoInhiden)} ");
 					yield return RunStatus.Failure;
 					yield break;
 				}

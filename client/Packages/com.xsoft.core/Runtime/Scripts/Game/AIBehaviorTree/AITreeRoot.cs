@@ -166,13 +166,13 @@ namespace GameLogic.Game.AIBehaviorTree
             return true;
         }
 
-        public bool TryGetTarget( out BattleCharacter target, bool ighidden = true)
+        public bool TryGetTarget( out BattleCharacter target, bool igHidden = true)
         {
             target = null;
             if (!TryGet(TARGET_INDEX, out int index)) return false;
             target = Perception.FindTarget(index);
             if (target == null) return false;
-            if (ighidden && target.IsLock(Proto.ActionLockType.NoInhiden)) return false;
+            if (igHidden && target.IsLock(Proto.ActionLockType.NoInhiden)) return false;
             return !target.IsDeath;
         }
 

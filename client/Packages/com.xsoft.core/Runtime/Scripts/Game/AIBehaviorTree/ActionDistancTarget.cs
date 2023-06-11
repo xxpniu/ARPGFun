@@ -18,7 +18,7 @@ namespace GameLogic.Game.AIBehaviorTree
 		{
 			var root = context as AITreeRoot;
 
-			if (!root.TryGetTarget( out BattleCharacter target))
+			if (!root!.TryGetTarget(out var target)) 
 			{
 				yield return RunStatus.Failure;
 				yield break;
@@ -39,7 +39,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
 
 
-            if (!root.GetDistanceByValueType(Node.valueOf, Node.distance/100f, out float distance))
+            if (!root.GetDistanceByValueType(Node.valueOf, Node.distance/100f, out var  distance))
             {
                 yield return RunStatus.Failure;
                 yield break;

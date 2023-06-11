@@ -36,8 +36,7 @@ namespace BattleViews.Components
         public static AlphaOperator Operator(GameObject root)
         {
             var a = root.GetComponent<AlphaOperator>();
-            if (a) return a;
-            return root.AddComponent<AlphaOperator>();
+            return a ? a : root.AddComponent<AlphaOperator>();
         }
     }
 }

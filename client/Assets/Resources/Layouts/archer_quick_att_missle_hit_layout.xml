@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-16"?>
 <TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Time>3</Time>
+  <Time>2</Time>
   <Points>
     <TimePoint>
       <GUID>dac7692e-3434-4719-b097-4d7578409726</GUID>
       <Time>0.0771208256</Time>
-    </TimePoint>
-    <TimePoint>
-      <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
-      <Time>0.837288141</Time>
     </TimePoint>
     <TimePoint>
       <GUID>fd584289-cd71-450d-a4f5-cf37141b737e</GUID>
@@ -16,11 +12,7 @@
     </TimePoint>
     <TimePoint>
       <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
-      <Time>1.44406784</Time>
-    </TimePoint>
-    <TimePoint>
-      <GUID>1b2f1f0e-c57b-44ec-8c12-cd8f32cb7d1d</GUID>
-      <Time>2.39658451</Time>
+      <Time>1.185</Time>
     </TimePoint>
   </Points>
   <Layouts>
@@ -56,11 +48,11 @@
       <fromBoneName>Bottom</fromBoneName>
       <toBoneName>Bottom</toBoneName>
       <Bind>false</Bind>
-      <destoryType>Time</destoryType>
-      <destoryTime>5</destoryTime>
+      <destoryType>LayoutTimeOut</destoryType>
+      <destoryTime>-1</destoryTime>
       <offet>
         <x>0</x>
-        <y>1</y>
+        <y>0</y>
         <z>0</z>
       </offet>
       <rotation>

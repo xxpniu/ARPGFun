@@ -144,6 +144,18 @@
                       <teamType>Enemy</teamType>
                       <findNew>false</findNew>
                     </TreeNode>
+                    <TreeNode xsi:type="TreeNodeSetIntKey">
+                      <childs />
+                      <name>操作黑板值(Int)</name>
+                      <guid>2189f198-5515-4129-900d-dfcc4d5a72b0</guid>
+                      <Key>attack_state</Key>
+                      <operatorType>Reset</operatorType>
+                      <OperatorValue>
+                        <min>0</min>
+                        <max>0</max>
+                        <type>Fixed</type>
+                      </OperatorValue>
+                    </TreeNode>
                   </childs>
                   <name>选择节点</name>
                   <guid>1f0ba775-11d7-4f2a-a4a3-77dd5ed0f02f</guid>
@@ -176,6 +188,7 @@
                           <guid>0668bbd2-518c-4e44-92d5-593eed2610ba</guid>
                           <valueOf>BlackBoard</valueOf>
                           <magicKey />
+                          <ReleaseATPos>false</ReleaseATPos>
                         </TreeNode>
                       </childs>
                       <name>攻击目标</name>
@@ -193,7 +206,7 @@
               <childs>
                 <TreeNode xsi:type="TreeNodeFindTarget">
                   <childs />
-                  <name>查找目标</name>
+                  <name>查找目标 两倍视野</name>
                   <guid>f3e26d08-fcd9-4ad0-aa05-3e626406a612</guid>
                   <valueOf>ViewDistance</valueOf>
                   <Distance>
@@ -252,7 +265,7 @@
                               <guid>2a407c1a-7a62-4a4d-9382-c29d5255a7c6</guid>
                               <valueOf>ViewDistance</valueOf>
                               <distance>
-                                <min>100</min>
+                                <min>0</min>
                                 <max>100</max>
                                 <type>Fixed</type>
                               </distance>

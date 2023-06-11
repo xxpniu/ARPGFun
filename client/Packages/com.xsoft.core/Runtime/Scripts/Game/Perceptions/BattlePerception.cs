@@ -252,14 +252,15 @@ namespace GameLogic.Game.Perceptions
             float view,
             bool igDead = true,
             TargetSelectType sType = TargetSelectType.Nearest,
-            TargetFilterType filterType = TargetFilterType.None)
+            TargetFilterType filterType = TargetFilterType.None,
+            bool ignoreHidden = true)
         {
 
             var list = new List<BattleCharacter>();
             State.Each<BattleCharacter>(t =>
             {
                 //隐身的不进入目标查找
-                if (t.IsLock(ActionLockType.NoInhiden)) return false;
+                if (ignoreHidden && t.IsLock(ActionLockType.NoInhiden)) return false;
                 if (igDead && t.IsDeath) return false;
                 switch (type)
                 {

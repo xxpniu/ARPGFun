@@ -23,9 +23,9 @@ namespace GameLogic.Game.AIBehaviorTree
             IReleaserTarget releaserTarget;
             if (!atPos)
             {
-                if (!root.TryGetTarget(out BattleCharacter target))
+                if (!root!.TryGetTarget(out var target))
                 {
-                    if (root.IsDebug) { Attach("failure", "nofound target"); }
+                    if (root.IsDebug) { Attach("failure", "not found target"); }
 
                     yield return RunStatus.Failure;
                     yield break;
@@ -35,9 +35,9 @@ namespace GameLogic.Game.AIBehaviorTree
             }
             else
             {
-                if (!root.TryGetTargetPos(out UnityEngine.Vector3 tar))
+                if (!root!.TryGetTargetPos(out var tar))
                 {
-                    if (root.IsDebug) { Attach("failure", "nofound target pos"); }
+                    if (root.IsDebug) { Attach("failure", "not found target pos"); }
 
                     yield return RunStatus.Failure;
                     yield break;
@@ -50,7 +50,7 @@ namespace GameLogic.Game.AIBehaviorTree
             {
                 case MagicValueOf.BlackBoard:
                     {
-                        if (!root.TryGetMagic(out CharacterMagicData magicData))
+                        if (!root.TryGetMagic(out var magicData)) 
                         {
                             yield return RunStatus.Failure;
                             yield break;
@@ -70,16 +70,16 @@ namespace GameLogic.Game.AIBehaviorTree
             {
                 if (context.IsDebug)
                 {
-                    Attach("failure", $"nofound key {key}");
+                    Attach("failure", $"not found key {key}");
                 }
                 yield return RunStatus.Failure;
                 yield break;
             }
 
-            releaser = root.Perception
+            _releaser = root.Perception
                 .CreateReleaser(key, root.Character,releaserTarget , ReleaserType.Magic, Proto.ReleaserModeType.RmtMagic, -1);
 
-            while (!releaser.IsLayoutStartFinish)
+            while (!_releaser.IsLayoutStartFinish)
             {
                 yield return RunStatus.Running;
             }
@@ -89,13 +89,13 @@ namespace GameLogic.Game.AIBehaviorTree
 
         }
 
-        private MagicReleaser releaser;
+        private MagicReleaser _releaser;
 
         public override void Stop(ITreeRoot context)
         {
             if (LastStatus == RunStatus.Running)
             {
-                releaser?.Cancel();
+                _releaser?.Cancel();
             }
             base.Stop(context);
         }
