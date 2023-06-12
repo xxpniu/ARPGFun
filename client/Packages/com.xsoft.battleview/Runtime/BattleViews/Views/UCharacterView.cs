@@ -304,7 +304,7 @@ namespace BattleViews.Views
 
         public Transform GetBoneByName(string boneName)
         {
-            if (!transform) return null;
+            if (!this || !transform) return null;
             return bones.TryGetValue(boneName, out var bone) ? bone : transform;
         }
 
@@ -628,7 +628,7 @@ namespace BattleViews.Views
         public void AddMagicCd(int id, float cdTimeCompleted, MagicType type, float cdTime, int? mpCost)
         {
 
-            if (_magicCds.TryGetValue(id, out HeroMagicData data))
+            if (_magicCds.TryGetValue(id, out var data))
             {
                 data.CDCompletedTime = cdTimeCompleted;
                 data.CdTotalTime = cdTime;

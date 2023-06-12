@@ -63,7 +63,7 @@ namespace GameLogic.Game.Controllors
                     var key = data.Config.MagicKey;
                     if (!TryGetReleaserTarget(data.Config, character, out var target)) break;
                     if (!character.SubMP(data.MpCost)) break;
-                    if (TryReleaseMagic(target, character, key, data.Params)) break;
+                    if (!TryReleaseMagic(target, character, key, data.Params)) break;
                     character.IsCoolDown(skill.MagicId, time.Time, true);
                     character[TimeKey] = time.Time;
                 }

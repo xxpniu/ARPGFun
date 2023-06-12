@@ -428,7 +428,7 @@ namespace GameLogic.Game.Elements
         public bool IsCoolDown(int magicID, float now, bool autoAttach = false, float? cdTime = null)
         {
             var isOk = true;
-            if (Magics.TryGetValue(magicID, out BattleCharacterMagic h)) isOk = h.IsCoolDown(now);
+            if (Magics.TryGetValue(magicID, out var h)) isOk = h.IsCoolDown(now);
             if (autoAttach) AttachMagicHistory(magicID, now, cdTime);
             return isOk;
         }
