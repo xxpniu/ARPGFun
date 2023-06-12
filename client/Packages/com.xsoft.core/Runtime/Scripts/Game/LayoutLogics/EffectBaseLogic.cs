@@ -81,7 +81,7 @@ namespace GameLogic.Game.LayoutLogics
             {
                 if (!result.IsMissed)
                 {
-                    var cureHp = (int)(result.Damage * releaser.Releaser[P.Hpdrain] / 10000f);
+                    var cureHp = (int)(result.Damage * releaser.Releaser[P.HpDrain] / 10000f);
                     if (cureHp > 0) releaser.Releaser.AddHP(cureHp); 
                     var cureMp = (int)(result.Damage * releaser.Releaser[P.MpDrain] / 10000f);
                     if (cureMp > 0) releaser.Releaser.AddMP(cureMp);
