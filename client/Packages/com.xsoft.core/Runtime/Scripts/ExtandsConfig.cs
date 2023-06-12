@@ -159,7 +159,7 @@ namespace GameLogic
                 var stat = ExcelToJSONConfigManager.GetId<StatData>((int)i);
                 if (stat == null)
                 {
-                    Debug.LogError($"No found {(P)i} in StatData");
+                    Debug.LogError($"No found [{i}]{(P)i} in StatData");
                     continue;
                 }
                 ComplexValue value = Mathf.Max(0, stat.InitValue);
