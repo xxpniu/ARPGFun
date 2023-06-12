@@ -2071,6 +2071,11 @@
             攻击速度 次数秒 * 1000 
              </summary>
         </member>
+        <member name="F:Proto.HeroPropertyType.HpDrain">
+             <summary>
+            Hp 吸取等级 万分比
+             </summary>
+        </member>
         <member name="F:Proto.HeroPropertyType.MpDrain">
              <summary>
             MP 吸取等级 万分比
