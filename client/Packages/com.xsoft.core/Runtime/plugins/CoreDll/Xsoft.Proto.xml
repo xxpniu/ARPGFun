@@ -2071,49 +2071,9 @@
             攻击速度 次数秒 * 1000 
              </summary>
         </member>
-        <member name="F:Proto.HeroPropertyType.CastSpeed">
-             <summary>
-            释法速度 Cd 时间减免比例 万分比
-             </summary>
-        </member>
-        <member name="F:Proto.HeroPropertyType.HitBack">
-             <summary>
-            攻击击退  cm
-             </summary>
-        </member>
-        <member name="F:Proto.HeroPropertyType.HitImmob">
-             <summary>
-            攻击硬直 毫秒
-             </summary>
-        </member>
-        <member name="F:Proto.HeroPropertyType.HitBurn">
-             <summary>
-            攻击燃烧
-             </summary>
-        </member>
-        <member name="F:Proto.HeroPropertyType.HitFreeze">
-             <summary>
-            攻击冰冻
-             </summary>
-        </member>
-        <member name="F:Proto.HeroPropertyType.Hpdrain">
-             <summary>
-            吸血等级  万分比
-             </summary>
-        </member>
         <member name="F:Proto.HeroPropertyType.MpDrain">
              <summary>
             MP 吸取等级 万分比
-             </summary>
-        </member>
-        <member name="F:Proto.HeroPropertyType.VsBoss">
-             <summary>
-            boss 伤害加成 万分比
-             </summary>
-        </member>
-        <member name="F:Proto.HeroPropertyType.VsElite">
-             <summary>
-            精英 伤害加成 万分比
              </summary>
         </member>
         <member name="F:Proto.HeroPropertyType.Hit">
