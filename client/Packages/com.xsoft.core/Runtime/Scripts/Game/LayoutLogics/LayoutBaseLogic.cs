@@ -28,6 +28,7 @@ namespace GameLogic.Game.LayoutLogics
         /// </summary>
 		public Type HandleType{set;get;}
 	}
+    
     /// <summary>
     /// Layout base logic.
     /// </summary>

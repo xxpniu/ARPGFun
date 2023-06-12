@@ -10,7 +10,7 @@
   <Layouts>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>ee7025bc-e9a6-495c-a801-716a6bb9342b</GUID>
-      <path>Effects/Shields/Shield Sphere/ShadowShield.prefab</path>
+      <path>Effects/Shields/ShieldSphere/ShadowShield.prefab</path>
       <fromTarget>Releaser</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Body</fromBoneName>

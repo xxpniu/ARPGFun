@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using EngineCore.Simulater;
+﻿using EngineCore.Simulater;
 using GameLogic.Game.Elements;
 using GameLogic.Game.LayoutLogics;
 using GameLogic.Game.Perceptions;
-using Google.Protobuf;
 using Layout.AITree;
 using Layout.LayoutEffects;
 using Proto;
@@ -15,6 +12,7 @@ namespace GameLogic.Game.Controllors
 {
     public class ControllorState : GControllor
     {
+        private const string TimeKey = "__SkillTime__";
         public BattlePerception BattlePerception => Perception as BattlePerception;
 
         public ControllorState(BattlePerception per) : base(per)
@@ -31,11 +29,16 @@ namespace GameLogic.Game.Controllors
             {
                 case Action_MoveJoystick move:
                 {
+                    var lastSkillTime = character[TimeKey];
+                    if (lastSkillTime != null &&  (float)lastSkillTime +0.2f > time.Time)
+                    {
+                        return GAction.Empty;
+                    }
+
                     if (character.MoveTo(move.WillPos.ToUV3(), out UVector3 _))
                     {
                         CancelStartingReleaser(character);
                     }
-
                     break;
                 }
                 case Action_NormalAttack normal:
@@ -46,8 +49,9 @@ namespace GameLogic.Game.Controllors
                             var key = t.Config.MagicKey;
                             if (!TryGetReleaserTarget(t.Config, character, out var target)) return true;
                             if (!character.SubMP(t.MpCost)) return true;
-                            if (TryReleaseMagic(target, character, key))
-                                character.IsCoolDown(t.ConfigId, time.Time, true, character.NormalCdTime);
+                            if (!TryReleaseMagic(target, character, key)) return true;
+                            character.IsCoolDown(t.ConfigId, time.Time, true, character.NormalCdTime);
+                            character[TimeKey] = time.Time;
                             return true;
                         });
 
@@ -61,6 +65,7 @@ namespace GameLogic.Game.Controllors
                     if (!character.SubMP(data.MpCost)) break;
                     if (TryReleaseMagic(target, character, key, data.Params)) break;
                     character.IsCoolDown(skill.MagicId, time.Time, true);
+                    character[TimeKey] = time.Time;
                 }
                     break;
 
@@ -79,10 +84,7 @@ namespace GameLogic.Game.Controllors
         {
             BattlePerception.BreakReleaserByCharacter(character, BreakReleaserType.InStartLayoutMagic, true);
         }
-
-
-        // private const string LastReleaser = "_LAST_INDEX_";
-
+        
         private bool TryReleaseMagic(IReleaserTarget target, BattleCharacter character, 
             string key, string[] magicParams = default)
         {

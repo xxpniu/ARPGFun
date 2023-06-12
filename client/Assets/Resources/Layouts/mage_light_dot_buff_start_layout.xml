@@ -14,7 +14,7 @@
   <Layouts>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>3c5a69c0-93a9-4a7e-91b6-4cd35e24a827</GUID>
-      <path>Effects/Missiles &amp; Explosions/-Generics/Missiles/LightningBlueMissile.prefab</path>
+      <path>Effects/DoT/DamageOverTimeFire.prefab</path>
       <fromTarget>Target</fromTarget>
       <toTarget>Target</toTarget>
       <fromBoneName>Bottom</fromBoneName>

@@ -34,7 +34,7 @@
   <Layouts>
     <LayoutBase xsi:type="DamageLayout">
       <GUID>b2e2f13f-92e0-4551-892f-09471d9430f8</GUID>
-      <target>TargetPoistion</target>
+      <target>TargetPosition</target>
       <RangeType>
         <damageType>Area</damageType>
         <fiterType>EmenyTeam</fiterType>
@@ -60,8 +60,8 @@
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>a4fa31fe-f794-464c-8cae-847da9238d6a</GUID>
       <path>Effects/Rain/RainWater.prefab</path>
-      <fromTarget>TargetPoistion</fromTarget>
-      <toTarget>TargetPoistion</toTarget>
+      <fromTarget>TargetPosition</fromTarget>
+      <toTarget>TargetPosition</toTarget>
       <fromBoneName>Bottom</fromBoneName>
       <toBoneName>Bottom</toBoneName>
       <Bind>false</Bind>

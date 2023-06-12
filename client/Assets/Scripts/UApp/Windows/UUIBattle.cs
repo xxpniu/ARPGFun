@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BattleViews.Components;
 using BattleViews.Views;
 using Core;
@@ -23,18 +24,19 @@ namespace Windows
             public GridTableModel() { }
             public override void InitModel()
             {
-                this.Template.Button.onClick.AddListener(
-                    () =>
-                    {
-                        if ((lastTime + 0.3f > UnityEngine.Time.time)) return;
-                        lastTime = UnityEngine.Time.time;
-                        OnClick?.Invoke(this);
-                    });
+                this.Template.Button.onClick.AddListener(ClickItem);
+            }
+
+            public void ClickItem()
+            {
+                if ((lastTime + 0.3f > UnityEngine.Time.time)) return;
+                lastTime = UnityEngine.Time.time;
+                OnClick?.Invoke(this);
             }
 
             public Action<GridTableModel> OnClick;
             public HeroMagicData Data;
-            public async void SetMagic(HeroMagicData  data,IBattleGate battle )
+            public async void SetMagic(HeroMagicData  data,IBattleGate battle, KeyCode key )
             {
                 Data = data;
                 if (magicID == data.MagicID) return;
@@ -43,6 +45,7 @@ namespace Windows
                 var per = battle.PreView as IBattlePerception;
                 LMagicData = per.GetMagicByKey(MagicData.MagicKey);
                 Template.Icon.sprite =await ResourcesManager.S.LoadIcon(MagicData);
+                Template.tb_key.text = $"{key}";
             }
             private int magicID = -1;
             public CharacterMagicData MagicData;
@@ -132,26 +135,33 @@ namespace Windows
                 BattleGate?.DoNormalAttack();
             });
 
-            bt_hp.onClick.AddListener(() => 
-            {
-                if (BattleGate?.IsHpFull()==true)
-                {
-                    UApplication.S.ShowNotify(LanguageManager.S["UUIBattle_HP_Full"]);
-                    return;
-                }
-                BattleGate?.SendUseItem(ItemType.ItHpitem);
-            });
-            bt_mp.onClick.AddListener(() => {
-                if (BattleGate?.IsMpFull() == true)
-                {
-                    UApplication.S.ShowNotify(LanguageManager.S["UUIBattle_MP_Full"]);
-                    return;
-                }
-                BattleGate?.SendUseItem(ItemType.ItMpitem);
-            });
+            bt_hp.onClick.AddListener(UseHpItem);
+            bt_mp.onClick.AddListener(UseMpItem);
 
             ThirdPersonCameraContollor.Current
                 .SetClampX(15, 80).SetForwardOffset(Vector3.up * 1.5f);
+        }
+
+        private void UseMpItem()
+        {
+            if (BattleGate?.IsMpFull() == true)
+            {
+                UApplication.S.ShowNotify(LanguageManager.S["UUIBattle_MP_Full"]);
+                return;
+            }
+
+            BattleGate?.SendUseItem(ItemType.ItMpitem);
+        }
+
+        private void UseHpItem()
+        {
+            if (BattleGate?.IsHpFull() == true)
+            {
+                UApplication.S.ShowNotify(LanguageManager.S["UUIBattle_HP_Full"]);
+                return;
+            }
+
+            BattleGate?.SendUseItem(ItemType.ItHpitem);
         }
 
         private string keyHp = string.Empty;
@@ -202,7 +212,6 @@ namespace Windows
                 }
             }
             InitCharacter(BattleGate.Owner);
-
         }
 
         protected override void OnUpdateUIData()
@@ -220,17 +229,39 @@ namespace Windows
 
         public IBattleGate BattleGate { private set; get; }
 
+        private readonly KeyCode[] _keyCodes = { KeyCode.H ,KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.N, KeyCode.M};
+
         protected override void OnUpdate()
         {
             base.OnUpdate();
-            
+
+            #region  快捷键
+
             if (Input.GetKey(KeyCode.B))
             {
                 BattleGate?.DoNormalAttack();
             }
             
-            
+            if (Input.GetKey(KeyCode.Q))
+            {
+                UseHpItem();
+            }
 
+            if (Input.GetKey(KeyCode.E))
+            {
+                UseMpItem();
+            }
+
+            for (var i = 0; i < _keyCodes.Length; i++)
+            {
+                if (GridTableManager.Count <= i) break;
+                if (!Input.GetKey(_keyCodes[i])) continue;
+                GridTableManager[i].Model.ClickItem();
+            }
+
+
+            #endregion
+            
             var view = BattleGate?.Owner;
             if (!view) return;
             HPSilder.value = view.HP / (float)view.HpMax;
@@ -309,19 +340,18 @@ namespace Windows
                 int index = 0;
                 foreach (var i in GridTableManager)
                 {
-                    
-                    i.Model.SetMagic(list[index],BattleGate);
+                    i.Model.SetMagic(list[index],BattleGate, _keyCodes[index]);
                     i.Model.OnClick = OnRelease;
-                    index++;
+                    index++; 
                 }
             }
 
-            if (view.TryGetMagicByType(MagicType.MtNormal, out HeroMagicData data))
+            if (view.TryGetMagicByType(MagicType.MtNormal, out var  data))
             {
                 var config = ExcelToJSONConfigManager.GetId<CharacterMagicData>(data.MagicID);
                 att_Icon.sprite = await  ResourcesManager.S.LoadIcon(config);
             }
-            this.Player.texture = BattleGate.LookAtView;
+            Player.texture = BattleGate.LookAtView;
         }
 
         private async void SetPackage(PlayerPackage package)

@@ -18,6 +18,7 @@ namespace Windows
             public Image Icon;
             public Text CDTime;
             public Image ICdMask;
+            public Text tb_key;
 
             public override void InitTemplate()
             {
@@ -25,6 +26,7 @@ namespace Windows
                 Icon = FindChild<Image>("Icon");
                 CDTime = FindChild<Text>("CDTime");
                 ICdMask = FindChild<Image>("ICdMask");
+                tb_key = FindChild<Text>("tb_key");
 
             }
         }

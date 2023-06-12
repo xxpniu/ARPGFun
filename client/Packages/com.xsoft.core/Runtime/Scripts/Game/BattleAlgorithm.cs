@@ -15,21 +15,21 @@ namespace GameLogic.Game
             Damage = da;
             CrtMult = crtm;
         }
-        public DamageType DType;
-        public bool IsMissed;
-        public int Damage;
-        public int CrtMult;
+        public DamageType DType { get; }
+        public bool IsMissed { get; }
+        public int Damage { get; }
+        public int CrtMult { get; }
     }
 	/// <summary>
 	/// 战斗中的算法
 	/// </summary>
-	public sealed class BattleAlgorithm
+	public static class BattleAlgorithm
 	{
-        
         /// <summary>
         /// 最快的移动速度
         /// </summary>
-        public static float MAX_SPEED = 6.5f;//最大速度
+        public const float MaxSpeed = 6.5f; //最大速度
+
         /// <summary>
         /// 计算普通攻击
         /// </summary>
@@ -40,7 +40,7 @@ namespace GameLogic.Game
             return attack[P.Damage];
         }
 
-		public static float[][] DamageRate = new float[][]
+        private static readonly float[][] DamageRate = new float[][]
 		{
 			new float[]{0f,0f,0f},//混乱
 			new float[]{0f,0.5f,0f},
@@ -50,17 +50,17 @@ namespace GameLogic.Game
         //处理伤害类型加成
         public static int CalFinalDamage(int damage, DamageType dType, DefanceType dfType)
         {
-            float rate = 1 + DamageRate[(int)dType][(int)dfType];
-            float result = damage * rate;
+            var rate = 1 + DamageRate[(int)dType][(int)dfType];
+            var result = damage * rate;
             return (int)result;
         }
 
         public static DamageResult GetDamageResult(BattleCharacter sources, int damage,DamageType dType, BattleCharacter defencer)
         {
-            var crtmult = 1f;
+            var crtMult = 1f; 
             if (GRandomer.Probability10000(sources[P.Crt]))
             {
-                crtmult = 1 + sources[P.CrtDamageRate] / 10000f;
+                crtMult = 1 + sources[P.CrtDamageRate] / 10000f;
             }
             bool isMissed;
             switch (dType)
@@ -71,14 +71,14 @@ namespace GameLogic.Game
                 default:
                     {
                         var d = defencer[P.Defance];
-                        damage = (int)(damage * crtmult);
+                        damage = (int)(damage * crtMult);
                         var result = Mathf.Max(1, damage - d);
                         isMissed = GRandomer.Probability10000(defencer[P.Dodge]);
                         damage = (int)result;
                     }
                     break;
             }
-            return new DamageResult(dType, isMissed, damage, (int)crtmult);
+            return new DamageResult(dType, isMissed, damage, (int)crtMult);
         }
 	}
 }

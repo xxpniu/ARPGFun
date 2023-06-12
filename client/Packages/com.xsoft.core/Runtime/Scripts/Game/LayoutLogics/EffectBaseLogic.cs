@@ -25,17 +25,17 @@ namespace GameLogic.Game.LayoutLogics
     {
         static EffectBaseLogic()
         {
-            _handlers = new Dictionary<Type, MethodInfo>();
+            Handlers = new Dictionary<Type, MethodInfo>();
             var methodInfos = typeof(EffectBaseLogic).GetMethods();
             foreach (var i in methodInfos)
             {
-                var attrs = i.GetCustomAttributes(typeof(EffectHandleAttribute), false) as EffectHandleAttribute[];
-                if (attrs.Length == 0) continue;
-                _handlers.Add(attrs[0].HandleType, i);
+                var att = i.GetCustomAttribute<EffectHandleAttribute>(false);
+                if(att ==null) continue;
+                Handlers.Add(att.HandleType, i);
             }
         }
 
-        private static readonly Dictionary<Type, MethodInfo> _handlers;
+        private static readonly Dictionary<Type, MethodInfo> Handlers;
 
         /// <summary>
         /// Effects the active.
@@ -45,7 +45,7 @@ namespace GameLogic.Game.LayoutLogics
         /// <param name="releaser">魔法释放者</param>
         public static void EffectActive(BattleCharacter effectTarget, EffectBase effect, MagicReleaser releaser)
         {
-            if (_handlers.TryGetValue(effect.GetType(), out MethodInfo handle))
+            if (Handlers.TryGetValue(effect.GetType(), out var handle))
             {
                 handle.Invoke(null, new object[] { effectTarget, effect, releaser });
             }
@@ -75,14 +75,14 @@ namespace GameLogic.Game.LayoutLogics
         {
             var per = releaser.Controllor.Perception as BattlePerception;
             var effect = e as NormalDamageEffect;
-            int damage = GetValueBy(releaser.Releaser, effectTarget, effect!.valueOf, effect.DamageValue.ProcessValue(releaser));
+            var damage = GetValueBy(releaser.Releaser, effectTarget, effect!.valueOf, effect.DamageValue.ProcessValue(releaser));
             var result = BattleAlgorithm.GetDamageResult(releaser.Releaser, damage, releaser.Releaser.TDamage, effectTarget);
             if (releaser.ReleaserTarget.Releaser.TDamage != Proto.DamageType.Magic)
             {
                 if (!result.IsMissed)
                 {
-                    var cureHP = (int)(result.Damage * releaser.Releaser[P.Hpdrain] / 10000f);
-                    if (cureHP > 0) releaser.Releaser.AddHP(cureHP);
+                    var cureHp = (int)(result.Damage * releaser.Releaser[P.Hpdrain] / 10000f);
+                    if (cureHp > 0) releaser.Releaser.AddHP(cureHp); 
                     var cureMp = (int)(result.Damage * releaser.Releaser[P.MpDrain] / 10000f);
                     if (cureMp > 0) releaser.Releaser.AddMP(cureMp);
                 }
@@ -97,7 +97,7 @@ namespace GameLogic.Game.LayoutLogics
         public static void Cure(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as CureEffect;
-            int cure =  GetValueBy(releaser.Releaser, effectTarget, effect.valueType, effect.value.ProcessValue(releaser));
+            var cure =  GetValueBy(releaser.Releaser, effectTarget, effect!.valueType, effect.value.ProcessValue(releaser));
             if (cure > 0)
             {
                 effectTarget.AddHP(cure);
@@ -105,13 +105,12 @@ namespace GameLogic.Game.LayoutLogics
         }
         //CureEffect
         [EffectHandle(typeof(CureMPEffect))]
-        public static void CureMP(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
+        public static void CureMp(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as CureMPEffect;
-            int cure = GetValueBy(releaser.Releaser, effectTarget, effect.valueType, effect.value.ProcessValue(releaser));
+            var cure = GetValueBy(releaser.Releaser, effectTarget, effect!.valueType, effect.value.ProcessValue(releaser));
             if (cure > 0) effectTarget.AddMP(cure);
         }
-
 
         [EffectHandle(typeof(AddBufEffect))]
         public static void AddBuff(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
@@ -130,7 +129,7 @@ namespace GameLogic.Game.LayoutLogics
         {
             var effect = e as BreakReleaserEffect;
             var per = releaser.Controllor.Perception as BattlePerception;
-            per.BreakReleaserByCharacter(effectTarget, effect.breakType);
+            per!.BreakReleaserByCharacter(effectTarget, effect!.breakType);
         }
 
         [EffectHandle(typeof(AddPropertyEffect))]
@@ -148,8 +147,6 @@ namespace GameLogic.Game.LayoutLogics
             effectTarget.LockAction(effect!.lockType);
             if (effect.revertType == RevertType.ReleaserDeath) releaser.RevertLock(effectTarget, effect.lockType);
         }
-
-    
         //CharmEffect
         [EffectHandle(typeof(CharmEffect))]
         public static void CharmEffect(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
@@ -175,23 +172,21 @@ namespace GameLogic.Game.LayoutLogics
         [EffectHandle(typeof(TransportEffect))]
         public static void Transport(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
-            if (e is TransportEffect transport)
+            if (e is not TransportEffect transport) return;
+            UnityEngine.Vector3 tar;
+            switch (transport.ValueOf)
             {
-                UnityEngine.Vector3 tar;
-                switch (transport.ValueOf)
-                {
                     
-                    case TransportEffect.TranportValueOf.Value:
-                        tar = transport.TargetPos.ToUV3();
-                        break;
-                    default:
-                    case TransportEffect.TranportValueOf.ReleaseTargetPos:
-                        tar = releaser.ReleaserTarget.TargetPosition;
-                        break;
-                }
-
-                effectTarget.TryToSetPosition(tar, 0);
+                case TransportEffect.TranportValueOf.Value:
+                    tar = transport.TargetPos.ToUV3();
+                    break;
+                default:
+                case TransportEffect.TranportValueOf.ReleaseTargetPos:
+                    tar = releaser.ReleaserTarget.TargetPosition;
+                    break;
             }
+
+            effectTarget.TryToSetPosition(tar, 0);
             return;
         }
     }

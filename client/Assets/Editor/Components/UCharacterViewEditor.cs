@@ -34,15 +34,16 @@ public class UCharacterViewEditor : Editor
 		}
 		if (GUILayout.Button("Kill"))
 		{
-			if (!(uCharacterView.GElement is BattleCharacter character)) return;
+			if (uCharacterView!.GElement is not BattleCharacter character) return;
 			character.SubHP(character.MaxHP,out _);
 		}
 
-		if (showProperties = EditorGUILayout.Toggle("Display Properties", showProperties))
+		showProperties = EditorGUILayout.Toggle("Display Properties", showProperties);
+		if (showProperties)
 		{
-			foreach (var i in uCharacterView.properties)
+			foreach (var i in uCharacterView!.properties)
 			{
-				EditorGUILayout.LabelField($"{i.Property}:{i.Value}");
+				EditorGUILayout.LabelField($"[{(int)i.Property}]{i.Property}:{i.Value}");
 			}
 		}
 

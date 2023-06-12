@@ -63,7 +63,7 @@ namespace GameLogic.Game
                     Locks[ty]++;
                     if (isLocked != IsLock(ty))
                     {
-                        OnStateOnchanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
+                        OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
                     }
                 }
             }
@@ -81,14 +81,14 @@ namespace GameLogic.Game
                     Locks[ty]--;
                     if (isLocked != IsLock(ty))
                     {
-                        OnStateOnchanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
+                        OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
                     }
                 }
             }
         }
 
         //发生变化
-        public EventHandler<StateChangedEventArgs> OnStateOnchanged;
+        public EventHandler<StateChangedEventArgs> OnStateOnChanged;
     }
 }
 

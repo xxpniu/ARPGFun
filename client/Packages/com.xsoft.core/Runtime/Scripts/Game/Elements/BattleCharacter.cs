@@ -46,10 +46,7 @@ namespace GameLogic.Game.Elements
             LevelData?.Param1, LevelData?.Param2, LevelData?.Param3, LevelData?.Param4, LevelData?.Param5
         };
 
-        public bool IsCoolDown(float time)
-        {
-            return time > CdCompletedTime ;
-        }
+        public bool IsCoolDown(float time) => time > CdCompletedTime;
 
     }
 
@@ -104,7 +101,7 @@ namespace GameLogic.Game.Elements
             get
             {
                 var speed =  _baseSpeed;
-                return Math.Min(BattleAlgorithm.MAX_SPEED, speed);
+                return Math.Min(BattleAlgorithm.MaxSpeed, speed);
             }
         }
   
@@ -184,7 +181,7 @@ namespace GameLogic.Game.Elements
 
             _baseSpeed = _properties[P.MoveSpeed]/100f;
             Lock = new ActionLock();
-            Lock.OnStateOnchanged += (s, e) =>
+            Lock.OnStateOnChanged += (s, e) =>
             {
                 switch (e.Type)
                 {

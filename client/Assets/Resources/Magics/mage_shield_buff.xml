@@ -24,7 +24,7 @@
                 <Value>0</Value>
               </addValue>
               <revertType>ReleaserDeath</revertType>
-              <property>Resistibility</property>
+              <property>Dodge</property>
             </EffectBase>
           </effects>
           <key>001</key>
@@ -33,6 +33,5 @@
     </EventContainer>
   </Containers>
   <triggerTicksTime>-1</triggerTicksTime>
-  <triggerDurationTime>-1</triggerDurationTime>
   <unique>false</unique>
 </MagicData>

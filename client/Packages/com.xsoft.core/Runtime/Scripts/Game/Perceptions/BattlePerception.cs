@@ -211,7 +211,7 @@ namespace GameLogic.Game.Perceptions
             NotifyHurt(effectTarget);
             if (result.IsMissed) return;
             effectTarget.AttachDamage(sources.Index, result.Damage, View.GetTimeSimulater().Now.Time);
-            if (!effectTarget.SubHP(result.Damage, out bool dead)) return;
+            if (!effectTarget.SubHP(result.Damage, out var dead)) return;
             if (dead) sources.FireEvent(BattleEventType.Killed, effectTarget);
         }
 
@@ -220,9 +220,9 @@ namespace GameLogic.Game.Perceptions
         public BattleItem CreateItem(UVector3 ps, PlayerItem item, int groupIndex, int teamIndex)
         {
             var view = View.CreateDropItem(ps.ToPV3(), item, teamIndex, groupIndex);
-            var ditem = new BattleItem(this.BattleItemControllor, view, item);
-            JoinElement(ditem);
-            return ditem;
+            var dItem = new BattleItem(this.BattleItemControllor, view, item);
+            JoinElement(dItem); 
+            return dItem;
         }
 
         public AITreeRoot ChangeCharacterAI(string pathTree, BattleCharacter character)
