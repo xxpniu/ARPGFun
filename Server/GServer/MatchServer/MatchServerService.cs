@@ -135,26 +135,29 @@ namespace MatchServer
         {
             foreach (var i in BattleWatcher)
             {
-                await DataBase.DataBaseTool.S.RemoveMatchByServerId(i.ServerID);
+                await DataBaseTool.S.RemoveMatchByServerId(i.ServerID);
             }
         }
 
         public override async Task<M2S_CreateMatchGroup> CreateMatchGroup(S2M_CreateMatchGroup request, ServerCallContext context)
         {
             var (res, group) = await DataBaseTool.S.TryToCreateGroup(request.Level, request.Player);
-            if (res)
-            {
-                var ntf = new N_Notify_MatchGroup
+            if (!res)
+                return new M2S_CreateMatchGroup
                 {
-                    LevelID = group.LevelID,
-                    Players = { group.Players },
-                    Id = group.Uuid
+                    Code = ErrorCode.InMatch,
+                    GroupID = group?.Uuid ?? string.Empty
                 };
-                await SendNotify(ntf, request.Player.AccountID);
-            }
+            var ntf = new N_Notify_MatchGroup
+            {
+                LevelID = group.LevelID,
+                Players = { group.Players },
+                Id = group.Uuid
+            };
+            await SendNotify(ntf, request.Player.AccountID);
             return new M2S_CreateMatchGroup
             {
-                Code = res ? ErrorCode.Ok : ErrorCode.InMatch,
+                Code = ErrorCode.Ok,
                 GroupID = group?.Uuid??string.Empty
             };
         }

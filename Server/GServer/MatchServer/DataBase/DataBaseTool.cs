@@ -147,24 +147,27 @@ namespace DataBase
             var b = Builders<MatchGroupEntity>.Filter;
             var filter = b.ElemMatch(t => t.Players, x => x.AccountID == accountId);
             var query = (await MatchGroups.FindAsync(filter)).FirstOrDefault();
-
             if (query == null)
             {
                 return (false, null);
             }
 
             var update = Builders<MatchGroupEntity>.Update.PullFilter(t => t.Players, t => t.AccountID == accountId);
-            query = await MatchGroups.FindOneAndUpdateAsync(filter, update);
+            await MatchGroups.UpdateOneAsync(filter, update);
 
-            if (query != null) Debuger.Log($"{query.Uuid}:{query.Players}");
+            var groupIdFilter = Builders<MatchGroupEntity>.Filter.Eq(t => t.Uuid , query.Uuid);
+            var gQuery  = await MatchGroups.FindAsync(groupIdFilter);
+            var group = gQuery.FirstOrDefault();
+            
+            if (group != null) Debuger.Log($"{query.Uuid}:{query.Players}");
 
-            if (query != null && query.Players.Count == 0)
+            if (group != null && group.Players.Count == 0)
             {
                 await MatchGroups.DeleteOneAsync(t => t.Uuid == query.Uuid);
             }
-            var matchgroup = (await MatchGroups.FindAsync(t => t.Uuid == query.Uuid)).FirstOrDefault();
+            var matchGroup = (await MatchGroups.FindAsync(t => t.Uuid == query.Uuid)).FirstOrDefault();
             await ExitBattleServer(accountId);
-            return (matchgroup != null, matchgroup);
+            return (matchGroup != null, matchGroup);
         }
 
         public async Task<bool> ExitBattleServer(string accountId)
