@@ -19,7 +19,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utility;
 using XNet.Libs.Utility;
-using static Stream;
+using static UApp.Utility.Stream;
 using Vector3 = UnityEngine.Vector3;
 
 namespace UApp.GameGates

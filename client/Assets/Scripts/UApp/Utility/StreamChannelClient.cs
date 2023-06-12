@@ -9,196 +9,199 @@ using UnityEngine;
 using Utility;
 using XNet.Libs.Utility;
 
-public class Stream : ComponentAsync
+namespace UApp.Utility
 {
-    protected override void Update()
+    public class Stream : ComponentAsync
     {
-        base.Update();
-        UpdateCall?.Invoke();
-    }
-    public void OnDestroy()
-    {
-        Debuger.Log($"{this.name} OnDestoryed");
-        DestroyCall?.Invoke();
-    }
-    public Action DestroyCall { get; internal set; }
-    public Action UpdateCall { get; internal set; }
-    private readonly ConcurrentQueue<Action> calls = new ConcurrentQueue<Action>();
-
-    public abstract class StreamChannel<TData>
-    where TData : IMessage, new()
-    {
-        protected readonly StreamBuffer<TData> Buffer = new StreamBuffer<TData>();
-
-        private Stream Com { get; }
-
-        public StreamChannel(bool dontupload = false, string Tag = null)
+        protected override void Update()
         {
-            CancellationToken = new CancellationTokenSource();
-            var go = new GameObject(Tag ?? $"Channel_{typeof(TData).Name}");
-            Com = go.AddComponent<Stream>();
-            if (dontupload) DontDestroyOnLoad(go);
-            Com.UpdateCall = this.OnUpdate;
-            Com.DestroyCall = this.OnDestroy;
-            IsWorking = true;
-            Task.Factory.StartNew(async () =>
+            base.Update();
+            UpdateCall?.Invoke();
+        }
+        public void OnDestroy()
+        {
+            Debuger.Log($"{this.name} OnDestroyed");
+            DestroyCall?.Invoke();
+        }
+        public Action DestroyCall { get; internal set; }
+        public Action UpdateCall { get; internal set; }
+        private readonly ConcurrentQueue<Action> _calls = new ConcurrentQueue<Action>();
+
+        public abstract class StreamChannel<TData>
+            where TData : IMessage, new()
+        {
+            protected readonly StreamBuffer<TData> Buffer = new StreamBuffer<TData>();
+
+            private Stream Com { get; }
+
+            public StreamChannel(bool dontupload = false, string Tag = null)
             {
-                await Process().ConfigureAwait(false);
-                await ShutDownAsync(true);
-            }, this.CancellationToken.Token);
-        }
-
-        protected CancellationTokenSource CancellationToken { get; }
-
-        protected abstract Task ShutDownProcessAsync();
-
-        public async Task ShutDownAsync(bool haveCallBack = true)
-        {
-            IsWorking = false;
-            if (!TryCancel()) return;
-            await ShutDownProcessAsync();
-            if (haveCallBack) OnDisconnect?.Invoke();
-            else OnDisconnect = null;
-            if (Com) Com.Invoke(() => { Destroy(Com.gameObject); });
-        }
-
-        private bool TryCancel()
-        {
-            if (CancellationToken == null) return false;
-            if (CancellationToken.IsCancellationRequested) return false;
-            CancellationToken.Cancel();
-            return true;
-        }
-
-        protected virtual void OnDestroy()
-        {
-            _ = ShutDownAsync(false);
-        }
-
-        protected virtual void OnUpdate()
-        {
-        }
-
-        protected abstract Task Process();
-
-        public Action OnDisconnect;
-
-        protected void InvokeCall(Action action)
-        {
-            if (Com) Com.Invoke(action);
-        }
-
-        public bool IsWorking { get; private set; }
-    }
-
-    public class ResponseChannel<TData> : StreamChannel<TData>
-    where TData : IMessage, new()
-    {
-        public ResponseChannel(IAsyncStreamReader<TData> call, bool dontupload = false, string tag = null) : base(dontupload, tag)
-        {
-            this.Call = call;
-        }
-
-        public IAsyncStreamReader<TData> Call { get; }
-
-        protected async override Task Process()
-        {
-            try
-            {
-                while (await Call.MoveNext(CancellationToken.Token).ConfigureAwait(false)
-                    && Buffer.IsWorking)
+                CancellationToken = new CancellationTokenSource();
+                var go = new GameObject(Tag ?? $"Channel_{typeof(TData).Name}");
+                Com = go.AddComponent<Stream>();
+                if (dontupload) DontDestroyOnLoad(go);
+                Com.UpdateCall = this.OnUpdate;
+                Com.DestroyCall = this.OnDestroy;
+                IsWorking = true;
+                Task.Factory.StartNew(async () =>
                 {
-                    Buffer.Push(Call.Current);
-                }
-            }
-            catch (TaskCanceledException) { }
-            catch (RpcException) { }
-            catch (Exception ex)
-            {
-                Debuger.LogError(ex);
+                    await Process().ConfigureAwait(false);
+                    await ShutDownAsync(true);
+                }, this.CancellationToken.Token);
             }
 
-            Buffer.Close();
-        }
+            protected CancellationTokenSource CancellationToken { get; }
 
-        protected override void OnUpdate()
-        {
-            while (this.Buffer.TryPull(out TData data))
+            protected abstract Task ShutDownProcessAsync();
+
+            public async Task ShutDownAsync(bool haveCallBack = true)
             {
-                OnReceived?.Invoke(data);
+                IsWorking = false;
+                if (!TryCancel()) return;
+                await ShutDownProcessAsync();
+                if (haveCallBack) OnDisconnect?.Invoke();
+                else OnDisconnect = null;
+                if (Com) Com.Invoke(() => { Destroy(Com.gameObject); });
             }
-        }
 
-        public Action<TData> OnReceived;
-
-        protected async override Task ShutDownProcessAsync()
-        {
-            await Task.CompletedTask;
-        }
-    }
-
-    public class RequestChannel<TData> : StreamChannel<TData>
-        where TData : IMessage, new()
-    {
-        public RequestChannel(IAsyncStreamWriter<TData> call, bool dontupload = false, string tag = null) : base(dontupload, tag)
-        {
-            this.Call = call;
-        }
-
-        public IAsyncStreamWriter<TData> Call { get; }
-
-        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
-
-        protected async override Task Process()
-        {
-            try
+            private bool TryCancel()
             {
-                while (Buffer.IsWorking)
+                if (CancellationToken == null) return false;
+                if (CancellationToken.IsCancellationRequested) return false;
+                CancellationToken.Cancel();
+                return true;
+            }
+
+            protected virtual void OnDestroy()
+            {
+                _ = ShutDownAsync(false);
+            }
+
+            protected virtual void OnUpdate()
+            {
+            }
+
+            protected abstract Task Process();
+
+            public Action OnDisconnect;
+
+            protected void InvokeCall(Action action)
+            {
+                if (Com) Com.Invoke(action);
+            }
+
+            public bool IsWorking { get; private set; }
+        }
+
+        public class ResponseChannel<TData> : StreamChannel<TData>
+            where TData : IMessage, new()
+        {
+            public ResponseChannel(IAsyncStreamReader<TData> call, bool dontupload = false, string tag = null) : base(dontupload, tag)
+            {
+                this.Call = call;
+            }
+
+            public IAsyncStreamReader<TData> Call { get; }
+
+            protected async override Task Process()
+            {
+                try
                 {
-                    while (Buffer.TryPull(out TData i))
+                    while (await Call.MoveNext(CancellationToken.Token).ConfigureAwait(false)
+                           && Buffer.IsWorking)
                     {
-                        await Call.WriteAsync(i).ConfigureAwait(false);
+                        Buffer.Push(Call.Current);
                     }
-                    await semaphoreSlim.WaitAsync(this.CancellationToken.Token);
+                }
+                catch (TaskCanceledException) { }
+                catch (RpcException) { }
+                catch (Exception ex)
+                {
+                    Debuger.LogError(ex);
+                }
+
+                Buffer.Close();
+            }
+
+            protected override void OnUpdate()
+            {
+                while (this.Buffer.TryPull(out TData data))
+                {
+                    OnReceived?.Invoke(data);
                 }
             }
-            catch (RpcException)
+
+            public Action<TData> OnReceived;
+
+            protected override async Task ShutDownProcessAsync()
             {
-                Debuger.LogWaring("Exit!");
+                await Task.CompletedTask;
             }
-            catch (Exception ex)
+        }
+
+        public class RequestChannel<TData> : StreamChannel<TData>
+            where TData : IMessage, new()
+        {
+            public RequestChannel(IAsyncStreamWriter<TData> call, bool dontupload = false, string tag = null) : base(dontupload, tag)
             {
-                Debuger.LogError(ex);
+                this.Call = call;
             }
-            Buffer.Close();
+
+            public IAsyncStreamWriter<TData> Call { get; }
+
+            private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
+            protected override async Task Process()
+            {
+                try
+                {
+                    while (Buffer.IsWorking)
+                    {
+                        while (Buffer.TryPull(out TData i))
+                        {
+                            await Call.WriteAsync(i).ConfigureAwait(false);
+                        }
+                        await _semaphoreSlim.WaitAsync(this.CancellationToken.Token);
+                    }
+                }
+                catch (RpcException)
+                {
+                    Debuger.LogWaring("Exit!");
+                }
+                catch (Exception ex)
+                {
+                    Debuger.LogError(ex);
+                }
+                Buffer.Close();
+            }
+
+            public bool Push(TData data)
+            {
+                var t = this.Buffer.Push(data);
+                Resume();
+                return t;
+            }
+
+            private void Resume()
+            {
+                _semaphoreSlim.Release();
+            }
+
+            protected override void OnDestroy()
+            {
+                Buffer.Close();
+                Resume();
+                base.OnDestroy();
+            }
+
+            protected override async Task ShutDownProcessAsync()
+            {
+                await Task.CompletedTask;
+            }
         }
 
-        public bool Push(TData data)
-        {
-            var t = this.Buffer.Push(data);
-            Resume();
-            return t;
-        }
 
-        private void Resume()
-        {
-            semaphoreSlim.Release();
-        }
-
-        protected override void OnDestroy()
-        {
-            Buffer.Close();
-            Resume();
-            base.OnDestroy();
-        }
-
-        protected async override Task ShutDownProcessAsync()
-        {
-            await Task.CompletedTask;
-        }
     }
-
-
 }
 
 

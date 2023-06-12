@@ -18,7 +18,7 @@ using UnityEngine.AddressableAssets;
 using Utility;
 using XNet.Libs.Utility;
 using Vector3 = UnityEngine.Vector3;
-using static Stream;
+using static UApp.Utility.Stream;
 
 
 

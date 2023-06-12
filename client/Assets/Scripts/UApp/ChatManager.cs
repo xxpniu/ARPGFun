@@ -8,7 +8,7 @@ using Proto;
 using UApp.GameGates;
 using Utility;
 using XNet.Libs.Utility;
-using static Stream;
+using static UApp.Utility.Stream;
 
 namespace UApp
 {
@@ -131,14 +131,11 @@ namespace UApp
                         {
                             Windows.UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(), "BattleJoinContent".GetLanguageWord(),
                                     () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID),
-                                    () =>
+                                    async () =>
                                     {
                                         var gate = UApplication.G<GMainGate>();
-                                        if (gate == null) return;
-                                        Task.Factory.StartNew(async () =>
-                                        {
-                                            await gate.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
-                                        });
+                                        if (gate==null) return;
+                                        await gate.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
                                     })
                                 ;
                         }
@@ -165,9 +162,8 @@ namespace UApp
 
             await Task.Delay(1000);
 
-            if (UApplication.G<GMainGate>() != null)
-                await UApplication.G<GMainGate>()
-                    .GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState { });
+            var g = UApplication.G<GMainGate>();
+            if (g!=null) await  g.GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState { });
 
             return true;
         }
