@@ -47,9 +47,10 @@ enum HeroPropertyType
 	CrtDamageRate = 7;//暴击伤害倍数 万分比
 	MoveSpeed = 8;//移动速度 cm/s
 	AttackSpeed = 9 ; //攻击速度 次数秒 * 1000 
-	MpDrain= 10; //MP 吸取等级 万分比
-	Hit = 11;//命中
-	
+	HpDrain = 10 ;//Hp 吸取等级 万分比
+	MpDrain= 11; //MP 吸取等级 万分比
+	Hit = 12;//命中
+
 	ViewDistance =20;//视野范围
 	AmplifyDamageRate = 21 ;//伤害加深 万分比
 	MpCostReductionRate= 22;//mp消耗减免比例 万分比

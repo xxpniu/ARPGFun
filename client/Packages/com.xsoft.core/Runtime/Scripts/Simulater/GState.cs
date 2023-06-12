@@ -73,7 +73,7 @@ namespace EngineCore.Simulater
                     current.Value.Controller?.GetAction(time, current.Value)?.Execute(time, current.Value);
                 }
 
-                if (!current.Value.Enable && current.Value.CanDestory)
+                if (!current.Value.Enable && current.Value.CanDestroy)
                 {
                     GObject.ExitState(current.Value);
                     _elements.Remove(current.Value.Index);

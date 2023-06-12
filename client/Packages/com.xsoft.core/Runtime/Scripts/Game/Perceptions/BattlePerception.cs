@@ -451,7 +451,7 @@ namespace GameLogic.Game.Perceptions
                         return list;
                     }
 
-                case Layout.LayoutElements.DamageType.Single:
+                case DamageType.Single:
                 default:
                     return new List<BattleCharacter> { deTarget };
 
@@ -475,43 +475,39 @@ namespace GameLogic.Game.Perceptions
         {
             State.Each<MagicReleaser>(t =>
             {
-                if (t.Releaser == character)
+                if (t.Releaser != character) return false;
+                if (move)
                 {
-                    if (move)
+                    if (!t.MoveCancel) return false;
+                }
+
+                switch (type)
+                {
+                    case BreakReleaserType.InStartLayoutMagic:
                     {
-                        if (!t.MoveCancel) return false;
+                        if (t.RType == ReleaserType.Magic)
+                        {
+                            if (!t.IsLayoutStartFinish)
+                            {
+                                t.StopAllPlayer();
+                            }
+                            t.SetState(ReleaserStates.ToComplete);
+                        }
                     }
-
-                    switch (type)
+                        break;
+                    case BreakReleaserType.Buff:
                     {
-                        case BreakReleaserType.InStartLayoutMagic:
-                            {
-                                if (t.RType == ReleaserType.Magic)
-                                {
-                                    if (!t.IsLayoutStartFinish)
-                                    {
-                                        t.StopAllPlayer();
-                                    }
-                                    t.SetState(ReleaserStates.ToComplete);
-                                }
-                            }
-                            break;
-                        case BreakReleaserType.Buff:
-                            {
-                                if (t.RType == ReleaserType.Buff)
-                                {
-                                    t.SetState(ReleaserStates.ToComplete);
-                                }
-                            }
-                            break;
-                        case BreakReleaserType.ALL:
-                            {
-                                t.SetState(ReleaserStates.ToComplete);
-                            }
-                            break;
+                        if (t.RType == ReleaserType.Buff)
+                        {
+                            t.SetState(ReleaserStates.ToComplete);
+                        }
                     }
-
-
+                        break;
+                    case BreakReleaserType.ALL:
+                    {
+                        t.SetState(ReleaserStates.ToComplete);
+                    }
+                        break;
                 }
                 return false;
             });

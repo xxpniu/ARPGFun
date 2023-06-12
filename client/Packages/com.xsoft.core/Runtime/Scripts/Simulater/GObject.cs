@@ -47,11 +47,11 @@ namespace EngineCore.Simulater
 			this.Controller = controllor;
 		}
 
-		private bool HadBeenDestory = false;
+		private bool _hadBeenDestroy = false;
 
 		public bool Enable { private set; get; }
 
-		public bool IsAliveAble { get { return !HadBeenDestory; } }
+		public bool IsAliveAble => !_hadBeenDestroy;
 
 		#region Events
 
@@ -72,16 +72,16 @@ namespace EngineCore.Simulater
 
 		#endregion
 
-		private DateTime? destroyTime;
+		private DateTime? _destroyTime;
 
-		public bool CanDestory
+		public bool CanDestroy
 		{
 			get
 			{
 				if (this.Enable) return false;
-				if (destroyTime.HasValue)
+				if (_destroyTime.HasValue)
 				{
-					return destroyTime.Value < DateTime.Now;
+					return _destroyTime.Value < DateTime.Now;
 				}
 				return true;
 			}
@@ -89,7 +89,7 @@ namespace EngineCore.Simulater
 
 		internal static void JoinState(GObject el)
 		{
-			if (el.HadBeenDestory) return;
+			if (el._hadBeenDestroy) return;
 			el.Enable = true;
 			el.OnJoinState();
 		}
@@ -101,17 +101,19 @@ namespace EngineCore.Simulater
 
 		public static void Destroy(GObject el, float time = -1f)
 		{
-			if (time > 0) el.destroyTime = DateTime.Now.AddSeconds(time);
-			el.HadBeenDestory = true;
+			if (time > 0) el._destroyTime = DateTime.Now.AddSeconds(time);
+			el._hadBeenDestroy = true;
 			if (el.Enable) el.Enable = false;
 		}
 
 		public static implicit operator bool(GObject el)
 		{
-			if (el == null) return false;
-			if (!el.Enable) return false;
-			return true;
+			return el is { Enable: true };
 		}
+		
+		
+		 
 	}
+	
 }
 
