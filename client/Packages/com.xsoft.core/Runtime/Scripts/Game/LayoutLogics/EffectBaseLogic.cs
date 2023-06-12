@@ -97,12 +97,17 @@ namespace GameLogic.Game.LayoutLogics
         public static void Cure(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as CureEffect;
-            var cure =  GetValueBy(releaser.Releaser, effectTarget, effect!.valueType, effect.value.ProcessValue(releaser));
+            var cure = GetValueBy(releaser.Releaser,
+                effectTarget, effect!.valueType, effect.value.ProcessValue(releaser));
+
+            var modify = 1+ effect.modifyOf.ProcessValue(releaser)/10000f;
+            cure = (int)(cure * modify);
             if (cure > 0)
             {
                 effectTarget.AddHP(cure);
             }
         }
+
         //CureEffect
         [EffectHandle(typeof(CureMPEffect))]
         public static void CureMp(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)

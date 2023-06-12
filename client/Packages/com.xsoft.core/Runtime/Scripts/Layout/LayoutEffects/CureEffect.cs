@@ -12,6 +12,9 @@ namespace Layout.LayoutEffects
 
         [Label("值")]
         public ValueSourceOf value =0;
+        
+        [Label("修正参数(1+万分比)")]
+        public ValueSourceOf modifyOf =0;
     }
 }
 

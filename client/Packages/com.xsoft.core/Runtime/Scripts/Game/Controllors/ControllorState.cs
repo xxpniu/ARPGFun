@@ -99,7 +99,7 @@ namespace GameLogic.Game.Controllors
         {
             target = null;
             var tCharacter = BattlePerception.FindTarget(character, config.GetTeamType(),
-                config.RangeMax, 360, ignoreHidden:false);
+                config.RangeMax/100f, 360, ignoreHidden:false);
             if (tCharacter)
             {
                 target = new ReleaseAtTarget(character, tCharacter);

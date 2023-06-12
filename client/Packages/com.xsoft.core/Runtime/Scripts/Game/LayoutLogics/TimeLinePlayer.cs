@@ -10,7 +10,7 @@ namespace GameLogic.Game.LayoutLogics
 {
 	public abstract class TimeLinePlayerBase
 	{
-		public int Index { set; get; }
+		public int Index {  set; get; }
 		public TimeLinePlayerBase(TimeLine timeLine, int index)
 		{
 			this.Index = index;
