@@ -85,7 +85,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
         public ITimeSimulater TimeSimulater { private set; get; }
 
-        public BattlePerception Perception => Character.Controllor.Perception as BattlePerception;
+        public BattlePerception Perception => Character.Controller.Perception as BattlePerception;
 
         public BattleCharacter Character { get; private set; }
 

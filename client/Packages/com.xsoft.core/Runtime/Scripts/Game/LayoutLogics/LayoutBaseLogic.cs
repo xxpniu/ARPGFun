@@ -79,7 +79,7 @@ namespace GameLogic.Game.LayoutLogics
 		public static void MissileActive(TimeLinePlayer linePlayer, LayoutBase layoutBase)
 		{
 			var layout = layoutBase as MissileLayout;
-			var per = linePlayer.Releaser.Controllor.Perception as BattlePerception;
+			var per = linePlayer.Releaser.Controller.Perception as BattlePerception;
 			var missile = per!.CreateMissile(layout, linePlayer.Releaser);
 			if (missile != null)
 				linePlayer.Releaser.AttachElement(missile);
@@ -129,7 +129,7 @@ namespace GameLogic.Game.LayoutLogics
 			}
 
 			var offsetPos = layout.RangeType.offsetPosition.ToUV3();
-			var per = releaser.Controllor.Perception as BattlePerception;
+			var per = releaser.Controller.Perception as BattlePerception;
 			var targets = per!.DamageFindTarget(
 				deTarget,
 				targetPos.Value,
@@ -170,7 +170,7 @@ namespace GameLogic.Game.LayoutLogics
 			var unitLayout = layoutBase as CallUnitLayout;
 			var releaser = linePlayer.Releaser;
 			var character = releaser.ReleaserTarget.Releaser;
-			var per = releaser.Controllor.Perception as BattlePerception;
+			var per = releaser.Controller.Perception as BattlePerception;
 			var level = unitLayout!.level.ProcessValue(linePlayer.Releaser);
 			//判断是否达到上限
 			if (unitLayout.maxNum <= releaser.UnitCount) return;

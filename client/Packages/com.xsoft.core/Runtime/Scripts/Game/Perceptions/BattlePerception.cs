@@ -298,123 +298,109 @@ namespace GameLogic.Game.Perceptions
                 list.Add(t);
                 return false;
             });
-
+            if (list.Count <= 0) return null;
+            
             BattleCharacter target = null;
-
-            if (list.Count > 0)
+            switch (sType)
             {
-                switch (sType)
+                case TargetSelectType.Nearest:
                 {
-                    case TargetSelectType.Nearest:
-                        {
-                            target = list[0];
-                            var d = Distance(target, character);
-                            foreach (var i in list)
-                            {
-                                var temp = Distance(i, character);
-                                if (temp < d)
-                                {
-                                    d = temp;
-                                    target = i;
-                                }
-                            }
-                        }
-                        break;
-                    case TargetSelectType.ForwardNearest:
-                        {
-                            var forward = character.Forward;
-                            var dis = 6f ;
-                            foreach (var i in list)
-                            {
-                                var temp = UVector3.Angle(i.Position - character.Position, forward);
-                                if (temp < 15)
-                                {
-                                    if (dis < Distance(i, character)) continue;
-                                    dis = Distance(i, character);
-                                    target = i;
-                                }
-                            }
-                            //no nearest
-                            if (target == null)
-                            {
-                                target = list[0];
-                                var d = Distance(target, character);
-                                foreach (var i in list)
-                                {
-                                    var temp = Distance(i, character);
-                                    if (temp < d)
-                                    {
-                                        d = temp;
-                                        target = i;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case TargetSelectType.Random:
-                        target = GRandomer.RandomList(list);
-                        break;
-                    case TargetSelectType.HPMax:
-                        {
-                            target = list[0];
-                            var d = target.HP;
-                            foreach (var i in list)
-                            {
-                                var temp = i.HP;
-                                if (temp > d)
-                                {
-                                    d = temp;
-                                    target = i;
-                                }
-                            }
-                        }
-                        break;
-                    case TargetSelectType.HPMin:
-                        {
-                            target = list[0];
-                            var d = target.HP;
-                            foreach (var i in list)
-                            {
-                                var temp = i.HP;
-                                if (temp < d)
-                                {
-                                    d = temp;
-                                    target = i;
-                                }
-                            }
-                        }
-                        break;
-                    case TargetSelectType.HPRateMax:
-                        {
-                            target = list[0];
-                            var d = (float)target.HP / target.MaxHP;
-                            foreach (var i in list)
-                            {
-                                var temp = (float)i.HP / i.MaxHP; ;
-                                if (temp > d)
-                                {
-                                    d = temp;
-                                    target = i;
-                                }
-                            }
-                        }
-                        break;
-                    case TargetSelectType.HPRateMin:
-                        {
-                            target = list[0];
-                            var d = (float)target.HP / target.MaxHP;
-                            foreach (var i in list)
-                            {
-                                var temp = (float)i.HP / i.MaxHP;
-                                if (temp < d)
-                                {
-                                    d = temp;
-                                    target = i;
-                                }
-                            }
-                        }
-                        break;
+                    target = list[0];
+                    var d = Distance(target, character);
+                    foreach (var i in list)
+                    {
+                        var temp = Distance(i, character);
+                        if (!(temp < d)) continue;
+                        d = temp;
+                        target = i;
+                    }
                 }
+                    break;
+                case TargetSelectType.ForwardNearest:
+                {
+                    var forward = character.Forward;
+                    var dis = 6f ;
+                    foreach (var i in list)
+                    {
+                        var temp = UVector3.Angle(i.Position - character.Position, forward);
+                        if (!(temp < 15)) continue;
+                        if (dis < Distance(i, character)) continue;
+                        dis = Distance(i, character);
+                        target = i;
+                    }
+                    //no nearest
+                    if (target == null)
+                    {
+                        target = list[0];
+                        var d = Distance(target, character);
+                        foreach (var i in list)
+                        {
+                            var temp = Distance(i, character);
+                            if (!(temp < d)) continue;
+                            d = temp;
+                            target = i;
+                        }
+                    }
+                }
+                    break;
+                case TargetSelectType.Random:
+                    target = GRandomer.RandomList(list);
+                    break;
+                case TargetSelectType.HPMax:
+                {
+                    target = list[0];
+                    var d = target.HP;
+                    foreach (var i in list)
+                    {
+                        var temp = i.HP;
+                        if (temp > d)
+                        {
+                            d = temp;
+                            target = i;
+                        }
+                    }
+                }
+                    break;
+                case TargetSelectType.HPMin:
+                {
+                    target = list[0];
+                    var d = target.HP;
+                    foreach (var i in list)
+                    {
+                        var temp = i.HP;
+                        if (temp < d)
+                        {
+                            d = temp;
+                            target = i;
+                        }
+                    }
+                }
+                    break;
+                case TargetSelectType.HPRateMax:
+                {
+                    target = list[0];
+                    var d = (float)target.HP / target.MaxHP;
+                    foreach (var i in list)
+                    {
+                        var temp = (float)i.HP / i.MaxHP; ;
+                        if (!(temp > d)) continue;
+                        d = temp;
+                        target = i;
+                    }
+                }
+                    break;
+                case TargetSelectType.HPRateMin:
+                {
+                    target = list[0];
+                    var d = (float)target.HP / target.MaxHP;
+                    foreach (var i in list)
+                    {
+                        var temp = (float)i.HP / i.MaxHP;
+                        if (!(temp < d)) continue;
+                        d = temp;
+                        target = i;
+                    }
+                } break;
             }
 
             return target;
@@ -423,26 +409,25 @@ namespace GameLogic.Game.Perceptions
 
         public List<BattleCharacter> DamageFindTarget(BattleCharacter deTarget,
             UVector3 target,
-            Quaternion rototion,
-            FilterType fitler,DamageType damageType,
+            Quaternion rotation,
+            FilterType filter,DamageType damageType,
             float radius, float angle, float offsetAngle,
             UVector3 offset, int teamIndex, bool igDeath = true)
         {
             switch (damageType)
             {
 
-               //case Layout.LayoutElements.DamageType.Rangle:
                 case DamageType.Area:
                     {
-                        var orgin = target + rototion * offset;
+                        var origin = target + rotation * offset;
                         var q = Quaternion.Euler(0, offsetAngle, 0);
-                        var forward = q * rototion * UVector3.forward;
+                        var forward = q * rotation * UVector3.forward;
                         var list = new List<BattleCharacter>();
                         State.Each<BattleCharacter>((t) =>
                         {
                             if (igDeath && t.IsDeath) return false;//ig
                             //过滤
-                            switch (fitler)
+                            switch (filter)
                             {
                                 case FilterType.Alliance:
                                 case FilterType.OwnerTeam:
@@ -453,8 +438,8 @@ namespace GameLogic.Game.Perceptions
                                     break;
 
                             }
-                            if (Distance(t, orgin) > radius) return false;
-                            var len = t.Position - orgin;
+                            if (Distance(t, origin) > radius) return false;
+                            var len = t.Position - origin;
                             if (angle < 360)
                             {
                                 var an = UVector3.Angle(len, forward);

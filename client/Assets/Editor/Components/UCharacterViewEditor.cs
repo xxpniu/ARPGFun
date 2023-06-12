@@ -16,7 +16,6 @@ public class UCharacterViewEditor : Editor
 		var uCharacterView = this.target as UCharacterView;
 		if (GUILayout.Button("View AI Tree"))
 		{
-			
 			var window = EditorWindow.GetWindow<AITreeEditor>();
 			if (window == null) return;
 			if (uCharacterView!.GElement is not BattleCharacter character) return;

@@ -98,9 +98,8 @@ namespace GameLogic.Game.Controllors
             out IReleaserTarget target)
         {
             target = null;
-
             var tCharacter = BattlePerception.FindTarget(character, config.GetTeamType(),
-                config.RangeMax, 360, true, TargetSelectType.Nearest, TargetFilterType.None);
+                config.RangeMax, 360, ignoreHidden:false);
             if (tCharacter)
             {
                 target = new ReleaseAtTarget(character, tCharacter);

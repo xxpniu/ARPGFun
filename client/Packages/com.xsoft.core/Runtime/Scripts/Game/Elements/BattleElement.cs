@@ -8,7 +8,7 @@ namespace GameLogic.Game.Elements
 
 	public class BattleElement<T> : GObject where T : IBattleElement
 	{
-		public BattleElement(GControllor controllor, T view) : base(controllor)
+		public BattleElement(GControllor controller, T view) : base(controller)
 		{
 			View = view;
 		}

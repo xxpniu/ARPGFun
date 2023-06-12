@@ -127,8 +127,7 @@ namespace GameLogic.Game.Elements
             get
             {
                 var t = View?.Transform;
-                if (!t) return UVector3.forward;
-                return t.forward;
+                return !t ? UVector3.forward : t.forward;
             }
         }
         public bool IsMoving => View.IsMoving;
@@ -145,10 +144,10 @@ namespace GameLogic.Game.Elements
         public BattleCharacter (
             CharacterData data,
             IList<BattleCharacterMagic> magics,
-            GControllor controllor, 
+            GControllor controller, 
             IBattleCharacter view, 
             string accountUuid,int teamIndex,
-            Dictionary<P,ComplexValue> properties, int ownerIndex = -1):base(controllor,view)
+            Dictionary<P,ComplexValue> properties, int ownerIndex = -1):base(controller,view)
 		{
             this.TeamIndex = teamIndex;
             this.OwnerIndex = ownerIndex;
@@ -302,8 +301,8 @@ namespace GameLogic.Game.Elements
 
         public bool AddHP(int hp)
         {
-            var maxHP = MaxHP;
-            if (hp <= 0 || HP >= maxHP) return false;
+            var maxHp = MaxHP;
+            if (hp <= 0 || HP >= maxHp) return false;
             if (HP == 0)
             {
                 Debug.LogError($"{HP}==0");
@@ -311,9 +310,9 @@ namespace GameLogic.Game.Elements
             }
             var t = HP;
             HP += hp;
-            if (HP >= maxHP) HP = maxHP;
+            if (HP >= maxHp) HP = maxHp;
             if (t == HP) return false;
-            View.ShowHPChange(hp, HP, maxHP);
+            View.ShowHPChange(hp, HP, maxHp); 
             return true;
         }
 
@@ -408,7 +407,7 @@ namespace GameLogic.Game.Elements
             FireEvent(BattleEventType.Death, this);
 			View.Death();
             OnDead?.Invoke(this);
-            var per = this.Controllor.Perception as BattlePerception;
+            var per = this.Controller.Perception as BattlePerception;
             per!.StopAllReleaserByCharacter(this);
             AiRoot?.BreakTree();
 		}
@@ -506,19 +505,17 @@ namespace GameLogic.Game.Elements
 
         public void AttachDamage(int sources, int damage, float time)
         {
-            if (damage > 0)
+            if (damage <= 0) return;
+            if (Watch.TryGetValue(sources, out var w)) 
             {
-                if (Watch.TryGetValue(sources, out DamageWatch w))
-                {
-                    w.TotalDamage += damage;
-                }
-                else
-                {
-                    w = new DamageWatch { Index = sources, TotalDamage = damage, FristTime = time };
-                    Watch.Add(sources, w);
-                }
-                w.LastTime = time;
+                w.TotalDamage += damage;
             }
+            else
+            {
+                w = new DamageWatch { Index = sources, TotalDamage = damage, FristTime = time };
+                Watch.Add(sources, w);
+            }
+            w.LastTime = time;
         }
 
         public void SetLevel(int level)

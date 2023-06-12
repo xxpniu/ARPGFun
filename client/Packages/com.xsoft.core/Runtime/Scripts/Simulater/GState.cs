@@ -70,7 +70,7 @@ namespace EngineCore.Simulater
                 var next = current.Next;
                 if (current.Value.Enable)
                 {
-                    current.Value.Controllor?.GetAction(time, current.Value)?.Execute(time, current.Value);
+                    current.Value.Controller?.GetAction(time, current.Value)?.Execute(time, current.Value);
                 }
 
                 if (!current.Value.Enable && current.Value.CanDestory)

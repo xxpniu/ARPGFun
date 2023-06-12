@@ -117,7 +117,7 @@ namespace GameLogic.Game.Elements
         public void OnEvent(Layout.EventType eventType, BattleCharacter target = null)
         {
             target = target??ReleaserTarget.ReleaserTarget;
-            var per = this.Controllor.Perception as BattlePerception;
+            var per = this.Controller.Perception as BattlePerception;
             LastEvent = eventType;
 
             for (var index = 0; index < Magic.Containers.Count; index++)

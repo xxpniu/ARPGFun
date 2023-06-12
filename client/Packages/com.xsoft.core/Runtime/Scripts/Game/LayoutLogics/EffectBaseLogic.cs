@@ -73,7 +73,7 @@ namespace GameLogic.Game.LayoutLogics
         [EffectHandle(typeof(NormalDamageEffect))]
         public static void NormalDamage(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
-            var per = releaser.Controllor.Perception as BattlePerception;
+            var per = releaser.Controller.Perception as BattlePerception;
             var effect = e as NormalDamageEffect;
             var damage = GetValueBy(releaser.Releaser, effectTarget, effect!.valueOf, effect.DamageValue.ProcessValue(releaser));
             var result = BattleAlgorithm.GetDamageResult(releaser.Releaser, damage, releaser.Releaser.TDamage, effectTarget);
@@ -116,7 +116,7 @@ namespace GameLogic.Game.LayoutLogics
         public static void AddBuff(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as AddBufEffect;
-            var per = releaser.Controllor.Perception as BattlePerception;
+            var per = releaser.Controller.Perception as BattlePerception;
 
             var rT = new ReleaseAtTarget(releaser.Releaser, effectTarget);
             var r= per!.CreateReleaser(effect!.buffMagicKey, releaser.Releaser, rT, ReleaserType.Buff, Proto.ReleaserModeType.RmtBuff, effect.durationTime.ProcessValue(releaser)/1000f);
@@ -128,7 +128,7 @@ namespace GameLogic.Game.LayoutLogics
         public static void BreakAction(BattleCharacter effectTarget, EffectBase e, MagicReleaser releaser)
         {
             var effect = e as BreakReleaserEffect;
-            var per = releaser.Controllor.Perception as BattlePerception;
+            var per = releaser.Controller.Perception as BattlePerception;
             per!.BreakReleaserByCharacter(effectTarget, effect!.breakType);
         }
 
@@ -158,7 +158,7 @@ namespace GameLogic.Game.LayoutLogics
             var re = releaser.Releaser;
             effectTarget.SetTeamIndex(re.TeamIndex, re.Index);
             releaser.AttachElement(effectTarget, false, effect.Time.ProcessValue(releaser) / 1000f);
-            var per = re.Controllor.Perception as BattlePerception;
+            var per = re.Controller.Perception as BattlePerception;
             var ai = effect.AIPath;
             if (!string.IsNullOrEmpty(ai))
             {

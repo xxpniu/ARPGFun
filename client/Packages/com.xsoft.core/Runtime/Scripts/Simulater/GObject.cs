@@ -15,12 +15,12 @@ namespace EngineCore.Simulater
 			this.Index = index;
 		}
 
-		public GObject(GControllor controllor) : this(controllor.Perception.State.NextElementID())
+		public GObject(GControllor controller) : this(controller.Perception.State.NextElementID())
 		{
-			Controllor = controllor;
+			Controller = controller;
 		}
 
-		public GControllor Controllor { private set; get; }
+		public GControllor Controller { private set; get; }
 
         public object this[string key]
         {
@@ -43,8 +43,8 @@ namespace EngineCore.Simulater
 
 		public void SetControllor(GControllor controllor)
 		{
-			OnChangedControllor(this.Controllor, controllor);
-			this.Controllor = controllor;
+			OnChangedControllor(this.Controller, controllor);
+			this.Controller = controllor;
 		}
 
 		private bool HadBeenDestory = false;
