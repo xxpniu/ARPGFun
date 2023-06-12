@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-16"?>
 <TimeLine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Time>1</Time>
+  <Time>0.3</Time>
   <Points>
     <TimePoint>
       <GUID>cf6ebe8a-f2f3-4a71-9983-b325837ea5e7</GUID>
@@ -8,15 +8,15 @@
     </TimePoint>
     <TimePoint>
       <GUID>19d4327c-6120-40c5-8ad2-4c4127473bed</GUID>
-      <Time>0.0294117648</Time>
+      <Time>0.0305</Time>
     </TimePoint>
     <TimePoint>
       <GUID>34f3432b-0ccb-41a8-ab24-16f344936b86</GUID>
-      <Time>0.620588243</Time>
+      <Time>0.26</Time>
     </TimePoint>
     <TimePoint>
       <GUID>9d678f81-e93c-4e97-95fc-6485477b8ff7</GUID>
-      <Time>0.182352945</Time>
+      <Time>0.118333332</Time>
     </TimePoint>
   </Points>
   <Layouts>
@@ -43,7 +43,6 @@
           <z>0</z>
         </offsetPosition>
       </RangeType>
-      <effectType>EffectGroup</effectType>
       <effectKey>001</effectKey>
     </LayoutBase>
     <LayoutBase xsi:type="ParticleLayout">

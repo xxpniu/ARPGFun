@@ -14,7 +14,7 @@
   <Layouts>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>7a43382f-72ee-4fcd-ab49-be82074bad3a</GUID>
-      <path>Effects/Shields/Shield Sphere/LightShield.prefab</path>
+      <path>Effects/Shields/ShieldSphere/FireShield.prefab</path>
       <fromTarget>Releaser</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Body</fromBoneName>
@@ -24,7 +24,7 @@
       <destoryTime>0</destoryTime>
       <offet>
         <x>0</x>
-        <y>0</y>
+        <y>-0.2</y>
         <z>0</z>
       </offet>
       <rotation>
@@ -32,7 +32,7 @@
         <y>0</y>
         <z>0</z>
       </rotation>
-      <localsize>1</localsize>
+      <localsize>0.4</localsize>
     </LayoutBase>
     <LayoutBase xsi:type="DamageLayout">
       <GUID>d711719d-2805-44b5-b991-1cafc7bcef6c</GUID>
@@ -49,7 +49,6 @@
           <z>0</z>
         </offsetPosition>
       </RangeType>
-      <effectType>EffectGroup</effectType>
       <effectKey>001</effectKey>
     </LayoutBase>
   </Layouts>

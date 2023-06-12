@@ -9,11 +9,15 @@
         <EffectGroup>
           <effects>
             <EffectBase xsi:type="CureEffect">
-              <valueType>FixedValue</valueType>
+              <valueType>NormalAttack</valueType>
               <value>
-                <ValueForm>MagicLevelParam1</ValueForm>
+                <ValueForm>CurrentConfig</ValueForm>
                 <Value>0</Value>
               </value>
+              <modifyOf>
+                <ValueForm>MagicLevelParam1</ValueForm>
+                <Value>0</Value>
+              </modifyOf>
             </EffectBase>
           </effects>
           <key>001</key>
@@ -22,6 +26,5 @@
     </EventContainer>
   </Containers>
   <triggerTicksTime>-1</triggerTicksTime>
-  <triggerDurationTime>-1</triggerDurationTime>
   <unique>true</unique>
 </MagicData>

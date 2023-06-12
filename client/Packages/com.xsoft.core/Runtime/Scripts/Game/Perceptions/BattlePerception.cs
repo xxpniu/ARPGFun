@@ -416,7 +416,6 @@ namespace GameLogic.Game.Perceptions
         {
             switch (damageType)
             {
-
                 case DamageType.Area:
                     {
                         var origin = target + rotation * offset;
@@ -453,7 +452,25 @@ namespace GameLogic.Game.Perceptions
 
                 case DamageType.Single:
                 default:
-                    return new List<BattleCharacter> { deTarget };
+                {
+                    switch (filter)
+                    {
+                        case FilterType.Alliance:
+                        case FilterType.OwnerTeam:
+                            if (teamIndex == deTarget.TeamIndex)
+                                return new List<BattleCharacter> { deTarget };
+                            break;
+                        case FilterType.EmenyTeam:
+                            if (teamIndex != deTarget.TeamIndex)
+                                return new List<BattleCharacter> { deTarget };
+                            break;
+                        default:
+                            return new List<BattleCharacter> { deTarget };
+
+                    }
+                    return new List<BattleCharacter> {  };
+                }
+                   
 
             }
         }
@@ -515,17 +532,14 @@ namespace GameLogic.Game.Perceptions
 
         public void NotifyHurt(BattleCharacter sources)
         {
-            var constant = (State as BattleState).ViewBase.GetConstant;
+            var constant = (State as BattleState)?.ViewBase.GetConstant;
             State.Each<BattleCharacter>((c) => 
             {
                 if (c.IsDeath) return false;
-                if (c.TeamIndex == sources.TeamIndex)
+                if (c.TeamIndex != sources.TeamIndex) return false;
+                if (Distance(c, sources) < (constant!.BATTLE_NOTIFY_DISTANCE/100f))
                 {
-                    
-                    if (Distance(c, sources) < (constant.BATTLE_NOTIFY_DISTANCE/100f))
-                    {
-                        c.FireEvent(BattleEventType.TeamBeAttack, sources);
-                    }
+                    c.FireEvent(BattleEventType.TeamBeAttack, sources);
                 }
                 return false;
             });
