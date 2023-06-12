@@ -6,11 +6,15 @@
       <GUID>ee7025bc-e9a6-495c-a801-716a6bb9342b</GUID>
       <Time>0</Time>
     </TimePoint>
+    <TimePoint>
+      <GUID>241a4d31-4b1f-4520-84a9-ff6193184031</GUID>
+      <Time>0.0076923077</Time>
+    </TimePoint>
   </Points>
   <Layouts>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>ee7025bc-e9a6-495c-a801-716a6bb9342b</GUID>
-      <path>Effects/Shields/ShieldSphere/ShadowShield.prefab</path>
+      <path>Effects/Shields/ShieldSphere/LightShield.prefab</path>
       <fromTarget>Releaser</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Body</fromBoneName>
@@ -29,6 +33,23 @@
         <z>0</z>
       </rotation>
       <localsize>1</localsize>
+    </LayoutBase>
+    <LayoutBase xsi:type="DamageLayout">
+      <GUID>241a4d31-4b1f-4520-84a9-ff6193184031</GUID>
+      <target>Releaser</target>
+      <RangeType>
+        <damageType>Single</damageType>
+        <fiterType>ALL</fiterType>
+        <radius>1</radius>
+        <angle>360</angle>
+        <offsetAngle>0</offsetAngle>
+        <offsetPosition>
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </offsetPosition>
+      </RangeType>
+      <effectKey>001</effectKey>
     </LayoutBase>
   </Layouts>
 </TimeLine>

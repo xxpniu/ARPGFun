@@ -47,7 +47,7 @@
     </LayoutBase>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>069448f9-2d19-4532-a319-2fcad8dd338b</GUID>
-      <path>Effects/Flames/LightFlame.prefab</path>
+      <path>Effects/Flames/LightningFlame.prefab</path>
       <fromTarget>Target</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Top</fromBoneName>

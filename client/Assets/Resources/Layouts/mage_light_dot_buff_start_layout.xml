@@ -4,7 +4,7 @@
   <Points>
     <TimePoint>
       <GUID>3c5a69c0-93a9-4a7e-91b6-4cd35e24a827</GUID>
-      <Time>0.182352945</Time>
+      <Time>0.0108695654</Time>
     </TimePoint>
     <TimePoint>
       <GUID>aecff6ed-8b49-477b-aa3a-2e812d9977fb</GUID>
@@ -14,7 +14,7 @@
   <Layouts>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>3c5a69c0-93a9-4a7e-91b6-4cd35e24a827</GUID>
-      <path>Effects/DoT/DamageOverTimeFire.prefab</path>
+      <path>Effects/DoT/DamageOverTimeLightning.prefab</path>
       <fromTarget>Target</fromTarget>
       <toTarget>Target</toTarget>
       <fromBoneName>Bottom</fromBoneName>
