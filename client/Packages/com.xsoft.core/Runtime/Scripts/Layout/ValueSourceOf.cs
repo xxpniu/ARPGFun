@@ -15,9 +15,7 @@ namespace Layout
 
         public override string ToString()
         {
-            if (ValueForm == GetValueFrom.CurrentConfig)
-                return $"{ValueForm} {Value}";
-            else return $"{ValueForm}";
+            return ValueForm == GetValueFrom.CurrentConfig ? $"{ValueForm} {Value}" : $"{ValueForm}";
         }
 
         public static implicit operator ValueSourceOf(int value)
