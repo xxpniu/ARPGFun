@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 using Proto;
 using UnityEngine;
 
-namespace Core
+namespace App.Core.Core
 {
     public static class Extends 
     {

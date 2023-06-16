@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using App.Core.UICore.Utility;
 using UGameTools;
 
 public class MainData : MonoBehaviour {

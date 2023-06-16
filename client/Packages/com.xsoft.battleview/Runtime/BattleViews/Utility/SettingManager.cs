@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using App.Core.Core;
 using UnityEngine;
 
 namespace BattleViews.Utility

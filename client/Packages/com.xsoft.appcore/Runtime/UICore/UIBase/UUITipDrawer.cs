@@ -2,7 +2,7 @@
 using UnityEngine;
 using Tips;
 using System.Collections.Generic;
-using Core;
+using App.Core.Core;
 
 public struct AppNotify
 {

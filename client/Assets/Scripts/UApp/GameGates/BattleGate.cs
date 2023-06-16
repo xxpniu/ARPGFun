@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Windows;
+using App.Core.Core;
 using BattleViews.Components;
 using BattleViews.Utility;
 using BattleViews.Views;
-using Core;
 using Cysharp.Threading.Tasks;
 using EConfig;
 using ExcelConfig;

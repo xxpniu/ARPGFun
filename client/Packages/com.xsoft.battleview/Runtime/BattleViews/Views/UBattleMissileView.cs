@@ -1,12 +1,12 @@
 ﻿using System.Collections;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using BattleViews.Components;
 using BattleViews.Utility;
-using Core;
 using GameLogic.Game.Elements;
 using Google.Protobuf;
 using Layout.LayoutElements;
 using Proto;
-using UGameTools;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 

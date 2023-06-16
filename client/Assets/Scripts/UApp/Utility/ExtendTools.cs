@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
+using App.Core.Core;
 using EConfig;
 using ExcelConfig;
 using GameLogic.Game;

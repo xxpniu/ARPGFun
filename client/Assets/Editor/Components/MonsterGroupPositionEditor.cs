@@ -4,7 +4,7 @@ using UnityEditor;
 //using org.vxwo.csharp.json;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
+using App.Core.Core;
 using Proto;
 
 [CustomEditor(typeof(MonsterGroupPosition))]

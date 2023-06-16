@@ -5,7 +5,8 @@ using Proto;
 using EConfig;
 using ExcelConfig;
 using System.Threading.Tasks;
-using Core;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using UApp;
 using UApp.GameGates;
 

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -16,7 +11,7 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 using XNet.Libs.Utility;
 using Object = UnityEngine.Object;
 
-namespace Core
+namespace App.Core.Core
 {
 	public class ResourcesManager : XSingleton<ResourcesManager>, IConfigLoader
 	{
@@ -43,7 +38,7 @@ namespace Core
 			where T : Object
 		{
 			var res = $"Assets/AssetRes/{path}";
-			print($"Load:{res}");
+			Debuger.Log($"Load:{res}");
 			token?.ThrowIfCancellationRequested();
 			var asset = Addressables.LoadAssetAsync<T>(res);
 			await asset.Task;
@@ -55,9 +50,9 @@ namespace Core
 
 
 
-		public string ReadStreamingFile(string name)
+		public string ReadStreamingFile(string fileName)
 		{
-			var path = Path.Combine(Application.streamingAssetsPath, name);
+			var path = Path.Combine(Application.streamingAssetsPath, fileName);
 			Debuger.Log($"Streaming->{path}");
 			return File.ReadAllText(path);
 		}

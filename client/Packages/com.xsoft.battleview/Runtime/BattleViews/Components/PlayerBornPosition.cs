@@ -1,4 +1,4 @@
-﻿using UGameTools;
+﻿using App.Core.UICore.Utility;
 using UnityEngine;
 
 namespace BattleViews.Components

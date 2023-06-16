@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using BattleViews.Components;
-using Core;
 using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;
@@ -17,7 +18,6 @@ using Layout;
 using Layout.AITree;
 using Layout.LayoutElements;
 using Proto;
-using UGameTools;
 using UnityEngine;
 using UVector3 = UnityEngine.Vector3;
 

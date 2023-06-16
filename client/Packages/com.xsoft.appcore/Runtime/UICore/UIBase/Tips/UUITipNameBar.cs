@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System;
-using UGameTools;
+using App.Core.UICore.Utility;
 
 namespace Tips
 {

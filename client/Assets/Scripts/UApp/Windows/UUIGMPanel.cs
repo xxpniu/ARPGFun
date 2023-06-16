@@ -3,6 +3,7 @@ using UGameTools;
 using Proto;
 using UnityEngine;
 using System.Threading.Tasks;
+using App.Core.UICore.Utility;
 using UApp;
 using UApp.GameGates;
 

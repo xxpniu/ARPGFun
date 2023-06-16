@@ -1,5 +1,5 @@
 ﻿using System;
-using Core;
+using App.Core.Core;
 using UnityEngine;
 
 

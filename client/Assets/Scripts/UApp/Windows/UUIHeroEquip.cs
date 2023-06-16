@@ -10,7 +10,8 @@ using GameLogic.Game;
 using GameLogic;
 using Layout.LayoutEffects;
 using System.Threading.Tasks;
-using Core;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using UApp;
 using UApp.GameGates;
 

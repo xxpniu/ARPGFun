@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 
 // <summary>
-namespace Core
+namespace App.Core.Core
 {
     /// 游戏中序列化和反序列化xml的类
     /// author:xxp

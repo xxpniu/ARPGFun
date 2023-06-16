@@ -1,6 +1,6 @@
-﻿using BattleViews.Components;
+﻿using App.Core.UICore.Utility;
+using BattleViews.Components;
 using BattleViews.Views;
-using UGameTools;
 using UnityEngine;
 
 namespace BattleViews.Utility

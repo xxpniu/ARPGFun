@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core;
+using App.Core.Core;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;

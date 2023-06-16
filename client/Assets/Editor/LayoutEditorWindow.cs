@@ -4,7 +4,7 @@ using UnityEngine;
 using Layout.LayoutElements;
 using System.IO;
 using System.Collections.Generic;
-using Core;
+using App.Core.Core;
 using Layout.EditorAttributes;
 
 public class LayoutEditorWindow:EditorWindow

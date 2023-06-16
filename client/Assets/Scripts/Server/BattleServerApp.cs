@@ -14,7 +14,7 @@ using XNet.Libs.Utility;
 using System.Collections;
 using System.Threading;
 using System.Linq;
-using Core;
+using App.Core.Core;
 using Cysharp.Threading.Tasks;
 using Proto;
 using UnityEngine.SceneManagement;

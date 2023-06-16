@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core;
+using App.Core.Core;
 using Cysharp.Threading.Tasks;
 using EConfig;
 using ExcelConfig;

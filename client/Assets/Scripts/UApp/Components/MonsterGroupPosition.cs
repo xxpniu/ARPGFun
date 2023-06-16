@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using App.Core.UICore.Utility;
+using UnityEngine;
 using UGameTools;
 using Proto;
 using UnityEngine.Serialization;

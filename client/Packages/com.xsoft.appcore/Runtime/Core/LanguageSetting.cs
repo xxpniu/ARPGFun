@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-namespace Core
+
+namespace App.Core.Core
 {
     [XmlType(TypeName = "Setting")]
     public class LanguageSetting

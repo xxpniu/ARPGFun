@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using BattleViews.Components;
 using BattleViews.Utility;
 using BattleViews.Views;
-using Core;
 using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;

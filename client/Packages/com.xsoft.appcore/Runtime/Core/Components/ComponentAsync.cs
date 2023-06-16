@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using UnityEngine;
 
-namespace Core.Components
+namespace App.Core.Core.Components
 {
     public class ComponentAsync : MonoBehaviour
     {

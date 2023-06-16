@@ -1,10 +1,8 @@
-﻿using UnityEngine;
+﻿using App.Core.Core;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System;
-using Core;
 
-namespace UGameTools
+namespace App.Core.UICore.Utility
 {
     public static class GExtends
 	{

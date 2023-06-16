@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using BattleViews.Components;
 using BattleViews.Utility;
-using Core;
 using EngineCore.Simulater;
 using GameLogic;
 using GameLogic.Game.Elements;
 using Google.Protobuf;
 using Proto;
-using UGameTools;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;

@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace Core
+namespace App.Core.Core
 {
     [AttributeUsage( AttributeTargets.Class)]
     public class DestroyOnLoadAttribute : Attribute

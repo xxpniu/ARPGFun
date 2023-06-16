@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using App.Core.UICore.Utility;
 using BattleViews.Views;
 using GameLogic.Game.Elements;
 using GameLogic.Game.Perceptions;

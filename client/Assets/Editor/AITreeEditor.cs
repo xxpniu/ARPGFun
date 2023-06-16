@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using Layout.AITree;
 using Layout.EditorAttributes;
 using System.IO;
+using App.Core.Core;
 using BattleViews;
 using GameLogic.Game.Perceptions;
 using GameLogic.Game.AIBehaviorTree;
 using BehaviorTree;
-using Core;
 
 /// <summary>
 /// AI tree editor.
@@ -18,43 +18,43 @@ public class AITreeEditor : EditorWindow
 {
     #region Inner types
 
-    public class LineData
+    private class LineData
     {
-        public Vector2 point;
+        public Vector2 Point;
         public bool IsRunning;
 
     }
 
-    public class StateOfEditor
+    private class StateOfEditor
     {
         public bool Expanded;
         public bool OnEdited;
-        public Vector2 scroll;
+        public Vector2 Scroll;
         //public static StateOfEditor Empty = new StateOfEditor ();
     }
 
-    public class MenuState
+    private class MenuState
     {
-        public Type type;
-        public TreeNode node;
+        public Type Type;
+        public TreeNode Node;
     }
 
-    public enum HoverType
+    private enum HoverType
     {
         Top,
         Middle,
         Bottom
     }
 
-    public class ShortNameColors
+    private class ShortNameColors
     {
-        public int order;
-        public Color color;
+        public int Order;
+        public readonly Color Color;
 
         public ShortNameColors(int order, Color c)
         {
-            this.color = c;
-            this.order = order;
+            this.Color = c;
+            this.Order = order;
         }
     }
 
@@ -114,7 +114,7 @@ public class AITreeEditor : EditorWindow
     private Color GetColorByShortName(string name)
     {
         if (_colors.TryGetValue(name, out ShortNameColors c))
-            return c.color;
+            return c.Color;
         return Color.white;
     }
 
@@ -382,29 +382,29 @@ public class AITreeEditor : EditorWindow
             {
                 m.AddItem(new GUIContent("Paste"), false, PasteNode, new MenuState()
                 {
-                    type = null,
-                    node = node
+                    Type = null,
+                    Node = node
                 });
             }
             if (pasteNode != node)
             {
                 m.AddItem(new GUIContent("Copy"), false, CopyNode, new MenuState()
                 {
-                    type = null,
-                    node = node
+                    Type = null,
+                    Node = node
                 });
             }
             m.AddSeparator("");
 
             m.AddItem(new GUIContent("Export"), false, ExportNode, new MenuState()
             {
-                type = null,
-                node = node
+                Type = null,
+                Node = node
             });
             m.AddItem(new GUIContent("Import"), false, ImportNode, new MenuState()
             {
-                type = null,
-                node = node
+                Type = null,
+                Node = node
             });
             m.AddSeparator("");
         }
@@ -426,8 +426,8 @@ public class AITreeEditor : EditorWindow
             m.AddItem(new GUIContent(i.Value.Flag + "/" + i.Value.Name), false, CreateNode
                 , new MenuState()
                 {
-                    type = i.Key,
-                    node = node
+                    Type = i.Key,
+                    Node = node
                 });
         }
     }
@@ -435,24 +435,24 @@ public class AITreeEditor : EditorWindow
     private void PasteNode(object userState)
     {
         var m = userState as MenuState;
-        if (CanAppend(m.node, pasteNode))
+        if (CanAppend(m.Node, pasteNode))
         {
             var tempNode = XmlParser.DeSerialize<TreeNode>(XmlParser.Serialize(pasteNode));
             tempNode.NewGuid();
-            m.node.childs.Add(tempNode);
+            m.Node.childs.Add(tempNode);
             pasteNode = null;
         }
         else
         {
-            ShowNotification(new GUIContent(string.Format("Can't Paste:{0}", m.node.name)));
+            ShowNotification(new GUIContent(string.Format("Can't Paste:{0}", m.Node.name)));
         }
     }
 
     private void CopyNode(object userState)
     {
         var m = userState as MenuState;
-        pasteNode = m.node;
-        ShowNotification(new GUIContent(string.Format("Copy:{0}", m.node.name)));
+        pasteNode = m.Node;
+        ShowNotification(new GUIContent(string.Format("Copy:{0}", m.Node.name)));
     }
 
     private void ImportNode(object userState)
@@ -462,14 +462,14 @@ public class AITreeEditor : EditorWindow
         if (!string.IsNullOrEmpty(path))
         {
             var node = XmlParser.DeSerialize<TreeNode>(File.ReadAllText(path));
-            if (CanAppend(m.node, node))
+            if (CanAppend(m.Node, node))
             {
                 node.NewGuid();
-                m.node.childs.Add(node);
+                m.Node.childs.Add(node);
             }
             else
             {
-                ShowNotification(new GUIContent(string.Format("Can't Import:{0}", m.node.name)));
+                ShowNotification(new GUIContent(string.Format("Can't Import:{0}", m.Node.name)));
             }
         }
     }
@@ -481,7 +481,7 @@ public class AITreeEditor : EditorWindow
         if (string.IsNullOrEmpty(path))
             return;
 
-        var xml = XmlParser.Serialize(m.node);
+        var xml = XmlParser.Serialize(m.Node);
         var exportNode = XmlParser.DeSerialize<TreeNode>(xml);
         exportNode.NewGuid();
         xml = XmlParser.Serialize(exportNode);
@@ -493,11 +493,11 @@ public class AITreeEditor : EditorWindow
     private void CreateNode(object userState)
     {
         var m = userState as MenuState;
-        var n = TreeNode.CreateInstance(m.type);
+        var n = TreeNode.CreateInstance(m.Type);
         if (root != null)
         {
-            m.node.childs.Add(n);
-            this[m.node.guid].Expanded = true;
+            m.Node.childs.Add(n);
+            this[m.Node.guid].Expanded = true;
         }
         else
         {
@@ -669,7 +669,7 @@ public class AITreeEditor : EditorWindow
                 var h = Mathf.Max(height + offsety, or.y);
                 offex = Mathf.Max(offex, or.x);
 
-                points.Add(new LineData { point = new Vector2(mine.x, mine.y + 5), IsRunning = runing });
+                points.Add(new LineData { Point = new Vector2(mine.x, mine.y + 5), IsRunning = runing });
                 tempOffset.y += h;
             }
         }
@@ -686,7 +686,7 @@ public class AITreeEditor : EditorWindow
 
         foreach (var p in points)
         {
-            GLDraw.DrawConnectingCurve(new Vector2(rect.xMax + 10, rect.center.y), p.point,
+            GLDraw.DrawConnectingCurve(new Vector2(rect.xMax + 10, rect.center.y), p.Point,
                 p.IsRunning ? Color.yellow : Color.black, p.IsRunning ? 2 : 1);
         }
 
@@ -746,7 +746,7 @@ public class AITreeEditor : EditorWindow
         {
 
             GUILayout.BeginArea(new Rect(rect.x, rect.y + 25, rect.width - 2, rect.height - 25));
-            expanded.scroll = GUILayout.BeginScrollView(expanded.scroll);
+            expanded.Scroll = GUILayout.BeginScrollView(expanded.Scroll);
             GUILayout.BeginVertical(GUILayout.Width(rect.width - 25));
             PropertyDrawer.DrawObject(node, "AINODE");
             GUILayout.EndVertical();

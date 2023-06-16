@@ -4,7 +4,7 @@ using EConfig;
 using UnityEngine;
 using XNet.Libs.Utility;
 
-namespace Core
+namespace App.Core.Core
 {
     public class LanguageManager : XSingleton<LanguageManager>
     {

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using BattleViews.Components;
 using BattleViews.Views;
-using Core;
-using UGameTools;
 using UnityEngine;
 using Proto;
 using ExcelConfig;

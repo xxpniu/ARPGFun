@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using UGameTools;
 using UnityEngine.UI;
 using UnityEngine;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
-using Core;
+using App.Core.Core;
+using App.Core.UICore.Utility;
 using Cysharp.Threading.Tasks;
 
 public abstract class UUIElement

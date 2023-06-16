@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Components;
+using App.Core.Core.Components;
 using Google.Protobuf;
 using Grpc.Core;
 using UnityEngine;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using App.Core.Core;
 using BattleViews.Utility;
-using Core;
 using EConfig;
 using EngineCore.Simulater;
 using GameLogic;

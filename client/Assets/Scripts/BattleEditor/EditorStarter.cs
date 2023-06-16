@@ -1,8 +1,9 @@
-﻿using BattleViews;
+﻿using App.Core.Core;
+using App.Core.UICore.Utility;
+using BattleViews;
 using BattleViews.Components;
 using BattleViews.Utility;
 using BattleViews.Views;
-using Core;
 using UnityEngine; 
 using Cysharp.Threading.Tasks;
 using ExcelConfig;

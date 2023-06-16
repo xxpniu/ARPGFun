@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using App.Core.UICore.Utility;
 using UnityEngine;
 using UnityEngine.UI;
-using UGameTools;
 
 
 /// <summary>

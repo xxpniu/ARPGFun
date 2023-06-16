@@ -5,8 +5,8 @@ using System.Xml;
 using Layout;
 using System.Collections.Generic;
 using System.IO;
+using App.Core.Core;
 using BattleViews;
-using Core;
 
 public class MagicEditorWindow : EditorWindow 
 {

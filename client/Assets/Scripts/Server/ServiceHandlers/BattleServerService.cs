@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 using Server.ServiceHandlers;
 using System.Linq;
 using System;
-using Core;
+using App.Core.Core;
 using Google.Protobuf;
 
 namespace Server
