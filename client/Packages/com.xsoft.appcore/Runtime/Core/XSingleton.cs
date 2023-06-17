@@ -24,7 +24,7 @@ namespace App.Core.Core
         }
 
 
-        public void Reset()
+        public static void Reset()
         {
             if (!_instance) return;
             Destroy(_instance.gameObject);

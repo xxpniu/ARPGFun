@@ -13,8 +13,8 @@ namespace UApp.GameGates
     {
         protected override async Task JoinGate(params object[] args)
         {
-            GateManager.S.Reset();
-            ChatManager.S.Reset();
+            GateManager.Reset();
+            ChatManager.Reset();
             
             await SceneManager.LoadSceneAsync("null");
             UUIManager.Singleton.HideAll();

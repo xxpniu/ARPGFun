@@ -43,8 +43,8 @@ def upload(host, root, dir):
 if __name__ == "__main__":
    args = parser.parse_args()
    root = args.root or "/configs"
-   dir = args.dir or "./client/Assets/Resources/Json"
-   host = args.host or "localhost:2181"
+   dir = args.dir or "../client/Assets/Resources/Json"
+   host = args.host or "andew25a.synology.me:1001"
    print(f"{args}")
    upload(host,root, dir)
  

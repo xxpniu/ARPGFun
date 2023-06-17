@@ -176,11 +176,22 @@ namespace UApp
         protected override async void OnDestroy()
         {
             base.OnDestroy();
-            await ChatHandleChannel?.ShutDownAsync(false)!;
+            if (ChatHandleChannel != null)
+            {
+                await ChatHandleChannel.ShutDownAsync(false)!;
+                ChatHandleChannel = null;
+            }
+            if (ChatChannel != null)
+            {
+                await ChatChannel.ShutdownAsync()!;
+                ChatChannel = null;
+            }
+
             LoginCall?.Dispose();
             LoginCall = null;
-            await ChatChannel?.ShutdownAsync()!;
+            
         }
+
         public async void SendChat(params Chat[] msg)
         {
             var res =  await ChatClient.SendChatAsync(new C2CH_Chat { Mesg = { msg } });

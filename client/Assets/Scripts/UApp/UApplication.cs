@@ -64,7 +64,7 @@ namespace UApp
 
         public async void GotoLoginGate()
         {
-            ChatManager.S.Reset();
+            ChatManager.Reset();
             UUIManager.S.ShowMask(false);
             await ChangeGate<LoginGate>();
         }

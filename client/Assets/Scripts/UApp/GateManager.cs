@@ -103,10 +103,18 @@ namespace UApp
         protected override async void OnDestroy()
         {
             base.OnDestroy();
-            await  HandleChannel.ShutDownAsync(false);
+            if (HandleChannel != null)
+            {
+                await HandleChannel.ShutDownAsync(false);
+                HandleChannel = null;
+            }
+            if (Call != null)
+            {
+                Call.Dispose();
+                Call = null;
+            }
             _login = null;
-            Call.Dispose();
-            Call = null;
+            
         }
     }
 }
