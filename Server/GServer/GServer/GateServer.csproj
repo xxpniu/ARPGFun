@@ -56,11 +56,6 @@
       <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\.dockerignore">
-      <Link>.dockerignore</Link>
-    </Content>
-  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>

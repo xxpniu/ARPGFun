@@ -33,11 +33,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\.dockerignore">
-      <Link>.dockerignore</Link>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Xsoft.Proto">
       <HintPath>..\..\..\GameCore\dll\Xsoft.Proto.dll</HintPath>
     </Reference>
