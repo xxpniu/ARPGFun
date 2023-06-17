@@ -161,14 +161,10 @@ namespace DataBase
             
             if (group != null) Debuger.Log($"{query.Uuid}:{query.Players}");
 
-            if (group != null && group.Players.Count == 0)
-            {
-                await MatchGroups.DeleteOneAsync(t => t.Uuid == query.Uuid);
-            }
-            var matchGroup = (await MatchGroups.FindAsync(t => t.Uuid == query.Uuid))
-                .FirstOrDefault() ??group ;
+            if (group != null && group.Players.Count == 0)  await MatchGroups.DeleteOneAsync(t => t.Uuid == query.Uuid);
+   
             await ExitBattleServer(accountId);
-            return (true, matchGroup);
+            return (group != null, group);
         }
 
         public async Task<bool> ExitBattleServer(string accountId)
