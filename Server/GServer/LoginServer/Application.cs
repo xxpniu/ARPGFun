@@ -32,11 +32,9 @@ namespace LoginServer
             return this;
         }
 
-        protected override async Task Start(CancellationToken token)
+        protected override async Task Start(CancellationToken token = default)
         {
             NetProtoTool.EnableLog = Config.Log;
-
-   
             
             Debuger.Log($"Start Login server");
 

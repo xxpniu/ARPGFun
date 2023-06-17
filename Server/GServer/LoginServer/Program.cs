@@ -30,7 +30,7 @@ namespace LoginServer
         public static async Task Main(string[] args)
         {
 
-            LoginServerConfig config = new LoginServerConfig();
+            var config = new LoginServerConfig();
 
             Parser.Default.ParseArguments<LoginOption>(args)
                 .WithParsed(o =>
