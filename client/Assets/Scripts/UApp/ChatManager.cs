@@ -22,16 +22,15 @@ namespace UApp
         public Action<N_Notify_MatchGroup> OnMatchGroup;
         public Action<N_Notify_InviteJoinMatchGroup> OnInviteJoinMatchGroup;
 
-        public ResponseChannel<Any> ChatHandleChannel { get; private set; }
-        public string HeroName { get; private set; }
-        public LogChannel ChatChannel { get; private set; }
+        private ResponseChannel<Any> ChatHandleChannel { get; set; }
+        private string HeroName { get; set; }
+        private LogChannel ChatChannel { get; set; }
 
         public Dictionary<string, PlayerState> Friends { get; } = new Dictionary<string, PlayerState>();
 
         public string Host;
         public int Port;
-
- 
+        
         private  void ShowConnect()
         {
             Windows.UUIPopup.ShowConfirm("Chat_Disconnect".GetLanguageWord(),
@@ -41,7 +40,7 @@ namespace UApp
         }
 
         public ChatService.ChatServiceClient ChatClient { private set; get; }
-        public AsyncServerStreamingCall<Any> LoginCall { get; private set; }
+        private AsyncServerStreamingCall<Any> LoginCall { get; set; }
 
         public async Task<bool> TryConnectChatServer(ServiceAddress serviceAddress, string heroName)
         {
@@ -122,7 +121,7 @@ namespace UApp
                     }
                     else if (any.TryUnpack(out N_Notify_BattleServer battleServer))
                     {
-                        this.OnStartBattle?.Invoke(battleServer);
+                        OnStartBattle?.Invoke(battleServer);
                         if (!battleServer.ReTry)
                         {
                             UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID);
@@ -133,9 +132,8 @@ namespace UApp
                                     () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID),
                                     async () =>
                                     {
-                                        var gate = UApplication.G<GMainGate>();
-                                        if (gate==null) return;
-                                        await gate.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
+                                        var (b, g) =GateManager.TryGet();
+                                        if(b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
                                     })
                                 ;
                         }
@@ -162,9 +160,9 @@ namespace UApp
 
             await Task.Delay(1000);
 
-            var g = UApplication.G<GMainGate>();
-            if (g!=null) await  g.GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState { });
-
+            var (s, gate) =GateManager.TryGet();
+            if(s)  await gate.GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState { });
+   
             return true;
         }
 

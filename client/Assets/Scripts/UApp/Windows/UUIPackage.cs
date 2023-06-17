@@ -50,37 +50,29 @@ namespace Windows
         {
             base.InitModel();
             ButtonClose.onClick.AddListener(
-                () =>
-                {
-                    HideWindow();
-                });
+                HideWindow);
 
             Bt_Buy.onClick.AddListener(() =>
             {
                 UUIPopup.ShowConfirm(LanguageManager.S["UI_PACKAGE_BUY_SIZE_TITLE"],
-                    LanguageManager.S.Format("UI_PACKAGE_BUY_SIZE",UApplication.S.Constant.PACKAGE_BUY_COST,UApplication.S.Constant.PACKAGE_BUY_SIZE),
-                    () =>
+                    LanguageManager.S.Format("UI_PACKAGE_BUY_SIZE", UApplication.S.Constant.PACKAGE_BUY_COST,
+                        UApplication.S.Constant.PACKAGE_BUY_SIZE),
+                    async () =>
                     {
-                        Task.Factory.StartNew(async () => {
-                            var gate = UApplication.G<GMainGate>();
-                            var res = await gate.GateFunction
+                        var gate = UApplication.G<GMainGate>();
+                        var res = await GateManager.S.GateFunction
                             .BuyPackageSizeAsync(new C2G_BuyPackageSize { SizeCurrent = gate.package.MaxSize });
-
-                            Invoke(() =>
-                            {
-                                if (res.Code.IsOk())
-                                {
-                                    gate.package.MaxSize = res.PackageCount;
-                                    OnUpdateUIData();
-                                }
-                                else
-                                    UApplication.S.ShowError(res.Code);
-                            });
-                        });
-
+                        if (res.Code.IsOk())
+                        {
+                            gate.package.MaxSize = res.PackageCount;
+                            OnUpdateUIData();
+                        }
+                        else  UApplication.S.ShowError(res.Code);
+                        
                     });
             });
         }
+
         protected override void OnShow()
         {
             base.OnShow();

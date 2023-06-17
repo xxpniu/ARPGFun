@@ -61,14 +61,12 @@ namespace UApp.GameGates
 
             Debug.Log($"Request:{req}");
             var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
-            var r = await client.LoginAsync(req);
+            var r = await client.LoginAsync(req,
+                deadline: DateTime.UtcNow.AddSeconds(10));
             await channel.ShutdownAsync();
-
             await UniTask.Yield();
             callback?.Invoke(r);
             return r;
-        
         }
-
     }
 }

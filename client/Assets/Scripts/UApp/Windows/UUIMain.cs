@@ -75,10 +75,13 @@ namespace Windows
             this.Button_Play.onClick.AddListener(async () =>
             {
                 var gate = UApplication.G<GMainGate>();
-                if (gate.Group == null) return;
-                var rs = await gate.GateFunction.BeginGameAsync(new Proto.C2G_BeginGame { GroupID = gate.Group.Id });
+                if(gate ==null) return;
+                var rs = await GateManager.S.GateFunction
+                    .BeginGameAsync(new Proto.C2G_BeginGame
+                {
+                    GroupID = gate.Group.Id
+                });
                 if (!rs.Code.IsOk()) UApplication.S.ShowError(rs.Code);
-
             });
 
             bt_invite.onClick.AddListener(async () =>
@@ -90,12 +93,10 @@ namespace Windows
 
             bt_Exit.onClick.AddListener(() =>
             {
-                UUIPopup.ShowConfirm("Leave_Title".GetLanguageWord(), "Leave_Content".GetLanguageWord(), async () =>
-                {
-                    var gate = UApplication.G<GMainGate>();
-                    if (gate.Group == null) return;
-                    await gate.GateFunction.LeaveMatchGroupAsync(new Proto.C2G_LeaveMatchGroup { });
-
+                UUIPopup.ShowConfirm("Leave_Title".GetLanguageWord(), 
+                    "Leave_Content".GetLanguageWord(), async () =>
+                { 
+                    await GateManager.S.GateFunction.LeaveMatchGroupAsync(new Proto.C2G_LeaveMatchGroup { });
                 });
             });
 

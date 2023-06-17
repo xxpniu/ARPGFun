@@ -40,10 +40,7 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            Bt_Return.onClick.AddListener(() =>
-            {
-                this.HideWindow();
-            });
+            Bt_Return.onClick.AddListener(this.HideWindow);
         }
         protected override void OnShow()
         {
@@ -77,16 +74,13 @@ namespace Windows
 #endif
         }
 
-        private void GoToServer(int leveID)
+        private async void GoToServer(int leveID)
         {
             var gate = UApplication.G<GMainGate>();
-            Task.Factory.StartNew(async()=>
-            {
-                var re = await gate.GateFunction.CreateMatchAsync(new C2G_CreateMatch { LevelID =leveID });
-                if (!re.Code.IsOk()) Invoke(() => UApplication.S.ShowError(re.Code));
-            });      
+            var re = await GateManager.S.GateFunction.CreateMatchAsync(new C2G_CreateMatch { LevelID = leveID });
+            if (!re.Code.IsOk()) Invoke(() => UApplication.S.ShowError(re.Code));
         }
-           
+
         protected override void OnHide()
         {
             base.OnHide();

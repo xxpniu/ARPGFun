@@ -77,9 +77,9 @@ namespace Windows
             }
         }
 
-        private void ClickItem(ContentTableModel m)
+        private async void ClickItem(ContentTableModel m)
         {
-            UUIManager.S.CreateWindowAsync<UUIGMDetail>(ui => { ui.ShowWindow( m.Command); });
+          await  UUIManager.S.CreateWindowAsync<UUIGMDetail>(ui => { ui.ShowWindow( m.Command); });
         }
 
         protected override void OnHide()
@@ -87,27 +87,21 @@ namespace Windows
             base.OnHide();
         }
 
-        public GMCommandAttribute[] AllCommand { get
+        private GMCommandAttribute[] AllCommand { get
             {
                 var att = typeof(UUIGMPanel).GetCustomAttributes(typeof(GMCommandAttribute), false) as GMCommandAttribute[];
                 return att;
             } }
 
 
-        public static void SendCommand(string command)
+        public static async void SendCommand(string command)
         {
-            Task.Factory.StartNew(async () =>
+            var r = await GateManager.S.GateFunction.GMToolAsync(new C2G_GMTool
             {
-                var gata = UApplication.G<GMainGate>();
-                if (gata == null) return;
-                var r = await gata.GateFunction.GMToolAsync(new C2G_GMTool
-                {
-                    GMCommand = command
-                });
-                Debug.Log("GMResult:" + r.Code);
+                GMCommand = command
             });
+            Debug.Log("GMResult:" + r.Code);
 
-            
         }
     }
 }

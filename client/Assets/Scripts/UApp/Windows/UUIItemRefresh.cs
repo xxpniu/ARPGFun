@@ -78,13 +78,13 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            CloseButton.onClick.AddListener(() => HideWindow());
-            equipRefresh.onClick.AddListener(() => SelectedItem());
+            CloseButton.onClick.AddListener(HideWindow);
+            equipRefresh.onClick.AddListener(SelectedItem);
 
-            bt_level_up.onClick.AddListener(() => BeginRefresh());
+            bt_level_up.onClick.AddListener(BeginRefresh);
         }
 
-        private void BeginRefresh()
+        private async void BeginRefresh()
         {
             if (currentRefreshData == null) return;
             if (refreshItem == null)
@@ -92,13 +92,13 @@ namespace Windows
                 UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_noItem"]);
                 return;
             }
+
             if (customItems == null || customItems.Count < currentRefreshData.NeedItemCount)
             {
                 //UUIItemRefresh_custom_empty
                 UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_custom_empty"]);
                 return;
             }
-
             
 
             var gate = UApplication.G<GMainGate>();
@@ -109,29 +109,28 @@ namespace Windows
                 request.CoustomItem.Add(i.GUID);
             }
 
-            Task.Factory.StartNew(async () =>
+            var res = await GateManager.S.GateFunction.RefreshEquipAsync(request);
+            Invoke(() =>
             {
-                var res = await gate.GateFunction.RefreshEquipAsync(request);
-                Invoke(() =>
+                if (res.Code.IsOk())
                 {
-                    if (res.Code.IsOk())
-                    {
-                        UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_Sucess"]);
-                        return;
-                    }
-                    UApplication.S.ShowError(res.Code);
-                });
+                    UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_Sucess"]);
+                    return;
+                }
+
+                UApplication.S.ShowError(res.Code);
             });
+
         }
 
 
-        private void SelectedItem()
+        private async void SelectedItem()
         {
-            UUIManager.S.CreateWindowAsync<UUISelectItem>(ui =>
+            await UUIManager.S.CreateWindowAsync<UUISelectItem>(ui =>
             {
                 ui.ShowSelect(1, false);
                 ui.OnSelectedItems = OnSelectRefresh;
-            } );
+            });
         }
 
         private void OnSelectRefresh(List<PlayerItem> obj)

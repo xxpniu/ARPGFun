@@ -50,14 +50,12 @@ namespace Windows
         {
             base.InitModel();
 
-            ButtonClose.onClick.AddListener(() => { this.HideWindow(); });
-            bt_level_up.onClick.AddListener(() =>
-            {
-                var gate = UApplication.G<GMainGate>();
-                var request = new C2G_MagicLevelUp { Level = selectMagic?.Level ?? 1, MagicId = selectConfig.ID };
-                Task.Factory.StartNew(async () =>
+            ButtonClose.onClick.AddListener(this.HideWindow);
+            bt_level_up.onClick.AddListener(async () =>
                 {
-                    var res = await gate.GateFunction.MagicLevelUpAsync(request);
+                    var gate = UApplication.G<GMainGate>();
+                    var request = new C2G_MagicLevelUp { Level = selectMagic?.Level ?? 1, MagicId = selectConfig.ID };
+                    var res = await GateManager.S.GateFunction.MagicLevelUpAsync(request);
                     Invoke(() =>
                     {
                         if (res.Code.IsOk())
@@ -70,11 +68,10 @@ namespace Windows
                         }
                     });
                 }
-                );
-            });
+            );
         }
 
-            
+
         protected override void OnShow()
         {
             base.OnShow();
@@ -141,21 +138,17 @@ namespace Windows
                 UUIPopup.ShowConfirm(
                     LanguageManager.S["UUIMaigc_Active_Title"],
                     LanguageManager.S["UUIMaigc_Active_Content"],
-                    () => {
-                        var gata = UApplication.G<GMainGate>();
-                        Task.Factory.StartNew(async () => {
-                            var res = await gata.GateFunction
+                    async () =>
+                    {
+                        var res = await GateManager.S.GateFunction
                             .ActiveMagicAsync(new C2G_ActiveMagic { MagicId = obj.config.ID });
-                            Invoke(() =>
-                            {
-                                if (res.Code.IsOk())
-                                {
-                                    //UApplication.S.ShowNotify("")
-                                    return;
-                                }
-                                UApplication.S.ShowError(res.Code);
-                            });
-                        });
+                        if (res.Code.IsOk())
+                        {
+                            //UApplication.S.ShowNotify("")
+                            return;
+                        }
+                        UApplication.S.ShowError(res.Code);
+
                     });
                 return;
             }

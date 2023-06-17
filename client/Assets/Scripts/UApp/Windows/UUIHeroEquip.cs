@@ -61,102 +61,108 @@ namespace Windows
             base.InitModel();
             bt_Exit.onClick.AddListener(() => { HideWindow(); });
 
-            Equips = new Dictionary<EquipmentType, HeroPartData> {
-                { EquipmentType.Arm, new HeroPartData{ bt =equip_weapon, icon = icon_weapon, level = weapon_Lvl, rootLvl=weapLeveRoot } },
-                { EquipmentType.Head, new HeroPartData{ bt =equip_head, icon = icon_head, level = head_Lvl , rootLvl=HeadLevelRoot} },
-                { EquipmentType.Foot, new HeroPartData{ bt = equip_shose, icon = icon_shose, level = shose_Lvl , rootLvl =ShoseLeveRoot } },
-                { EquipmentType.Body, new HeroPartData{ bt = equip_cloth, icon = icon_cloth, level = cloth_Lvl, rootLvl = ClothLeveRoot } }
+            Equips = new Dictionary<EquipmentType, HeroPartData>
+            {
+                {
+                    EquipmentType.Arm,
+                    new HeroPartData
+                        { bt = equip_weapon, icon = icon_weapon, level = weapon_Lvl, rootLvl = weapLeveRoot }
+                },
+                {
+                    EquipmentType.Head,
+                    new HeroPartData { bt = equip_head, icon = icon_head, level = head_Lvl, rootLvl = HeadLevelRoot }
+                },
+                {
+                    EquipmentType.Foot,
+                    new HeroPartData { bt = equip_shose, icon = icon_shose, level = shose_Lvl, rootLvl = ShoseLeveRoot }
+                },
+                {
+                    EquipmentType.Body,
+                    new HeroPartData { bt = equip_cloth, icon = icon_cloth, level = cloth_Lvl, rootLvl = ClothLeveRoot }
+                }
             };
 
             foreach (var i in Equips)
             {
-                i.Value.bt.onClick.AddListener(() => {
-                    Click(i.Key);
-                });
+                i.Value.bt.onClick.AddListener(() => { Click(i.Key); });
             }
 
-            bt_level_up.onClick.AddListener(() =>
+            bt_level_up.onClick.AddListener(async () =>
             {
-                if (selected == null) return;
+                if (_selected == null) return;
 
                 var g = UApplication.G<GMainGate>();
-                if (!g.package.Items.TryGetValue(selected.GUID, out PlayerItem item)) return;
-                var req = new C2G_EquipmentLevelUp { Guid = selected.GUID, Level = item.Level };
-                Task.Factory.StartNew(async () =>
+                if (!g.package.Items.TryGetValue(_selected.GUID, out PlayerItem item)) return;
+                var req = new C2G_EquipmentLevelUp { Guid = _selected.GUID, Level = item.Level };
+
+                var r = await GateManager.S.GateFunction.EquipmentLevelUpAsync(req);
+                Invoke(() =>
                 {
-                    var r = await g.GateFunction.EquipmentLevelUpAsync(req);
-                    Invoke(() =>
+                    if (r.Code.IsOk())
                     {
-                        if (r.Code.IsOk())
-                        {
-                            if (r.Level > item.Level)
-                                UApplication.S.ShowNotify("UUIHeroEquip_Level_Success".GetAsKeyFormat($" +{r.Level}"));
-                            else
-                                UApplication.S.ShowNotify(LanguageManager.S["UUIHeroEquip_Level_Failure"]);
-                        }
-                        else
-                        {
-                            UApplication.S.ShowError(r.Code);
-                        }
-                    });
+                        UApplication.S.ShowNotify(r.Level > item.Level
+                            ? "UUIHeroEquip_Level_Success".GetAsKeyFormat($" +{r.Level}")
+                            : LanguageManager.S["UUIHeroEquip_Level_Failure"]);
+                    }
+                    else
+                    {
+                        UApplication.S.ShowError(r.Code);
+                    }
                 });
             });
 
-            take_off.onClick.AddListener(() =>
+
+            take_off.onClick.AddListener(async () =>
             {
-                if (selected == null) return;
+                if (_selected == null) return;
 
                 var g = UApplication.G<GMainGate>();
-                if (!g.package.Items.TryGetValue(selected.GUID, out PlayerItem item)) return;
+                if (!g.package.Items.TryGetValue(_selected.GUID, out PlayerItem item)) return;
                 var config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
                 var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(config.ID);
-                Task.Factory.StartNew(async () =>
+
+                var r = await GateManager.S.GateFunction.OperatorEquipAsync(new C2G_OperatorEquip
                 {
-                    var r = await g.GateFunction.OperatorEquipAsync(new C2G_OperatorEquip
-                    {
-                        Guid = selected.GUID,
-                        IsWear = false,
-                        Part = (EquipmentType)equip.PartType
-                    });
-                    Invoke(() =>
-                    {
-                        if (r.Code.IsOk())
-                        {
-                            UApplication.S
-                            .ShowNotify("UUIHeroEquip_TakeOff_Result".GetAsFormatKeys(config.Name));
-                            Right.ActiveSelfObject(false);
-                            selected = null;
-                        }
-                        else { UApplication.S.ShowError(r.Code); }
-                    });
+                    Guid = _selected.GUID,
+                    IsWear = false,
+                    Part = (EquipmentType)equip.PartType
                 });
-
+                Invoke(() =>
+                {
+                    if (r.Code.IsOk())
+                    {
+                        UApplication.S
+                            .ShowNotify("UUIHeroEquip_TakeOff_Result".GetAsFormatKeys(config.Name));
+                        Right.ActiveSelfObject(false);
+                        _selected = null;
+                    }
+                    else
+                    {
+                        UApplication.S.ShowError(r.Code);
+                    }
+                });
             });
-
-            
         }
 
-        private void Click(EquipmentType key)
+        private async void Click(EquipmentType key)
         {
             var g = UApplication.G<GMainGate>();
             foreach (var i in g.hero.Equips)
             {
-                if (i.Part == key)
-                {
-                    DisplayEquip(i);
-                    return;
-                }
+                if (i.Part != key) continue;
+                DisplayEquip(i);
+                return;
             }
             Right.ActiveSelfObject(false);
-            UUIManager.S.CreateWindowAsync<UUISelectEquip>(ui=>ui.SetPartType(key).ShowWindow());
+            await UUIManager.S.CreateWindowAsync<UUISelectEquip>(ui=>ui.SetPartType(key).ShowWindow());
         }
 
 
-        private WearEquip selected;
+        private WearEquip _selected;
 
         private async void DisplayEquip(WearEquip eq)
         {
-            this.selected = eq;
+            this._selected = eq;
             Right.ActiveSelfObject(true);
             var g = UApplication.G<GMainGate>();
             g.package.Items.TryGetValue(eq.GUID, out PlayerItem it);
@@ -164,7 +170,7 @@ namespace Windows
             var item = ExcelToJSONConfigManager.GetId<ItemData>(eq.ItemID);
             var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(item.ID);
             await ResourcesManager.S.LoadIcon(item,s=> icon_right.sprite = s);
-            equip_lvl.text = $"+{it.Level}";
+            equip_lvl.text = $"+{it!.Level}";
             right_name.SetKey(item.Name);
             des_Text.text = item.Description;
             RightERoot.ActiveSelfObject(it.Level > 0);
@@ -219,9 +225,9 @@ namespace Windows
             base.OnUpdateUIData();
             var g = UApplication.G<GMainGate>();
             ShowHero(g.hero, g.package);
-            if (selected == null)
+            if (_selected == null)
                 Right.ActiveSelfObject(false);
-            else DisplayEquip(selected);
+            else DisplayEquip(_selected);
         }
 
         private async void ShowHero(DHero dHero,PlayerPackage package)

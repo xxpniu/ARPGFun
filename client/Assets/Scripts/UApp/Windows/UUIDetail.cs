@@ -30,21 +30,16 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            bt_cancel.onClick.AddListener(() =>
-                {
-                    HideWindow();
-                });
-            bt_sale.onClick.AddListener(() =>
-                {
-                    this.HideWindow();
-                   UUIManager.S.CreateWindowAsync<UUISaleItem>((ui)=> {
-                       ui.Show(this.item);
-                   });
-                });
-            bt_equip.onClick.AddListener(() =>
+            bt_cancel.onClick.AddListener(HideWindow);
+            bt_sale.onClick.AddListener(async () =>
             {
-                
-                
+                this.HideWindow();
+                await UUIManager.S.CreateWindowAsync<UUISaleItem>((ui) => { ui.Show(this.item); });
+            });
+            bt_equip.onClick.AddListener(async () =>
+            {
+
+
                 var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(config.ID);
                 if (equip == null) return;
 
@@ -55,31 +50,27 @@ namespace Windows
                     Part = (EquipmentType)equip.PartType
                 };
 
-                Task.Factory.StartNew(async () =>
+
+                var r = await GateManager.S.GateFunction.OperatorEquipAsync(requ);
+                this.Invoke(() =>
                 {
-                    var r = await UApplication.G<GMainGate>().GateFunction.OperatorEquipAsync(requ);
-                    this.Invoke(() =>
+                    if (r.Code.IsOk())
                     {
-                        if (r.Code.IsOk())
-                        {
-                            UApplication.S.ShowNotify(
-                                LanguageManager.S.Format("UUIDETAIL_WEAR_SUCESS",
+                        UApplication.S.ShowNotify(
+                            LanguageManager.S.Format("UUIDETAIL_WEAR_SUCESS",
                                 LanguageManager.S[config.Name]));
-                            HideWindow();
-                        }
-                        else
-                        {
-                            UApplication.S.ShowError(r.Code);
-                        }
-                    });
+                        HideWindow();
+                    }
+                    else
+                    {
+                        UApplication.S.ShowError(r.Code);
+                    }
                 });
-
             });
 
-            this.uiRoot.transform.OnMouseClick((obj) =>
-            {
-                HideWindow();
-            });
+
+
+            this.uiRoot.transform.OnMouseClick((obj) => { HideWindow(); });
             //Write Code here
         }
 

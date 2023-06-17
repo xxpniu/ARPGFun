@@ -60,7 +60,7 @@ namespace Windows
         protected override void OnShow()
         {
             base.OnShow();
-            if (!part.HasValue) { HideWindow(); }
+            if (!_part.HasValue) { HideWindow(); }
             else
                 ShowEquipList();
         }
@@ -78,14 +78,13 @@ namespace Windows
                 var wear = false;
                 foreach (var e in g.hero.Equips)
                 {
-                    if (e.GUID == i.Key) {
-                        wear = true;
-                        break;
-                    }
+                    if (e.GUID != i.Key) continue;
+                    wear = true;
+                    break;
                 }
                 if (wear) continue ;
                 var ec = ExcelToJSONConfigManager.GetId<EquipmentData>(item.ID);
-                if ((EquipmentType)ec.PartType != part) continue;
+                if ((EquipmentType)ec.PartType != _part) continue;
 
                 equip.Add( new PlayerEquipItem { data = ec, Item = i.Value });
 
@@ -103,36 +102,29 @@ namespace Windows
             }
         }
 
-        private void WearClick(ContentTableModel obj)
+        private async void WearClick(ContentTableModel obj)
         {
-            var g = UApplication.G<GMainGate>();
+            //var g = UApplication.G<GMainGate>();
             var req = new C2G_OperatorEquip
             {
                 Guid = obj.IItem.GUID,
                 IsWear = true,
                 Part = (EquipmentType)obj.Equip.PartType
             };
-
-            Task.Factory.StartNew(async () =>
+            var r = await GateManager.S.GateFunction.OperatorEquipAsync(req);
+            if (!r.Code.IsOk())
             {
-                var r = await g.GateFunction.OperatorEquipAsync(req);
-                Invoke(() =>
-                {
-                    if (!r.Code.IsOk())
-                    {
-                        UApplication.S.ShowError(r.Code);
-                    }
-                    HideWindow();
-                });
-            });
+                UApplication.S.ShowError(r.Code);
+            }
+            HideWindow();
             
         }
 
-        private  EquipmentType? part;
+        private  EquipmentType? _part;
 
         public UUISelectEquip SetPartType(EquipmentType type)
         {
-            this.part = type;
+            this._part = type;
             return this;
         }
     }

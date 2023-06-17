@@ -44,26 +44,30 @@ namespace Windows
             base.InitModel();
             ButtonClose.onClick.AddListener(() => { HideWindow(); });
         }
+
         protected override void OnShow()
         {
             base.OnShow();
-
-            var g = UApplication.G<GMainGate>();
-            if (!g) { HideWindow(); return; }
-
-            Task.Factory.StartNew(async () => {
-                var res = await g.GateFunction.SearchPlayerAsync(new Proto.C2G_SearchPlayer());
-                if (!res.Code.IsOk()) return;
-                Invoke(() => {
-                    this.Players = res.Players.Where(t=>t.AccountUuid!=UApplication.S.AccountUuid).ToList();
-                    InitData();
-                });
-            });
+            InitData();
 
         }
 
-        private void InitData()
+
+        private async void InitData()
         {
+            var g = UApplication.G<GMainGate>();
+            if (!g)
+            {
+                HideWindow();
+                return;
+            } 
+
+            var res = await GateManager.S.GateFunction.SearchPlayerAsync(new Proto.C2G_SearchPlayer());
+            if (!res.Code.IsOk()) return;
+
+            this.Players = res.Players.Where(t => t.AccountUuid != UApplication.S.AccountUuid).ToList();
+            InitData();
+
             this.ContentTableManager.Count = Players.Count;
             int index = 0;
             foreach (var i in ContentTableManager)

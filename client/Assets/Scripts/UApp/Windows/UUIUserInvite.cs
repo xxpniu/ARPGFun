@@ -33,7 +33,7 @@ namespace Windows
                 Template.InviteBlue.ActiveSelfObject(true);
                 this.Player = playerState;
                 this.Template.TextName.text = playerState.User.UserName;
-                this.Template.TextLvScore.text = $"lvl:{0}";
+                this.Template.TextLvScore.text = $"lvl:0";
             }
 
             internal void Invited()
@@ -45,7 +45,7 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            ButtonClose.onClick.AddListener(() => HideWindow());
+            ButtonClose.onClick.AddListener(HideWindow);
 
             //Write Code here
         }
@@ -64,25 +64,23 @@ namespace Windows
             }
         }
 
-        private async void InviteFriend(ContentTableModel obj)
+        private static async void InviteFriend(ContentTableModel obj)
         {
             var gate = UApplication.G<GMainGate>();
             if (!gate) return;
             var group = gate.Group;
             if (group == null) return;
             obj.Invited();
-            var res = await gate.GateFunction.InviteJoinMatchAsync(new C2G_InviteJoinMatch
+            var res = await GateManager.S.GateFunction.InviteJoinMatchAsync(new C2G_InviteJoinMatch
             {
                 AccountUuid = obj.Player.User.Uuid,
                 GroupID = group.Id,
                 LevelID = group.LevelID
             });
-
             if (!res.Code.IsOk())
             {
                 UApplication.S.ShowError(res.Code);
             }
-            
         }
         
     }

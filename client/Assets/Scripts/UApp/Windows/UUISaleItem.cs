@@ -17,41 +17,31 @@ namespace Windows
         {
             base.InitModel();
             s_salenum.onValueChanged.AddListener((v) =>
-                {
-                    saleNum = (int)v ;
-                    ShowSale();
-                });
-            bt_close.onClick.AddListener(() =>
-                {
-                    this.HideWindow();
-                });
-            
-            bt_OK.onClick.AddListener(() =>
-                {
-                    if(saleNum==0) return;
+            {
+                saleNum = (int)v;
+                ShowSale();
+            });
+            bt_close.onClick.AddListener(() => { this.HideWindow(); });
 
-                    var saleItem = new C2G_SaleItem.Types.SaleItem { Guid = Item.GUID, Num = saleNum };
-                    var re = new C2G_SaleItem { };
-                    re.Items.Add(saleItem);
-                    var gate = UApplication.G<GMainGate>();
-                    Task.Factory.StartNew(async () =>
-                    {
-                        var r = await gate.GateFunction.SaleItemAsync(re);
-                        Invoke(() =>
-                        {
-                            if (r.Code.IsOk())
-                            {
-                                HideWindow();
-                                UApplication.S.ShowNotify(LanguageManager.S["UUISaleItem_Sale_Success"]);
-                            }
-                            else
-                                UApplication.S.ShowError(r.Code);
-                        });
-                    });
+            bt_OK.onClick.AddListener(async () =>
+            {
+                if (saleNum == 0) return;
 
-                });
-            //Write Code here
+                var saleItem = new C2G_SaleItem.Types.SaleItem { Guid = Item.GUID, Num = saleNum };
+                var re = new C2G_SaleItem { };
+                re.Items.Add(saleItem);
+                var r = await GateManager.S.GateFunction.SaleItemAsync(re);
+                if (r.Code.IsOk())
+                {
+                    HideWindow();
+                    UApplication.S.ShowNotify(LanguageManager.S["UUISaleItem_Sale_Success"]);
+                }
+                else
+                    UApplication.S.ShowError(r.Code);
+                
+            });
         }
+
         protected override void OnShow()
         {
             base.OnShow();

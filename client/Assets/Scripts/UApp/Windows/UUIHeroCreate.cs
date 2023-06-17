@@ -45,50 +45,49 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            Bt_create.onClick.AddListener(() =>
+            Bt_create.onClick.AddListener(async () =>
             {
                 if (string.IsNullOrEmpty(InputField.text) || InputField.text.Length < 2)
                 {
                     UApplication.S.ShowNotify("UI_HERONAME_NEED".GetLanguageWord());
                     return;
                 }
-
-                var request = new Proto.C2G_CreateHero { HeroID = selectedID, HeroName = InputField.text };
-                Task.Factory.StartNew(async () => {
-                    var r = await UApplication.G<GMainGate>().GateFunction.CreateHeroAsync(request);
-                    Invoke(() => {
-                        if (r.Code.IsOk())
-                        {
-                            UApplication.G<GMainGate>().ShowMain();
-                            HideWindow();
-                        }
-                        else
-                            UApplication.S.ShowError(r.Code);
-                    });
+                var request = new Proto.C2G_CreateHero { HeroID = _selectedID, HeroName = InputField.text };
+                var r = await GateManager.S.GateFunction.CreateHeroAsync(request);
+                Invoke(() =>
+                {
+                    if (r.Code.IsOk())
+                    {
+                        UApplication.G<GMainGate>().ShowMain();
+                        HideWindow();
+                    }
+                    else
+                        UApplication.S.ShowError(r.Code);
                 });
             });
+
         }
 
         protected override void OnShow()
         {
             base.OnShow();
 
-            var heros = ExcelToJSONConfigManager.Find<CharacterPlayerData>();
-            
-            ListTableManager.Count = heros.Length;
-            int index = 0;
+            var characters = ExcelToJSONConfigManager.Find<CharacterPlayerData>();
 
-            SetHeroId(heros[0],
-                ExcelToJSONConfigManager.GetId<CharacterData>(heros[0].CharacterID));
-            foreach (var i in heros)
+            ListTableManager.Count = characters.Length;
+            var index = 0;
+
+            SetHeroId(characters[0],
+                ExcelToJSONConfigManager.GetId<CharacterData>(characters[0].CharacterID));
+            foreach (var i in characters)
             {
-                ListTableManager[index].Model.SetData(heros[index]);
+                ListTableManager[index].Model.SetData(characters[index]);
                 ListTableManager[index].Model.OnClick = ClickItem;
                 index++;
             }
         }
 
-        private int selectedID = 0;
+        private int _selectedID = 0;
 
         private void ClickItem(ListTableModel obj)
         {
@@ -98,7 +97,7 @@ namespace Windows
 
         private void SetHeroId(CharacterPlayerData hero, CharacterData  character)
         {
-            selectedID = character.ID;
+            _selectedID = character.ID;
 
             var v =UApplication.G<GMainGate>().CreateOwner(character.ID, character.Name);
             lb_description.SetKey(  hero.Description);

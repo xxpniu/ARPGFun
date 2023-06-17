@@ -36,9 +36,7 @@ namespace UApp.GameGates
         public DHero hero;
         private UCharacterView characterView;
         private ServiceAddress ServerInfo;
-        public LogChannel Client { private set; get; }
-
-
+    
         public UCharacterView CreateOwner(int heroID, string heroName)
         {
             if (characterView)
@@ -96,93 +94,24 @@ namespace UApp.GameGates
             view = UPerceptionView.Create(UApplication.S.Constant);
             var serverIP = $"{ServerInfo.IpAddress}:{ServerInfo.Port}";
             Debuger.Log($"Gat:{serverIP}");
-            Client = new LogChannel(serverIP, ChannelCredentials.Insecure);
-            GateFunction = Client.CreateClient<GateServerService.GateServerServiceClient>();
-            await RequestPlayer();
-            _gm = this.gameObject.AddComponent<GameGMTools>();
-            _gm.ShowGM = true;
-        }
 
-        public Proto.GateServerService.GateServerServiceClient GateFunction { private set; get; }
-        private AsyncServerStreamingCall<Any> Call { get; set; }
-        private ResponseChannel<Any> HandleChannel { get; set; }
+   
+            GateManager.S.OnSyncHero = OnSyncHero; 
+            GateManager.S.OnSyncPackage = OnSyncPackage;
+            GateManager.S.OnModifyItem = OnModifyItem;
+            GateManager.S.OnPackageSize = OnPackageSize;
+            GateManager.S.OnCoinAndGold = OnCoinAndGold;
+            ChatManager.S.OnMatchGroup = RefreshMatchGroup;
+            ChatManager.S.OnInviteJoinMatchGroup = InviteJoinGroup;
 
-  
-        private async Task RequestPlayer()
-        {
-            var login = GateFunction.LoginAsync(new C2G_Login
-            {
-                Session = UApplication.S.SesssionKey,
-                UserID = UApplication.S.AccountUuid,
-                Version = 1
-            });
-            var r = await login;
-            var header = await login.ResponseHeadersAsync;
-            Client.SessionKey = header.Get("session-key")?.Value??string.Empty;
-            Debuger.Log(Client.SessionKey);
-
+            var r = await GateManager.S.TryToConnectedGateServer(ServerInfo);
+            //UApplication.S.GotoLoginGate();
             if (r.Code.IsOk())
             {
-                ChatManager.S.OnMatchGroup = RefreshMatchGroup;
-                ChatManager.S.OnInviteJoinMatchGroup = InviteJoinGroup;
                 if (await ChatManager.S.TryConnectChatServer(UApplication.S.ChatServer, r.Hero?.Name) == false)
                 {
                     UApplication.S.ShowError(ErrorCode.Error);
                 }
-
-                Call = Client.CreateClient<ServerStreamService.ServerStreamServiceClient>()
-                    .ServerAnyStream(new Proto.Void(), cancellationToken: Client.ShutdownToken);
-
-                HandleChannel = new ResponseChannel<Any>(Call.ResponseStream, tag: "MainGateHandle")
-                {
-                    OnReceived = (res) =>
-                    {
-                        Debuger.Log(res);
-                        if (res.TryUnpack(out Task_G2C_SyncHero syncHero))
-                        {
-                            hero = syncHero.Hero;
-                            CreateOwner(hero.HeroID, hero.Name);
-                        }
-                        else if (res.TryUnpack(out Task_G2C_SyncPackage p))
-                        {
-                            this.package = p.Package;
-                            this.Gold = p.Gold;
-                            this.Coin = p.Coin;
-                        }
-                        else if (res.TryUnpack(out Task_ModifyItem item))
-                        {
-                            foreach (var i in item.ModifyItems)
-                            {
-                                package.Items.Remove(i.GUID);
-                                package.Items.Add(i.GUID, i);
-                            }
-
-                            foreach (var i in item.RemoveItems) package.Items.Remove(i.GUID);
-                        }
-                        else if (res.TryUnpack(out Task_PackageSize size))
-                        {
-                            package.MaxSize = size.Size;
-                        }
-                        else if (res.TryUnpack(out Task_CoinAndGold coin))
-                        {
-                            this.Coin = coin.Coin;
-                            this.Gold = coin.Gold;
-                        }
-                        else
-                        {
-                            Debuger.LogError($"No handler:{res}");
-                        }
-
-                        UUIManager.S.UpdateUIData();
-                    },
-
-                    OnDisconnect = () =>
-                    {
-                        UApplication.S.GotoLoginGate();
-                        Debuger.LogError($"Disconnect form gate server");
-
-                    }
-                };
                 ShowPlayer(r);
             }
             else
@@ -190,7 +119,47 @@ namespace UApp.GameGates
                 UUITipDrawer.S.ShowNotify("GateServer Response:" + r.Code);
                 UApplication.S.GotoLoginGate();
             }
+            
+            _gm = gameObject.AddComponent<GameGMTools>();
+            _gm.ShowGM = true;
         }
+
+        private void OnCoinAndGold(Task_CoinAndGold coin)
+        {
+            this.Coin = coin.Coin;
+            this.Gold = coin.Gold;
+        }
+
+        private void OnPackageSize(Task_PackageSize size)
+        {
+            package.MaxSize = size.Size;
+        }
+
+        private void OnModifyItem(Task_ModifyItem item)
+        {
+            foreach (var i in item.ModifyItems)
+            {
+                package.Items.Remove(i.GUID);
+                package.Items.Add(i.GUID, i);
+            }
+
+            foreach (var i in item.RemoveItems) package.Items.Remove(i.GUID);
+
+        }
+
+        private void OnSyncPackage(Task_G2C_SyncPackage p)
+        {
+            this.package = p.Package;
+            this.Gold = p.Gold;
+            this.Coin = p.Coin;
+        }
+
+        private void OnSyncHero(Task_G2C_SyncHero syncHero)
+        {
+            hero = syncHero.Hero;
+            CreateOwner(hero.HeroID, hero.Name);
+        }
+        
 
         private void InviteJoinGroup(N_Notify_InviteJoinMatchGroup obj)
         {
@@ -201,15 +170,10 @@ namespace UApp.GameGates
             UUIPopup.ShowConfirm("Invite_Title".GetLanguageWord(),
                 "Invite_Content".GetAsKeyFormat(userName, levelName), async () =>
                 {
-                    var gate = UApplication.G<GMainGate>();
-                    if (!gate) return;
-
-                    var rs = await gate.GateFunction.JoinMatchAsync(new C2G_JoinMatch { GroupID = obj.GroupId });
-                    if (!rs.Code.IsOk())
-                    {
-                        UApplication.S.ShowError(rs.Code);
-                    }
-
+                    var (s, g) = GateManager.TryGet();
+                    if (!s) return;
+                    var rs = await g.GateFunction.JoinMatchAsync(new C2G_JoinMatch { GroupID = obj.GroupId });
+                    if (!rs.Code.IsOk()) UApplication.S.ShowError(rs.Code);
                 });
         }
 
@@ -282,16 +246,15 @@ namespace UApp.GameGates
 
         protected override async Task ExitGate()
         {
-            var (h, s) = ChatManager.TryGet();
-            if (h) s.OnMatchGroup = null;
-            if (HandleChannel != null)
-                await HandleChannel?.ShutDownAsync(false)!;
-            Call?.Dispose();
-            Call = null;
-            if (Client != null)
-                await Client?.ShutdownAsync()!;
-            Client = null;
+            GateManager.S.OnSyncHero -= OnSyncHero; 
+            GateManager.S.OnSyncPackage -= OnSyncPackage;
+            GateManager.S.OnModifyItem -= OnModifyItem;
+            GateManager.S.OnPackageSize -= OnPackageSize;
+            GateManager.S.OnCoinAndGold -= OnCoinAndGold;
+            ChatManager.S.OnMatchGroup -= RefreshMatchGroup;
+            ChatManager.S.OnInviteJoinMatchGroup -= InviteJoinGroup;
             Destroy(_gm);
+            await Task.CompletedTask;
         }
 
         protected override void Tick()

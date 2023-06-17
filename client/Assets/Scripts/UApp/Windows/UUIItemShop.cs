@@ -81,40 +81,35 @@ namespace Windows
                 HideWindow();
             });
         }
+
         protected override void OnShow()
         {
             base.OnShow();
-            Task.Factory.StartNew(async () => {
-                var gate = UApplication.G<GMainGate>();
-                var r = await gate.GateFunction.QueryShopAsync(new C2G_Shop());
-                Invoke(() =>
-                {
-                    if (r.Code.IsOk())
-                    {
-                        this.Shops = r.Shops;
-                        ShowData();
-                        return;
-                    }
-                    HideWindow();
-                    UApplication.S.ShowError(r.Code);
-                });
-            });
-
+            ShowData();
         }
 
-        private void ShowData()
-        {
 
+        private async void ShowData()
+        {
+            var r = await GateManager.S.GateFunction.QueryShopAsync(new C2G_Shop());
+            if (!r.Code.IsOk())
+            {
+                HideWindow();
+                UApplication.S.ShowError(r.Code);
+                return;
+            }
+
+            this.Shops = r.Shops;
 
             this.ShopTabTableManager.Count = Shops.Count;
-            int index = 0;
+            var index = 0;
             foreach (var i in ShopTabTableManager)
             {
                 i.Model.SetData(Shops[index]);
                 i.Model.OnSelected = Selected;
                 index++;
             }
-            
+
             if (Shops.Count > 0) ShopTabTableManager[0].Template.ToggleSelected.isOn = true;
         }
 
@@ -131,10 +126,10 @@ namespace Windows
             }
         }
 
-        private void ShowDetail(ContentTableModel obj)
+        private async void ShowDetail(ContentTableModel obj)
         {
             var item = new PlayerItem { ItemID = obj.Config.ID, Level = 0, Num = obj.ShopItem.PackageNum };
-            UUIManager.S.CreateWindowAsync<UUIDetail>(ui => ui.Show(item, true));
+            await UUIManager.S.CreateWindowAsync<UUIDetail>(ui => ui.Show(item, true));
         }
 
         private void Buy(ContentTableModel obj)
@@ -142,36 +137,29 @@ namespace Windows
 
             UUIPopup.ShowConfirm(LanguageManager.S["UUIItemShop_Confirm_Title"],
                 LanguageManager.S.Format("UUIItemShop_Confirm_Content", LanguageManager.S[obj.Config.Name]),
-                () => {
+                async () =>
+                {
                     var request = new C2G_BuyItem
                     {
                         ItemId = obj.ShopItem.ItemId,
                         ShopId = obj.Shop.ShopId
                     };
-                    Task.Factory.StartNew(async () =>
+                    var gate = UApplication.G<GMainGate>();
+                    var r = await GateManager.S.GateFunction.BuyItemAsync(request);
+                    if (r.Code.IsOk())
                     {
-                        var gate = UApplication.G<GMainGate>();
-                        var r = await gate.GateFunction.BuyItemAsync(request);
-                        Invoke(() =>
-                        {
-                            if (r.Code.IsOk())
-                            {
-                                UApplication.S.ShowNotify(
-                                    LanguageManager.S.Format(
-                                    "UUIItemShop_BUY",
-                                    LanguageManager.S[$"{obj.Config.Name}"],
-                                    $"{obj.ShopItem.PackageNum}"));
-                            }
-                            else
-                            {
-                                UApplication.S.ShowError(r.Code);
-                            }
-                        });
-                    });
-
-                    
+                        UApplication.S.ShowNotify(
+                            LanguageManager.S.Format(
+                                "UUIItemShop_BUY",
+                                LanguageManager.S[$"{obj.Config.Name}"],
+                                $"{obj.ShopItem.PackageNum}"));
+                    }
+                    else
+                    {
+                        UApplication.S.ShowError(r.Code);
+                    }
                 }
-                );
+            );
         }
 
         protected override void OnHide()
