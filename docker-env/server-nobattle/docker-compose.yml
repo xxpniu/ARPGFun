@@ -4,19 +4,20 @@ services:
     login:
         image: 'game/login:latest'
         ports: 
-            - '3000:9000'
-            - '1100:1800'
+            - '3000:3000'
+            - '1100:1100'
         environment: 
             - DBHOST=$MONGOURL
-            - MAP_LOGIN_SERVICE_PORT=1800
+            - MAP_LOGIN_SERVICE_PORT=1100
             - SERVICE_HOST=${ADDRESS}
             - HOST_NAME=${ADDRESS}
             - ZK_SERVER_LIST=${ZK}
             - KFK_SERVER_LIST=${KAFKA}
+            - MAP_LOGIN_PORT=3000
     gate:
         image: 'game/gate:latest'
         ports:
-            - '2000:2001'
+            - '2000:2000'
             - '1700:1700'
         environment:
             - DBHOST=$MONGOURL
@@ -27,6 +28,8 @@ services:
             - HOST_NAME=${ADDRESS}
             - ZK_SERVER_LIST=${ZK}
             - KFK_SERVER_LIST=${KAFKA}
+            - MAP_GATE_PORT=2000
+            - MAP_GATE_SERVICE_PORT=1700
     notify:
         image: 'game/notify:latest'
         ports: 
@@ -38,11 +41,12 @@ services:
             - HOST_NAME=${ADDRESS}
             - ZK_SERVER_LIST=${ZK}
             - KFK_SERVER_LIST=${KAFKA}
+            - MAP_NOTIFY_SERVICE_PORT=1300
     chat:
         image: 'game/chat:latest'
         ports:  
             - '2200:2200'
-            - '1600:1522'
+            - '1600:1600'
         environment: 
             - DBHOST=$MONGOURL
             - DB_CHAT=chat
@@ -52,6 +56,8 @@ services:
             - HOST_NAME=${ADDRESS}
             - ZK_SERVER_LIST=${ZK}
             - KFK_SERVER_LIST=${KAFKA}
+            - MAP_CHAT_PORT=2200
+            - MAP_CHAT_SERVICE_PORT=1600
         depends_on: 
             - notify           
     match:
@@ -65,5 +71,6 @@ services:
             - HOST_NAME=${ADDRESS}
             - ZK_SERVER_LIST=${ZK}
             - KFK_SERVER_LIST=${KAFKA}
+            - MAP_MATCH_SERVICE_PORT=1500
 
 

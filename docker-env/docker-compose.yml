@@ -1,76 +1,95 @@
 version: '3'
 
 services: 
+    zookeeper:
+        image: 'zookeeper'
+        ports:
+            - '2181:2181'
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+    kafka:
+        image: 'bitnami/kafka'
+        ports:
+            - '9092:9092'
+        environment:
+            - KAFKA_BROKER_ID=1
+            - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+            - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=${ADDRESS}:2181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+        depends_on:
+            - zookeeper
+    gamemongodb:
+        image: 'mongo' 
+        ports:
+            - "27017:27017"  
     login:
         image: 'game/login:latest'
         ports: 
-            - '3000:3000'
-            - '1100:1100'
+            - '9000:9000'
+            - '1800:1800'
         environment: 
-            - DBHOST=$MONGOURL
-            - MAP_LOGIN_SERVICE_PORT=1100
+            - DBHOST=mongodb://${ADDRESS}:27017/
+            - MAP_LOGIN_SERVICE_PORT=1800
             - SERVICE_HOST=${ADDRESS}
             - HOST_NAME=${ADDRESS}
-            - ZK_SERVER_LIST=${ZK}
-            - KFK_SERVER_LIST=${KAFKA}
-            - MAP_LOGIN_PORT=3000
+        depends_on: 
+            - zookeeper    
+            - gamemongodb
     gate:
         image: 'game/gate:latest'
         ports:
-            - '2000:2000'
+            - '2001:2001'
             - '1700:1700'
         environment:
-            - DBHOST=$MONGOURL
+            - DBHOST=mongodb://${ADDRESS}:27017/
             - DB_GATE=gate1
             - SERVERGROUPID=1
             - MAXPLAYER=10000
             - SERVICE_HOST=${ADDRESS}
             - HOST_NAME=${ADDRESS}
-            - ZK_SERVER_LIST=${ZK}
-            - KFK_SERVER_LIST=${KAFKA}
-            - MAP_GATE_PORT=2000
-            - MAP_GATE_SERVICE_PORT=1700
+        depends_on:
+            - zookeeper
+            - gamemongodb
     notify:
         image: 'game/notify:latest'
         ports: 
             - '1300:1300'
         environment: 
-            - DBHOST=$MONGOURL
+            - DBHOST=mongodb://${ADDRESS}:27017/   
             - DB_CHAT=chat
             - SERVICE_HOST=${ADDRESS}
             - HOST_NAME=${ADDRESS}
-            - ZK_SERVER_LIST=${ZK}
-            - KFK_SERVER_LIST=${KAFKA}
-            - MAP_NOTIFY_SERVICE_PORT=1300
+        depends_on: 
+            - gamemongodb
+            - zookeeper
     chat:
         image: 'game/chat:latest'
         ports:  
             - '2200:2200'
-            - '1600:1600'
+            - '1522:1522'
         environment: 
-            - DBHOST=$MONGOURL
+            - DBHOST=mongodb://${ADDRESS}:27017/
             - DB_CHAT=chat
             - MAX_PLAYER=4000
             - SERVERID=1000
             - SERVICE_HOST=${ADDRESS}
             - HOST_NAME=${ADDRESS}
-            - ZK_SERVER_LIST=${ZK}
-            - KFK_SERVER_LIST=${KAFKA}
-            - MAP_CHAT_PORT=2200
-            - MAP_CHAT_SERVICE_PORT=1600
         depends_on: 
-            - notify           
+            - zookeeper
+            - gamemongodb
+            - notify 
     match:
         image: 'game/match:latest'
         ports: 
             - '1500:1500'
         environment: 
-            - DBHOST=$MONGOURL
+            - DBHOST=mongodb://${ADDRESS}:27017/  
             - DB_MATCH=match
             - SERVICE_HOST=${ADDRESS} 
             - HOST_NAME=${ADDRESS}
-            - ZK_SERVER_LIST=${ZK}
-            - KFK_SERVER_LIST=${KAFKA}
-            - MAP_MATCH_SERVICE_PORT=1500
-
+        depends_on: 
+            - zookeeper
+            - gamemongodb
+   
 
