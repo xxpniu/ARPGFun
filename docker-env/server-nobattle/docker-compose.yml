@@ -4,8 +4,8 @@ services:
     login:
         image: 'game/login:latest'
         ports: 
-            - '9000:9000'
-            - '1800:1800'
+            - '3000:9000'
+            - '1100:1800'
         environment: 
             - DBHOST=$MONGOURL
             - MAP_LOGIN_SERVICE_PORT=1800
@@ -16,7 +16,7 @@ services:
     gate:
         image: 'game/gate:latest'
         ports:
-            - '2001:2001'
+            - '2000:2001'
             - '1700:1700'
         environment:
             - DBHOST=$MONGOURL
@@ -42,7 +42,7 @@ services:
         image: 'game/chat:latest'
         ports:  
             - '2200:2200'
-            - '1522:1522'
+            - '1600:1522'
         environment: 
             - DBHOST=$MONGOURL
             - DB_CHAT=chat
