@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using App.Core.Core;
+using Cysharp.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
@@ -99,8 +100,9 @@ namespace UApp
 
             ChatHandleChannel = new ResponseChannel<Any>(LoginCall.ResponseStream, true, tag: "ChatHandle")
             {
-                OnReceived = (any) =>
+                OnReceived = async (any) =>
                 {
+                    await UniTask.SwitchToMainThread();
                     if (any.TryUnpack(out Chat msg))
                     {
                         Debuger.Log($"State:{msg}");

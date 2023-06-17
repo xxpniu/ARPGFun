@@ -29,28 +29,26 @@ namespace MatchServer
                 return false;
             }
 
-            var rnotify = new S2N_RouteSendNotify { };
+            var rNotify = new S2N_RouteSendNotify { }; 
             var any = Any.Pack(notify);
             foreach (var i in player)
             {
                 var msg = new NotifyMsg { AccountID = i, AnyNotify = { any } };
-                rnotify.Msg.Add(msg);
+                rNotify.Msg.Add(msg);
             }
 
 
             var chn = new LogChannel(notifyServer.ServicsHost);
             var query = await chn.CreateClientAsync<NotifyServices.NotifyServicesClient>();
-            var res = await query.RouteSendNotifyAsync(rnotify);
+            var res = await query.RouteSendNotifyAsync(rNotify);
             await chn.ShutdownAsync();
             if (res.Code == ErrorCode.Ok)
             {
                 return true;
             }
-            else
-            {
-                Debuger.LogError("Send notify error");
-                return false;
-            }
+
+            Debuger.LogError("Send notify error");
+            return false;
         }
 
         private async Task<(string id, BattleServerConfig config)> StartBattleServer(IList<string> player, int levelId)

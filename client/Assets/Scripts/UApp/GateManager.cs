@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using App.Core.Core;
+using Cysharp.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
@@ -50,53 +51,59 @@ namespace UApp
             _login = r;
             
             Call = _client.CreateClient<ServerStreamService.ServerStreamServiceClient>()
-                .ServerAnyStream(new Proto.Void(), cancellationToken: _client.ShutdownToken);
+                .ServerAnyStream(new Proto.Void(),
+                    cancellationToken: _client.ShutdownToken);
             
-            HandleChannel = new Stream.ResponseChannel<Any>(Call.ResponseStream, tag: "MainGateHandle")
+            HandleChannel = new Stream.ResponseChannel<Any>(Call.ResponseStream, dontUpload:true, tag: "MainGateHandle")
             {
-                OnReceived = res =>
-                {
-                    Debuger.Log(res);
-                    if (res.TryUnpack(out Task_G2C_SyncHero syncHero))
-                    {
-                        OnSyncHero?.Invoke(syncHero);
-                    }
-                    else if (res.TryUnpack(out Task_G2C_SyncPackage p))
-                    {
-                        OnSyncPackage?.Invoke(p);
-                    }
-                    else if (res.TryUnpack(out Task_ModifyItem item))
-                    {
-                        OnModifyItem?.Invoke(item);
-                    }
-                    else if (res.TryUnpack(out Task_PackageSize size))
-                    {
-                        OnPackageSize?.Invoke(size);
-                    }
-                    else if (res.TryUnpack(out Task_CoinAndGold coin))
-                    {
-                        OnCoinAndGold?.Invoke(coin);
-                    }
-                    else
-                    {
-                        Debuger.LogError($"No handler:{res}");
-                    }
-
-                    UUIManager.S.UpdateUIData();
-                },
-
-                OnDisconnect = () =>
-                {
-                    UApplication.S.GotoLoginGate();
-                    Debuger.LogError($"Disconnect form gate server");
-
-                }
+                OnReceived = HandleOnReceived,
+                OnDisconnect = HandleOnDisconnect
             };
             
 
             return r;
         }
-        
+
+        private async void HandleOnDisconnect()
+        {
+            await UniTask.SwitchToMainThread();
+            var (s, a) = UApplication.TryGet();
+            if(s) a.GotoLoginGate();
+            Debuger.LogError($"Disconnect form gate server");
+        }
+
+        private async void HandleOnReceived(Any res)
+        {
+            await UniTask.SwitchToMainThread();
+            Debuger.Log(res);
+            if (res.TryUnpack(out Task_G2C_SyncHero syncHero))
+            {
+                OnSyncHero?.Invoke(syncHero);
+            }
+            else if (res.TryUnpack(out Task_G2C_SyncPackage p))
+            {
+                OnSyncPackage?.Invoke(p);
+            }
+            else if (res.TryUnpack(out Task_ModifyItem item))
+            {
+                OnModifyItem?.Invoke(item);
+            }
+            else if (res.TryUnpack(out Task_PackageSize size))
+            {
+                OnPackageSize?.Invoke(size);
+            }
+            else if (res.TryUnpack(out Task_CoinAndGold coin))
+            {
+                OnCoinAndGold?.Invoke(coin);
+            }
+            else
+            {
+                Debuger.LogError($"No handler:{res}");
+            }
+
+            UUIManager.S.UpdateUIData();
+        }
+
         public Stream.ResponseChannel<Any> HandleChannel { get; set; }
 
         public AsyncServerStreamingCall<Any> Call { get; set; }

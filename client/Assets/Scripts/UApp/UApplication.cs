@@ -72,7 +72,7 @@ namespace UApp
         public async void GotoBattleGate(GameServerInfo serverInfo, int mapID)
         {
             BattleServer = new ServiceAddress { IpAddress = serverInfo.Host, Port = serverInfo.Port };
-            var gate = await ChangeGate<BattleGate>(BattleServer, mapID);
+            await ChangeGate<BattleGate>(BattleServer, mapID);
         }
 
         private async Task<T> ChangeGate<T>(params object[] args) where T : UGate, new()

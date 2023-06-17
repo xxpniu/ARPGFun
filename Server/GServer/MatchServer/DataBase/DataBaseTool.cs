@@ -167,7 +167,7 @@ namespace DataBase
             }
             var matchGroup = (await MatchGroups.FindAsync(t => t.Uuid == query.Uuid)).FirstOrDefault();
             await ExitBattleServer(accountId);
-            return (matchGroup != null, matchGroup);
+            return (true, matchGroup);
         }
 
         public async Task<bool> ExitBattleServer(string accountId)
@@ -176,10 +176,19 @@ namespace DataBase
             {
                 var filter = Builders<BattleMatchInfo>.Filter.AnyEq(t => t.Players, accountId);
                 var match =( await MatchInfos.FindAsync(filter)).FirstOrDefault();
-                Debuger.Log($"{accountId} Exit {match?.LevelID} by {match?.Uuid}");
+                if (match == null)
+                {
+                    Debuger.Log($"not create battle match info of {accountId}");
+                    return true;
+                }
 
-                var bUpdate = Builders<BattleMatchInfo>.Update.Pull(t => t.Players,accountId);
-                var modify = await MatchInfos.UpdateOneAsync(t=>t.Uuid == match.Uuid, bUpdate);
+                Debuger.Log($"{accountId} Exit {match?.LevelID} by {match?.Uuid}");
+                
+
+                var bUpdate = Builders<BattleMatchInfo>.Update
+                    .Pull(t => t.Players,accountId);
+                var modify = await MatchInfos.UpdateOneAsync(t=>t.Uuid == match.Uuid, 
+                    bUpdate);
                 return modify.ModifiedCount > 0;
             }
             catch (Exception ex)
