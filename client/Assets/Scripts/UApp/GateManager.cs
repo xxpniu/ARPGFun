@@ -51,7 +51,7 @@ namespace UApp
             
             Call = _client.CreateClient<ServerStreamService.ServerStreamServiceClient>()
                 .ServerAnyStream(new Proto.Void(), cancellationToken: _client.ShutdownToken);
-
+            
             HandleChannel = new Stream.ResponseChannel<Any>(Call.ResponseStream, tag: "MainGateHandle")
             {
                 OnReceived = res =>
@@ -92,6 +92,7 @@ namespace UApp
 
                 }
             };
+            
 
             return r;
         }

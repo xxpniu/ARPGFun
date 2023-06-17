@@ -183,7 +183,15 @@ namespace UApp
             }
             if (ChatChannel != null)
             {
-                await ChatChannel.ShutdownAsync()!;
+                try
+                {
+                    await ChatChannel.ShutdownAsync();
+                }
+                catch
+                {
+                    //ignore
+                }
+
                 ChatChannel = null;
             }
 

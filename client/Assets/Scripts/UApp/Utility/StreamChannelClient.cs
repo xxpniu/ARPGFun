@@ -34,12 +34,12 @@ namespace UApp.Utility
 
             private Stream Com { get; }
 
-            public StreamChannel(bool dontupload = false, string Tag = null)
+            public StreamChannel(bool dontUpload = false, string Tag = null)
             {
                 CancellationToken = new CancellationTokenSource();
                 var go = new GameObject(Tag ?? $"Channel_{typeof(TData).Name}");
                 Com = go.AddComponent<Stream>();
-                if (dontupload) DontDestroyOnLoad(go);
+                if (dontUpload) DontDestroyOnLoad(go);
                 Com.UpdateCall = this.OnUpdate;
                 Com.DestroyCall = this.OnDestroy;
                 IsWorking = true;
@@ -96,18 +96,19 @@ namespace UApp.Utility
         public class ResponseChannel<TData> : StreamChannel<TData>
             where TData : IMessage, new()
         {
-            public ResponseChannel(IAsyncStreamReader<TData> call, bool dontupload = false, string tag = null) : base(dontupload, tag)
+            public ResponseChannel(IAsyncStreamReader<TData> call, bool dontUpload = false, string tag = null) : base(dontUpload, tag)
             {
                 this.Call = call;
             }
 
-            public IAsyncStreamReader<TData> Call { get; }
+            private IAsyncStreamReader<TData> Call { get; }
 
-            protected async override Task Process()
+            protected override async Task Process()
             {
                 try
                 {
-                    while (await Call.MoveNext(CancellationToken.Token).ConfigureAwait(false)
+                    while (await Call.MoveNext(CancellationToken.Token)
+                               .ConfigureAwait(false)
                            && Buffer.IsWorking)
                     {
                         Buffer.Push(Call.Current);
@@ -125,7 +126,7 @@ namespace UApp.Utility
 
             protected override void OnUpdate()
             {
-                while (this.Buffer.TryPull(out TData data))
+                while (this.Buffer.TryPull(out var data))
                 {
                     OnReceived?.Invoke(data);
                 }
@@ -142,14 +143,14 @@ namespace UApp.Utility
         public class RequestChannel<TData> : StreamChannel<TData>
             where TData : IMessage, new()
         {
-            public RequestChannel(IAsyncStreamWriter<TData> call, bool dontupload = false, string tag = null) : base(dontupload, tag)
+            public RequestChannel(IAsyncStreamWriter<TData> call, bool dontUpload = false, string tag = null) : base(dontUpload, tag)
             {
                 this.Call = call;
             }
 
-            public IAsyncStreamWriter<TData> Call { get; }
+            private IAsyncStreamWriter<TData> Call { get; }
 
-            private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+            private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
             protected override async Task Process()
             {

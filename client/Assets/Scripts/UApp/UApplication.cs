@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using App.Core.Core;
 using Cysharp.Threading.Tasks;
@@ -7,7 +8,6 @@ using ExcelConfig;
 using Grpc.Core;
 using Proto;
 using UApp.GameGates;
-using UnityEditor;
 using UnityEngine;
 using XNet.Libs.Utility;
 
@@ -142,7 +142,7 @@ namespace UApp
                     ItemID = itemCfg.ID,
                     Level = 10,
                     Locked = true,
-                    GUID = GUID.Generate().ToString(),
+                    GUID = Guid.NewGuid().ToString(),
                     Data = new EquipData
                     {
                         RefreshTime = 10

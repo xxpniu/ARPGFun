@@ -38,7 +38,7 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            ButtonClose.onClick.AddListener(() => HideWindow()) ;
+            ButtonClose.onClick.AddListener(HideWindow) ;
         }
         protected override void OnShow()
         {
@@ -47,7 +47,7 @@ namespace Windows
             var goldItems = ExcelToJSONConfigManager.Find<GoldShopData>();
 
             ContentsTableManager.Count = goldItems.Length;
-            int index = 0;
+            var index = 0;
             foreach (var i in ContentsTableManager)
             {
                 i.Model.SetConfig(goldItems[index]);
