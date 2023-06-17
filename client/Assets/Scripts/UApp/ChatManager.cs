@@ -173,13 +173,13 @@ namespace UApp
             ShowConnect();
         }
 
-        protected override void OnDestroy()
+        protected override async void OnDestroy()
         {
             base.OnDestroy();
-            ChatHandleChannel?.ShutDownAsync(false);
+            await ChatHandleChannel?.ShutDownAsync(false)!;
             LoginCall?.Dispose();
             LoginCall = null;
-            _ = ChatChannel?.ShutdownAsync()!;
+            await ChatChannel?.ShutdownAsync()!;
         }
         public async void SendChat(params Chat[] msg)
         {
