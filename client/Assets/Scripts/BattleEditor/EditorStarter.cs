@@ -202,7 +202,7 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 
     bool IAIRunner.IsRunning(Layout.EventType eventType)
     {
-		return currentReleaser?.IsRuning(eventType) == true;
+		return currentReleaser?.IsRunning(eventType) == true;
     }
 
 	bool IAIRunner.ReleaseMagic(MagicData data)

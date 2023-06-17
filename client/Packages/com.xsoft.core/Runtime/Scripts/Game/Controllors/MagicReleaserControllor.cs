@@ -11,10 +11,16 @@ namespace GameLogic.Game.Controllors
 
 		}
 
+		private bool IsBindAlive(MagicReleaser releaser)
+		{
+			if (releaser.BindLifeCharacter == null) return true;
+			return releaser.BindLifeCharacter.IsAliveAble;
+		}
+
 		public override GAction GetAction(GTime time, GObject current)
 		{
 			var releaser = current as MagicReleaser;
-            releaser.Tick(time);
+            releaser!.Tick(time);
 			switch (releaser.State)
 			{
 				case ReleaserStates.NOStart:
@@ -29,6 +35,12 @@ namespace GameLogic.Game.Controllors
 						releaser.SetState(ReleaserStates.Releasing);
 						releaser.TickTime = 0;
 					}
+
+					if (!IsBindAlive(releaser))
+					{
+						releaser.SetState(ReleaserStates.ToComplete);
+					}
+
 					break;
 				case ReleaserStates.Releasing:
 					{
@@ -43,8 +55,12 @@ namespace GameLogic.Game.Controllors
 							releaser.TickTime += time.DeltaTime;
 							break;
 						}
-
 						if (releaser.IsCompleted)
+						{
+							releaser.SetState(ReleaserStates.ToComplete);
+						}
+						
+						if (!IsBindAlive(releaser))
 						{
 							releaser.SetState(ReleaserStates.ToComplete);
 						}

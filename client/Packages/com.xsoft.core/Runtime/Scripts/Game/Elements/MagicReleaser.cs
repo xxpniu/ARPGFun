@@ -46,8 +46,8 @@ namespace GameLogic.Game.Elements
     public class MagicReleaser : BattleElement<IMagicReleaser>,ICharacterWatcher
     {
         public float TickTime = -1;
-        private readonly List<RevertActionLock> actionReverts = new List<RevertActionLock>();
-        private readonly List<RevertData> reverts = new List<RevertData>();
+        private readonly List<RevertActionLock> _actionReverts = new();
+        private readonly List<RevertData> _reverts = new();
 
         public bool MoveCancel { get; } = false;
 
@@ -76,7 +76,10 @@ namespace GameLogic.Game.Elements
 
         public string MagicKey { private set; get; }
 
-        public BattleCharacter Owner { set; private get; }
+        public BattleCharacter Owner { private set;  get; }
+        
+        //绑定生命周期 buff用
+        public BattleCharacter BindLifeCharacter { get; private set; } 
 
         public float Durtime { set; get; }
 
@@ -86,16 +89,7 @@ namespace GameLogic.Game.Elements
         }
 
         public string[] Params { private set; get; }
-
-        public string this[int paramIndex]
-        {
-            get
-            {
-                if (Params == null) return string.Empty;
-                if (paramIndex < 0 || paramIndex >= Params.Length) return string.Empty;
-                return Params[paramIndex];
-            }
-        }
+        
 
         public ReleaserType RType { private set; get; }
 
@@ -105,14 +99,14 @@ namespace GameLogic.Game.Elements
 
         public ReleaserStates State { private set; get; }
 
-        public int UnitCount { get { return this._objs.Count; } }
+        public int UnitCount => this._objs.Count;
 
         public void SetState(ReleaserStates state)
         {
             State = state;
         }
 
-        private int playerIndex = 0;
+        private int _playerIndex = 0;
 
         public void OnEvent(Layout.EventType eventType, BattleCharacter target = null)
         {
@@ -127,11 +121,11 @@ namespace GameLogic.Game.Elements
                 {
                     var timeLine = i.line ?? per.View.GetTimeLineByPath(i.layoutPath);
                     if (timeLine == null) continue;
-                    playerIndex++;
-                    var player = new TimeLinePlayer(playerIndex, timeLine, this, i, target);
+                    _playerIndex++;
+                    var player = new TimeLinePlayer(_playerIndex, timeLine, this, i, target);
                     _players.AddLast(player);
-                    if (i.line == null) View.PlayTimeLine(playerIndex, index, target.Index, (int)eventType);//for runtime
-                    else View.PlayTest(playerIndex, i.line);
+                    if (i.line == null) View.PlayTimeLine(_playerIndex, index, target.Index, (int)eventType);//for runtime
+                    else View.PlayTest(_playerIndex, i.line);
                     if (i.type == Layout.EventType.EVENT_START)
                     {
                         if (startLayout != null)
@@ -280,13 +274,13 @@ namespace GameLogic.Game.Elements
             }
         }
 
-        public BattleCharacter Releaser { get { return ReleaserTarget.Releaser; } }
+        public BattleCharacter Releaser => ReleaserTarget.Releaser;
 
-        public BattleCharacter Target { get { return ReleaserTarget.ReleaserTarget; } }
+        public BattleCharacter Target => ReleaserTarget.ReleaserTarget;
 
         public int DisposeValue { get; internal set; } = 0;
-        public UnityEngine.Vector3 Position { get { return View.Position; } }
-        public UnityEngine.Quaternion Rotation { get { return View.Rotation; } }
+        public UnityEngine.Vector3 Position => View.Position;
+        public UnityEngine.Quaternion Rotation => View.Rotation;
 
         public void StopAllPlayer()
         {
@@ -294,18 +288,18 @@ namespace GameLogic.Game.Elements
             _players.Clear();
         }
 
-        private readonly HashSet<int> hitList = new HashSet<int>();
+        private readonly HashSet<int> _hitList = new HashSet<int>();
 
         internal bool TryHit(BattleCharacter hit)
         {
-            if (hitList.Contains(hit.Index)) return false;
-            hitList.Add(hit.Index);
+            if (_hitList.Contains(hit.Index)) return false;
+            _hitList.Add(hit.Index);
             return true;
         }
 
         private void ReleaseAll(GObject el)
         {
-            foreach (var i in reverts)
+            foreach (var i in _reverts)
             {
                 if (i.target.Enable)
                 {
@@ -313,7 +307,7 @@ namespace GameLogic.Game.Elements
                 }
             }
 
-            foreach (var i in actionReverts)
+            foreach (var i in _actionReverts)
             {
                 if (i.target.Enable)
                 {
@@ -321,8 +315,8 @@ namespace GameLogic.Game.Elements
                 }
             }
 
-            actionReverts.Clear();
-            reverts.Clear();
+            _actionReverts.Clear();
+            _reverts.Clear();
 
             foreach (var i in _objs)
             {
@@ -346,7 +340,7 @@ namespace GameLogic.Game.Elements
             _objs.Remove(battleCharacter.Index);
         }
 
-        public bool IsRuning(Layout.EventType type)
+        public bool IsRunning(Layout.EventType type)
         {
             foreach (var i in _players)
             {
@@ -360,7 +354,7 @@ namespace GameLogic.Game.Elements
         internal RevertData RevertProperty(BattleCharacter effectTarget, HeroPropertyType property, AddType addType, float addValue)
         {
             var rP = new RevertData { addtype = addType, addValue = addValue, property = property, target = effectTarget };
-            reverts.Add(rP);
+            _reverts.Add(rP);
             return rP;
 
         }
@@ -368,7 +362,7 @@ namespace GameLogic.Game.Elements
         public RevertActionLock RevertLock(BattleCharacter effectTarget, ActionLockType lockType)
         {
             var rLock = new RevertActionLock { target = effectTarget, type = lockType };
-            actionReverts.Add(rLock);
+            _actionReverts.Add(rLock);
             return rLock;
         }
 
@@ -432,6 +426,15 @@ namespace GameLogic.Game.Elements
             if (index < 0) return 0;
             if (int.TryParse(this.Params[index], out var v)) return v;
             return 0;
+        }
+
+        /// <summary>
+        /// 绑定一个对象的生命周期 如果消失就结束技能
+        /// </summary>
+        /// <param name="lifeCharacter"></param>
+        public void BindCharacter(BattleCharacter lifeCharacter)
+        {
+            BindLifeCharacter = lifeCharacter;
         }
     }
 }
