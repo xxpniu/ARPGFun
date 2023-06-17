@@ -6,6 +6,7 @@ using Proto;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utility;
+using XNet.Libs.Utility;
 
 namespace UApp.GameGates
 {
@@ -52,23 +53,37 @@ namespace UApp.GameGates
 
         public async Task<L2C_Login> DoLogin(string userName, string pwd, Action<L2C_Login> callback = default)
         {
-            var channel = new LogChannel(UApplication.S.LoginServer);
-
-            var req = new C2L_Login
+            try
             {
-                Password = pwd,
-                UserName = userName,
-                Version =0
-            };
+                var channel = new LogChannel(UApplication.S.LoginServer);
 
-            Debug.Log($"Request:{req}");
-            var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
-            var r = await client.LoginAsync(req,
-                deadline: DateTime.UtcNow.AddSeconds(10));
-            await channel.ShutdownAsync();
-            await UniTask.Yield();
-            callback?.Invoke(r);
-            return r;
+                var req = new C2L_Login
+                {
+                    Password = pwd,
+                    UserName = userName,
+                    Version = 0
+                };
+
+                Debug.Log($"Request:{req}");
+                var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
+                var r = await client.LoginAsync(req,
+                    deadline: DateTime.UtcNow.AddSeconds(10));
+                await channel.ShutdownAsync();
+                await UniTask.Yield();
+                callback?.Invoke(r);
+                return r;
+            }
+            catch(Exception ex)
+            {
+                var res = new L2C_Login
+                {
+                    Code = ErrorCode.Error
+                };
+                Debug.LogException(ex);
+                callback?.Invoke(res);
+
+                return res;
+            }
         }
     }
 }

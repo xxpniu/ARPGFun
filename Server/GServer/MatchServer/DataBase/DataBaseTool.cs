@@ -165,7 +165,8 @@ namespace DataBase
             {
                 await MatchGroups.DeleteOneAsync(t => t.Uuid == query.Uuid);
             }
-            var matchGroup = (await MatchGroups.FindAsync(t => t.Uuid == query.Uuid)).FirstOrDefault();
+            var matchGroup = (await MatchGroups.FindAsync(t => t.Uuid == query.Uuid))
+                .FirstOrDefault() ??group ;
             await ExitBattleServer(accountId);
             return (true, matchGroup);
         }
