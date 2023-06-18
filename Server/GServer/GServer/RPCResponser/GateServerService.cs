@@ -307,8 +307,9 @@ namespace GServer.RPCResponsor
             {
                 return new G2C_Login { Code = ErrorCode.Error };
             }
+            
             var player = await DataBase.S.Playes.FindOneAndUpdateAsync(t => t.AccountUuid == request.UserID,
-                Builders<GamePlayerEntity>.Update.Set(t => t.LastIp, context.Host ?? string.Empty));
+                Builders<GamePlayerEntity>.Update.Set(t => t.LastIp, context.Peer ?? string.Empty));
 
             if (!(await context.WriteSession(request.UserID, Application.S.ListenServer)))
                 return new G2C_Login();
