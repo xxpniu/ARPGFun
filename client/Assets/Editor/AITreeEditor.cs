@@ -163,13 +163,17 @@ public class AITreeEditor : EditorWindow
     public void OnGUI()
     {
         Repaint();
-        var guiSty = new GUIStyle();
-        guiSty.normal.textColor = Color.yellow;
-        guiSty.alignment = TextAnchor.MiddleRight;
-        var title = string.Format("s:{0:0.0} p:x={1:0.0} y={2:0.0} type:{3}",
-              scale, offsetPos.x, offsetPos.y, Event.current.type);
+        var guiSty = new GUIStyle
+        {
+            normal =
+            {
+                textColor = Color.yellow
+            },
+            alignment = TextAnchor.MiddleRight
+        };
+        var text = $"s:{scale:0.0} p:x={offsetPos.x:0.0} y={offsetPos.y:0.0} type:{Event.current.type}";
 
-        GUI.Label(new Rect(this.position.width - 300, 0, 150, 20), title, guiSty);
+        GUI.Label(new Rect(this.position.width - 300, 0, 150, 20), text, guiSty);
 
         //Debug.Log(title);
 
@@ -207,7 +211,7 @@ public class AITreeEditor : EditorWindow
 
 
         if (currentDrag == null
-            && Event.current.type == EventType.MouseDrag && BeginDraging)
+            && Event.current.type == EventType.MouseDrag && _beginDraging)
         {
             offsetPos += Event.current.delta;
             Event.current.Use();
@@ -215,17 +219,17 @@ public class AITreeEditor : EditorWindow
 
         if (currentDrag == null && Event.current.type == EventType.MouseDown)
         {
-            BeginDraging = true;
+            _beginDraging = true;
             //Event.current.Use();
         }
 
         
     }
 
-    private bool BeginDraging = false;
+    private bool _beginDraging = false;
     private void ResetDrag()
     {
-        BeginDraging = false;
+        _beginDraging = false;
     }
 
 

@@ -55,7 +55,7 @@ namespace BehaviorTree
 
         public RunStatus? LastStatus { private set; get; }
 
-        private readonly Dictionary<string, object> _attachVariables = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> _attachVariables = new();
 
         public virtual Composite FindGuid(string id)
         {

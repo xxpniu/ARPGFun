@@ -14,12 +14,14 @@ public class UCharacterViewEditor : Editor
 	{
 		EditorGUILayout.BeginVertical();
 		var uCharacterView = this.target as UCharacterView;
+		
 		if (GUILayout.Button("View AI Tree"))
 		{
 			var window = EditorWindow.GetWindow<AITreeEditor>();
 			if (window == null) return;
 			if (uCharacterView!.GElement is not BattleCharacter character) return;
 			var root = character.AiRoot;
+			
 			if (root == null)
 			{
 				EditorUtility.DisplayDialog("Failure", "Current character no ai tree", "OK");
@@ -31,11 +33,15 @@ public class UCharacterViewEditor : Editor
 				AIRunner.Current?.Attach(character);
 			}
 		}
+		
+		
 		if (GUILayout.Button("Kill"))
 		{
 			if (uCharacterView!.GElement is not BattleCharacter character) return;
 			character.SubHP(character.MaxHP,out _);
 		}
+		
+		
 
 		showProperties = EditorGUILayout.Toggle("Display Properties", showProperties);
 		if (showProperties)

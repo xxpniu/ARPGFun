@@ -11,6 +11,11 @@
         <max>100</max>
         <type>Fixed</type>
       </distance>
+      <ValueMul>
+        <min>10000</min>
+        <max>10000</max>
+        <type>Fixed</type>
+      </ValueMul>
       <compareType>Less</compareType>
     </TreeNode>
     <TreeNode xsi:type="TreeNodeParallelSelector">
@@ -29,6 +34,11 @@
                     <max>0</max>
                     <type>Fixed</type>
                   </Distance>
+                  <ValueMul>
+                    <min>10000</min>
+                    <max>10000</max>
+                    <type>Fixed</type>
+                  </ValueMul>
                   <View>
                     <min>360</min>
                     <max>360</max>
@@ -47,7 +57,7 @@
           </childs>
           <name>战斗事件</name>
           <guid>e6e388cb-b07a-4d59-94ad-6a1e03cb8e0d</guid>
-          <eventType>TeamBeAttack</eventType>
+          <DiType>1</DiType>
         </TreeNode>
         <TreeNode xsi:type="TreeNodeCd">
           <childs>
@@ -123,6 +133,11 @@
                     <max>0</max>
                     <type>Fixed</type>
                   </Distance>
+                  <ValueMul>
+                    <min>10000</min>
+                    <max>10000</max>
+                    <type>Fixed</type>
+                  </ValueMul>
                   <View>
                     <min>360</min>
                     <max>360</max>
@@ -144,6 +159,11 @@
                     <max>0</max>
                     <type>Fixed</type>
                   </Distance>
+                  <ValueMul>
+                    <min>10000</min>
+                    <max>10000</max>
+                    <type>Fixed</type>
+                  </ValueMul>
                   <View>
                     <min>160</min>
                     <max>360</max>
