@@ -143,7 +143,7 @@ namespace BattleViews.Views
         }
         #endregion
 
-        public string accoundUuid = string.Empty;
+        public string accountUuid = string.Empty;
         public const string TopBone = "Top";
         public const string BodyBone = "Body";
         public const string BottomBone = "Bottom";
@@ -151,7 +151,7 @@ namespace BattleViews.Views
         private const string DieMotion = "Die";
         private Animator _characterAnimator;
 
-        private readonly Dictionary<int, HeroMagicData> _magicCds = new Dictionary<int, HeroMagicData>();
+        private readonly Dictionary<int, HeroMagicData> _magicCds = new();
 
         void Update()
         {
@@ -181,23 +181,23 @@ namespace BattleViews.Views
         
         }
 
-        private readonly List<TimeLineViewPlayer> timeLinePlayers = new List<TimeLineViewPlayer>();
+        private readonly List<TimeLineViewPlayer> _timeLinePlayers = new List<TimeLineViewPlayer>();
 
         internal void AttachLayoutView(TimeLineViewPlayer timeLineViewPlayer)
         {
-            timeLinePlayers.Add(timeLineViewPlayer);
+            _timeLinePlayers.Add(timeLineViewPlayer);
         }
 
         internal void DeAttachLayoutView(TimeLineViewPlayer timeLineViewPlayer)
         {
-            timeLinePlayers.Remove(timeLineViewPlayer);
+            _timeLinePlayers.Remove(timeLineViewPlayer);
         }
 
         public bool InStartLayout
         {
             get
             {
-                foreach (var i in timeLinePlayers)
+                foreach (var i in _timeLinePlayers)
                 {
                     if (i.RView.RMType != ReleaserModeType.RmtMagic) continue;
                     if (i.EventType == Layout.EventType.EVENT_START) return true;
@@ -212,7 +212,7 @@ namespace BattleViews.Views
             return this.transform.position + forward * Speed * .4f;
         }
 
-        public CharacterMoveState State;
+        private CharacterMoveState State;
 
         private T ChangeState<T>(T s) where T : CharacterMoveState
         {
@@ -254,17 +254,16 @@ namespace BattleViews.Views
             _agent.obstacleAvoidanceType =ObstacleAvoidanceType.NoObstacleAvoidance;
             _agent.speed = Speed;
         }
+        
 
         private void OnTriggerEnter(Collider other)
         {
             var view = other.GetComponent<UCharacterView>();
             if (view == null) return;
-            if (GElement is BattleCharacter o)
+            if (GElement is not BattleCharacter o) return;
+            if (view.GElement is BattleCharacter ot)
             {
-                if (view.GElement is BattleCharacter ot)
-                {
-                    o.HitOther(ot);
-                }
+                o.HitOther(ot);
             }
         }
 
@@ -286,7 +285,7 @@ namespace BattleViews.Views
         private NavMeshAgent _agent;
         public string lastMotion =string.Empty;
         private float _last = 0;
-        private readonly Dictionary<string ,Transform > bones = new Dictionary<string, Transform>();
+        private readonly Dictionary<string ,Transform > _bones = new Dictionary<string, Transform>();
         public float damping  = 5;
         public Quaternion targetLookQuaternion;
         public Quaternion LookQuaternion
@@ -295,17 +294,13 @@ namespace BattleViews.Views
             {
                 if (_viewRoot) _viewRoot.transform.rotation = value;
             }
-            get
-            {
-                if (_viewRoot) return _viewRoot.transform.rotation;
-                return Quaternion.identity;
-            }
+            get => _viewRoot ? _viewRoot.transform.rotation : Quaternion.identity;
         }
 
         public Transform GetBoneByName(string boneName)
         {
             if (!this || !transform) return null;
-            return bones.TryGetValue(boneName, out var bone) ? bone : transform;
+            return _bones.TryGetValue(boneName, out var bone) ? bone : transform;
         }
 
         private GameObject _viewRoot;
@@ -317,17 +312,17 @@ namespace BattleViews.Views
         {
             _viewRoot = root;
             //bones.Add(ViewRootBone, ViewRoot);
-            bones.Add(RootBone, _viewRoot.transform);
+            _bones.Add(RootBone, _viewRoot.transform);
             var gameTop = new GameObject("__Top");
             gameTop.transform.SetParent(this.transform);
-            bones.Add(TopBone, gameTop.transform);
+            _bones.Add(TopBone, gameTop.transform);
 
             var bottom = new GameObject("__Bottom");
             bottom.transform.SetParent(this.transform, false);
-            bones.Add(BottomBone, bottom.transform);
+            _bones.Add(BottomBone, bottom.transform);
             var body = new GameObject("__Body");
             body.transform.SetParent(this.transform, false);
-            bones.Add(BodyBone, body.transform);
+            _bones.Add(BodyBone, body.transform);
 
             if (HP == 0) { PlayMotion(DieMotion); IsDeath = true; };
             await (Init(path));
@@ -349,7 +344,7 @@ namespace BattleViews.Views
 
             var height = 1f;
             var radius = .5f;
-            int direction = 1;
+            var direction = 1;
             var center = new Vector3(0, 0.5f, 0);
             if (capsuleCollider)
             {
@@ -357,6 +352,7 @@ namespace BattleViews.Views
                 radius = capsuleCollider.radius;
                 center = capsuleCollider.center;
                 direction = capsuleCollider.direction;
+                capsuleCollider.enabled = false;
             }
 
             character.transform.SetLayer(this._viewRoot.layer);
@@ -651,7 +647,7 @@ namespace BattleViews.Views
             var createNotity = new Notify_CreateBattleCharacter
             {
                 Index = Index,
-                AccountUuid = this.accoundUuid,
+                AccountUuid = this.accountUuid,
                 ConfigID = ConfigID,
                 Position = transform.position.ToPVer3(),
                 Forward = LookQuaternion.eulerAngles.ToPVer3(),
