@@ -38,12 +38,11 @@ namespace App.Core.Core
 			where T : Object
 		{
 			var res = $"Assets/AssetRes/{path}";
-			Debuger.Log($"Load:{res}");
+			//Debuger.Log($"Load:{res}");
 			token?.ThrowIfCancellationRequested();
 			var asset = Addressables.LoadAssetAsync<T>(res);
 			await asset.Task;
 			token?.ThrowIfCancellationRequested();
-			//if (token?.IsCancellationRequested == true) return null;
 			call?.Invoke(asset.Result);
 			return asset.Result;
 		}
@@ -53,7 +52,7 @@ namespace App.Core.Core
 		public string ReadStreamingFile(string fileName)
 		{
 			var path = Path.Combine(Application.streamingAssetsPath, fileName);
-			Debuger.Log($"Streaming->{path}");
+			//Debuger.Log($"Streaming->{path}");
 			return File.ReadAllText(path);
 		}
 
@@ -97,7 +96,7 @@ namespace App.Core.Core
 		public AsyncOperationHandle<SceneInstance> LoadLevelAsync(BattleLevelData map)
 		{
 			var path = $"Assets/Levels/{map.LevelName}.unity";
-			Debuger.Log(path);
+			//Debuger.Log(path);
 			return Addressables.LoadSceneAsync(path);
 		}
 	}

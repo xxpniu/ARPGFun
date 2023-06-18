@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
@@ -37,6 +38,9 @@ namespace GServer.MongoTool
             public int Num { set; get; }
 
             public bool IsLock { set; get; }
+            
+            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+            public DateTime CreateTime { set; get; }
             
             public PackageEquip EquipData { set; get; }
         }
