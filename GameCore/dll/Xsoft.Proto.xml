@@ -5363,56 +5363,6 @@
             章节
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.SceneID">
-            <summary>
-            场景id
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.Level">
-            <summary>
-            Level
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.Distance">
-            <summary>
-            出怪间隔
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.Num">
-            <summary>
-            怪物N值
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.Len">
-            <summary>
-            关卡长度(cm)
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.PMin">
-            <summary>
-            最小概率
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.PInc">
-            <summary>
-            概率上涨
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.BossID">
-            <summary>
-            boss
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.EliteWeight">
-            <summary>
-            精英怪权重
-            </summary>
-        </member>
-        <member name="P:EConfig.BattleLevelData.BossEliteWeight">
-            <summary>
-            boss权重
-            </summary>
-        </member>
         <member name="P:EConfig.BattleLevelData.LimitTime">
             <summary>
             最大挑战时间秒
