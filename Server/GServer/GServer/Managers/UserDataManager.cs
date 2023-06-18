@@ -684,7 +684,8 @@ namespace GServer.Managers
                         Id = i.ItemID,
                         IsLock = i.Locked,
                         Level = i.Level,
-                        Num = add
+                        Num = add,
+                        CreateTime = DateTime.UtcNow
                     };
                     adds.Add(itemNum);
                 }
