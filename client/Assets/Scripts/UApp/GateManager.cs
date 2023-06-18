@@ -30,10 +30,15 @@ namespace UApp
         private G2C_Login _login  = null;
         public async Task<G2C_Login> TryToConnectedGateServer(ServiceAddress serverInfo)
         {
+            if (_login is { HavePlayer: false })
+            {
+                await Release();
+            }
+            if (_login != null) return _login;
+            
             host = serverInfo.IpAddress;
             port = serverInfo.Port;
-            await Release();
-            
+
             var serverIP = $"{serverInfo.IpAddress}:{serverInfo.Port}";
             Debuger.Log($"Gat:{serverIP}");
             _client = new LogChannel(serverIP, ChannelCredentials.Insecure);

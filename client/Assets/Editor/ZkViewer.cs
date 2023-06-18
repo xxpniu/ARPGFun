@@ -11,9 +11,9 @@ using UnityEngine;
 
 public class ZkViewer : EditorWindow
 {
-    public class ZKWatcher : Watcher
+    private class ZkWatcher : Watcher
     {
-        public async override Task process(WatchedEvent @event)
+        public override async Task process(WatchedEvent @event)
         {
             Debug.Log($"{@event}");
             await Task.CompletedTask;
@@ -68,7 +68,7 @@ public class ZkViewer : EditorWindow
             if (GUILayout.Button("Connect"))
             {
                 zk?.closeAsync();
-                zk = new ZooKeeper(Host, 3000, new ZKWatcher());
+                zk = new ZooKeeper(Host, 3000, new ZkWatcher());
                 Root = new ZkTreeNode() { Path = "/" };
                 _= Task.Factory.StartNew(()=> LoadChildAsync(Root));
             }

@@ -19,8 +19,8 @@ namespace App.Core.Core
         }
       
 
-        private static readonly JsonParser parser = new JsonParser(JsonParser.Settings.Default.WithIgnoreUnknownFields(true));
-        private static readonly JsonFormatter format = new JsonFormatter(JsonFormatter.Settings.Default.WithFormatEnumsAsIntegers(true).WithFormatDefaultValues(true));
+        private static readonly JsonParser parser = new (JsonParser.Settings.Default.WithIgnoreUnknownFields(true));
+        private static readonly JsonFormatter format = new (JsonFormatter.Settings.Default.WithFormatEnumsAsIntegers(true).WithFormatDefaultValues(true));
 
         public static string ToJson<T>(this T msg) where T : IMessage, new()
         {

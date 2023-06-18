@@ -382,8 +382,8 @@ namespace BattleViews.Views
             var view = viewRoot.AddComponent<UParticlePlayer>();
             view.Path = layout.path;
             var viewRelease = releaser as UMagicReleaserView;
-            var viewTarget = viewRelease!.CharacterTarget as UCharacterView;
-            var characterView = viewRelease.CharacterReleaser as UCharacterView;
+            var viewTarget = viewRelease!.CharacterTarget;
+            var characterView = viewRelease.CharacterReleaser;
             var eventView = eventTarget as UCharacterView;
             var bind = layout.Bind;
             UCharacterView form =null;
