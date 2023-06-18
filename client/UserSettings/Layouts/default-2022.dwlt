@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: 520
-    y: 60
-    width: 747
-    height: 653
+    x: 300
+    y: 200
+    width: 700
+    height: 421
   m_ShowMode: 0
-  m_Title: NuGet
+  m_Title: Magic Editor
   m_RootView: {fileID: 4}
-  m_MinSize: {x: 100, y: 121}
+  m_MinSize: {x: 400, y: 321}
   m_MaxSize: {x: 4000, y: 4021}
   m_Maximized: 0
 --- !u!114 &2
@@ -43,11 +43,11 @@ MonoBehaviour:
     width: 1440
     height: 773
   m_ShowMode: 4
-  m_Title: Console
-  m_RootView: {fileID: 9}
+  m_Title: Game
+  m_RootView: {fileID: 5}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
-  m_Maximized: 0
+  m_Maximized: 1
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -58,16 +58,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: NugetWindow
+  m_Name: MagicEditorWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 747
-    height: 653
-  m_MinSize: {x: 100, y: 121}
+    width: 700
+    height: 421
+  m_MinSize: {x: 400, y: 321}
   m_MaxSize: {x: 4000, y: 4021}
   m_ActualView: {fileID: 15}
   m_Panes:
@@ -92,117 +92,13 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 747
-    height: 653
-  m_MinSize: {x: 100, y: 121}
+    width: 700
+    height: 421
+  m_MinSize: {x: 400, y: 321}
   m_MaxSize: {x: 4000, y: 4021}
   vertical: 0
-  controlID: 5392
+  controlID: 14287
 --- !u!114 &5
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Children:
-  - {fileID: 12}
-  - {fileID: 6}
-  m_Position:
-    serializedVersion: 2
-    x: 0
-    y: 30
-    width: 1440
-    height: 723
-  m_MinSize: {x: 300, y: 100}
-  m_MaxSize: {x: 24288, y: 16192}
-  vertical: 0
-  controlID: 20
---- !u!114 &6
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: InspectorWindow
-  m_EditorClassIdentifier: 
-  m_Children: []
-  m_Position:
-    serializedVersion: 2
-    x: 929
-    y: 0
-    width: 511
-    height: 723
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_ActualView: {fileID: 17}
-  m_Panes:
-  - {fileID: 17}
-  m_Selected: 0
-  m_LastSelected: 0
---- !u!114 &7
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Children: []
-  m_Position:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 227
-    height: 320
-  m_MinSize: {x: 201, y: 221}
-  m_MaxSize: {x: 4001, y: 4021}
-  m_ActualView: {fileID: 18}
-  m_Panes:
-  - {fileID: 18}
-  m_Selected: 0
-  m_LastSelected: 0
---- !u!114 &8
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: ConsoleWindow
-  m_EditorClassIdentifier: 
-  m_Children: []
-  m_Position:
-    serializedVersion: 2
-    x: 0
-    y: 320
-    width: 929
-    height: 403
-  m_MinSize: {x: 101, y: 121}
-  m_MaxSize: {x: 4001, y: 4021}
-  m_ActualView: {fileID: 21}
-  m_Panes:
-  - {fileID: 16}
-  - {fileID: 21}
-  m_Selected: 1
-  m_LastSelected: 0
---- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -215,9 +111,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Children:
-  - {fileID: 10}
-  - {fileID: 5}
-  - {fileID: 11}
+  - {fileID: 6}
+  - {fileID: 8}
+  - {fileID: 7}
   m_Position:
     serializedVersion: 2
     x: 0
@@ -230,7 +126,7 @@ MonoBehaviour:
   m_TopViewHeight: 30
   m_UseBottomView: 1
   m_BottomViewHeight: 20
---- !u!114 &10
+--- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -252,7 +148,7 @@ MonoBehaviour:
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
   m_LastLoadedLayoutName: 
---- !u!114 &11
+--- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -273,6 +169,107 @@ MonoBehaviour:
     height: 20
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
+--- !u!114 &8
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children:
+  - {fileID: 9}
+  - {fileID: 14}
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 30
+    width: 1440
+    height: 723
+  m_MinSize: {x: 300, y: 100}
+  m_MaxSize: {x: 24288, y: 16192}
+  vertical: 0
+  controlID: 1006
+--- !u!114 &9
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children:
+  - {fileID: 10}
+  - {fileID: 13}
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1000
+    height: 723
+  m_MinSize: {x: 200, y: 100}
+  m_MaxSize: {x: 16192, y: 16192}
+  vertical: 1
+  controlID: 936
+--- !u!114 &10
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children:
+  - {fileID: 11}
+  - {fileID: 12}
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1000
+    height: 456
+  m_MinSize: {x: 200, y: 50}
+  m_MaxSize: {x: 16192, y: 8096}
+  vertical: 0
+  controlID: 973
+--- !u!114 &11
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 391.5
+    height: 456
+  m_MinSize: {x: 201, y: 221}
+  m_MaxSize: {x: 4001, y: 4021}
+  m_ActualView: {fileID: 16}
+  m_Panes:
+  - {fileID: 16}
+  m_Selected: 0
+  m_LastSelected: 0
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -282,22 +279,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 1
-  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: SceneView
   m_EditorClassIdentifier: 
-  m_Children:
-  - {fileID: 13}
-  - {fileID: 8}
+  m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 0
+    x: 391.5
     y: 0
-    width: 929
-    height: 723
-  m_MinSize: {x: 200, y: 100}
-  m_MaxSize: {x: 16192, y: 16192}
-  vertical: 1
-  controlID: 21
+    width: 608.5
+    height: 456
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_ActualView: {fileID: 17}
+  m_Panes:
+  - {fileID: 17}
+  - {fileID: 18}
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -307,22 +306,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 1
-  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: ConsoleWindow
   m_EditorClassIdentifier: 
-  m_Children:
-  - {fileID: 7}
-  - {fileID: 14}
+  m_Children: []
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 0
-    width: 929
-    height: 320
-  m_MinSize: {x: 200, y: 50}
-  m_MaxSize: {x: 16192, y: 8096}
-  vertical: 0
-  controlID: 22
+    y: 456
+    width: 1000
+    height: 267
+  m_MinSize: {x: 101, y: 121}
+  m_MaxSize: {x: 4001, y: 4021}
+  m_ActualView: {fileID: 20}
+  m_Panes:
+  - {fileID: 19}
+  - {fileID: 20}
+  m_Selected: 1
+  m_LastSelected: 0
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -333,23 +334,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: GameView
+  m_Name: InspectorWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 227
+    x: 1000
     y: 0
-    width: 702
-    height: 320
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
-  m_ActualView: {fileID: 20}
+    width: 440
+    height: 723
+  m_MinSize: {x: 276, y: 71}
+  m_MaxSize: {x: 4001, y: 4021}
+  m_ActualView: {fileID: 21}
   m_Panes:
-  - {fileID: 19}
-  - {fileID: 20}
-  m_Selected: 1
-  m_LastSelected: 1
+  - {fileID: 21}
+  m_Selected: 0
+  m_LastSelected: 0
 --- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -359,21 +359,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bcf6ea9ed8fc4074da149ff7d600ca45, type: 3}
+  m_Script: {fileID: 11500000, guid: 61bdea04e899e4dfc92d8635387eba3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MinSize: {x: 100, y: 100}
+  m_MinSize: {x: 400, y: 300}
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
-    m_Text: NuGet
+    m_Text: Magic Editor
     m_Image: {fileID: 0}
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 520
-    y: 60
-    width: 747
-    height: 632
+    x: 300
+    y: 200
+    width: 700
+    height: 400
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -384,743 +384,7 @@ MonoBehaviour:
     m_LastAppliedPresetName: Default
     m_SaveData: []
     m_OverlaysVisible: 1
-  availablePackages:
-  - Id: Grpc
-    Version: 2.46.6
-    Authors: The gRPC Authors
-    Description: Metapackage for gRPC C#
-    DownloadCount: 32769080
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc/2.46.6
-    icon: {fileID: 0}
-    IconUrl: 
-    LicenseUrl: https://www.nuget.org/packages/Grpc/2.46.6/license
-    ProjectUrl: https://github.com/grpc/grpc
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc
-  - Id: Grpc.Core.Api
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: gRPC C# Surface API
-    DownloadCount: 170540416
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Core.Api/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.core.api/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Core.Api/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Core.Api
-  - Id: Grpc.Core
-    Version: 2.46.6
-    Authors: The gRPC Authors
-    Description: 'C# implementation of gRPC based on native gRPC C-core library.
-
-
-      Note
-      that the Grpc.Core implementation of gRPC for C# is in maintenance mode and
-      will be replaced by grpc-dotnet in the future.
-
-      See https://grpc.io/blog/grpc-csharp-future/
-      for details.'
-    DownloadCount: 87689474
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Core/2.46.6
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.core/2.46.6/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Core/2.46.6/license
-    ProjectUrl: https://github.com/grpc/grpc
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Core
-  - Id: Grpc.Net.Common
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: Infrastructure for common functionality in gRPC
-    DownloadCount: 90638293
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Net.Common/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.net.common/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Net.Common/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Net.Common
-  - Id: Grpc.Net.Client
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: .NET client for gRPC
-    DownloadCount: 83722273
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Net.Client/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.net.client/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Net.Client/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Net.Client
-  - Id: Grpc.Tools
-    Version: 2.54.0
-    Authors: The gRPC Authors
-    Description: gRPC and Protocol Buffer compiler for C# projects
-    DownloadCount: 60194493
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Tools/2.54.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.tools/2.54.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Tools/2.54.0/license
-    ProjectUrl: https://github.com/grpc/grpc
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Tools
-  - Id: Grpc.Net.ClientFactory
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: HttpClientFactory integration the for gRPC .NET client
-    DownloadCount: 44350133
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Net.ClientFactory/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.net.clientfactory/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Net.ClientFactory/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Net.ClientFactory
-  - Id: Grpc.Auth
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: gRPC C# Authentication Library
-    DownloadCount: 37689795
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Auth/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.auth/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Auth/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Auth
-  - Id: Grpc.AspNetCore.Server
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: gRPC support for ASP.NET Core
-    DownloadCount: 38072182
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.AspNetCore.Server/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.aspnetcore.server/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.AspNetCore.Server/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.AspNetCore.Server
-  - Id: Grpc.AspNetCore
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: gRPC meta-package for ASP.NET Core
-    DownloadCount: 26776764
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.AspNetCore/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.aspnetcore/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.AspNetCore/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.AspNetCore
-  - Id: Grpc.AspNetCore.Server.ClientFactory
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: HttpClientFactory integration the for gRPC .NET client when running
-      in ASP.NET Core
-    DownloadCount: 28280170
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.AspNetCore.Server.ClientFactory/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.aspnetcore.server.clientfactory/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.AspNetCore.Server.ClientFactory/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.AspNetCore.Server.ClientFactory
-  - Id: Google.Api.Gax.Grpc
-    Version: 4.4.0
-    Authors: Google LLC
-    Description: Additional support classes for Google gRPC API client libraries
-    DownloadCount: 37658732
-    DownloadUrl: https://www.nuget.org/api/v2/package/Google.Api.Gax.Grpc/4.4.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/google.api.gax.grpc/4.4.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Google.Api.Gax.Grpc/4.4.0/license
-    ProjectUrl: https://github.com/googleapis/gax-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Google gRPC API Extensions
-  - Id: Google.Api.Gax.Grpc.GrpcCore
-    Version: 3.7.0
-    Authors: Google LLC
-    Description: Implementation of the GAX GrpcAdapter abstract class based on Grpc.Core
-    DownloadCount: 17228475
-    DownloadUrl: https://www.nuget.org/api/v2/package/Google.Api.Gax.Grpc.GrpcCore/3.7.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/google.api.gax.grpc.grpccore/3.7.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Google.Api.Gax.Grpc.GrpcCore/3.7.0/license
-    ProjectUrl: https://github.com/googleapis/gax-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Core bridge Google.Api.Gax.Grpc
-  - Id: Grpc.Reflection
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: gRPC C# Server Reflection
-    DownloadCount: 5535124
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Reflection/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.reflection/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Reflection/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Reflection
-  - Id: Grpc.HealthCheck
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: gRPC C# Health Checking
-    DownloadCount: 5707265
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.HealthCheck/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.healthcheck/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.HealthCheck/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.HealthCheck
-  - Id: Grpc.Core.Testing
-    Version: 2.46.6
-    Authors: The gRPC Authors
-    Description: 'Miscellaneous code for testing Grpc.Core
-
-
-      Note that the
-      Grpc.Core implementation of gRPC for C# is in maintenance mode and will be
-      replaced by grpc-dotnet in the future.
-
-      See https://grpc.io/blog/grpc-csharp-future/
-      for details.'
-    DownloadCount: 4618482
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Core.Testing/2.46.6
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.core.testing/2.46.6/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Core.Testing/2.46.6/license
-    ProjectUrl: https://github.com/grpc/grpc
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Core.Testing
-  - Id: Grpc.AspNetCore.Server.Reflection
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: Automatic discovery of services for Grpc.Reflection
-    DownloadCount: 4511792
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.AspNetCore.Server.Reflection/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.aspnetcore.server.reflection/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.AspNetCore.Server.Reflection/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.AspNetCore.Server.Reflection
-  - Id: protobuf-net.Grpc
-    Version: 1.1.1
-    Authors: Marc Gravell
-    Description: Package Description
-    DownloadCount: 3994136
-    DownloadUrl: https://www.nuget.org/api/v2/package/protobuf-net.Grpc/1.1.1
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/protobuf-net.grpc/1.1.1/icon
-    LicenseUrl: https://www.nuget.org/packages/protobuf-net.Grpc/1.1.1/license
-    ProjectUrl: https://github.com/protobuf-net/protobuf-net.Grpc
-    ReleaseNotes: https://protobuf-net.github.io/protobuf-net.Grpc/releasenotes#
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: protobuf-net.Grpc
-  - Id: Grpc.Net.Client.Web
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: Adds gRPC-Web support to .NET client for gRPC
-    DownloadCount: 2686329
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Net.Client.Web/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.net.client.web/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.Net.Client.Web/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Net.Client.Web
-  - Id: Grpc.AspNetCore.Web
-    Version: 2.53.0
-    Authors: The gRPC Authors
-    Description: gRPC-Web support for ASP.NET Core
-    DownloadCount: 2971339
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.AspNetCore.Web/2.53.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/grpc.aspnetcore.web/2.53.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Grpc.AspNetCore.Web/2.53.0/license
-    ProjectUrl: https://github.com/grpc/grpc-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.AspNetCore.Web
-  - Id: Elastic.Apm.GrpcClient
-    Version: 1.22.0
-    Authors: Elastic and contributors
-    Description: Package Description
-    DownloadCount: 7994931
-    DownloadUrl: https://www.nuget.org/api/v2/package/Elastic.Apm.GrpcClient/1.22.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/elastic.apm.grpcclient/1.22.0/icon
-    LicenseUrl: https://www.nuget.org/packages/Elastic.Apm.GrpcClient/1.22.0/license
-    ProjectUrl: https://github.com/elastic/apm-agent-dotnet
-    ReleaseNotes: See https://github.com/elastic/apm-agent-dotnet/releases/tag/1.22.0
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Elastic.Apm.GrpcClient
-  - Id: Microsoft.Azure.Functions.Worker.Grpc
-    Version: 1.10.1
-    Authors: Microsoft
-    Description: This library provides gRPC support for Azure Functions .NET Worker
-      communication with the Azure Functions Host.
-    DownloadCount: 7542304
-    DownloadUrl: https://www.nuget.org/api/v2/package/Microsoft.Azure.Functions.Worker.Grpc/1.10.1
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.grpc/1.10.1/icon
-    LicenseUrl: https://www.nuget.org/packages/Microsoft.Azure.Functions.Worker.Grpc/1.10.1/license
-    ProjectUrl: https://github.com/Azure/azure-functions-dotnet-worker
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Microsoft.Azure.Functions.Worker.Grpc
-  - Id: protobuf-net.Grpc.AspNetCore
-    Version: 1.1.1
-    Authors: Marc Gravell
-    Description: Package Description
-    DownloadCount: 2229373
-    DownloadUrl: https://www.nuget.org/api/v2/package/protobuf-net.Grpc.AspNetCore/1.1.1
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/protobuf-net.grpc.aspnetcore/1.1.1/icon
-    LicenseUrl: https://www.nuget.org/packages/protobuf-net.Grpc.AspNetCore/1.1.1/license
-    ProjectUrl: https://github.com/protobuf-net/protobuf-net.Grpc
-    ReleaseNotes: https://protobuf-net.github.io/protobuf-net.Grpc/releasenotes#
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: protobuf-net.Grpc.AspNetCore
-  - Id: Grpc.Gcp
-    Version: 2.0.0
-    Authors: Google Inc.
-    Description: Extension supporting Google Cloud Platform specific features for
-      gRPC.
-    DownloadCount: 1250272
-    DownloadUrl: https://www.nuget.org/api/v2/package/Grpc.Gcp/2.0.0
-    icon: {fileID: 0}
-    IconUrl: 
-    LicenseUrl: https://www.apache.org/licenses/LICENSE-2.0
-    ProjectUrl: https://github.com/GoogleCloudPlatform/grpc-gcp-csharp
-    ReleaseNotes: 'Grpc.Gcp v2.0.0
-
-      - Upgrade gRPC version to v2.25.0'
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: Grpc.Gcp
-  - Id: EventStore.Client.Grpc
-    Version: 23.0.0
-    Authors: Event Store Ltd
-    Description: The base GRPC client library for Event Store. Get the open source
-      or commercial versions of Event Store server from https://eventstore.com/
-    DownloadCount: 1621496
-    DownloadUrl: https://www.nuget.org/api/v2/package/EventStore.Client.Grpc/23.0.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/eventstore.client.grpc/23.0.0/icon
-    LicenseUrl: https://www.nuget.org/packages/EventStore.Client.Grpc/23.0.0/license
-    ProjectUrl: https://eventstore.com/
-    ReleaseNotes: https://eventstore.com/blog/
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: EventStore.Client.Grpc
-  - Id: EventStore.Client.Grpc.Streams
-    Version: 23.0.0
-    Authors: Event Store Ltd
-    Description: The GRPC client API for Event Store Streams. Get the open source
-      or commercial versions of Event Store server from https://eventstore.com/
-    DownloadCount: 1576010
-    DownloadUrl: https://www.nuget.org/api/v2/package/EventStore.Client.Grpc.Streams/23.0.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/eventstore.client.grpc.streams/23.0.0/icon
-    LicenseUrl: https://www.nuget.org/packages/EventStore.Client.Grpc.Streams/23.0.0/license
-    ProjectUrl: https://eventstore.com/
-    ReleaseNotes: https://eventstore.com/blog/
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: EventStore.Client.Grpc.Streams
-  - Id: SkyAPM.Transport.Grpc
-    Version: 2.1.0
-    Authors: SkyAPM Team
-    Description: SkyAPM gRPC data transmitter.
-    DownloadCount: 1192397
-    DownloadUrl: https://www.nuget.org/api/v2/package/SkyAPM.Transport.Grpc/2.1.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/skyapm.transport.grpc/2.1.0/icon
-    LicenseUrl: https://github.com/SkyAPM/SkyAPM-dotnet/blob/master/LICENSE
-    ProjectUrl: https://github.com/SkyAPM/SkyAPM-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: SkyAPM.Transport.Grpc
-  - Id: SkyAPM.Transport.Grpc.Protocol
-    Version: 2.1.0
-    Authors: SkyAPM Team
-    Description: SkyAPM gRPC data transmitter.
-    DownloadCount: 1171065
-    DownloadUrl: https://www.nuget.org/api/v2/package/SkyAPM.Transport.Grpc.Protocol/2.1.0
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/skyapm.transport.grpc.protocol/2.1.0/icon
-    LicenseUrl: https://github.com/SkyAPM/SkyAPM-dotnet/blob/master/LICENSE
-    ProjectUrl: https://github.com/SkyAPM/SkyAPM-dotnet
-    ReleaseNotes: 
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: SkyAPM.Transport.Grpc.Protocol
-  - Id: protobuf-net.Grpc.Reflection
-    Version: 1.1.1
-    Authors: Marc Gravell
-    Description: Package Description
-    DownloadCount: 1027198
-    DownloadUrl: https://www.nuget.org/api/v2/package/protobuf-net.Grpc.Reflection/1.1.1
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/protobuf-net.grpc.reflection/1.1.1/icon
-    LicenseUrl: https://www.nuget.org/packages/protobuf-net.Grpc.Reflection/1.1.1/license
-    ProjectUrl: https://github.com/protobuf-net/protobuf-net.Grpc
-    ReleaseNotes: https://protobuf-net.github.io/protobuf-net.Grpc/releasenotes#
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: protobuf-net.Grpc.Reflection
-  - Id: OpenTracing.Contrib.Grpc
-    Version: 0.5.1
-    Authors: "Benjamin Kr\xE4mer"
-    Description: Adds OpenTracing instrumentation for .NET Standard apps that use
-      GRPC.
-    DownloadCount: 778060
-    DownloadUrl: https://www.nuget.org/api/v2/package/OpenTracing.Contrib.Grpc/0.5.1
-    icon: {fileID: 0}
-    IconUrl: https://api.nuget.org/v3-flatcontainer/opentracing.contrib.grpc/0.5.1/icon
-    LicenseUrl: https://www.nuget.org/packages/OpenTracing.Contrib.Grpc/0.5.1/license
-    ProjectUrl: https://github.com/opentracing-contrib/csharp-grpc
-    ReleaseNotes: https://github.com/opentracing-contrib/csharp-grpc/releases/tag/v0.5.1
-    RepositoryBranch: 
-    RepositoryCommit: 
-    RepositoryType: 0
-    RepositoryUrl: 
-    Summary: 
-    Title: OpenTracing.Contrib.Grpc
-  defaultIcon: {fileID: 2800000, guid: 0efa0a38ec1ce484896502259d7ee8f7, type: 3}
-  hasRefreshed: 1
-  numberToSkip: 15
-  updatePackages: []
 --- !u!114 &16
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MinSize: {x: 230, y: 250}
-  m_MaxSize: {x: 10000, y: 10000}
-  m_TitleContent:
-    m_Text: Project
-    m_Image: {fileID: -2032128904892744680, guid: 0000000000000000d000000000000000,
-      type: 0}
-    m_Tooltip: 
-  m_Pos:
-    serializedVersion: 2
-    x: 0
-    y: 403
-    width: 928
-    height: 382
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_OverlaysVisible: 1
-  m_SearchFilter:
-    m_NameFilter: 
-    m_ClassNames: []
-    m_AssetLabels: []
-    m_AssetBundleNames: []
-    m_VersionControlStates: []
-    m_SoftLockControlStates: []
-    m_ReferencingInstanceIDs: 
-    m_SceneHandles: 
-    m_ShowAllHits: 0
-    m_SkipHidden: 0
-    m_SearchArea: 1
-    m_Folders:
-    - Assets/Scenes
-    m_Globs: []
-    m_OriginalText: 
-    m_ImportLogFlags: 0
-    m_FilterByTypeIntersection: 0
-  m_ViewMode: 1
-  m_StartGridSize: 16
-  m_LastFolders:
-  - Assets/Scenes
-  m_LastFoldersGridSize: 16
-  m_LastProjectPath: /Users/andrew/ws.localized/arpgfun/client
-  m_LockTracker:
-    m_IsLocked: 0
-  m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 84720000
-    m_LastClickedID: 29316
-    m_ExpandedIDs: 00000000846f000050a4000058a4000048b4000052b400005eb4000000ca9a3bffffff7f
-    m_RenameOverlay:
-      m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
-      m_EditFieldRect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-      m_UserData: 0
-      m_IsWaitingForDelay: 0
-      m_IsRenaming: 0
-      m_OriginalEventType: 11
-      m_IsRenamingFilename: 1
-      m_ClientGUIView: {fileID: 0}
-    m_SearchString: 
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-  m_AssetTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 
-    m_LastClickedID: 0
-    m_ExpandedIDs: 00000000846f0000
-    m_RenameOverlay:
-      m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
-      m_EditFieldRect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-      m_UserData: 0
-      m_IsWaitingForDelay: 0
-      m_IsRenaming: 0
-      m_OriginalEventType: 11
-      m_IsRenamingFilename: 1
-      m_ClientGUIView: {fileID: 0}
-    m_SearchString: 
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-  m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
-    m_ExpandedInstanceIDs: c6230000
-    m_RenameOverlay:
-      m_UserAcceptedRename: 0
-      m_Name: x86
-      m_OriginalName: x86
-      m_EditFieldRect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-      m_UserData: 46378
-      m_IsWaitingForDelay: 0
-      m_IsRenaming: 0
-      m_OriginalEventType: 0
-      m_IsRenamingFilename: 1
-      m_ClientGUIView: {fileID: 8}
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-    m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 0}
-    m_GridSize: 16
-  m_SkipHiddenPackages: 0
-  m_DirectoriesAreaWidth: 207
---- !u!114 &17
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12019, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_TitleContent:
-    m_Text: Inspector
-    m_Image: {fileID: 8356117983803934776, guid: 0000000000000000d000000000000000,
-      type: 0}
-    m_Tooltip: 
-  m_Pos:
-    serializedVersion: 2
-    x: 929
-    y: 83
-    width: 510
-    height: 702
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_OverlaysVisible: 1
-  m_ObjectsLockedBeforeSerialization: []
-  m_InstanceIDsLockedBeforeSerialization: 
-  m_PreviewResizer:
-    m_CachedPref: 160
-    m_ControlHash: -371814159
-    m_PrefName: Preview_InspectorPreview
-  m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 0
-  m_GlobalObjectId: 
-  m_InspectorMode: 0
-  m_LockTracker:
-    m_IsLocked: 0
-  m_PreviewWindow: {fileID: 0}
---- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1136,15 +400,15 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Hierarchy
-    m_Image: {fileID: -9000905672528348964, guid: 0000000000000000d000000000000000,
+    m_Image: {fileID: -3734745235275155857, guid: 0000000000000000d000000000000000,
       type: 0}
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
     x: 0
     y: 83
-    width: 226
-    height: 299
+    width: 390.5
+    height: 435
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1160,7 +424,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 3618d3ffaa18d3ff8664dcfffe64dcff3265dcffb4bedeffc8c2deff00c3deff6852e0ff24f5fffff4ffffff
+      m_ExpandedIDs: eed6ebff16daebff7a23ecffd626ecff1e83f5ff2283f5ff2683f5ff2a83f5ff7283f5ff7683f5ffaa83f5ffae83f5ffbc83f5ffd284f5ffd684f5ff5e89f5ff868cf5ffcc07f6ffd411f6ffea18f6fff418f6fffe18f6ff0819f6ff0c19f6ff1619f6ff081ef6ffb6b6f9ff5ebcf9ff6ab5ffff22dcffff7ae8ffff9ce8ffff9cf4ffffa6f4ffff20f9ffffb26f00005894000060940000a0b700000ab8000012b80000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1176,7 +440,7 @@ MonoBehaviour:
         m_IsRenaming: 0
         m_OriginalEventType: 11
         m_IsRenamingFilename: 0
-        m_ClientGUIView: {fileID: 0}
+        m_ClientGUIView: {fileID: 11}
       m_SearchString: 
     m_ExpandedScenes: []
     m_CurrenRootInstanceID: 0
@@ -1184,7 +448,7 @@ MonoBehaviour:
       m_IsLocked: 0
     m_CurrentSortingName: TransformSorting
   m_WindowGUID: 4c969a2b90040154d917609493e03593
---- !u!114 &19
+--- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1200,15 +464,15 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Scene
-    m_Image: {fileID: -131512000283675692, guid: 0000000000000000d000000000000000,
+    m_Image: {fileID: 8634526014445323508, guid: 0000000000000000d000000000000000,
       type: 0}
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 271.5
+    x: 391.5
     y: 83
-    width: 826.5
-    height: 314.5
+    width: 606.5
+    height: 435
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1223,7 +487,7 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: -101, y: -26}
+      snapOffset: {x: -160, y: -26}
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 3
       id: Tool Settings
@@ -1249,7 +513,7 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: 0, y: 0}
+      snapOffset: {x: 0, y: 25}
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: unity-scene-view-toolbar
@@ -1275,7 +539,7 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: 0, y: 0}
+      snapOffset: {x: 0, y: 25}
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: unity-transform-toolbar
@@ -1444,7 +708,7 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 0
-      snapOffset: {x: 0, y: 0}
+      snapOffset: {x: 0, y: 25}
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: Scene View/Particles
@@ -1509,9 +773,9 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: 48, y: 48}
+      snapOffset: {x: 48, y: -268}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 0
+      snapCorner: 2
       id: AINavigationOverlay
       index: 7
       layout: 4
@@ -1543,6 +807,19 @@ MonoBehaviour:
       layout: 4
       size: {x: 0, y: 0}
       sizeOverriden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      floating: 0
+      collapsed: 0
+      displayed: 1
+      snapOffset: {x: 48, y: 48}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      id: UnityEditor.SceneViewCameraOverlay
+      index: 10
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverriden: 0
     m_OverlaysVisible: 1
   m_WindowGUID: cc27987af1a868c49b0894db9c0f5429
   m_Gizmos: 1
@@ -1554,9 +831,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0, y: 0, z: 0}
+    m_Target: {x: -1.2211363, y: 0.7462293, z: 11.748082}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: -1.2211363, y: 0.7462293, z: 11.748082}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1602,13 +879,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Target: {x: -0.007926636, y: 0.9914995, z: -0.073315434, w: -0.10719834}
     speed: 2
-    m_Value: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Value: {x: -0.007926634, y: 0.9914991, z: -0.073315404, w: -0.107198305}
   m_Size:
-    m_Target: 10
+    m_Target: 2.04987
     speed: 2
-    m_Value: 10
+    m_Value: 2.04987
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1633,7 +910,7 @@ MonoBehaviour:
   m_SceneVisActive: 1
   m_LastLockedObject: {fileID: 0}
   m_ViewIsLockedToObject: 0
---- !u!114 &20
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1649,15 +926,15 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Game
-    m_Image: {fileID: 257045534191678443, guid: 0000000000000000d000000000000000,
+    m_Image: {fileID: 4621777727084837110, guid: 0000000000000000d000000000000000,
       type: 0}
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 227
+    x: 372.5
     y: 83
-    width: 700
-    height: 299
+    width: 606.5
+    height: 435
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1674,7 +951,7 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 494, y: 278}
+  m_TargetSize: {x: 1334, y: 750}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
@@ -1683,16 +960,16 @@ MonoBehaviour:
   m_VSyncEnabled: 0
   m_Gizmos: 0
   m_Stats: 0
-  m_SelectedSizes: 01000000000000000000000000000000000000000000000000000000000000000000000000000000
+  m_SelectedSizes: 01000000000000000400000000000000000000000000000000000000000000000000000000000000
   m_ZoomArea:
     m_HRangeLocked: 0
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -123.5
-    m_HBaseRangeMax: 123.5
-    m_VBaseRangeMin: -69.5
-    m_VBaseRangeMax: 69.5
+    m_HBaseRangeMin: -333.5
+    m_HBaseRangeMax: 333.5
+    m_VBaseRangeMin: -187.5
+    m_VBaseRangeMax: 187.5
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -1701,7 +978,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 1
+    m_EnableMouseInput: 0
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -1710,29 +987,176 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 700
-      height: 278
-    m_Scale: {x: 2, y: 2}
-    m_Translation: {x: 350, y: 139}
+      width: 606.5
+      height: 414
+    m_Scale: {x: 0.9092954, y: 0.9092954}
+    m_Translation: {x: 303.25, y: 207}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -175
-      y: -69.5
-      width: 350
-      height: 139
+      x: -333.5
+      y: -227.6488
+      width: 667
+      height: 455.2976
     m_MinimalGUI: 1
-  m_defaultScale: 2
-  m_LastWindowPixelSize: {x: 1400, y: 598}
+  m_defaultScale: 0.9092954
+  m_LastWindowPixelSize: {x: 1213, y: 870}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
   m_XRRenderMode: 0
   m_RenderTexture: {fileID: 0}
---- !u!114 &21
+--- !u!114 &19
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MinSize: {x: 230, y: 250}
+  m_MaxSize: {x: 10000, y: 10000}
+  m_TitleContent:
+    m_Text: Project
+    m_Image: {fileID: -5179483145760003458, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_Pos:
+    serializedVersion: 2
+    x: -19
+    y: 539
+    width: 999
+    height: 246
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_OverlaysVisible: 1
+  m_SearchFilter:
+    m_NameFilter: 
+    m_ClassNames: []
+    m_AssetLabels: []
+    m_AssetBundleNames: []
+    m_ReferencingInstanceIDs: 
+    m_SceneHandles: 
+    m_ShowAllHits: 0
+    m_SkipHidden: 0
+    m_SearchArea: 1
+    m_Folders:
+    - Assets/AssetRes/Effects/MissilesExplosions/Earth
+    m_Globs: []
+    m_OriginalText: 
+    m_ImportLogFlags: 0
+    m_FilterByTypeIntersection: 0
+  m_ViewMode: 1
+  m_StartGridSize: 16
+  m_LastFolders:
+  - Assets/AssetRes/Effects/MissilesExplosions/Earth
+  m_LastFoldersGridSize: 16
+  m_LastProjectPath: /Users/andrew/ws.localized/arpgfun/client
+  m_LockTracker:
+    m_IsLocked: 0
+  m_FolderTreeState:
+    scrollPos: {x: 0, y: 756}
+    m_SelectedIDs: 70df0000
+    m_LastClickedID: 57200
+    m_ExpandedIDs: 00000000787100007a7100007c7100007e7100008071000082710000468e0000488e00004a8e0000b495000092ba000094ba00000abb000000ca9a3bffffff7f
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_AssetTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 00000000787100007a7100007c7100007e7100008071000082710000
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_ListAreaState:
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 1
+    m_ExpandedInstanceIDs: c6230000
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_ClientGUIView: {fileID: 13}
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+    m_NewAssetIndexInList: -1
+    m_ScrollPosition: {x: 0, y: 0}
+    m_GridSize: 16
+  m_SkipHiddenPackages: 0
+  m_DirectoriesAreaWidth: 207
+--- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1748,15 +1172,15 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Console
-    m_Image: {fileID: -3303252850963283158, guid: 0000000000000000d000000000000000,
+    m_Image: {fileID: -4950941429401207979, guid: 0000000000000000d000000000000000,
       type: 0}
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 403
-    width: 928
-    height: 382
+    y: 539
+    width: 999
+    height: 246
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1767,3 +1191,51 @@ MonoBehaviour:
     m_LastAppliedPresetName: Default
     m_SaveData: []
     m_OverlaysVisible: 1
+--- !u!114 &21
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12019, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Inspector
+    m_Image: {fileID: -440750813802333266, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_Pos:
+    serializedVersion: 2
+    x: 1000
+    y: 83
+    width: 439
+    height: 702
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_OverlaysVisible: 1
+  m_ObjectsLockedBeforeSerialization: []
+  m_InstanceIDsLockedBeforeSerialization: 
+  m_PreviewResizer:
+    m_CachedPref: 160
+    m_ControlHash: -371814159
+    m_PrefName: Preview_InspectorPreview
+  m_LastInspectedObjectInstanceID: -1
+  m_LastVerticalScrollValue: 0
+  m_GlobalObjectId: 
+  m_InspectorMode: 0
+  m_LockTracker:
+    m_IsLocked: 0
+  m_PreviewWindow: {fileID: 0}

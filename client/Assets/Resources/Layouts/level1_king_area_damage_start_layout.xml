@@ -46,12 +46,11 @@
           <z>2</z>
         </offsetPosition>
       </RangeType>
-      <effectType>EffectGroup</effectType>
       <effectKey>001</effectKey>
     </LayoutBase>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>e05d2002-2c1b-480b-989d-c40308ef2e54</GUID>
-      <path>Effects/Missiles &amp; Explosions/-Generics/Explosions/MesmerizeExplosion.prefab</path>
+      <path>Effects/MissilesExplosions/Earth/EarthExplosionNormal.prefab</path>
       <fromTarget>Releaser</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Bottom</fromBoneName>
@@ -77,7 +76,7 @@
     </LayoutBase>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>3353883b-71df-4b6b-bdcc-62c588a760e0</GUID>
-      <path>Effects/Missiles &amp; Explosions/-Generics/Explosions/MesmerizeExplosion.prefab</path>
+      <path>Effects/MissilesExplosions/Earth/EarthExplosionNormal.prefab</path>
       <fromTarget>Releaser</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Bottom</fromBoneName>
@@ -111,7 +110,6 @@
           <z>5</z>
         </offsetPosition>
       </RangeType>
-      <effectType>EffectGroup</effectType>
       <effectKey>001</effectKey>
     </LayoutBase>
   </Layouts>

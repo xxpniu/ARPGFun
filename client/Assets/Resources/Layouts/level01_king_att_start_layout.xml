@@ -43,12 +43,11 @@
           <z>2.5</z>
         </offsetPosition>
       </RangeType>
-      <effectType>EffectGroup</effectType>
       <effectKey>001</effectKey>
     </LayoutBase>
     <LayoutBase xsi:type="ParticleLayout">
       <GUID>24b479fb-684c-4527-b1d5-05ac22a1d97e</GUID>
-      <path>Effects/Missiles &amp; Explosions/Earth/EarthExplosionSmall.prefab</path>
+      <path>Effects/MissilesExplosions/Earth/EarthExplosionNormal.prefab</path>
       <fromTarget>Releaser</fromTarget>
       <toTarget>Releaser</toTarget>
       <fromBoneName>Bottom</fromBoneName>
