@@ -227,7 +227,7 @@ namespace Windows
             ShowView();
         }
 
-        public IBattleGate BattleGate { private set; get; }
+        private IBattleGate BattleGate { set; get; }
 
         private readonly KeyCode[] _keyCodes = { KeyCode.H ,KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.N, KeyCode.M};
 

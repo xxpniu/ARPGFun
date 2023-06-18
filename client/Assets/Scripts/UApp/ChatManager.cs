@@ -6,7 +6,6 @@ using Cysharp.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
-using UApp.GameGates;
 using Utility;
 using XNet.Libs.Utility;
 using static UApp.Utility.Stream;
@@ -18,8 +17,8 @@ namespace UApp
 
         public Action<Chat> OnReceivedChat;
         public Action<PlayerState> OnReceivePlayerStateChange;
-
         public Action<N_Notify_BattleServer> OnStartBattle;
+        
         public Action<N_Notify_MatchGroup> OnMatchGroup;
         public Action<N_Notify_InviteJoinMatchGroup> OnInviteJoinMatchGroup;
 
@@ -27,7 +26,7 @@ namespace UApp
         private string HeroName { get; set; }
         private LogChannel ChatChannel { get; set; }
 
-        public Dictionary<string, PlayerState> Friends { get; } = new Dictionary<string, PlayerState>();
+        public Dictionary<string, PlayerState> Friends { get; } = new();
 
         public string Host;
         public int Port;
@@ -66,9 +65,9 @@ namespace UApp
             ChatClient = chat;
             LoginCall = chat.Login(new C2CH_Login
             {
-                AccountID = UApplication.S.AccountUuid,
+                AccountID = UApplication.S.accountUuid,
                 HeroName = HeroName ?? string.Empty,
-                Token = UApplication.S.SesssionKey
+                Token = UApplication.S.sessionKey
             }, cancellationToken: ChatChannel.ShutdownToken);
             var header = await LoginCall.ResponseHeadersAsync;
             ChatChannel.SessionKey = header.Get("session-key")?.Value ?? string.Empty;
@@ -148,7 +147,6 @@ namespace UApp
                     }
                     else if (any.TryUnpack(out N_Notify_InviteJoinMatchGroup invite))
                     {
-
                         //start
                         OnInviteJoinMatchGroup?.Invoke(invite);
                     }

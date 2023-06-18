@@ -119,6 +119,7 @@ namespace UApp.Utility
                 catch (Exception ex)
                 {
                     Debuger.LogError(ex);
+                    Debug.LogException(ex);
                 }
 
                 Buffer.Close();

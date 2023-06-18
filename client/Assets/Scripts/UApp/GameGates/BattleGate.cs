@@ -41,7 +41,7 @@ namespace UApp.GameGates
             {
                 var r = await _battleService.ExitBattleAsync(new C2B_ExitBattle
                 {
-                    AccountUuid = UApplication.S.AccountUuid
+                    AccountUuid = UApplication.S.accountUuid
                 });
                 await Client.ShutdownAsync();
             
@@ -91,8 +91,8 @@ namespace UApp.GameGates
             _battleService = Client.CreateClient<BattleServerService.BattleServerServiceClient>();
             var query = _battleService.JoinBattleAsync(new C2B_JoinBattle
             {
-                Session = UApplication.S.SesssionKey,
-                AccountUuid = UApplication.S.AccountUuid,
+                Session = UApplication.S.sessionKey,
+                AccountUuid = UApplication.S.accountUuid,
                 MapID = Level.ID,
                 Version = 0
             }, cancellationToken: Client.ShutdownToken);
@@ -137,7 +137,7 @@ namespace UApp.GameGates
                     var character = view as UCharacterView;
 
                     if (character==null ||character.OwnerIndex > 0) return;
-                    if (UApplication.S.AccountUuid != character.accoundUuid) return;
+                    if (UApplication.S.accountUuid != character.accoundUuid) return;
                     Owner = character;
                     //Owner.transform.SetLayer( LayerMask.NameToLayer("Player"));
                     Owner.ShowName = true;

@@ -14,8 +14,8 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            ButtonBlue.onClick.AddListener(() => { Ok?.Invoke(); HideWindow(); });
-            ButtonBrown.onClick.AddListener(() => { Cancel?.Invoke(); HideWindow(); });
+            ButtonBlue.onClick.AddListener(() => { _ok?.Invoke(); HideWindow(); });
+            ButtonBrown.onClick.AddListener(() => { _cancel?.Invoke(); HideWindow(); });
             //Write Code here
         }
         protected override void OnShow()
@@ -29,15 +29,15 @@ namespace Windows
             base.OnHide();
         }
 
-        private Action Ok;
-        private Action Cancel;
+        private Action _ok;
+        private Action _cancel;
 
-        public static void ShowConfirm(string title, string content, Action ok, Action cancel = null)
+        public static async void ShowConfirm(string title, string content, Action ok, Action cancel = null)
         {
-            UUIManager.S.CreateWindowAsync<UUIPopup>(ui =>
+            await UUIManager.S.CreateWindowAsync<UUIPopup>(ui =>
             {
-                ui.Ok = ok;
-                ui.Cancel = cancel;
+                ui._ok = ok;
+                ui._cancel = cancel;
                 ui.lb_conent.text = content;
                 ui.lb_title.text = title;
                 ui.ShowWindow();

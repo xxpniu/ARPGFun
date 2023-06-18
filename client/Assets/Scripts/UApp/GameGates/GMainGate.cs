@@ -217,12 +217,12 @@ namespace UApp.GameGates
             if (group != null)
             {
                 Debuger.Log($"Match group:{group}");
-                if (group.Players.Any(t => t.AccountID == UApplication.S.AccountUuid))
+                if (group.Players.Any(t => t.AccountID == UApplication.S.accountUuid))
                 {
                     int index = 1;
                     foreach (var i in group.Players)
                     {
-                        if (i.AccountID == UApplication.S.AccountUuid) continue;
+                        if (i.AccountID == UApplication.S.accountUuid) continue;
                         _views.Add(CreateHero(i.Hero.HeroID, i.Name, index));
                     }
                 }

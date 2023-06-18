@@ -56,7 +56,7 @@ namespace Windows
         private async void InitData()
         {
             var g = UApplication.G<GMainGate>();
-            if (!g)
+            if (g ==null)
             {
                 HideWindow();
                 return;
@@ -65,11 +65,10 @@ namespace Windows
             var res = await GateManager.S.GateFunction.SearchPlayerAsync(new Proto.C2G_SearchPlayer());
             if (!res.Code.IsOk()) return;
 
-            this.Players = res.Players.Where(t => t.AccountUuid != UApplication.S.AccountUuid).ToList();
-            InitData();
-
+            Players = res.Players.Where(t => t.AccountUuid != UApplication.S.accountUuid)
+                .ToList();
             this.ContentTableManager.Count = Players.Count;
-            int index = 0;
+            var index = 0;
             foreach (var i in ContentTableManager)
             {
                 i.Model.SetPlayer(Players[index]);

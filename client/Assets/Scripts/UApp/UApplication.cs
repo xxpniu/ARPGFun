@@ -9,6 +9,7 @@ using Grpc.Core;
 using Proto;
 using UApp.GameGates;
 using UnityEngine;
+using UnityEngine.Serialization;
 using XNet.Libs.Utility;
 
 namespace UApp
@@ -31,11 +32,11 @@ namespace UApp
 
         public int index = 0;
 
-        public string AccountUuid;
-        public string SesssionKey; //login token
-        public string HeroName;
+        public string accountUuid;
+        public string sessionKey; //login token
+        public string heroName;
 
-        public float PingDelay = 0f;
+        public float pingDelay = 0f;
 
         #region Gate
 
@@ -44,15 +45,15 @@ namespace UApp
         public async void GoToMainGate(ServiceAddress info)
         {
             await ChangeGate<GMainGate>(info);
-            this.GateServer = info;
+            GateServer = info;
         }
 
         public void GoServerMainGate(GameServerInfo chatServer, GameServerInfo server, string userID, string session)
         {
             ChatServer = new ServiceAddress { IpAddress = chatServer.Host, Port = chatServer.Port };
             GateServer = new ServiceAddress { IpAddress = server.Host, Port = server.Port };
-            AccountUuid = userID;
-            SesssionKey = session;
+            accountUuid = userID;
+            sessionKey = session;
             GoToMainGate(GateServer);
 
         }
@@ -121,7 +122,7 @@ namespace UApp
             StopChannel();
         }
 
-        protected  void Update()
+        protected void Update()
         {
             if (_gate == null) return;
             UGate.DoTick(_gate);
@@ -230,12 +231,12 @@ namespace UApp
             Debuger.Log("Application Quit: stop all channel!!");
 
         }
+
         public static T G<T>() where T : UGate
         {
             return S._gate as T;
         }
 
-    
     }
 }
 

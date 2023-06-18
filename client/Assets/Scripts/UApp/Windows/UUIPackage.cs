@@ -1,9 +1,8 @@
 using System;
-using UGameTools;
+using System.Linq;
 using Proto;
 using ExcelConfig;
 using EConfig;
-using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using UApp;
@@ -32,15 +31,15 @@ namespace Windows
             public PlayerItem pItem;
             public async void SetItem(PlayerItem item,bool isWear)
             {
-                var itemconfig = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
-                Config = itemconfig;
-                pItem = item;
+                var itemConfig = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
+                Config = itemConfig;
+                pItem = item; 
                 Template.ItemCount.ActiveSelfObject(item.Num > 1);
                 Template.lb_count.text = item.Num>1? item.Num.ToString():string.Empty;
-                Template.icon.sprite = await ResourcesManager.S.LoadIcon(itemconfig);
+                Template.icon.sprite = await ResourcesManager.S.LoadIcon(itemConfig);
                 Template.lb_level.text = item.Level > 0 ? $"+{item.Level}" : string.Empty;
                 Template.ItemLevel.ActiveSelfObject(item.Level > 0);
-                Template.lb_Name.SetKey(itemconfig.Name);
+                Template.lb_Name.SetKey(itemConfig.Name);
                 Template.Locked.ActiveSelfObject(item.Locked);
                 Template.WearOn.ActiveSelfObject(isWear);
             }
@@ -94,29 +93,32 @@ namespace Windows
 
             lb_TextCountCur.text = $"{ gate.package.Items.Count}";
             lb_TextCountSize.text = $"/{gate.package.MaxSize}";
-            ContentTableManager.Count = gate.package.Items.Count;
+           
             var hero = gate.hero;
             int index = 0;
-            foreach (var item in gate.package.Items)
+
+            var items = gate.package.Items
+                .Select(t => t.Value).OrderBy(t => t.CreateTime).ToArray();
+            ContentTableManager.Count = items.Length;
+            foreach (var item in items)
             {
                 var i = ContentTableManager[index];
-                i.Model.SetItem(item.Value,IsWear(item.Key,hero));
+                i.Model.SetItem(item,IsWear(item.GUID,hero));
                 i.Model.OnClickItem = ClickItem;
                 index++;
             }
         }
 
-        private bool IsWear(string guuid, DHero hero)
+        private bool IsWear(string guid, DHero hero)
         {
             foreach (var i in hero.Equips)
-                if (i.GUID == guuid) return true;
+                if (i.GUID == guid) return true;
             return false;
         }
 
-        private void ClickItem(ContentTableModel item)
+        private async void ClickItem(ContentTableModel item)
         {
-            UUIManager.S.CreateWindowAsync<UUIDetail>(ui => ui.Show(item.pItem));
-            
+            await UUIManager.S.CreateWindowAsync<UUIDetail>(ui => ui.Show(item.pItem));
         }
     }
 }
