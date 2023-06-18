@@ -76,6 +76,7 @@ message PlayerItem
 	bool Locked=4; //是否锁定中
 	int32 Level =5;//等级 装备特有
 	EquipData Data= 6;
+	int64 CreateTime = 7;
 }
 
 //玩家背包
