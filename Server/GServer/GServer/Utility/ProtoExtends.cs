@@ -85,7 +85,7 @@ namespace GServer.Utility
                 Locked = i.IsLock,
                 Num = i.Num,
                 Level = i.Level,
-                
+                CreateTime = i.CreateTime.Ticks,
                 Data = new EquipData {RefreshTime = i.EquipData?.RefreshCount ?? 0}
             };
 
