@@ -53,7 +53,8 @@ namespace Windows
         {
             base.OnShow();
 
-            var users = ChatManager.S.Friends.Values.Where(t=>t.State== PlayerState.Types.StateType.Online).ToArray();
+            var users = ChatManager.S.Friends
+                .Values.Where(t=>t.State== PlayerState.Types.StateType.Online).ToArray();
             ContentTableManager.Count = users.Length;
             int index = 0;
             foreach (var i in ContentTableManager)

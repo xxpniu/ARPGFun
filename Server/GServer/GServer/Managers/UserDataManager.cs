@@ -656,7 +656,7 @@ namespace GServer.Managers
         public async Task<Tuple<List<PackageItem>,List< PackageItem>>> AddItems(string uuid, PlayerItem i)
         {
             if (i.Num <= 0) return null;
-            GamePackageEntity package = await FindPackageByPlayerID(uuid);
+            var package = await FindPackageByPlayerID(uuid);
             var it =  ExcelToJSONConfigManager.GetId<ItemData>(i.ItemID);
             if (it == null) return null;
             var num = i.Num;

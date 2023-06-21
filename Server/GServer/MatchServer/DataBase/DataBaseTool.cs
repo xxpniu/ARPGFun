@@ -75,8 +75,7 @@ namespace DataBase
             Debuger.Log($"uuid:{group.Uuid}");
             return (true, group);
         }
-
-
+        
         public async Task<(bool res, MatchGroupEntity entity)> TryToJoinGroup(string groupId, MatchPlayer player)
         {
             var filter = Builders<MatchGroupEntity>.Filter.ElemMatch(t => t.Players, i => i.AccountID == player.AccountID);

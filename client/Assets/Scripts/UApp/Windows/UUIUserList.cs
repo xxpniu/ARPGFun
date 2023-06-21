@@ -65,7 +65,11 @@ namespace Windows
             var res = await GateManager.S.GateFunction.SearchPlayerAsync(new Proto.C2G_SearchPlayer());
             if (!res.Code.IsOk()) return;
 
-            Players = res.Players.Where(t => t.AccountUuid != UApplication.S.accountUuid)
+            //var friends = ChatManager.S.Friends.
+            
+            Players = res.Players.Where(t => 
+                    t.AccountUuid != UApplication.S.accountUuid 
+                    ||  !ChatManager.S.Friends.ContainsKey(t.AccountUuid))
                 .ToList();
             this.ContentTableManager.Count = Players.Count;
             var index = 0;
