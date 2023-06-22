@@ -454,7 +454,7 @@ namespace BattleViews.Views
                 Index = Index
             });
 #else
-         targetLookQuaternion = Quaternion.Euler(0,rotationY,0);//use smooth
+             this.LookQuaternion = targetLookQuaternion = Quaternion.Euler(0,rotationY,0);//use smooth
 #endif
 
         }

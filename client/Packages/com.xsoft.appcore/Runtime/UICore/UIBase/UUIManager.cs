@@ -51,7 +51,8 @@ public abstract class UUIElement
 public enum WRenderType
 {
     Base,
-    Notify
+    Notify,
+    WithCanvas
 }
 
 
@@ -171,12 +172,15 @@ public class UUIManager:XSingleton<UUIManager>
     {
         var ui = GetUIWindow<T>();
         if (ui != null) return ui;
-        var root = this.BaseCanvas;
+        var root = this.BaseCanvas.transform;
         switch (wRender)
         {
 
             case WRenderType.Notify:
-                root = NotifyCanvas;
+                root = NotifyCanvas.transform;
+                break;
+            case WRenderType.WithCanvas:
+                root = this.transform;
                 break;
             case WRenderType.Base:
             default:

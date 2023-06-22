@@ -5,6 +5,7 @@ using GameLogic.Game.Perceptions;
 using Layout.AITree;
 using Layout.LayoutEffects;
 using Proto;
+using UnityEngine;
 using XNet.Libs.Utility;
 using UVector3 = UnityEngine.Vector3;
 
@@ -63,7 +64,8 @@ namespace GameLogic.Game.Controllors
                     var key = data.Config.MagicKey;
                     if (!TryGetReleaserTarget(data.Config, character, out var target)) break;
                     if (!character.SubMP(data.MpCost)) break;
-                    if (!TryReleaseMagic(target, character, key, data.Params)) break;
+                    if (!TryReleaseMagic(target, character,
+                            key, Quaternion.Euler(skill.Rotation.ToUV3()),  data.Params)) break;
                     character.IsCoolDown(skill.MagicId, time.Time, true);
                     character[TimeKey] = time.Time;
                 }
@@ -86,8 +88,14 @@ namespace GameLogic.Game.Controllors
         }
         
         private bool TryReleaseMagic(IReleaserTarget target, BattleCharacter character, 
-            string key, string[] magicParams = default)
+            string key, Quaternion? forward = null, string[] magicParams = default)
         {
+            if (forward.HasValue)
+            {
+                var angleY = forward.Value.eulerAngles.y;
+                character.CharacterView.SetLookRotation(angleY);
+            }
+
             return BattlePerception.CreateReleaser(key, character, target,
                 ReleaserType.Magic, ReleaserModeType.RmtMagic,
                 -1, true, magicParams);

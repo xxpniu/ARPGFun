@@ -125,7 +125,9 @@ namespace UApp.GameGates
                 .SetXY(40, Owner.GetBoneByName(UCharacterView.RootBone).rotation.eulerAngles.y)
                 .SetDis(18.2f);
             Owner.LookView(LookAtView);
-            await UUIManager.S.CreateWindowAsync<Windows.UUIBattle>(ui => ui.ShowWindow(this));
+            await UUIManager.S.CreateWindowAsync<Windows.UUIBattle>(
+                ui => ui.ShowWindow(this), wRender: WRenderType.WithCanvas
+                    );
             UUIManager.S.ShowMask(false);
 
             _characterOwner.OnDead = (obj) =>
@@ -194,15 +196,21 @@ namespace UApp.GameGates
 
         float IBattleGate.LeftTime => 1f;
 
-        bool IBattleGate.ReleaseSkill(HeroMagicData data)
+        bool IBattleGate.ReleaseSkill(HeroMagicData data, Vector3? forward)
         {
             if (data.MPCost > Owner.MP) return false;
             var character = Owner as IBattleCharacter;
+            var rotation = character.Rotation.eulerAngles.ToPV3();
+            if (forward.HasValue)
+            {
+                rotation = Quaternion.LookRotation(forward.Value).eulerAngles.ToPV3();
+                Debug.Log($"Euler:{Quaternion.LookRotation(forward.Value).eulerAngles}");
+            }
             SendAction(new Action_ClickSkillIndex
             {
                 MagicId = data.MagicID,
                 Position = character.Transform.position.ToPV3(),
-                Rotation = character.Rotation.eulerAngles.ToPV3()
+                Rotation = rotation 
             });
 
             return true;

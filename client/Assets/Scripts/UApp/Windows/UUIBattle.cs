@@ -14,6 +14,7 @@ using Vector3 = UnityEngine.Vector3;
 using Layout;
 using UApp;
 using UApp.GameGates;
+using UGameTools;
 
 namespace Windows
 {
@@ -22,19 +23,47 @@ namespace Windows
         public class GridTableModel : TableItemModel<GridTableTemplate>
         {
             public GridTableModel() { }
+            private SwipeButton Button {  set; get; }
+
             public override void InitModel()
             {
-                this.Template.Button.onClick.AddListener(ClickItem);
+                Button = this.Template.Button.GetComponent<SwipeButton>();
+                Button.OnSwipeClickEvent.AddListener(ClickItem);
+                Template.Forward.gameObject.SetActive(false);
+                Button.OnSwipeStarted.AddListener(() =>
+                {
+                    Template.Forward.gameObject.SetActive(true);
+                });
+                
+                Button.OnSwipeEnd.AddListener(() =>
+                {
+                    Template.Forward.gameObject.SetActive(false);
+                });
+                
+                Button.OnDragging.AddListener((dir) =>
+                {
+                    if (!dir.HasValue) return;
+                    var lookV = new Vector3(dir.Value.x, 0, dir.Value.y);
+                    var look = Quaternion.LookRotation(lookV);
+                    //Debug.Log($"{dir} {look.eulerAngles.y}");
+                    Template.Forward.transform.rotation = Quaternion.Euler(0,0,-look.eulerAngles.y);
+                });
             }
 
-            public void ClickItem()
+            public void ClickItem(Vector2? dir)
             {
                 if ((lastTime + 0.3f > UnityEngine.Time.time)) return;
-                lastTime = UnityEngine.Time.time;
-                OnClick?.Invoke(this);
+                lastTime = Time.time;
+                if (dir.HasValue)
+                {
+                    var lookV = new Vector3(dir.Value.x, 0, dir.Value.y);
+                    var look = Quaternion.LookRotation(lookV);
+                    //Debug.Log($"{dir} {look.eulerAngles.y}");
+                }
+                OnClick?.Invoke(this,dir);
             }
 
-            public Action<GridTableModel> OnClick;
+            public Action<GridTableModel,Vector2?> OnClick;
             public HeroMagicData Data;
             public async void SetMagic(HeroMagicData  data,IBattleGate battle, KeyCode key )
             {
@@ -56,8 +85,8 @@ namespace Windows
             public void Update(UCharacterView view, float now,bool haveKey)
             {
                 if (LMagicData == null) return;
-                if (LMagicData.unique)  Template.Button.interactable = !haveKey;
-                else  Template.Button.interactable = true;
+                if (LMagicData.unique)  Button.interactable = !haveKey;
+                else  Button.interactable = true;
 
                 if (!view.TryGetMagicData(magicID, out var data)) return;
                 var time = Mathf.Max(0, data.CDCompletedTime - now);
@@ -65,15 +94,15 @@ namespace Windows
                 cdTime = Mathf.Max(0.01f, data.CdTotalTime);
                 if (time > 0)
                 {
-                    lastTime = UnityEngine.Time.time;
+                    lastTime = Time.time;
                 }
                 if (cdTime > 0)
                 {
-                    this.Template.ICdMask.fillAmount = time / cdTime;
+                    Template.ICdMask.fillAmount = time / cdTime;
                 }
                 else
                 {
-                    this.Template.ICdMask.fillAmount = 0;
+                    Template.ICdMask.fillAmount = 0;
                 }
             }
         }
@@ -110,15 +139,19 @@ namespace Windows
                     });
                 });
 
-            var bt = this.Joystick_Left.GetComponent<zFrame.UI.Joystick>();
+            var bt = this.Joystick_Left.GetComponent<ETCJoystick>();
             float lastTime = -1;
             //Vector2 last = Vector2.zero;
-            bt.OnValueChanged.AddListener((v) =>
+            bt.onMove.AddListener((v) =>
             {
                 if (lastTime > UnityEngine.Time.time) return;
                 lastTime = UnityEngine.Time.time + .3f;
                 var dir = ThirdPersonCameraContollor.Current.LookRotation * new Vector3(v.x, 0, v.y);
                 BattleGate?.MoveDir(dir);
+            });
+            bt.onMoveEnd.AddListener(() =>
+            {
+                BattleGate?.MoveDir(Vector2.zero);
             });
 
             var swipeEv = swipe.GetComponent<UIEventSwipe>();
@@ -140,6 +173,22 @@ namespace Windows
 
             ThirdPersonCameraContollor.Current
                 .SetClampX(15, 80).SetForwardOffset(Vector3.up * 1.5f);
+        }
+        private void OnRelease(GridTableModel item, Vector2? dir)
+        {
+            Vector3? forward = null;
+            if (dir.HasValue)
+            {
+                forward = ThirdPersonCameraContollor.Current.LookRotation 
+                          * new Vector3(dir.Value.x, 0 , dir.Value.y);
+                forward = forward.Value.ZeroY();
+                Debug.Log($"Forward:{dir} to {forward}");
+            }
+
+            if (!BattleGate.ReleaseSkill(item.Data, forward))
+            {
+                UApplication.S.ShowNotify(LanguageManager.S["UIBattle_Release_Skill_Error"]);
+            }
         }
 
         private void UseMpItem()
@@ -256,7 +305,7 @@ namespace Windows
             {
                 if (GridTableManager.Count <= i) break;
                 if (!Input.GetKey(_keyCodes[i])) continue;
-                GridTableManager[i].Model.ClickItem();
+                GridTableManager[i].Model.ClickItem(null);
             }
 
 
@@ -378,13 +427,7 @@ namespace Windows
             mp_num.text = $"{mp}";
         }
         
-        private void OnRelease(GridTableModel item)
-        {
-            if (!BattleGate.ReleaseSkill(item.Data))
-            {
-                UApplication.S.ShowNotify(LanguageManager.S["UIBattle_Release_Skill_Error"]);
-            }
-        }
+  
 
         public bool IsMagic(int id)
         {

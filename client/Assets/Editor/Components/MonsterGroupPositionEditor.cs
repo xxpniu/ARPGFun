@@ -50,7 +50,7 @@ public class MonsterGroupPositionEditor : Editor {
         var tar = this.target as MonsterGroupPosition;
 
         EditorGUILayout.BeginVertical();
-        var last = tar.EType;
+        var last = tar!.EType;
 
         tar.EType= (Proto.MapElementType)EditorGUILayout.Popup("类型", (int)tar.EType, Lables);
 

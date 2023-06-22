@@ -339,7 +339,7 @@ namespace UApp.GameGates
             if (Owner.IsDeath) return false;
             return !Owner.IsLock(ActionLockType.NoAi);
         }
-        bool IBattleGate.ReleaseSkill(HeroMagicData magicData)
+        bool IBattleGate.ReleaseSkill(HeroMagicData magicData, Vector3? forward)
         {
             if (!CanNetAction()) return false;
             if (!Owner.TryGetMagicData(magicData.MagicID, out var data)) return false;
@@ -350,11 +350,17 @@ namespace UApp.GameGates
             if (magicData.MPCost <= Owner.MP)
             {
                 ReleaseLock();
+                var rotation = character.Rotation.eulerAngles.ToPV3();
+                if (forward.HasValue)
+                {
+                    rotation = Quaternion.LookRotation(forward.Value).eulerAngles.ToPV3();
+                }
+
                 SendAction(new Action_ClickSkillIndex
                 {
                     MagicId = data.MagicID,
                     Position = character.Transform.position.ToPV3(),
-                    Rotation = character.Rotation.eulerAngles.ToPV3()
+                    Rotation =  rotation // character.Rotation.eulerAngles.ToPV3()
                 });
                 return true;
             }

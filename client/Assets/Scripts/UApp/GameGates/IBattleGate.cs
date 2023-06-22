@@ -1,6 +1,7 @@
 ﻿using BattleViews.Views;
 using Proto;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 namespace UApp.GameGates
 {
@@ -19,9 +20,9 @@ namespace UApp.GameGates
         UCharacterView Owner { get; }
         PlayerPackage Package { get; }
         DHero Hero { get; }
-        bool ReleaseSkill(HeroMagicData data);
+        bool ReleaseSkill(HeroMagicData data, Vector3? dir); 
         void Exit();
-        bool MoveDir(UnityEngine.Vector3 dir);
+        bool MoveDir(Vector3 dir);
         bool TrySendLookForward(bool force);
         bool DoNormalAttack();
         bool SendUseItem(ItemType type);

@@ -14,7 +14,8 @@ namespace Windows
         public class GridTableTemplate : TableItemTemplate
         {
             public GridTableTemplate(){}
-            public Button Button;
+            public Image Forward;
+            public Image Button;
             public Image Icon;
             public Text CDTime;
             public Image ICdMask;
@@ -22,7 +23,8 @@ namespace Windows
 
             public override void InitTemplate()
             {
-                Button = FindChild<Button>("Button");
+                Forward = FindChild<Image>("Forward");
+                Button = FindChild<Image>("Button");
                 Icon = FindChild<Image>("Icon");
                 CDTime = FindChild<Text>("CDTime");
                 ICdMask = FindChild<Image>("ICdMask");
@@ -46,18 +48,19 @@ namespace Windows
         protected Button bt_normal_att;
         protected Image att_Icon;
         protected Image AttCdMask;
+        protected Text tb_key;
         protected Button bt_hp;
         protected Image hp_item_Icon;
         protected Text hp_num;
         protected Button bt_mp;
         protected Image mp_item_Icon;
         protected Text mp_num;
+        protected Text Username;
         protected Slider HPSilder;
         protected Image hp_bg;
         protected Text lb_hp;
         protected Slider MpSilder;
         protected Text lb_mp;
-        protected Text Username;
 
 
         protected UITableManager<AutoGenTableItem<GridTableTemplate, GridTableModel>> GridTableManager = new UITableManager<AutoGenTableItem<GridTableTemplate, GridTableModel>>();
@@ -80,18 +83,19 @@ namespace Windows
             bt_normal_att = FindChild<Button>("bt_normal_att");
             att_Icon = FindChild<Image>("att_Icon");
             AttCdMask = FindChild<Image>("AttCdMask");
+            tb_key = FindChild<Text>("tb_key");
             bt_hp = FindChild<Button>("bt_hp");
             hp_item_Icon = FindChild<Image>("hp_item_Icon");
             hp_num = FindChild<Text>("hp_num");
             bt_mp = FindChild<Button>("bt_mp");
             mp_item_Icon = FindChild<Image>("mp_item_Icon");
             mp_num = FindChild<Text>("mp_num");
+            Username = FindChild<Text>("Username");
             HPSilder = FindChild<Slider>("HPSilder");
             hp_bg = FindChild<Image>("hp_bg");
             lb_hp = FindChild<Text>("lb_hp");
             MpSilder = FindChild<Slider>("MpSilder");
             lb_mp = FindChild<Text>("lb_mp");
-            Username = FindChild<Text>("Username");
 
             GridTableManager.InitFromLayout(Grid);
 

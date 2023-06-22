@@ -18,6 +18,8 @@ public class StartType : MonoBehaviour
 
     private IEnumerator Start()
     {
+        SRDebug.Init();
+        
         yield return Addressables.InitializeAsync();
         Debuger.Loger = new UnityLogger();
 
