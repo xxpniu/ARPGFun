@@ -10,5 +10,5 @@ chmod +x ./BattleServer.x86_64
 --maxplayer ${MAX_PLAYER} \
 --zkmatch ${ZK_MATCH_ROOT} \
 --zk ${ZK_SERVER} \
---kafka ${KAFKA_SERVER}\
+--kafka ${KAFKA_SERVER} \
 --map ${MAP_ID}

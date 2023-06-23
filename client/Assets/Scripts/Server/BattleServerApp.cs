@@ -133,6 +133,11 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         Application.targetFrameRate = 30;
         var commandLineArgs = Environment.GetCommandLineArgs();
 
+        foreach (var arg in commandLineArgs)
+        {
+            print(arg);
+        }
+        
         Config = new BattleServerConfig();
 
         var json = ResourcesManager.S.ReadStreamingFile("server.json");
@@ -157,16 +162,10 @@ public class BattleServerApp : XSingleton<BattleServerApp>
                 o.ZkRoot?.Set(s=>Config.BattleServerRoot = s);
             });
 #endif
-
-
-        Config = BattleServerConfig.Parser.ParseJson(json);
         ServerID = Config.ServerID;
-
         Debuger.Log($"{ServerID}->{Config}");
-
         _ = new CM(ResourcesManager.S);
         LanguageManager.S.AddLanguage(CM.Find<LanguageData>());
-
         Constant = CM.GetId<ConstantValue>(1);
     }
 
@@ -177,8 +176,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         Debuger.Log("Starting");
         await StartServerAsync(cts.Token);
         Debuger.Log($"Listen:{Config.ServicsHost}");
-   
-
+        
         Debuger.Log($"Start task finish:{cts.IsCancellationRequested}");
     }
 

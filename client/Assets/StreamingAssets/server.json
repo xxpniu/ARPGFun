@@ -2,20 +2,20 @@
 	"Level": 1,
 	"MaxPlayer": 1000,
 	"ListenHost":{
-		"IpAddress":"10.10.10.101",
+		"IpAddress":"0.0.0.0",
 		"Port":2100
 	},
 	"ServicsHost":{
-		"IpAddress":"127.0.0.1",
+		"IpAddress":"0.0.0.0",
 		"Port":1200
 	},
-	"ZkServer":["129.211.9.75:2181"],
+	"ZkServer":["andew25a.synology.me:1001"],
 	"ConfigRoot":"/configs",
 	"LoginServerRoot":"/login" ,
 	"BattleServerRoot":"/battle",
 	"MatchServerRoot":"/match",
 	"ServerID":"unitytest01",
-    "KafkaServer":["129.211.9.75:9092"]
+    "KafkaServer":["andew25a.synology.me:9092"]
 }
 
 

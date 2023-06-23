@@ -12,7 +12,6 @@ server_port_file="port.yaml"
 
 def get_ports(dir:str):
    file_name = os.path.join(dir,server_port_file)
-   
    if not os.path.exists(file_name):
      used_ports = {
         "server_port" :[battle_port_range[0]],
@@ -62,11 +61,11 @@ services:
             - '{server_port}:{server_port}'
             - '{service_port}:{service_port}' 
         environment: 
-            - HOST_ADDRESS='{server_ip}'     
-            - LISTEN_ADDRESS='{service_ip}'
+            - HOST_ADDRESS={service_ip}    
+            - LISTEN_ADDRESS={server_ip} 
             - HOST_PORT={service_port}
             - LISTEN_PORT={server_port}
-            - ZK_SERVER='{zk}'
+            - ZK_SERVER={zk}
 #            - KAFKA_SERVER= 
             - MAX_PLAYER=10
             - BATTLE_ID={server_id}
@@ -99,7 +98,7 @@ if __name__ == "__main__" :
    args = parser.parse_args()
    dir = args.dir or "."
    zk = args.zookeeper or "andew25a.synology.me:1001"
-   image = args.image or "battle:latest"
+   image = args.image or "game/battle:latest"
    server_id = args.serverid or "test"
    server_ip = args.serverip or "andew25a.synology.me"
    service_ip = args.serviceip or "192.168.1.8"
