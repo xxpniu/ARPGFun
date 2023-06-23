@@ -168,6 +168,7 @@ namespace Utility
             DateTime? deadTime = default)
         {
 
+            Debuger.Log($"Server:{ip}");
             var server = new C<TClient>(ip);
             var client = await server.CreateClientAsync<TClient>(deadTime);
             try
