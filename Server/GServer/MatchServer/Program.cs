@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommandLine;
 using DataBase;
 using Grpc.Core;
+using Newtonsoft.Json;
 using org.apache.zookeeper;
 using Proto;
 using Proto.ServerConfig;
@@ -26,6 +27,9 @@ namespace MatchServer
             public string ZKNotify { set; get; }
             [Option('b',"zkbattle", Required = true)]
             public string ZKBattle { set; get; }
+            
+            [Option('j',"jenkins", Required=true)]
+            public string Jenkins { set; get; }
         }
         public static async Task Main(string[] args)
         {
@@ -49,6 +53,7 @@ namespace MatchServer
                     o.ZKBattle?.Set(s=>config.BattleServerRoot=s);
                     o.ZKNotify?.Set(s=>config.NotifyServerRoot=s);
                     o.ZKRoot?.Set(s=>config.MatchServerRoot=s);
+                   // o.Jenkins?.Set(s=> config.JenkinsUrl = s);
                 });
 
             using var log = new DefaultLogger(config.KafkaServer, "Log", $"match_server");

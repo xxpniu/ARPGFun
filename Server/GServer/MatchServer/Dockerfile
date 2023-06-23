@@ -28,6 +28,8 @@ ENV MAP_MATCH_SERVICE_PORT="1500"
 # db mathc
 ENV DB_MATCH="match"
 
+ENV JENKINS_URL=""
+
 
 #内网端口
 EXPOSE 1500 

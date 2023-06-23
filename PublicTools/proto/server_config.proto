@@ -103,4 +103,5 @@ message MatchServerConfig
     string NotifyServerRoot = 11;//对内服务器端口
     string BattleServerRoot =12;  //battle server list
     string MatchServerRoot = 13;
+    string JenkinsUrl = 14;//Jenkins for battle server
 }
