@@ -7,7 +7,7 @@ import io
 
 
 
-def setup_env(iamge_name:str, dir:str, server_id:str, server_ip:str, server_port:int, service_ip:str, service_port:int, zk:setattr):
+def setup_env(map_id:str, iamge_name:str, dir:str, server_id:str, server_ip:str, server_port:int, service_ip:str, service_port:int, zk:setattr):
    root_dir = os.path.join(dir, server_id)
    if not os.path.exists(root_dir):
       os.makedirs(root_dir)
@@ -29,6 +29,7 @@ services:
 #            - KAFKA_SERVER= 
             - MAX_PLAYER=10
             - BATTLE_ID={server_id}
+            - MAP_ID={map_id}
    """
    config = yaml.safe_load(services)
    print(config)
@@ -44,14 +45,15 @@ parser = argparse.ArgumentParser(
                 description='启动battleserver',
                 epilog='')
 
-parser.add_argument("-d","--dir")
-parser.add_argument("-s","--serverid") 
-parser.add_argument("-z","--zookeeper")
-parser.add_argument("-i","--image")
+parser.add_argument("-d", "--dir")
+parser.add_argument("-s", "--serverid") 
+parser.add_argument("-z", "--zookeeper")
+parser.add_argument("-i", "--image")
 parser.add_argument("-ip","--serverip")
-parser.add_argument("-p","--port")
+parser.add_argument("-p", "--port")
 parser.add_argument("-si","--serviceip")
-parser.add_argument("-sp", "--serviceprot")
+parser.add_argument("-sp","--serviceprot")
+parser.add_argument("-m", "--map")
 
 
 if __name__ == "__main__" :
@@ -64,6 +66,8 @@ if __name__ == "__main__" :
    server_port = args.port or 2000
    service_ip = args.serviceip or "192.168.1.8"
    service_port = args.serviceprot or 1400
+   map_id= args.map or "1"
 
-   setup_env(image, dir, server_id,server_ip, server_port,service_ip, service_port, zk)
+
+   setup_env(map_id, image, dir, server_id,server_ip, server_port,service_ip, service_port, zk)
 

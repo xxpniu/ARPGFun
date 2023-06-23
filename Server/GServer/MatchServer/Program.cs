@@ -53,7 +53,7 @@ namespace MatchServer
                     o.ZKBattle?.Set(s=>config.BattleServerRoot=s);
                     o.ZKNotify?.Set(s=>config.NotifyServerRoot=s);
                     o.ZKRoot?.Set(s=>config.MatchServerRoot=s);
-                   // o.Jenkins?.Set(s=> config.JenkinsUrl = s);
+                    o.Jenkins?.Set(s=> config.JenkinsUrl = s);
                 });
 
             using var log = new DefaultLogger(config.KafkaServer, "Log", $"match_server");

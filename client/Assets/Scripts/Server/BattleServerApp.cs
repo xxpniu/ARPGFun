@@ -15,6 +15,7 @@ using System.Collections;
 using System.Threading;
 using System.Linq;
 using App.Core.Core;
+using CommandLine;
 using Cysharp.Threading.Tasks;
 using Proto;
 using UnityEngine.SceneManagement;
@@ -130,18 +131,34 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     {
         base.Awake();
         Application.targetFrameRate = 30;
-        var json = ResourcesManager.S.ReadStreamingFile("server.json");
-
-#if UNITY_SERVER && !UNITY_EDITOR
-        var CommandLine = Environment.CommandLine;
         var commandLineArgs = Environment.GetCommandLineArgs();
-        if (commandLineArgs.Length >1)
-        {
-            var file = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, commandLineArgs[1]);
-            json = System.IO.File.ReadAllText(file);
-            Debuger.Log($"File:{file}");
-        }
+
+        Config = new BattleServerConfig();
+
+        var json = ResourcesManager.S.ReadStreamingFile("server.json");
+        Config = BattleServerConfig.Parser.ParseJson(json);
+        
+#if UNITY_SERVER || UNITY_EDITOR
+        Parser.Default.ParseArguments<CommandOption>(commandLineArgs)
+            .WithParsed(o =>
+            {
+                o.Id?.Set(str => Config.ServerID = str);
+                o.kafka?.SplitInsert(Config.KafkaServer);
+                o.Zk?.SplitInsert(Config.ZkServer);
+                o.Zk?.Set(s => Config.BattleServerRoot = s);
+                o.ListenAddress?.SetAddress(s => Config.ListenHost = s);
+                o.ServiceAddress?.SetAddress(s => Config.ServicsHost = s);
+                o.MaxPlayer?.Set(s => Config.MaxPlayer = int.Parse(s));
+                o.ZkLogin?.Set(s => Config.LoginServerRoot = s);
+                o.ZkMatch?.Set(s => Config.MatchServerRoot = s);
+                o.ZkExConfig?.Set(s => Config.ConfigRoot = s);
+                o.MapId?.Set(s=>Config.Level =int.Parse(s));
+                //Config.Level = 0;
+                o.ZkRoot?.Set(s=>Config.BattleServerRoot = s);
+            });
 #endif
+
+
         Config = BattleServerConfig.Parser.ParseJson(json);
         ServerID = Config.ServerID;
 
@@ -172,8 +189,6 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         await BeginSimulator(new List<string>(), 1);
         Debuger.Log($"Start:1");
 #endif
-
-
     }
 
     public LogServer ListenServer { get; private set; }
