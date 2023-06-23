@@ -48,12 +48,12 @@ namespace ChatServer
             await CloseChannel(request.AccountID);
 
             //update database states
-            if (!(await DataBase.S
-                .Online(
-                    request.AccountID, 
-                    Application.S.Config.ChatServerID,
-                    request.HeroName,
-                    request.Token))) return;
+            if (!await DataBase.S
+                    .Online(
+                        request.AccountID, 
+                        Application.S.Config.ChatServerID,
+                        request.HeroName,
+                        request.Token)) return;
             
 
             var account = request.AccountID;
@@ -61,7 +61,7 @@ namespace ChatServer
             if (!NotifyChannels.TryAdd(account, accountChannel))
                 throw new Exception($"Account:[{account}] had join chat");
 
-            if (!(await context.WriteSession(account, Server))) return;
+            if (!await context.WriteSession(account, Server)) return;
             
             await Application.S.NotifyStateForAllFriends(new PlayerState
             {
@@ -163,9 +163,8 @@ namespace ChatServer
                 foreach (var i in state) chan.Push(i);
                 return await Task.FromResult(true);
             }
-            else {
-                Debuger.LogWaring($"Not found {account} on chat server");
-            }
+
+            Debuger.LogWaring($"Not found {account} on chat server");
             return await Task.FromResult(false);
         }
 

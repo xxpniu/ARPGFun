@@ -119,7 +119,7 @@ public class UUIManager:XSingleton<UUIManager>
         if (ui != null)
             UUIWindow.UpdateUIData(ui);
     }
-    private readonly Queue<UUITip> _tipDelTemp = new Queue<UUITip>();
+    private readonly Queue<UUITip> _tipDelTemp = new();
 
     void LateUpdate()
     {
@@ -159,11 +159,12 @@ public class UUIManager:XSingleton<UUIManager>
         return default;
 	}
 
-	private readonly Queue<UUIWindow> _addTemp = new Queue<UUIWindow> ();
-	private readonly Queue<UUIWindow> _delTemp = new Queue<UUIWindow> ();
+	private readonly Queue<UUIWindow> _addTemp = new();
+	private readonly Queue<UUIWindow> _delTemp = new();
 
   
-    public async Task<T> CreateWindowAsync<T>(Action<T> callBack = default, WRenderType wRender = WRenderType.Base) where T : UUIWindow, new()
+    public async Task<T> CreateWindowAsync<T>(Action<T> callBack = default, 
+        WRenderType wRender = WRenderType.Base) where T : UUIWindow, new()
     {
         return await CreateWindow(callBack,wRender);
     }

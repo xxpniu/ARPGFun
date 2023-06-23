@@ -58,11 +58,11 @@ namespace ChatTool
             
         }
 
-        public async Task<bool> Online(string uuid, int ServerID,string heroName,string token)
+        public async Task<bool> Online(string uuid, int serverId,string heroName,string token)
         {
             var update1 = Builders<OnlineStateEntity>.Update
                 .Set(t => t.IsOnline, true)
-                .Set(t => t.ChatServerID, ServerID)
+                .Set(t => t.ChatServerID, serverId)
                 .Set(t => t.HeroName, heroName)
                 .Set(t=>t.Token, token);
              
@@ -71,13 +71,13 @@ namespace ChatTool
             u = new OnlineStateEntity
             {
                 AccountID = uuid, 
-                ChatServerID = ServerID, 
+                ChatServerID = serverId, 
                 IsOnline = true,
                 HeroName = heroName,
                 Token = token
             };
             await States.InsertOneAsync(u);
-            return u !=null;
+            return true;
         }
 
         public async Task<bool> Offline(string uuid,string token)

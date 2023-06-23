@@ -18,7 +18,7 @@ namespace Windows
 
             this.MenuMap.onClick.AddListener(async () =>
             {
-                var ui = await this.CreateWindow<UUILevelList>();
+                var ui = await this.CreateChildWindow<UUILevelList>();
                 ui.ShowWindow();
                 //await UUIManager.S.CreateWindowAsync<UUILevelList>((ui) => ui.ShowWindow());
             });

@@ -7,17 +7,20 @@ namespace UGameTools
 {
     public static class AppExtends
     {
-        public static UIMouseClick OnMouseClick(this Component c, Action<object> click, object userstate = null)
+        public static UIMouseClick OnMouseClick(this Component c, Action<object> click, object userState = null)
         {
             var t = c.TryAdd<UIMouseClick>();
-            t.userState = userstate;
+            t.userState = userState;
             t.OnClick = click;
             return t;
         }
 
-        public static async Task<T> CreateWindow<T>(this UUIWindow ui, WRenderType renderType = WRenderType.Base) where T : UUIWindow, new()
+        public static async Task<T> CreateChildWindow<T>(this UUIWindow win,　WRenderType renderType = WRenderType.Base) where T : UUIWindow, new()
         {
-            return await UUIManager.S.CreateWindowAsync<T>( wRender : renderType);
+           // var parent = win;
+            var ui = await UUIManager.S.CreateWindowAsync<T>( wRender : renderType);
+            //ui.Parent = ui;
+            return ui;
         }
 
         public static Vector3 ZeroY(this Vector3 vec)
