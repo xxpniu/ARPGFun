@@ -30,6 +30,8 @@ namespace MatchServer
             
             [Option('j',"jenkins", Required=true)]
             public string Jenkins { set; get; }
+            
+            
         }
         public static async Task Main(string[] args)
         {

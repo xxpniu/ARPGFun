@@ -28,7 +28,7 @@ ENV MAP_MATCH_SERVICE_PORT="1500"
 # db mathc
 ENV DB_MATCH="match"
 
-ENV JENKINS_URL=""
+ENV JENKINS_URL="http://andew25a.synology.me:2080/generic-webhook-trigger/invoke"
 
 
 #内网端口
