@@ -4565,6 +4565,14 @@
         <member name="F:Proto.ServerConfig.MatchServerConfig.MatchServerRootFieldNumber">
             <summary>Field number for the "MatchServerRoot" field.</summary>
         </member>
+        <member name="F:Proto.ServerConfig.MatchServerConfig.JenkinsUrlFieldNumber">
+            <summary>Field number for the "JenkinsUrl" field.</summary>
+        </member>
+        <member name="P:Proto.ServerConfig.MatchServerConfig.JenkinsUrl">
+             <summary>
+            Jenkins for battle server
+             </summary>
+        </member>
         <member name="T:Proto.StreamServerReflection">
             <summary>Holder for reflection information generated from stream_server.proto</summary>
         </member>
@@ -4613,79 +4621,164 @@
             <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
             <param name="serviceImpl">An object implementing the server-side handling logic.</param>
         </member>
-        <member name="T:EConfig.TalentData">
+        <member name="T:EConfig.GemShopData">
             <summary>
-            天赋表
+            钻石商店
             </summary>    
         </member>
-        <member name="P:EConfig.TalentData.NameKey">
+        <member name="P:EConfig.GemShopData.Name">
             <summary>
             名称
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.DescKey">
+        <member name="P:EConfig.GemShopData.Icon">
+            <summary>
+            图片
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.BundleId">
+            <summary>
+            商店Key
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.Prices">
+            <summary>
+            价格
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.ReceiveCoin">
+            <summary>
+            获得钻石
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.OneOfValue">
+            <summary>
+            价值兑换
+            </summary>
+        </member>
+        <member name="T:EConfig.CharacterMagicData">
+            <summary>
+            角色技能
+            </summary>    
+        </member>
+        <member name="P:EConfig.CharacterMagicData.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterMagicData.Description">
             <summary>
             描述
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.MagicKey">
+        <member name="P:EConfig.CharacterMagicData.CharacterID">
+            <summary>
+            所属角色
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterMagicData.IconKey">
+            <summary>
+            魔法图标
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterMagicData.MagicKey">
             <summary>
             魔法Key
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.NeedTalentID">
+        <member name="P:EConfig.CharacterMagicData.MPCost">
             <summary>
-            需要激活ID
+            需求MP
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.TalentType">
+        <member name="P:EConfig.CharacterMagicData.TickTime">
             <summary>
-            天赋类型(显示)
+            CoolDown
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.TpCost">
+        <member name="P:EConfig.CharacterMagicData.RangeMin">
             <summary>
-            消耗TP
+            释放最小距离(cm)
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.Conflict">
+        <member name="P:EConfig.CharacterMagicData.RangeMax">
             <summary>
-            和谁冲突
+            释放最大距离(cm)
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.ReleaseType">
+        <member name="P:EConfig.CharacterMagicData.ReleaseType">
             <summary>
             释放类型
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.ReleasePro">
+        <member name="P:EConfig.CharacterMagicData.AITargetType">
             <summary>
-            释放机率 万分比
+            释放参数
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.Param01">
+        <member name="P:EConfig.CharacterMagicData.NeedTarget">
             <summary>
-            参数1
+            是否必须目标
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.Param02">
+        <member name="T:EConfig.MonsterGroupData">
             <summary>
-            参数2
+            怪物刷新组
+            </summary>    
+        </member>
+        <member name="P:EConfig.MonsterGroupData.MonsterID">
+            <summary>
+            怪物ID
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.Param03">
+        <member name="P:EConfig.MonsterGroupData.Nums">
             <summary>
-            参数3
+            数量
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.Param04">
+        <member name="P:EConfig.MonsterGroupData.Weight">
             <summary>
-            参数4
+            权重
             </summary>
         </member>
-        <member name="P:EConfig.TalentData.Param05">
+        <member name="P:EConfig.MonsterGroupData.Count">
             <summary>
-            参数5
+            组数
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.Repeat">
+            <summary>
+            是否可重复
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.StandType">
+            <summary>
+            站位
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.StandParams01">
+            <summary>
+            参数
+            </summary>
+        </member>
+        <member name="T:EConfig.LanguageData">
+            <summary>
+            怪物刷新组
+            </summary>    
+        </member>
+        <member name="P:EConfig.LanguageData.Key">
+            <summary>
+            key
+            </summary>
+        </member>
+        <member name="P:EConfig.LanguageData.ZH">
+            <summary>
+            中文
+            </summary>
+        </member>
+        <member name="P:EConfig.LanguageData.EN">
+            <summary>
+            english
             </summary>
         </member>
         <member name="T:EConfig.EquipmentData">
@@ -4723,54 +4816,59 @@
             属性值
             </summary>
         </member>
-        <member name="T:EConfig.DropGroupData">
+        <member name="T:EConfig.ConstantValue">
             <summary>
-            掉落组
+            游戏常量表
             </summary>    
         </member>
-        <member name="P:EConfig.DropGroupData.DropPro">
+        <member name="P:EConfig.ConstantValue.PLAYER_COIN">
             <summary>
-            万分比掉落
+            用户初始化钻石
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.GoldMin">
+        <member name="P:EConfig.ConstantValue.PLAYER_GOLD">
             <summary>
-            掉落金币
+            初始化金币
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.GoldMax">
+        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE">
             <summary>
-            掉落金币大
+            初始化数据 
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.DropMinNum">
+        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_COST">
             <summary>
-            掉落数min
+            购买消耗
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.DropMaxNum">
+        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_SIZE">
             <summary>
-            掉落数max
+            购买消耗增容量
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.Repeat">
+        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE_LIMIT">
             <summary>
-            是否可重复
+            购买消耗增容量上限
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.DropItem">
+        <member name="P:EConfig.ConstantValue.BATTLE_NOTIFY_DISTANCE">
             <summary>
-            道具
+            战斗中被攻击广播半径cm
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.DropNum">
+        <member name="P:EConfig.ConstantValue.WAITING_TIME">
             <summary>
-            掉落数
+            战斗服务器等待时间秒
             </summary>
         </member>
-        <member name="P:EConfig.DropGroupData.Pro">
+        <member name="P:EConfig.ConstantValue.ELITE_PRO">
             <summary>
-            掉落概率
+            精英怪概率参数 万分比
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.RUSH_BUFF">
+            <summary>
+            Buff技能
             </summary>
         </member>
         <member name="T:EConfig.ItemData">
@@ -4833,109 +4931,34 @@
             描述
             </summary>
         </member>
-        <member name="T:EConfig.GoldShopData">
+        <member name="T:EConfig.CharacterLevelUpData">
             <summary>
-            金币商店
+            英雄升级经验表
             </summary>    
         </member>
-        <member name="P:EConfig.GoldShopData.Name">
+        <member name="P:EConfig.CharacterLevelUpData.CharacterID">
             <summary>
-            名称
+            角色ID
             </summary>
         </member>
-        <member name="P:EConfig.GoldShopData.Icon">
+        <member name="P:EConfig.CharacterLevelUpData.Level">
             <summary>
-            图片
+            等级
             </summary>
         </member>
-        <member name="P:EConfig.GoldShopData.Prices">
+        <member name="P:EConfig.CharacterLevelUpData.NeedExp">
             <summary>
-            价格
+            需要经验
             </summary>
         </member>
-        <member name="P:EConfig.GoldShopData.ReceiveGold">
+        <member name="P:EConfig.CharacterLevelUpData.Properties">
             <summary>
-            
+            属性
             </summary>
         </member>
-        <member name="P:EConfig.GoldShopData.CoinOfGold">
+        <member name="P:EConfig.CharacterLevelUpData.PropertyValues">
             <summary>
-            每个钻石多少金币
-            </summary>
-        </member>
-        <member name="T:EConfig.ItemShopData">
-            <summary>
-            商店表
-            </summary>    
-        </member>
-        <member name="P:EConfig.ItemShopData.ShopId">
-            <summary>
-            商店ID
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemShopData.Name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemShopData.ItemIds">
-            <summary>
-            商店道具
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemShopData.ItemNums">
-            <summary>
-            道具数量
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemShopData.ItemPrices">
-            <summary>
-            价格
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemShopData.CoinTypes">
-            <summary>
-            货币类型
-            </summary>
-        </member>
-        <member name="T:EConfig.MonsterGroupData">
-            <summary>
-            怪物刷新组
-            </summary>    
-        </member>
-        <member name="P:EConfig.MonsterGroupData.MonsterID">
-            <summary>
-            怪物ID
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Nums">
-            <summary>
-            数量
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Weight">
-            <summary>
-            权重
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Count">
-            <summary>
-            组数
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Repeat">
-            <summary>
-            是否可重复
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.StandType">
-            <summary>
-            站位
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.StandParams01">
-            <summary>
-            参数
+            属性值
             </summary>
         </member>
         <member name="T:EConfig.MonsterData">
@@ -5028,409 +5051,59 @@
             掉金币
             </summary>
         </member>
-        <member name="T:EConfig.EquipmentLevelUpData">
-            <summary>
-            装备升级表
-            </summary>    
-        </member>
-        <member name="P:EConfig.EquipmentLevelUpData.Quality">
-            <summary>
-            品质
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentLevelUpData.Level">
-            <summary>
-            装备级别
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentLevelUpData.AppendRate">
-            <summary>
-            附加比例万分比
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentLevelUpData.Pro">
-            <summary>
-            成功概率
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentLevelUpData.CostGold">
-            <summary>
-            消耗金币
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentLevelUpData.CostCoin">
-            <summary>
-            消耗钻石
-            </summary>
-        </member>
-        <member name="T:EConfig.ConstantValue">
-            <summary>
-            游戏常量表
-            </summary>    
-        </member>
-        <member name="P:EConfig.ConstantValue.PLAYER_COIN">
-            <summary>
-            用户初始化钻石
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PLAYER_GOLD">
-            <summary>
-            初始化金币
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE">
-            <summary>
-            初始化数据 
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_COST">
-            <summary>
-            购买消耗
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_SIZE">
-            <summary>
-            购买消耗增容量
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE_LIMIT">
-            <summary>
-            购买消耗增容量上限
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.BATTLE_NOTIFY_DISTANCE">
-            <summary>
-            战斗中被攻击广播半径cm
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.WAITING_TIME">
-            <summary>
-            战斗服务器等待时间秒
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.ELITE_PRO">
-            <summary>
-            精英怪概率参数 万分比
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.RUSH_BUFF">
-            <summary>
-            Buff技能
-            </summary>
-        </member>
-        <member name="T:EConfig.StatData">
-            <summary>
-            属性表
-            </summary>    
-        </member>
-        <member name="P:EConfig.StatData.WordKey">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.StatData.InitValue">
-            <summary>
-            初始值
-            </summary>
-        </member>
-        <member name="P:EConfig.StatData.MaxValue">
-            <summary>
-            上限
-            </summary>
-        </member>
-        <member name="T:EConfig.MagicLevelUpData">
-            <summary>
-            英雄数据表
-            </summary>    
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.MagicID">
-            <summary>
-            ID
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.NeedLevel">
-            <summary>
-            需要等级
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.NeedGold">
-            <summary>
-            需求金币
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Level">
-            <summary>
-            等级
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.MPCost">
-            <summary>
-            Mp cost
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param1">
-            <summary>
-            参数1
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param2">
-            <summary>
-            参数2
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param3">
-            <summary>
-            参数3
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param4">
-            <summary>
-            参数4
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param5">
-            <summary>
-            参数5
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Description">
-            <summary>
-            描述
-            </summary>
-        </member>
-        <member name="T:EConfig.MapElementData">
-            <summary>
-            地图物件表
-            </summary>    
-        </member>
-        <member name="P:EConfig.MapElementData.NameKey">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.MapElementData.CharacterID">
-            <summary>
-            角色表
-            </summary>
-        </member>
-        <member name="P:EConfig.MapElementData.HPMax">
-            <summary>
-            可被破坏（-1 为不可破环）
-            </summary>
-        </member>
-        <member name="P:EConfig.MapElementData.METype">
-            <summary>
-            地图元素类型
-            </summary>
-        </member>
-        <member name="P:EConfig.MapElementData.Params01">
-            <summary>
-            参数1
-            </summary>
-        </member>
-        <member name="P:EConfig.MapElementData.Params02">
-            <summary>
-            参数2
-            </summary>
-        </member>
-        <member name="P:EConfig.MapElementData.Params03">
-            <summary>
-            参数3
-            </summary>
-        </member>
-        <member name="T:EConfig.CharacterPlayerData">
+        <member name="T:EConfig.CharacterData">
             <summary>
             角色表
             </summary>    
         </member>
-        <member name="P:EConfig.CharacterPlayerData.CharacterID">
-            <summary>
-            角色ID
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterPlayerData.Unlock">
-            <summary>
-            解锁条件
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterPlayerData.Motion">
-            <summary>
-            创建角色动作
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterPlayerData.Description">
-            <summary>
-            角色说明
-            </summary>
-        </member>
-        <member name="T:EConfig.EquipRefreshData">
-            <summary>
-            装备刷新
-            </summary>    
-        </member>
-        <member name="P:EConfig.EquipRefreshData.Quality">
-            <summary>
-            品质
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.CostGold">
-            <summary>
-            金币消耗
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.Pro">
-            <summary>
-            成功概率万分比
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.NeedQuality">
-            <summary>
-            需求装备品质
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.MaxRefreshTimes">
-            <summary>
-            最大可刷新次数
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.NeedItemCount">
-            <summary>
-            需要消耗道具
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendMin">
-            <summary>
-            属性添加值
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendMax">
-            <summary>
-            属性添加上限
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMin">
-            <summary>
-            属性添加数量
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMax">
-            <summary>
-            属性添加数量
-            </summary>
-        </member>
-        <member name="T:EConfig.RefreshPropertyValueData">
-            <summary>
-            属性参数对照
-            </summary>    
-        </member>
-        <member name="P:EConfig.RefreshPropertyValueData.Value">
-            <summary>
-            属性单位值
-            </summary>
-        </member>
-        <member name="T:EConfig.BattleLevelData">
-            <summary>
-            战斗关卡地图表
-            </summary>    
-        </member>
-        <member name="P:EConfig.BattleLevelData.Name">
+        <member name="P:EConfig.CharacterData.Name">
             <summary>
             名称
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.LimitLevel">
+        <member name="P:EConfig.CharacterData.NormalAttack">
             <summary>
-            最大进入等级
+            普通攻击技能
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.Icon">
+        <member name="P:EConfig.CharacterData.ResourcesPath">
             <summary>
-            图标
+            资源目录
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.LevelName">
+        <member name="P:EConfig.CharacterData.AIResourcePath">
             <summary>
-            资源名称
+            AI路径
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.MapType">
+        <member name="P:EConfig.CharacterData.ViewSize">
             <summary>
-            地图类型
+            大小
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.Chapter">
+        <member name="P:EConfig.CharacterData.PriorityMove">
             <summary>
-            章节
+            避让优先级
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.LimitTime">
+        <member name="P:EConfig.CharacterData.Category">
             <summary>
-            最大挑战时间秒
+            种类
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.ElementConfigPath">
+        <member name="P:EConfig.CharacterData.InitEquip">
             <summary>
-            地图元素配置文件
+            默认装备
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.Description">
+        <member name="P:EConfig.CharacterData.Properties">
             <summary>
-            描述
+            属性
             </summary>
         </member>
-        <member name="T:EConfig.LanguageData">
+        <member name="P:EConfig.CharacterData.PropertyValues">
             <summary>
-            怪物刷新组
-            </summary>    
-        </member>
-        <member name="P:EConfig.LanguageData.Key">
-            <summary>
-            key
-            </summary>
-        </member>
-        <member name="P:EConfig.LanguageData.ZH">
-            <summary>
-            中文
-            </summary>
-        </member>
-        <member name="P:EConfig.LanguageData.EN">
-            <summary>
-            english
-            </summary>
-        </member>
-        <member name="T:EConfig.GemShopData">
-            <summary>
-            钻石商店
-            </summary>    
-        </member>
-        <member name="P:EConfig.GemShopData.Name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.Icon">
-            <summary>
-            图片
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.BundleId">
-            <summary>
-            商店Key
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.Prices">
-            <summary>
-            价格
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.ReceiveCoin">
-            <summary>
-            获得钻石
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.OneOfValue">
-            <summary>
-            价值兑换
+            属性值
             </summary>
         </member>
         <member name="T:EConfig.BuffData">
@@ -5498,89 +5171,104 @@
             参数5
             </summary>
         </member>
-        <member name="T:EConfig.CharacterData">
+        <member name="T:EConfig.EquipmentLevelUpData">
             <summary>
-            角色表
+            装备升级表
             </summary>    
         </member>
-        <member name="P:EConfig.CharacterData.Name">
+        <member name="P:EConfig.EquipmentLevelUpData.Quality">
             <summary>
-            名称
+            品质
             </summary>
         </member>
-        <member name="P:EConfig.CharacterData.NormalAttack">
+        <member name="P:EConfig.EquipmentLevelUpData.Level">
             <summary>
-            普通攻击技能
+            装备级别
             </summary>
         </member>
-        <member name="P:EConfig.CharacterData.ResourcesPath">
+        <member name="P:EConfig.EquipmentLevelUpData.AppendRate">
             <summary>
-            资源目录
+            附加比例万分比
             </summary>
         </member>
-        <member name="P:EConfig.CharacterData.AIResourcePath">
+        <member name="P:EConfig.EquipmentLevelUpData.Pro">
             <summary>
-            AI路径
+            成功概率
             </summary>
         </member>
-        <member name="P:EConfig.CharacterData.ViewSize">
+        <member name="P:EConfig.EquipmentLevelUpData.CostGold">
             <summary>
-            大小
+            消耗金币
             </summary>
         </member>
-        <member name="P:EConfig.CharacterData.PriorityMove">
+        <member name="P:EConfig.EquipmentLevelUpData.CostCoin">
             <summary>
-            避让优先级
+            消耗钻石
             </summary>
         </member>
-        <member name="P:EConfig.CharacterData.Category">
+        <member name="T:EConfig.EquipRefreshData">
             <summary>
-            种类
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.InitEquip">
-            <summary>
-            默认装备
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.Properties">
-            <summary>
-            属性
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.PropertyValues">
-            <summary>
-            属性值
-            </summary>
-        </member>
-        <member name="T:EConfig.CharacterLevelUpData">
-            <summary>
-            英雄升级经验表
+            装备刷新
             </summary>    
         </member>
-        <member name="P:EConfig.CharacterLevelUpData.CharacterID">
+        <member name="P:EConfig.EquipRefreshData.Quality">
             <summary>
-            角色ID
+            品质
             </summary>
         </member>
-        <member name="P:EConfig.CharacterLevelUpData.Level">
+        <member name="P:EConfig.EquipRefreshData.CostGold">
             <summary>
-            等级
+            金币消耗
             </summary>
         </member>
-        <member name="P:EConfig.CharacterLevelUpData.NeedExp">
+        <member name="P:EConfig.EquipRefreshData.Pro">
             <summary>
-            需要经验
+            成功概率万分比
             </summary>
         </member>
-        <member name="P:EConfig.CharacterLevelUpData.Properties">
+        <member name="P:EConfig.EquipRefreshData.NeedQuality">
             <summary>
-            属性
+            需求装备品质
             </summary>
         </member>
-        <member name="P:EConfig.CharacterLevelUpData.PropertyValues">
+        <member name="P:EConfig.EquipRefreshData.MaxRefreshTimes">
             <summary>
-            属性值
+            最大可刷新次数
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.NeedItemCount">
+            <summary>
+            需要消耗道具
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendMin">
+            <summary>
+            属性添加值
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendMax">
+            <summary>
+            属性添加上限
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMin">
+            <summary>
+            属性添加数量
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMax">
+            <summary>
+            属性添加数量
+            </summary>
+        </member>
+        <member name="T:EConfig.RefreshPropertyValueData">
+            <summary>
+            属性参数对照
+            </summary>    
+        </member>
+        <member name="P:EConfig.RefreshPropertyValueData.Value">
+            <summary>
+            属性单位值
             </summary>
         </member>
         <member name="T:EConfig.MapElementGroup">
@@ -5613,69 +5301,389 @@
             是否可重复
             </summary>
         </member>
-        <member name="T:EConfig.CharacterMagicData">
+        <member name="T:EConfig.CharacterPlayerData">
             <summary>
-            角色技能
+            角色表
             </summary>    
         </member>
-        <member name="P:EConfig.CharacterMagicData.Name">
+        <member name="P:EConfig.CharacterPlayerData.CharacterID">
             <summary>
-            名称
+            角色ID
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.Description">
+        <member name="P:EConfig.CharacterPlayerData.Unlock">
+            <summary>
+            解锁条件
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterPlayerData.Motion">
+            <summary>
+            创建角色动作
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterPlayerData.Description">
+            <summary>
+            角色说明
+            </summary>
+        </member>
+        <member name="T:EConfig.MagicLevelUpData">
+            <summary>
+            英雄数据表
+            </summary>    
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.MagicID">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.NeedLevel">
+            <summary>
+            需要等级
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.NeedGold">
+            <summary>
+            需求金币
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Level">
+            <summary>
+            等级
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.MPCost">
+            <summary>
+            Mp cost
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param1">
+            <summary>
+            参数1
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param2">
+            <summary>
+            参数2
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param3">
+            <summary>
+            参数3
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param4">
+            <summary>
+            参数4
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param5">
+            <summary>
+            参数5
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Description">
             <summary>
             描述
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.CharacterID">
+        <member name="T:EConfig.GoldShopData">
             <summary>
-            所属角色
+            金币商店
+            </summary>    
+        </member>
+        <member name="P:EConfig.GoldShopData.Name">
+            <summary>
+            名称
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.IconKey">
+        <member name="P:EConfig.GoldShopData.Icon">
             <summary>
-            魔法图标
+            图片
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.MagicKey">
+        <member name="P:EConfig.GoldShopData.Prices">
+            <summary>
+            价格
+            </summary>
+        </member>
+        <member name="P:EConfig.GoldShopData.ReceiveGold">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:EConfig.GoldShopData.CoinOfGold">
+            <summary>
+            每个钻石多少金币
+            </summary>
+        </member>
+        <member name="T:EConfig.MapElementData">
+            <summary>
+            地图物件表
+            </summary>    
+        </member>
+        <member name="P:EConfig.MapElementData.NameKey">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementData.CharacterID">
+            <summary>
+            角色表
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementData.HPMax">
+            <summary>
+            可被破坏（-1 为不可破环）
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementData.METype">
+            <summary>
+            地图元素类型
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementData.Params01">
+            <summary>
+            参数1
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementData.Params02">
+            <summary>
+            参数2
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementData.Params03">
+            <summary>
+            参数3
+            </summary>
+        </member>
+        <member name="T:EConfig.DropGroupData">
+            <summary>
+            掉落组
+            </summary>    
+        </member>
+        <member name="P:EConfig.DropGroupData.DropPro">
+            <summary>
+            万分比掉落
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.GoldMin">
+            <summary>
+            掉落金币
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.GoldMax">
+            <summary>
+            掉落金币大
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropMinNum">
+            <summary>
+            掉落数min
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropMaxNum">
+            <summary>
+            掉落数max
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.Repeat">
+            <summary>
+            是否可重复
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropItem">
+            <summary>
+            道具
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropNum">
+            <summary>
+            掉落数
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.Pro">
+            <summary>
+            掉落概率
+            </summary>
+        </member>
+        <member name="T:EConfig.ItemShopData">
+            <summary>
+            商店表
+            </summary>    
+        </member>
+        <member name="P:EConfig.ItemShopData.ShopId">
+            <summary>
+            商店ID
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.ItemIds">
+            <summary>
+            商店道具
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.ItemNums">
+            <summary>
+            道具数量
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.ItemPrices">
+            <summary>
+            价格
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.CoinTypes">
+            <summary>
+            货币类型
+            </summary>
+        </member>
+        <member name="T:EConfig.BattleLevelData">
+            <summary>
+            战斗关卡地图表
+            </summary>    
+        </member>
+        <member name="P:EConfig.BattleLevelData.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.LimitLevel">
+            <summary>
+            最大进入等级
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.Icon">
+            <summary>
+            图标
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.LevelName">
+            <summary>
+            资源名称
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.MapType">
+            <summary>
+            地图类型
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.Chapter">
+            <summary>
+            章节
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.LimitTime">
+            <summary>
+            最大挑战时间秒
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.ElementConfigPath">
+            <summary>
+            地图元素配置文件
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.Description">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="T:EConfig.StatData">
+            <summary>
+            属性表
+            </summary>    
+        </member>
+        <member name="P:EConfig.StatData.WordKey">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.StatData.InitValue">
+            <summary>
+            初始值
+            </summary>
+        </member>
+        <member name="P:EConfig.StatData.MaxValue">
+            <summary>
+            上限
+            </summary>
+        </member>
+        <member name="T:EConfig.TalentData">
+            <summary>
+            天赋表
+            </summary>    
+        </member>
+        <member name="P:EConfig.TalentData.NameKey">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.TalentData.DescKey">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="P:EConfig.TalentData.MagicKey">
             <summary>
             魔法Key
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.MPCost">
+        <member name="P:EConfig.TalentData.NeedTalentID">
             <summary>
-            需求MP
+            需要激活ID
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.TickTime">
+        <member name="P:EConfig.TalentData.TalentType">
             <summary>
-            CoolDown
+            天赋类型(显示)
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.RangeMin">
+        <member name="P:EConfig.TalentData.TpCost">
             <summary>
-            释放最小距离(cm)
+            消耗TP
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.RangeMax">
+        <member name="P:EConfig.TalentData.Conflict">
             <summary>
-            释放最大距离(cm)
+            和谁冲突
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.ReleaseType">
+        <member name="P:EConfig.TalentData.ReleaseType">
             <summary>
             释放类型
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.AITargetType">
+        <member name="P:EConfig.TalentData.ReleasePro">
             <summary>
-            释放参数
+            释放机率 万分比
             </summary>
         </member>
-        <member name="P:EConfig.CharacterMagicData.NeedTarget">
+        <member name="P:EConfig.TalentData.Param01">
             <summary>
-            是否必须目标
+            参数1
+            </summary>
+        </member>
+        <member name="P:EConfig.TalentData.Param02">
+            <summary>
+            参数2
+            </summary>
+        </member>
+        <member name="P:EConfig.TalentData.Param03">
+            <summary>
+            参数3
+            </summary>
+        </member>
+        <member name="P:EConfig.TalentData.Param04">
+            <summary>
+            参数4
+            </summary>
+        </member>
+        <member name="P:EConfig.TalentData.Param05">
+            <summary>
+            参数5
             </summary>
         </member>
     </members>
