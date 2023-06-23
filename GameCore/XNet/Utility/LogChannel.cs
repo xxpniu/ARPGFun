@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Proto;
@@ -108,19 +111,22 @@ namespace Utility
 
     public class LogChannel : Channel
     {
-        public string Token { get;  set; }
+        public string Token { get; set; }
         public string SessionKey { set; get; }
 
-        public LogChannel(ServiceAddress address) : this($"{address.IpAddress}:{address.Port}", ChannelCredentials.Insecure)
-        { }
-        
-        
+        public LogChannel(ServiceAddress address) : this($"{address.IpAddress}:{address.Port}",
+            ChannelCredentials.Insecure)
+        {
+        }
+
+
 
         public LogChannel(string target, ChannelCredentials credentials) : base(target, credentials)
         {
             Debuger.Log($"LogChannel:{target}");
-            
+
         }
+        
 
         private CallInvoker CreateLogCallInvoker()
         {
@@ -130,16 +136,57 @@ namespace Utility
         public async Task<T> CreateClientAsync<T>(DateTime? deadline = default) where T : ClientBase
         {
             if (deadline == null) deadline = DateTime.UtcNow.AddSeconds(10);
-            await this.ConnectAsync(deadline);
+            await ConnectAsync(deadline);
 
             return CreateClient<T>();
         }
 
         public T CreateClient<T>() where T : ClientBase
         {
-            return  Activator.CreateInstance(typeof(T), this.CreateLogCallInvoker()) as T;
+            return Activator.CreateInstance(typeof(T), this.CreateLogCallInvoker()) as T;
         }
 
 
+       
+    }
+
+
+    public class C<TClient> : LogChannel
+    where TClient:ClientBase
+    {
+        private C(ServiceAddress address) : base(address)
+        {
+        }
+
+        private C(string target, ChannelCredentials credentials) : base(target, credentials)
+        {
+        }
+
+        public static async Task<TRes> RequestOnceAsync<TRes>(
+            ServiceAddress ip,
+            Func<TClient, Task<TRes>> expression,
+            DateTime? deadTime = default)
+        {
+
+            var server = new C<TClient>(ip);
+            var client = await server.CreateClientAsync<TClient>(deadTime);
+            try
+            {
+                var res = await expression.Invoke(client);
+                return res;
+            }
+            finally
+            {
+                try
+                {
+                    await server.ShutdownAsync();
+                }
+                catch
+                {
+                    // ignore
+                }
+            }
+            
+        }
     }
 }

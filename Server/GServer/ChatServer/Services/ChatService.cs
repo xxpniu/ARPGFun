@@ -38,10 +38,11 @@ namespace ChatServer
 
             //login server 
             Debuger.Log($"{request.AccountID} Join chat");
-            var channel = new LogChannel(loginServer.ServicsHost);
-            var client = await channel.CreateClientAsync<LoginBattleGameServerService.LoginBattleGameServerServiceClient>();
-            var r = await client.CheckSessionAsync(new S2L_CheckSession { UserID = request.AccountID, Session = request.Token });
-            await channel.ShutdownAsync();
+            
+            var r = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>.RequestOnceAsync(
+                loginServer.ServicsHost,
+                async ( c) => 
+                    await c.CheckSessionAsync(new S2L_CheckSession { UserID = request.AccountID, Session = request.Token }));
             //check login session token
             if (r.Code != ErrorCode.Ok) return;
             //if (!Server.TryCreateSession(request.AccountID, out string session)) return;

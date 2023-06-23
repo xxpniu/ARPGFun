@@ -61,16 +61,14 @@ namespace GServer.RPCResponser
         {
             Application.S.StreamService.TryClose(request.Uuid);
 
-            {
-                var match = Application.S.MatchServers.FirstOrDefault();
-                if (match == null) return await Task.FromResult(new Void());
-                var chn = new LogChannel(match.ServicsHost);
-                var client = await chn.CreateClientAsync<MatchServices.MatchServicesClient>();
-                await client.KllUserAsync(new S2M_KillUser {UserID = request.Uuid});
-                await chn.ShutdownAsync();
-            }
+            var match = Application.S.MatchServers.FirstOrDefault();
+            if (match == null) return await Task.FromResult(new Void());
 
-            return await Task.FromResult(new Void());
+            await C<MatchServices.MatchServicesClient>.RequestOnceAsync(match.ServicsHost,
+                async (c) =>
+                    await c.KllUserAsync(new S2M_KillUser { UserID = request.Uuid }));
+            
+            return new Void();
         }
     }
 }

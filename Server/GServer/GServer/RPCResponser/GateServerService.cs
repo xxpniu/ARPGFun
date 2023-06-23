@@ -41,12 +41,10 @@ namespace GServer.RPCResponsor
                 var msg = new NotifyMsg { AccountID = i, AnyNotify = { any } };
                 rNotify.Msg.Add(msg);
             }
-
-
-            var chn = new LogChannel(notifyServer.ServicsHost);
-            var query = await chn.CreateClientAsync<NotifyServices.NotifyServicesClient>();//
-            var res = await query.RouteSendNotifyAsync(rNotify,cancellationToken:chn.ShutdownToken);
-            await chn.ShutdownAsync();
+            
+            var res = await C<NotifyServices.NotifyServicesClient>.RequestOnceAsync(
+                notifyServer.ServicsHost,
+                async ( c)=> await c.RouteSendNotifyAsync(rNotify));
             if (res.Code == ErrorCode.Ok)
             {
                 return true;
@@ -86,9 +84,7 @@ namespace GServer.RPCResponsor
                 Debuger.LogError($"No found match server");
                 return new G2C_JoinMatch();
             }
-
-            var chan = new LogChannel(matchServer.ServicsHost);
-            var query = await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
+ 
             var hero = await UserDataManager.S.FindHeroByAccountId(context.GetAccountId());
             var player = new MatchPlayer
             {
@@ -100,9 +96,12 @@ namespace GServer.RPCResponsor
                 },
                 Name = hero.HeroName
             };
-            var match = await query.JoinMatchGroupAsync( new S2M_JoinMatchGroup { GroupID = request.GroupID, Player = player });
-            await chan.ShutdownAsync();
-
+            
+           var match = await  C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                   matchServer.ServicsHost,
+               async ( c)=> await c.JoinMatchGroupAsync(
+                   new S2M_JoinMatchGroup { GroupID = request.GroupID, Player = player }));
+        
             return new G2C_JoinMatch { Code = match.Code };
         }
 
@@ -114,11 +113,7 @@ namespace GServer.RPCResponsor
                 Debuger.LogError($"No found match server");
                 return new G2C_CreateMatch { Code = ErrorCode.Error };
             }
-
-            var chan = new LogChannel(matchServer.ServicsHost);
-            await chan.ConnectAsync(DateTime.UtcNow.AddSeconds(3));
-            var query = await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
-
+            
             var hero = await UserDataManager.S.FindHeroByAccountId(context.GetAccountId());
             var player = new MatchPlayer
             {
@@ -131,12 +126,16 @@ namespace GServer.RPCResponsor
                 Name = hero.HeroName
             };
 
-            var match = await query.CreateMatchGroupAsync(new S2M_CreateMatchGroup
-            {
-                Level = request.LevelID,
-                Player = player
-            });
-            await chan.ShutdownAsync();
+            var match = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                matchServer.ServicsHost,
+                async (c) =>
+                    await c.CreateMatchGroupAsync(new S2M_CreateMatchGroup
+                    {
+                        Level = request.LevelID,
+                        Player = player
+                    })
+
+            );
 
 
             return new G2C_CreateMatch { Code = match.Code, GroupID = match.GroupID };
@@ -151,12 +150,10 @@ namespace GServer.RPCResponsor
                 return new  G2C_LeaveMatchGroup { Code = ErrorCode.Error };
             }
 
-            var chan = new LogChannel(matchServer.ServicsHost);
-            var query = await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
-
-            var quit = await query.LeaveMatchGroupAsync( new S2M_LeaveMatchGroup {  AccountID = context.GetAccountId()});
-            await chan.ShutdownAsync();
-
+            var quit = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                matchServer.ServicsHost,
+                async (c) => await c.LeaveMatchGroupAsync(new S2M_LeaveMatchGroup { AccountID = context.GetAccountId() })
+            );
             return new G2C_LeaveMatchGroup { Code = quit.Code };
         }
 
@@ -172,11 +169,11 @@ namespace GServer.RPCResponsor
 
             try
             {
-                var chan = new LogChannel(matchServer.ServicsHost);
-                
-                var query =await chan.CreateClientAsync<MatchServices.MatchServicesClient>();
-                var match = await query.StartMatchAsync(new S2M_StartMatch { GroupID = request.GroupID, Leader = userId });
-                await chan.ShutdownAsync();
+                var match = await C<MatchServices.MatchServicesClient>
+                    .RequestOnceAsync(
+                    matchServer.ServicsHost,
+                    async (c)=>  await c.StartMatchAsync(new S2M_StartMatch { GroupID = request.GroupID, Leader = userId })
+                    );
                 return match.Code == ErrorCode.Ok ? new G2C_BeginGame { Code = ErrorCode.Ok } : new G2C_BeginGame { Code = match.Code };
             }
             catch (Exception ex)
@@ -295,14 +292,12 @@ namespace GServer.RPCResponsor
                 return new G2C_Login();
             }
 
-            //check login token
-            var chn = new LogChannel(loginServer.ServicsHost);
-            await chn.ConnectAsync(DateTime.UtcNow.AddSeconds(10));
-            var client = await chn.CreateClientAsync<LoginBattleGameServerService.LoginBattleGameServerServiceClient>();// (chn.CreateLogCallInvoker());
-            var req = await client.CheckSessionAsync(check,
-                cancellationToken:context.CancellationToken);
-            await chn.ShutdownAsync();
-
+            var req = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>
+                .RequestOnceAsync(loginServer.ServicsHost,
+                    async (c)=> 
+                        await c.CheckSessionAsync(check, cancellationToken:context.CancellationToken));
+     
+    
             if (req.Code != ErrorCode.Ok)
             {
                 return new G2C_Login { Code = ErrorCode.Error };
@@ -452,10 +447,11 @@ namespace GServer.RPCResponsor
                 var matchSever = Application.S.MatchServers.FirstOrDefault();
                 if (matchSever != null)
                 {
-                    var mc = new LogChannel(matchSever.ServicsHost);
-                    var mQuery = await mc.CreateClientAsync<MatchServices.MatchServicesClient>();
-                     await mQuery.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = context.GetAccountId() });
-                    await mc.ShutdownAsync();
+                    await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                            matchSever.ServicsHost,
+                            async (c) => await c.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch
+                                { Account = context.GetAccountId() }))
+                        ;
                 }
             }
             catch

@@ -33,10 +33,11 @@ namespace LoginServer.RPCResponser
                 try
                 {
                     var s = Application.S.FindGateServer(info.GateServerId);
-                    var channel = new LogChannel($"{s.ServicsHost.IpAddress}:{s.ServicsHost.Port}", ChannelCredentials.Insecure);
-                    var client = await channel.CreateClientAsync<GateServerInnerService.GateServerInnerServiceClient>();
-                    await client.KillUserAsync(new L2G_KillUser { Uuid = user.Uuid });
-                    await channel.ConnectAsync();
+                    await C<GateServerInnerService.GateServerInnerServiceClient>.RequestOnceAsync(
+                       ip: s.ServicsHost,
+                       expression:async (c) => await c.KillUserAsync(new L2G_KillUser { Uuid = user.Uuid })
+                    );
+                    Debuger.Log($"Send kill user");
                 }
                 catch (Exception ex)
                 {
@@ -45,8 +46,8 @@ namespace LoginServer.RPCResponser
             }
             
             //清空之前的登陆信息
-            var s_filter = Builders<UserSessionInfoEntity>.Filter.Eq(t => t.AccountUuid, user.Uuid);
-            await DataBase.S.Session.DeleteManyAsync(s_filter);
+            var sFilter = Builders<UserSessionInfoEntity>.Filter.Eq(t => t.AccountUuid, user.Uuid);
+            await DataBase.S.Session.DeleteManyAsync(sFilter);
 
             Debuger.Log($"Server:{user.ServerID}");
             var gate = Application.S.FindGateServer(user.ServerID);
@@ -59,8 +60,8 @@ namespace LoginServer.RPCResponser
                 .Set(u => u.LastLoginTime, DateTime.Now)
                 .Set(t => t.LoginCount, user.LoginCount);
 
-            var upfilter = Builders<AccountEntity>.Filter.Eq(t => t.Uuid, user.Uuid);
-            await users.UpdateOneAsync(upfilter, update);
+            var upFilter = Builders<AccountEntity>.Filter.Eq(t => t.Uuid, user.Uuid);
+            await users.UpdateOneAsync(upFilter, update);
 
 
             var chat = Application.S.FindFreeChatServer();

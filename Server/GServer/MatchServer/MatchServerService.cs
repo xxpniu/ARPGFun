@@ -38,15 +38,14 @@ namespace MatchServer
             }
 
 
-            var chn = new LogChannel(notifyServer.ServicsHost);
-            var query = await chn.CreateClientAsync<NotifyServices.NotifyServicesClient>();
-            var res = await query.RouteSendNotifyAsync(rNotify);
-            await chn.ShutdownAsync();
+            var res = await C<NotifyServices.NotifyServicesClient>
+                .RequestOnceAsync(
+                notifyServer.ServicsHost,
+                async ( c)=> await c.RouteSendNotifyAsync(rNotify));
             if (res.Code == ErrorCode.Ok)
             {
                 return true;
             }
-
             Debuger.LogError("Send notify error");
             return false;
         }
@@ -83,17 +82,11 @@ namespace MatchServer
                     re.Players.Add(i);
                 }
 
-                var channel = new LogChannel(config.ServicsHost);
-                var client = await channel.CreateClientAsync<BattleInnerServices.BattleInnerServicesClient>();
-                var rs = await client.StartBatleAsync(re);
-                try
-                {
-                    await channel.ShutdownAsync();
-                }
-                catch
-                {
-                    // ignored
-                }
+                var rs = await C<BattleInnerServices.BattleInnerServicesClient>
+                    .RequestOnceAsync(
+                        config.ServicsHost,
+                        async (c) => await c.StartBatleAsync(re));
+               
 
                 if (rs.Code != ErrorCode.Ok) return (null, null);
                 var notify = new N_Notify_BattleServer
@@ -110,7 +103,8 @@ namespace MatchServer
                     LevelID = levelId
                 };
                 if (!await SendNotify(notify, player.ToArray())) return (null, null);
-                await DataBaseTool.S.CreateMatch(player, config, levelId);
+                var match = await DataBaseTool.S.CreateMatch(player, config, levelId);
+                
                 return (config.ServerID, config);
             }
             finally
@@ -247,11 +241,10 @@ namespace MatchServer
             var (config, _) = await DataBaseTool.S.QueryMatchByPlayer(request.UserID);
             if (config == null) return new M2S_KillUser {Code = ErrorCode.NofoundUserOnBattleServer};
 
-            var chn = new LogChannel(config.ServicsHost);
-            var client = await chn.CreateClientAsync<BattleInnerServices.BattleInnerServicesClient>();
-            await client.KillUserAsync(new M2B_KillUser {UserID = request.UserID});
-            await chn.ShutdownAsync();
-
+            var rs = await C<BattleInnerServices.BattleInnerServicesClient>
+                .RequestOnceAsync(config.ServicsHost,
+                expression: async ( c) => await c.KillUserAsync(new M2B_KillUser { UserID = request.UserID }));
+            Debuger.Log($"M2B_KillUser Result:{rs.Code}");
             return new M2S_KillUser {Code = ErrorCode.Ok};
         }
 

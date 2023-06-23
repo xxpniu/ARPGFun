@@ -44,7 +44,7 @@ namespace NotifyServer
                 await channel.Channel.ShutdownAsync();
                 ChatServers.TryRemove(c.ChatServerID, out _);
             }
-
+            
             var ch = new LogChannel(c.ServicsHost);
             var client = await ch.CreateClientAsync<Proto.ChatServerService.ChatServerServiceClient>();
             channel = new ChatChannel { Channel = ch, Client = client, Config = c };
