@@ -18,7 +18,7 @@ namespace Server
 
     [LevelSimulater(MType = MapType.Boss)]
     [Serializable]
-    public class BossLevelSimulater:BattleLevelSimulater
+    public class BossLevelSimulator:BattleLevelSimulator
     {
         private  MapElementSpawn _spawn;
 
@@ -47,7 +47,7 @@ namespace Server
         private void DoDrop(DropItem it)
         {
             BattlePlayer player = null;
-            if (it.Owner && Simulater.TryGetPlayer(it.Owner.AccountUuid, out player))
+            if (it.Owner && Simulator.TryGetPlayer(it.Owner.AccountUuid, out player))
             {
                 var exp = player.GetHero().Exprices;
                 var expNew = player.AddExp(it.MDate.Exp, out var old, out var newLevel);

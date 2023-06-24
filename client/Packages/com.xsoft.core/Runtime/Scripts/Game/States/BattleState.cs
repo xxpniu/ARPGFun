@@ -8,10 +8,10 @@ namespace GameLogic.Game.States
 
     public class BattleState : GState
     {
-        public BattleState(IViewBase viewBase, IStateLoader loader, ITimeSimulater simulater)
+        public BattleState(IViewBase viewBase, IStateLoader loader, ITimeSimulator simulator)
         {
             ViewBase = viewBase;
-            Perception = new BattlePerception(this, viewBase.Create(simulater));
+            Perception = new BattlePerception(this, viewBase.Create(simulator));
             loader.Load(this);
         }
         public IViewBase ViewBase { private set; get; }

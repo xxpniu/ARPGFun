@@ -22,6 +22,7 @@ using UnityEngine.SceneManagement;
 using Extends = Utility.Extends;
 
 
+[DestroyOnLoad]
 public class BattleServerApp : XSingleton<BattleServerApp>
 {
     private class ZkWatcher : Watcher
@@ -52,19 +53,19 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     /// <returns></returns>
     public bool KillUser(string accountUuid)
     {
-        if (!BattleSimulater) return false;
-        BattleSimulater.KickUser(accountUuid);
-        return BattleSimulater.StateOfRun == RunState.Running;
+        if (!BattleSimulator) return false;
+        BattleSimulator.KickUser(accountUuid);
+        return BattleSimulator.stateOfRun == RunState.Running;
     }
 
     internal async Task<bool> BeginSimulator(IList<string> players, int levelID)
     {
-        if (BattleSimulater) return false;
+        if (BattleSimulator) return false;
         await UnRegBattleServer();
         await UniTask.SwitchToMainThread();
         await BeginSimulatorWorker(players, levelID);
         Debuger.Log($"start simulator of Level:{levelID}");
-        return BattleSimulater;
+        return BattleSimulator;
     }
 
     private async Task BeginSimulatorWorker(IList<string> players, int levelID)
@@ -72,16 +73,16 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         var level = CM.GetId<BattleLevelData>(levelID);
         await  ResourcesManager.S.LoadLevelAsync(level);
 
-        var go = new GameObject($"Simulator_{levelID}", typeof(BattleSimulater));
-        var si = go.GetComponent<BattleSimulater>();
+        var go = new GameObject($"Simulator_{levelID}", typeof(BattleSimulator));
+        var si = go.GetComponent<BattleSimulator>();
         si.OnExited = () =>
         {
-            BattleSimulater = null;
+            BattleSimulator = null;
             Services?.CloseAllChannel();
         };
 
         await si.Begin(level, players);
-        BattleSimulater = si;
+        BattleSimulator = si;
         si.OnEnd = SiOnEnd;
     }
 
@@ -114,10 +115,10 @@ public class BattleServerApp : XSingleton<BattleServerApp>
             Debuger.LogError(ex);
         }
         
-        if (BattleSimulater)
+        if (BattleSimulator)
         {
-            Destroy(BattleSimulater);
-            BattleSimulater = null;
+            Destroy(BattleSimulator);
+            BattleSimulator = null;
         }
         SceneManager.LoadScene("null");
         await UniTask.Delay(1000);
@@ -125,7 +126,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         //on end by time default
     }
 
-    public BattleSimulater BattleSimulater { private set; get; }
+    public BattleSimulator BattleSimulator { private set; get; }
 
     protected override void Awake()
     {

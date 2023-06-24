@@ -46,9 +46,7 @@ namespace Server.Map
 
         public void Spawn()
         {
-            var config = Config;
-
-            foreach (var i in config.Elements)
+            foreach (var i in Config.Elements)
             {
                 Debuger.Log($"{i}");
                 switch (i.Type)
@@ -208,7 +206,7 @@ namespace Server.Map
             return AliveCount == 0;
         }
 
-        public int AliveCount { get; private set; } = 0;
+        private int AliveCount { get; set; } = 0;
 
         private void CreateMonster(int id, Vector3 pos,Vector3 forward)
         {
@@ -246,7 +244,7 @@ namespace Server.Map
                 Debuger.Log($"{LanguageManager.S[el.Name]} death!!");
                 GObject.Destroy(el, 3f);
                 if (el["__Drop"] is DropGroupData d
-                && el["__Monster"] is MonsterData mdata)
+                && el["__Monster"] is MonsterData mData)
                 {
                     var os = el.Watch.Values.OrderBy(t => t.FristTime).ToList();
                     foreach (var e in os)
@@ -258,7 +256,7 @@ namespace Server.Map
                         OnDrop?.Invoke(new DropItem
                         {
                             Pos = el.Position,
-                            MDate = mdata,
+                            MDate = mData,
                             DataConfig = d,
                             OwnerIndex = owner?.Index ?? -1,
                             TeamIndex = owner?.TeamIndex ?? -1,

@@ -27,11 +27,11 @@ namespace GameLogic.Game.AIBehaviorTree
 
         public string TreePath { private set; get; }
 
-        public AITreeRoot(ITimeSimulater timeSimulater, BattleCharacter userstate,
+        public AITreeRoot(ITimeSimulator timeSimulator, BattleCharacter userstate,
             Composite root,TreeNode nodeRoot, string path)
         {
             this.TreePath = path;
-            TimeSimulater = timeSimulater;
+            TimeSimulator = timeSimulator;
             Character = userstate;
             Character = userstate;
             Root = root;
@@ -83,7 +83,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
         public TreeNode NodeRoot { private set; get; }
 
-        public ITimeSimulater TimeSimulater { private set; get; }
+        public ITimeSimulator TimeSimulator { private set; get; }
 
         public BattlePerception Perception => Character.Controller.Perception as BattlePerception;
 
@@ -141,7 +141,7 @@ namespace GameLogic.Game.AIBehaviorTree
             _blackbroad.Clear();
         }
 
-        public GTime Time => TimeSimulater.Now;
+        public GTime Time => TimeSimulator.Now;
 
 		public object this[string key] 
         { 

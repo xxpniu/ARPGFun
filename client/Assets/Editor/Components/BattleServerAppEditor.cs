@@ -8,7 +8,7 @@ public class BattleServerAppEditor : Editor
     {
 
         var t = this.target as BattleServerApp;
-        if (!t.BattleSimulater)
+        if (!t.BattleSimulator)
         {
             if (GUILayout.Button("StartTest"))
             {

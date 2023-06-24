@@ -13,7 +13,7 @@ namespace Server
         public bool Dirty { private set; get; } = false;
         public PlayerItem Item { private set; get; }
 
-        public void SetDrity()
+        public void SetDirty()
         {
             Dirty = true;
         }
@@ -39,20 +39,16 @@ namespace Server
 
         public PlayerPackage Package { get; }
         public Dictionary<string, BattlePlayerItem> Items { private set; get; }
-        public int MaxSize { get { return Package.MaxSize; } }
+        public int MaxSize => Package.MaxSize;
 
-        public List<BattlePlayerItem> Removes { private set; get; } = new List<BattlePlayerItem>();
+        public List<BattlePlayerItem> Removes { private set; get; } = new();
 
         internal bool RemoveItem(string key)
         {
-            if (Items.TryGetValue(key, out BattlePlayerItem item))
-            {
-                Items.Remove(key);
-                Removes.Add(item);
-                return true;
-            }
-            return false;
-
+            if (!Items.TryGetValue(key, out var item)) return false;
+            Items.Remove(key);
+            Removes.Add(item);
+            return true;
         }
     }
 }

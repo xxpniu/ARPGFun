@@ -33,7 +33,7 @@ namespace UApp.GameGates
         public BattleLevelData LevelData { get; private set; }
         public UPerceptionView PerView { get; private set; }
 
-        private ITimeSimulater _timeSimulator;
+        private ITimeSimulator _timeSimulator;
 
         public BattleState State { private set; get; }
 

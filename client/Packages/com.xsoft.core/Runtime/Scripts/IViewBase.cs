@@ -7,7 +7,7 @@ namespace GameLogic
 {
 	public interface IViewBase
 	{
-		IBattlePerception Create(ITimeSimulater simulater);
+		IBattlePerception Create(ITimeSimulator simulator);
 
 		ConstantValue GetConstant { get; }
 	}

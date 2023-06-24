@@ -32,10 +32,10 @@ namespace Server
     }
 
     [Serializable]
-    public class BattleLevelSimulater :  IStateLoader, IAIRunner
+    public class BattleLevelSimulator :  IStateLoader, IAIRunner
     {
 
-        public BattleSimulater Simulater { private set; get; }
+        public BattleSimulator Simulator { private set; get; }
 
         #region AI RUN
         private BattleCharacter aiAttach;
@@ -81,23 +81,23 @@ namespace Server
 
         }
 
-        ITimeSimulater timeSimulater;
+        ITimeSimulator _timeSimulator;
         public UPerceptionView PerView;
         public BattleLevelData LevelData;
 
         public BattleState State { private set; get; }
-        public GTime GetTime() { return timeSimulater.Now; }
+        public GTime GetTime() { return _timeSimulator.Now; }
         public MapConfig Config { private set; get; }
         public GTime TimeNow { get { return GetTime(); } }
         public float TotalTime = 0f;
 
 
-        public async  Task Init(BattleSimulater simulater, BattleLevelData data, UPerceptionView view)
+        public async  Task Init(BattleSimulator simulator, BattleLevelData data, UPerceptionView view)
         {
-            this.Simulater = simulater;
+            this.Simulator = simulator;
             LevelData = data;
             this.PerView = view;
-            timeSimulater = PerView;
+            _timeSimulator = PerView;
             AIRunner.Current = this;
             await ResourcesManager.S.LoadResourcesWithExName<TextAsset>(LevelData.ElementConfigPath,(res)=> {
                 Config = res.text?.Parser<MapConfig>();
@@ -228,9 +228,9 @@ namespace Server
 
         private static readonly Dictionary<MapType, Type> Types = new Dictionary<MapType, Type>();
 
-        static BattleLevelSimulater()
+        static BattleLevelSimulator()
         {
-            var t = typeof(BattleLevelSimulater);
+            var t = typeof(BattleLevelSimulator);
             var types =t .Assembly.GetTypes();
             foreach (var i in types)
             {
@@ -240,13 +240,13 @@ namespace Server
             }
         }
 
-        public static BattleLevelSimulater Create( BattleLevelData level)
+        public static BattleLevelSimulator Create( BattleLevelData level)
         {
             var MType = (MapType)level.MapType;
             Debuger.Log($"LoadType:{MType}");
             if (Types.TryGetValue(MType, out Type t))
             {
-                var si = Activator.CreateInstance(t) as BattleLevelSimulater;
+                var si = Activator.CreateInstance(t) as BattleLevelSimulator;
                 Debuger.Log($"Simualter:{si.GetType()}");
                 return si;
             }

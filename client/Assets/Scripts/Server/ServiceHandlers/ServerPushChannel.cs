@@ -22,7 +22,6 @@ namespace Server.ServiceHandlers
             if (_token == null) return;
             if (_token.IsCancellationRequested) return;
             _token.Cancel();
-
         }
 
         public override bool Push(TData request)
@@ -44,7 +43,7 @@ namespace Server.ServiceHandlers
             {
                 try
                 {
-                    while (TryPull(out TData data))
+                    while (TryPull(out var data))
                         await responseStream.WriteAsync(data).ConfigureAwait(false);
                     try
                     {

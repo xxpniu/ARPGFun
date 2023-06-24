@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Server
 {
     [LevelSimulater(MType = Proto.MapType.Pk)]
-    internal class PKLevelSimulater : BattleLevelSimulater
+    internal class PkLevelSimulator : BattleLevelSimulator
     {
 
         private int TeamIndex = 0;

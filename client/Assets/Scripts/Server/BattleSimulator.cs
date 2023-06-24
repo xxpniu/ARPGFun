@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using App.Core.Core.Components;
 using BattleViews.Views;
+using UnityEngine.Serialization;
 
 
 public enum RunState
@@ -28,40 +29,40 @@ public enum RunState
      Ending
 }
 
-public class BattleSimulater : ComponentAsync
+public class BattleSimulator : ComponentAsync
 {
     private readonly ConcurrentQueue<BindPlayer> _addTemp = new ConcurrentQueue<BindPlayer>();
     private readonly ConcurrentQueue<string> _kickUsers = new ConcurrentQueue<string>();
     private readonly Dictionary<string, BattlePlayer> BattlePlayers = new Dictionary<string, BattlePlayer>();
     private readonly ConcurrentDictionary<string, BattlePlayer> _tempPlayers = new ConcurrentDictionary<string, BattlePlayer>();
 
-    public BattleLevelSimulater Simulater;
-    public RunState StateOfRun = RunState.NoStart;
+    public BattleLevelSimulator simulator;
+    public RunState stateOfRun = RunState.NoStart;
 
-    public HashSet<string> Players { get; } = new HashSet<string>();
+    private HashSet<string> Players { get; } = new();
 
-    public async  Task<BattleLevelSimulater> Begin(BattleLevelData level, IList<string> players)
+    public async  Task<BattleLevelSimulator> Begin(BattleLevelData level, IList<string> players)
     {
         var per = UPerceptionView.Create(BattleServerApp.S.Constant);
-        var simulater = BattleLevelSimulater.Create(level);
+        var levelSimulator = BattleLevelSimulator.Create(level);
         foreach (var i in players) Players.Add(i);
-          await  simulater.Init(this, level, per);
-        Simulater = simulater;
-        StateOfRun = RunState.Waiting;
-        WaitingTime = BattleServerApp.S.Constant.WAITING_TIME;
-        return simulater;
+          await  levelSimulator.Init(this, level, per);
+        simulator = levelSimulator;
+        stateOfRun = RunState.Waiting;
+        _waitingTime = BattleServerApp.S.Constant.WAITING_TIME;
+        return levelSimulator;
     }
 
-    private float WaitingTime = 60;
+    private float _waitingTime = 60;
 
-    volatile bool exited = false;
+    private volatile bool _exited = false;
 
     private void StopAll()
     {
-        if (exited) return;
-        exited = true;
-        Simulater?.Stop();
-        Simulater = null;
+        if (_exited) return;
+        _exited = true;
+        simulator?.Stop();
+        simulator = null;
     }
 
     internal bool HavePlayer(string accountUuid)
@@ -72,28 +73,32 @@ public class BattleSimulater : ComponentAsync
     protected override void Update()
     {
         base.Update();
-        if (StateOfRun == RunState.NoStart) return;
-
-        if (StateOfRun == RunState.Waiting)
+        switch (stateOfRun)
         {
-            WaitingTime -= Time.deltaTime;
-            if (WaitingTime <= 0) EndCall(true);
+            case RunState.NoStart:
+                return;
+            case RunState.Waiting:
+            {
+                _waitingTime -= Time.deltaTime;
+                if (_waitingTime <= 0) EndCall(true);
+                break;
+            }
         }
 
         ProcessJoinClient();
         ProcessAction();
-        var (isEnd, msgs) = Simulater.Tick();
+        var (isEnd, msg) = simulator.Tick();
 
-        if (StateOfRun == RunState.Running)
+        if (stateOfRun == RunState.Running)
         {
             if (isEnd) EndCall();
         }
-        SendNotify(msgs);
+        SendNotify(msg);
     }
 
     private void EndCall(bool force = false)
     {
-        StateOfRun = RunState.Ending;
+        stateOfRun = RunState.Ending;
         OnEnd?.Invoke(force);
     }
 
@@ -111,21 +116,21 @@ public class BattleSimulater : ComponentAsync
     {
         if (_addTemp.Count == 0 && _kickUsers.Count ==0) return;
 
-        while (_addTemp.TryDequeue(out BindPlayer client))
+        while (_addTemp.TryDequeue(out var client))
         {
-            if (this.StateOfRun == RunState.Waiting)
-                this.StateOfRun = RunState.Running;
+            if (this.stateOfRun == RunState.Waiting)
+                this.stateOfRun = RunState.Running;
 
             Debuger.Log($"Add Client:{client.Account}");
             BattlePlayers.Remove(client.Account);
-            var createNotify = Simulater.GetInitNotify();
-            var c = Simulater.CreateUser(client.Player);
+            var createNotify = simulator.GetInitNotify();
+            var c = simulator.CreateUser(client.Player);
             if (c != null)
             {
                 client.Player.HeroCharacter = c;
                 BattlePlayers.Add(client.Account, client.Player);
                 var package = client.Player.GetNotifyPackage();
-                package.TimeNow = Simulater.TimeNow.Time;
+                package.TimeNow = simulator.TimeNow.Time;
                 client.Player.PushChannel?.Push(Any.Pack(package));
                 foreach (var i in createNotify)
                 {
@@ -138,9 +143,9 @@ public class BattleSimulater : ComponentAsync
             }
         }
 
-        while (_kickUsers.TryDequeue(out string u))
+        while (_kickUsers.TryDequeue(out var u))
         {
-            if (BattlePlayers.TryGetValue(u, out BattlePlayer p))
+            if (BattlePlayers.TryGetValue(u, out var p))
             {
                 ExitPlayer(u, p);
             }
@@ -164,7 +169,7 @@ public class BattleSimulater : ComponentAsync
             var req = new B2G_BattleReward
             {
                 AccountUuid = p.AccountId,
-                MapID = Simulater.LevelData.ID,
+                MapID = simulator.LevelData.ID,
                 DiffGold = p.DiffGold,
                 Exp = p.GetHero().Exprices,
                 Level = p.GetHero().Level,
@@ -172,9 +177,9 @@ public class BattleSimulater : ComponentAsync
                 MP = p.HeroCharacter?.MP ?? 0
             };
 
-            var removeItesm = p.Package.Removes.Select(t => t.Item).ToList();
+            var removeItem = p.Package.Removes.Select(t => t.Item).ToList();
             var modify = p.Package.Items.Where(t => t.Value.Dirty).Select(t => t.Value.Item).ToList();
-            foreach (var i in removeItesm)
+            foreach (var i in removeItem)
             {
                 req.RemoveItems.Add(i);
             }
@@ -211,7 +216,7 @@ public class BattleSimulater : ComponentAsync
         if (notify == null || notify.Length == 0) return;
 
         var buffer = new List<Any>();
-        var time = Any.Pack(new Notify_SyncServerTime { ServerNow = Simulater.TimeNow.Time });
+        var time = Any.Pack(new Notify_SyncServerTime { ServerNow = simulator.TimeNow.Time });
         buffer.Add(time);
         foreach (var i in notify)
         {
@@ -240,12 +245,10 @@ public class BattleSimulater : ComponentAsync
                 KickUser(i.Key);
                 continue;
             }
-            bool needNotifyPackage = false;
+            var needNotifyPackage = false;
             var hero = i.Value.HeroCharacter;
-            while (i.Value.RequestChannel.TryPull(out Any action))
+            while (i.Value.RequestChannel.TryPull(out var action))
             {
-
-
                 if (i.Value.HeroCharacter.IsDeath)
                 {
                     if (action.TryUnpack(out Action_Relive re))
@@ -256,17 +259,11 @@ public class BattleSimulater : ComponentAsync
                 }
                 if (action.TryUnpack(out Action_CollectItem collect))
                 {
-                    if (Simulater.TryGetElementByIndex(collect.Index, out BattleItem item))
-                    {
-                        if (item.IsAliveAble == true && item.CanBecollect(i.Value.HeroCharacter))
-                        {
-                            if (i.Value.AddDrop(item.DropItem))
-                            {
-                                needNotifyPackage = true;
-                                GObject.Destroy(item);
-                            }
-                        }
-                    }
+                    if (!simulator.TryGetElementByIndex(collect.Index, out BattleItem item)) continue;
+                    if (item.IsAliveAble != true || !item.CanBecollect(i.Value.HeroCharacter)) continue;
+                    if (!i.Value.AddDrop(item.DropItem)) continue;
+                    needNotifyPackage = true;
+                    GObject.Destroy(item);
                 }
                 else if (action.TryUnpack(out Action_UseItem useItem))
                 {
@@ -280,14 +277,23 @@ public class BattleSimulater : ComponentAsync
                         case ItemType.ItMpitem:
                             {
                                 var rTarget = new ReleaseAtTarget(i.Value.HeroCharacter, i.Value.HeroCharacter);
-                                if (Simulater.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
+                                if (simulator.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
                                 {
                                     i.Value.ConsumeItem(useItem.ItemId);
                                     needNotifyPackage = true;
                                 }
                                 break;
                             }
-                    }
+                        case ItemType.ItNone:
+                        case ItemType.ItEquip:
+                        case ItemType.ItConsume:
+                        default:
+                        {
+                            Debuger.LogError($"type of {(ItemType)config.ItemType} can't be used!");
+                        }
+                            break;
+                            
+                    };
                 }
                 else if (action.TryUnpack(out Action_LookRotation look))
                 {
@@ -311,22 +317,19 @@ public class BattleSimulater : ComponentAsync
                 }
                 else
                 {
-                    Debuger.LogError($"Nofound Type:{action.TypeUrl} of {action}");
+                    Debuger.LogError($"Not found Type:{action.TypeUrl} of {action}");
                 }
             }
-
-            if (needNotifyPackage)
-            {
-                var init = i.Value.GetNotifyPackage();
-                init.TimeNow = Simulater.TimeNow.Time;
-                i.Value.PushChannel?.Push(Any.Pack(init));
-            }
+            if (!needNotifyPackage) continue;
+            var init = i.Value.GetNotifyPackage();
+            init.TimeNow = simulator.TimeNow.Time;
+            i.Value.PushChannel?.Push(Any.Pack(init));
         }    
     }
 
-    public bool TryGetPlayer(string acccountUuid, out BattlePlayer player)
+    public bool TryGetPlayer(string accountUuid, out BattlePlayer player)
     {
-        return BattlePlayers.TryGetValue(acccountUuid, out player);
+        return BattlePlayers.TryGetValue(accountUuid, out player);
     }
 
     public bool BindUserChannel(string accountUuid, StreamBuffer<Any> pushChannel = null, StreamBuffer<Any> requestChannel = null)
@@ -339,17 +342,15 @@ public class BattleSimulater : ComponentAsync
         if (requestChannel != null)
             player.RequestChannel = requestChannel;
 
-        if (player.IsConnected)
+        if (!player.IsConnected) return true;
+        Debuger.Log($"Add client into simulator:{player.AccountId}");
+        _addTemp.Enqueue(new BindPlayer
         {
-            Debuger.Log($"Add client into simulater:{player.AccountId}");
-            _addTemp.Enqueue(new BindPlayer
-            {
-                Player = player,
-                Account = accountUuid
-            });
+            Player = player,
+            Account = accountUuid
+        });
 
-            _tempPlayers.TryRemove(accountUuid, out _);
-        }
+        _tempPlayers.TryRemove(accountUuid, out _);
         return true;
     }
 
@@ -360,8 +361,8 @@ public class BattleSimulater : ComponentAsync
         return _tempPlayers.TryAdd(accountUuid, battlePlayer);
     }
 
-    public void KickUser(string account_uuid)
+    public void KickUser(string accountUuid)
     {
-        _kickUsers.Enqueue(account_uuid);
+        _kickUsers.Enqueue(accountUuid);
     }
 }

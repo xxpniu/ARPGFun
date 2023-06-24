@@ -24,7 +24,7 @@ using UVector3 = UnityEngine.Vector3;
 
 namespace BattleViews.Views
 {
-    public class UPerceptionView : MonoBehaviour, IBattlePerception, ITimeSimulater, IViewBase
+    public class UPerceptionView : MonoBehaviour, IBattlePerception, ITimeSimulator, IViewBase
     {
         public UGameScene UScene;
         public bool UseCache = true;
@@ -203,7 +203,7 @@ namespace BattleViews.Views
             return u;
         }
 
-        GTime ITimeSimulater.Now => GetTime();
+        GTime ITimeSimulator.Now => GetTime();
 
         private ConstantValue _constValue;
 
@@ -435,11 +435,11 @@ namespace BattleViews.Views
             return view;
         }
 
-        ITimeSimulater IBattlePerception.GetTimeSimulater() => this;
+        ITimeSimulator IBattlePerception.GetTimeSimulater() => this;
 
         TreeNode IBattlePerception.GetAITree (string pathTree) =>LoadTreeXml(pathTree);
 
-        IBattlePerception IViewBase.Create(ITimeSimulater simulater) => this;
+        IBattlePerception IViewBase.Create(ITimeSimulator simulator) => this;
         
         TreeNode ITreeLoader.Load(string path) =>LoadTreeXml(path);
 

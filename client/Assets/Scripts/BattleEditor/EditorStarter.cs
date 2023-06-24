@@ -39,7 +39,7 @@ public class EditorStarter : XSingleton<EditorStarter> , IAIRunner, IStateLoader
 	{
 		get
 		{
-			var sim = PerView as ITimeSimulater;
+			var sim = PerView as ITimeSimulator;
 			return sim.Now;
 		}
 	}

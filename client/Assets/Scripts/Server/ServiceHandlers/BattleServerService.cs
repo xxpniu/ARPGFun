@@ -29,30 +29,27 @@ namespace Server
 
         public override async Task<B2C_ExitBattle> ExitBattle(C2B_ExitBattle req, ServerCallContext context)
         {
-            var accountUuid = context.GetAccountId(); 
-
-            var matchsever = BattleServerApp.S.MatchServer.FirstOrDefault();
-            if (matchsever != null)
+            var accountUuid = context.GetAccountId();
+            var matchServer = BattleServerApp.S.MatchServer.FirstOrDefault();
+            if (matchServer == null) return new B2C_ExitBattle { Code = ErrorCode.Ok };
+            try
             {
-                var chn = new LogChannel(matchsever.ServicsHost);
-                try
+                if (BattleServerApp.S.KillUser(accountUuid))
                 {
-                    var query = chn.CreateClient<MatchServices.MatchServicesClient>();
-
-                    if (BattleServerApp.S.KillUser(accountUuid))
-                    {
-                        await query.LeaveMatchGroupAsync(new S2M_LeaveMatchGroup { AccountID = accountUuid });
-                    }
-                    else
-                    {
-                        await query.ExitBattleAsync(new S2M_ExitBattle { UserID = accountUuid });
-                    }
+                    await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                        matchServer.ServicsHost, 
+                        async (c) => await c.LeaveMatchGroupAsync(new S2M_LeaveMatchGroup { AccountID = accountUuid }));
                 }
-                catch (Exception ex)
+                else
                 {
-                    Debuger.Log(ex);
+                    await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                        matchServer.ServicsHost,
+                        async (c) => await c.ExitBattleAsync(new S2M_ExitBattle { UserID = accountUuid }));
                 }
-                await chn.ShutdownAsync();
+            }
+            catch (Exception ex)
+            {
+                Debuger.Log(ex);
             }
             return new B2C_ExitBattle { Code = ErrorCode.Ok };
         }
@@ -60,8 +57,7 @@ namespace Server
         [Auth]
         public override async Task<B2C_JoinBattle> JoinBattle(C2B_JoinBattle request, ServerCallContext context)
         {
-
-            var simulator = BattleServerApp.S.BattleSimulater;
+            var simulator = BattleServerApp.S.BattleSimulator;
             if (!simulator) return new B2C_JoinBattle();
             if (!simulator.HavePlayer(request.AccountUuid)) return new B2C_JoinBattle();
 
@@ -75,31 +71,25 @@ namespace Server
             {
                 Debuger.LogError($"no found login");
                 return new B2C_JoinBattle { Code = ErrorCode.NofoundServerId };
-            }
-            L2S_CheckSession seResult;
-            {
-                var ch = new LogChannel(loginServer.ServicsHost);
-                var client = ch.CreateClient<LoginBattleGameServerService.LoginBattleGameServerServiceClient>();
-                seResult = await client.CheckSessionAsync(re);
-                await ch.ConnectAsync();
-            }
+            } 
+            var seResult = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>
+                .RequestOnceAsync(loginServer.ServicsHost, 
+                    async (c) => await c.CheckSessionAsync(re));
 
             if (!seResult.Code.IsOk()) return new B2C_JoinBattle();
-
+            
             {
-                var ch = new LogChannel(seResult.GateServerInnerHost);
-                var client = ch.CreateClient<Proto.GateServerInnerService.GateServerInnerServiceClient>();
-                var pack = await client.GetPlayerInfoAsync(new B2G_GetPlayerInfo { AccountUuid = request.AccountUuid });
-                await ch.ShutdownAsync();
-                if (!pack.Code.IsOk()) return new B2C_JoinBattle();
+                var pack = await C<GateServerInnerService.GateServerInnerServiceClient>
+                    .RequestOnceAsync(seResult.GateServerInnerHost,
+                        async (c)=> await c.GetPlayerInfoAsync(new B2G_GetPlayerInfo { AccountUuid = request.AccountUuid }));
 
-                if (!Server.TryCreateSession(request.AccountUuid, out string key)) return new B2C_JoinBattle();
+                if (!pack.Code.IsOk()) return new B2C_JoinBattle();
+                if (!Server.TryCreateSession(request.AccountUuid, out var key)) return new B2C_JoinBattle();
                 //session-key
                 await context.WriteResponseHeadersAsync(new Metadata { { "session-key", key } });
                 Debuger.Log($"Add:{request.AccountUuid} -> {key}");
                 var battlePlayer = new BattlePlayer(request.AccountUuid, pack.Package, pack.Hero, pack.Gold, seResult);
                 simulator.AddPlayer(request.AccountUuid, battlePlayer);
-
             }
 
             return new B2C_JoinBattle { Code = ErrorCode.Ok };
@@ -116,7 +106,7 @@ namespace Server
 
         public override async Task<B2C_ViewPlayerHero> ViewPlayerHero(C2B_ViewPlayerHero req,ServerCallContext context)
         {
-            var simulator = BattleServerApp.S.BattleSimulater;
+            var simulator = BattleServerApp.S.BattleSimulator;
             if (!simulator) return new B2C_ViewPlayerHero { Code = ErrorCode.Error };
 
             if (!simulator.TryGetPlayer(req.AccountUuid, out BattlePlayer player))
@@ -147,7 +137,7 @@ namespace Server
 
         public override async Task BattleChannel(IAsyncStreamReader<Any> requestStream, IServerStreamWriter<Any> responseStream, ServerCallContext context)
         {
-            var simulator = BattleServerApp.S.BattleSimulater;
+            var simulator = BattleServerApp.S.BattleSimulator;
             var account = context.GetAccountId();
             var puschannel = new ServerPushChannel<Any>(500);
             PushChannels.TryAdd(account, puschannel);

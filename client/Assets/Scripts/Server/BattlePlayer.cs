@@ -22,17 +22,14 @@ namespace Server
 
         #region Property
 
-        private readonly DHero Hero;
+        private readonly DHero _hero;
         public BattlePackage Package { private set; get; }
         public BattleCharacter HeroCharacter { set; get; }
 
         public int Gold
         {
-            get { return baseGold + DiffGold; }
-            private set
-            {
-                DiffGold = value - baseGold;
-            }
+            get => _baseGold + DiffGold;
+            private set => DiffGold = value - _baseGold;
         }
 
         #endregion
@@ -42,24 +39,23 @@ namespace Server
 
         public StreamBuffer<Any> RequestChannel { set; get; }
 
-        public DHero GetHero() { return Hero; }
+        public DHero GetHero() { return _hero; }
 
         public string AccountId { private set; get; }
 
         public L2S_CheckSession GateServer { set; get; }
-
-
-        private readonly int baseGold = 0;
+        
+        private readonly int _baseGold = 0;
 
         public BattlePlayer(string account, PlayerPackage package, DHero hero, int gold, L2S_CheckSession info,
-            StreamBuffer<Any> requestchannel = null, StreamBuffer<Any> pushChannel = null)
+            StreamBuffer<Any> requestChannel = null, StreamBuffer<Any> pushChannel = null)
         {
             Package = new BattlePackage(package);
-            Hero = hero;
-            baseGold = gold;
+            _hero = hero;
+            _baseGold = gold;
             this.AccountId = account;
             this.PushChannel = pushChannel;
-            this.RequestChannel = requestchannel;
+            this.RequestChannel = requestChannel;
             GateServer = info;
         }
 
@@ -88,7 +84,7 @@ namespace Server
                 AccountUuid = AccountId,
                 Gold = Gold,
                 Package = GetCompletedPackage(),
-                Hero = Hero
+                Hero = _hero
             };
             return notify;
 
@@ -105,14 +101,14 @@ namespace Server
             return result;
         }
 
-        public int CurrentSize { get { return Package.Items.Count; } }
+        public int CurrentSize => Package.Items.Count;
 
         public bool AddDrop(PlayerItem item)
         {
             var config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
             if (config.MaxStackNum == 1)
             {
-                item.GUID = CreateUUID();
+                item.GUID = CreateUuid();
                 if (CurrentSize >= Package.MaxSize) return false;
                 Package.Items.Add(item.GUID, new BattlePlayerItem(item, true));
             }
@@ -121,24 +117,20 @@ namespace Server
                 foreach (var i in Package.Items)
                 {
                     if (i.Value.Item.Locked) continue;
-                    if (i.Value.Item.ItemID == item.ItemID)
+                    if (i.Value.Item.ItemID != item.ItemID) continue;
+                    if (i.Value.Item.Num == config.MaxStackNum) continue;
+                    var maxNum = config.MaxStackNum - i.Value.Item.Num; 
+                    if (maxNum >= item.Num)
                     {
-                        if (i.Value.Item.Num == config.MaxStackNum) continue;
-                        int maxNum = config.MaxStackNum - i.Value.Item.Num;
-                        if (maxNum >= item.Num)
-                        {
-                            i.Value.Item.Num += item.Num;
-                            item.Num = 0;
-                            i.Value.SetDrity();
-                            break;
-                        }
-                        else
-                        {
-                            i.Value.Item.Num += maxNum;
-                            item.Num -= maxNum;
-                            i.Value.SetDrity();
-                        }
+                        i.Value.Item.Num += item.Num;
+                        item.Num = 0;
+                        i.Value.SetDirty();
+                        break;
                     }
+
+                    i.Value.Item.Num += maxNum;
+                    item.Num -= maxNum;
+                    i.Value.SetDirty();
                 }
                 if (CurrentSize >= Package.MaxSize) return true;
                 var needSize = item.Num / Mathf.Max(1, config.MaxStackNum);
@@ -147,8 +139,8 @@ namespace Server
                 {
                     var num = Mathf.Min(config.MaxStackNum, item.Num);
                     item.Num -= num;
-                    var playitem = new PlayerItem { GUID = CreateUUID(), ItemID = item.ItemID, Level = item.Level, Num = num };
-                    Package.Items.Add(playitem.GUID, new BattlePlayerItem(playitem, true));
+                    var playerItem = new PlayerItem { GUID = CreateUuid(), ItemID = item.ItemID, Level = item.Level, Num = num };
+                    Package.Items.Add(playerItem.GUID, new BattlePlayerItem(playerItem, true));
                 }
             }
             Dirty = true;
@@ -168,9 +160,9 @@ namespace Server
 
         public bool ConsumeItem(int item, int num = 1)
         {
-            int have = GetItemCount(item);
+            var have = GetItemCount(item);
             if (have < num) return false;
-            HashSet<string> needRemoves = new HashSet<string>();
+            var needRemoves = new HashSet<string>();
             foreach (var i in Package.Items)
             {
                 if (i.Value.Item.ItemID != item) continue;
@@ -179,11 +171,11 @@ namespace Server
                 if (left < 0)
                 {
                     i.Value.Item.Num -= num;
-                    i.Value.SetDrity();
+                    i.Value.SetDirty();
                     num = 0;
                     break;
                 }
-                i.Value.SetDrity();
+                i.Value.SetDirty();
                 needRemoves.Add(i.Key);
                 num = left;
             }
@@ -203,38 +195,33 @@ namespace Server
             get
             {
                 if (PushChannel == null) return false;
-                if (RequestChannel == null) return false;
-                return true;
+                return RequestChannel != null;
             }
         }
 
-        internal PlayerItem GetEquipByGuid(string gUID)
+        internal PlayerItem GetEquipByGuid(string guid)
         {
-            if (Package.Items.TryGetValue(gUID, out BattlePlayerItem item)) return item.Item;
-            return null;
+            return Package.Items.TryGetValue(guid, out var item) ? item.Item : null;
         }
 
-        public string CreateUUID()
+        private string CreateUuid()
         {
-            var sererid = BattleServerApp.S.ServerID;
-            return $"{sererid}-{Guid.NewGuid()}";
+            var serverId = BattleServerApp.S.ServerID;
+            return $"{serverId}-{Guid.NewGuid()}";
         }
 
         private bool AddExp(int totalExp, int level, out int exLevel, out int exExp)
         {
             exLevel = level;
             exExp = totalExp;
-            var herolevel = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == level + 1);
-            if (herolevel == null) return false;
-
-            if (exExp >= herolevel.NeedExp)
+            var heroLevel = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == level + 1);
+            if (heroLevel == null) return false;
+            if (exExp < heroLevel.NeedExp) return true;
+            exLevel += 1;
+            exExp -= heroLevel.NeedExp;
+            if (exExp > 0)
             {
-                exLevel += 1;
-                exExp -= herolevel.NeedExp;
-                if (exExp > 0)
-                {
-                    AddExp(exExp, exLevel, out exLevel, out exExp);
-                }
+                AddExp(exExp, exLevel, out exLevel, out exExp);
             }
             return true;
         }
@@ -243,20 +230,16 @@ namespace Server
         public int AddExp(int exp, out int oldLevel, out int newLevel)
         {
 
-            oldLevel = newLevel = Hero.Level;
-            if (exp <= 0) return Hero.Exprices;
-            if (AddExp(exp + Hero.Exprices, Hero.Level, out int level, out int exLimit))
+            oldLevel = newLevel = _hero.Level;
+            if (exp <= 0) return _hero.Exprices;
+            if (AddExp(exp + _hero.Exprices, _hero.Level, out var level, out var exLimit))
             {
-                Hero.Level = level;
-                Hero.Exprices = exLimit;
-                newLevel = Hero.Level;
+                _hero.Level = level;
+                _hero.Exprices = exLimit;
+                newLevel = _hero.Level;
             }
             Dirty = true;
-            return Hero.Exprices;
+            return _hero.Exprices;
         }
-
-
     }
-
-
 }

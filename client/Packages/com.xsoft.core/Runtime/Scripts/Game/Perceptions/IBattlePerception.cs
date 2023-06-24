@@ -23,7 +23,7 @@ namespace GameLogic.Game.Perceptions
         /// 当前的时间仿真
         /// </summary>
         /// <returns>The time simulater.</returns>
-        ITimeSimulater GetTimeSimulater();
+        ITimeSimulator GetTimeSimulater();
 
         /// <summary>
         /// Gets the AIT ree.
