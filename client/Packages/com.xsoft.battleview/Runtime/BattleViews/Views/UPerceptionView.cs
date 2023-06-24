@@ -435,7 +435,7 @@ namespace BattleViews.Views
             return view;
         }
 
-        ITimeSimulator IBattlePerception.GetTimeSimulater() => this;
+        ITimeSimulator IBattlePerception.GetTimeSimulator() => this;
 
         TreeNode IBattlePerception.GetAITree (string pathTree) =>LoadTreeXml(pathTree);
 

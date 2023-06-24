@@ -132,95 +132,103 @@ namespace UApp.GameGates
             _player = new NotifyPlayer(PreView)
             {
                 #region OnCreateUser
-                OnCreateUser = async (view) =>
-                {
-                    var character = view as UCharacterView;
-
-                    if (character==null ||character.OwnerIndex > 0) return;
-                    if (UApplication.S.accountUuid != character.accountUuid) return;
-                    Owner = character;
-                    //Owner.transform.SetLayer( LayerMask.NameToLayer("Player"));
-                    Owner.ShowName = true;
-                    PreView.OwnerTeamIndex = character.TeamId;
-                    PreView.OwnerIndex = character.Index;
-
-                    FindObjectOfType<ThirdPersonCameraContollor>()
-                        .SetLookAt(Owner.GetBoneByName(UCharacterView.RootBone))
-                        .SetXY(40, Owner.GetBoneByName(UCharacterView.RootBone).rotation.eulerAngles.y)
-                        .SetDis(18.2f);
-
-                    character.OnItemTrigger = TriggerItem;
-                    character.LookView(LookAtView);
-
-                    await UUIManager.Singleton.CreateWindowAsync<UUIBattle>((ui) =>
-                    {
-                        ui.ShowWindow(this);
-                        UUIManager.S.ShowMask(false);
-                    });
-                    character.OnDead = () =>
-                    {
-                        UUIPopup.ShowConfirm("Level_Relive_Title".GetLanguageWord(),
-                            "Level_Relive_Content".GetLanguageWord(),
-                            () => { SendAction(new Action_Relive { }); },
-                            () => { UApplication.S.GoBackToMainGate(); });
-                    };
-                },
+                OnCreateUser = OnCreateUser,
                 #endregion
 
                 #region OnJoined
-                OnJoined = (initPack) =>
-                {
-                    _startTime = Time.time;
-                    _serverStartTime = initPack.TimeNow;
-                    Package = initPack.Package;
-                    Hero = initPack.Hero;
-                    UUIManager.S.UpdateUIData();
-                },
+                OnJoined = OnJoined,
                 #endregion
 
                 #region OnAddExp
-                OnAddExp = async (exp) =>
-                {
-                    Hero.Exprices = exp.Exp;
-                    Hero.Level = exp.Level;
-
-                    if (exp.Level != exp.OldLeve)
-                    {
-                        await  UUIManager.S.CreateWindowAsync<UUILevelUp>((ui) => { ui.ShowWindow(exp.Level); });
-                    }
-
-                    UUIManager.S.UpdateUIData();
-                    //UUIManager.S.GetUIWindow<UUIBattle>()?.InitHero(Hero);
-                },
+                OnAddExp = OnAddExp,
                 #endregion
 
                 #region OnDropGold
 
-                OnDropGold = (gold) =>
-                {
-                    UApplication.S.ShowNotify($"获得金币{gold.Gold}");
-                },
+                OnDropGold = OnDropGold,
                 
                 #endregion
 
                 #region OnSyncServerTime
-                OnSyncServerTime = (sTime) =>
-                {
-                    _serverStartTime = sTime.ServerNow;
-                },
+                OnSyncServerTime = OnSyncServerTime,
                 #endregion
              
                 #region OnBattleEnd
-                OnBattleEnd = (end) =>
-                {
-                    EndTime = end.EndTime;
-                    State = StateType.Ending;
-                }
+                OnBattleEnd = OnBattleEnd
                 #endregion
             };
             await ConnectChannel();
             State = StateType.Running;
         }
+
+        #region Events
+        private void OnBattleEnd(Notify_BattleEnd end)
+        {
+            EndTime = end.EndTime;
+            State = StateType.Ending;
+        }
+
+        private void OnSyncServerTime(Notify_SyncServerTime sTime)
+        {
+            _serverStartTime = sTime.ServerNow;
+        }
+
+        private void OnDropGold(Notify_DropGold gold)
+        {
+            UApplication.S.ShowNotify($"获得金币{gold.Gold}");
+        }
+
+        private async void OnAddExp(Notify_CharacterExp exp)
+        {
+            Hero.Exprices = exp.Exp;
+            Hero.Level = exp.Level;
+
+            if (exp.Level != exp.OldLeve)
+            {
+                await UUIManager.S.CreateWindowAsync<UUILevelUp>((ui) => { ui.ShowWindow(exp.Level); });
+            }
+
+            UUIManager.S.UpdateUIData();
+            //UUIManager.S.GetUIWindow<UUIBattle>()?.InitHero(Hero);
+        }
+
+        private void OnJoined(Notify_PlayerJoinState initPack)
+        {
+            _startTime = Time.time;
+            _serverStartTime = initPack.TimeNow;
+            Package = initPack.Package;
+            Hero = initPack.Hero;
+            UUIManager.S.UpdateUIData();
+        }
+
+        private async void OnCreateUser(IBattleCharacter view)
+        {
+            var character = view as UCharacterView;
+
+            if (character == null || character.OwnerIndex > 0) return;
+            if (UApplication.S.accountUuid != character.accountUuid) return;
+            Owner = character;
+            //Owner.transform.SetLayer( LayerMask.NameToLayer("Player"));
+            Owner.ShowName = true;
+            PreView.OwnerTeamIndex = character.TeamId;
+            PreView.OwnerIndex = character.Index;
+
+            FindObjectOfType<ThirdPersonCameraContollor>()
+                .SetLookAt(Owner.GetBoneByName(UCharacterView.RootBone))
+                .SetXY(40, Owner.GetBoneByName(UCharacterView.RootBone).rotation.eulerAngles.y)
+                .SetDis(18.2f);
+
+            character.OnItemTrigger = TriggerItem;
+            character.LookView(LookAtView);
+
+            var ui = await UUIManager.Singleton.CreateWindowAsync<UUIBattle>(wRender: WRenderType.WithCanvas);
+            ui.ShowWindow(this);
+            UUIManager.S.ShowMask(false);
+            character.OnDead = () => { UUIPopup.ShowConfirm("Level_Relive_Title".GetLanguageWord(), "Level_Relive_Content".GetLanguageWord(), () => { SendAction(new Action_Relive { }); }, () => { UApplication.S.GoBackToMainGate(); }); };
+        }
+
+        #endregion
+        
         public float EndTime { private set; get; } = -1f;
         public RenderTexture LookAtView {private set; get; }
         private void TriggerItem(UBattleItem item)

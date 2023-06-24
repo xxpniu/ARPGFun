@@ -110,7 +110,7 @@ namespace Windows
             {
                 var g = UApplication.G<GMainGate>();
                 var wear = false;
-                foreach (var i in g.hero.Equips)
+                foreach (var i in g.Hero.Equips)
                     if (i.GUID == item.GUID)
                     {
                         wear = true;

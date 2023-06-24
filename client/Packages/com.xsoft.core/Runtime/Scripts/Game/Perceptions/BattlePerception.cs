@@ -175,7 +175,7 @@ namespace GameLogic.Game.Perceptions
             string name,int ownerIndex = -1, int hp = -1,int mp =-1)
         {
             
-            var now = this.View.GetTimeSimulater().Now.Time;
+            var now = this.View.GetTimeSimulator().Now.Time;
             var cds = magics.Select(t => t.ToHeroMagic(now)) .ToList();
 
             var view = View.CreateBattleCharacterView(accountUuid, data.ID,
@@ -210,7 +210,7 @@ namespace GameLogic.Game.Perceptions
             View.ProcessDamage(sources.Index, effectTarget.Index, result.Damage, result.IsMissed, result.CrtMult);
             NotifyHurt(effectTarget);
             if (result.IsMissed) return;
-            effectTarget.AttachDamage(sources.Index, result.Damage, View.GetTimeSimulater().Now.Time);
+            effectTarget.AttachDamage(sources.Index, result.Damage, View.GetTimeSimulator().Now.Time);
             if (!effectTarget.SubHP(result.Damage, out var dead)) return;
             if (dead) sources.FireEvent(BattleEventType.Killed, effectTarget);
         }
@@ -234,7 +234,7 @@ namespace GameLogic.Game.Perceptions
         public AITreeRoot ChangeCharacterAI(TreeNode ai, BattleCharacter character, string path = null)
         {
             var comp = AITreeParse.CreateFrom(ai,View);
-            var root = new AITreeRoot(View.GetTimeSimulater(), character, comp, ai,path);
+            var root = new AITreeRoot(View.GetTimeSimulator(), character, comp, ai,path);
             character.SetAITreeRoot(root);
             character.SetControllor(AIControllor);
             return root;

@@ -134,17 +134,17 @@ namespace Windows
             base.OnUpdateUIData();
             var gate = UApplication.G<GMainGate>();
             if (gate == null) return;
-            if (gate.hero == null) return;
+            if (gate.Hero == null) return;
             user_defalut.texture = gate.LookAtView;
-            lb_gold.text = gate.Gold.ToString("N0");
-            lb_gem.text = gate.Coin.ToString("N0");
-            if (gate.hero == null) return;
-            this.Level_Number.text = $"{gate.hero.Level}";
-            this.Username.text = $"{gate.hero.Name}";
-            var leveUp = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == gate.hero.Level + 1);
-            lb_exp.text = $"{gate.hero.Exprices}/{leveUp?.NeedExp ?? '-'}";
+            lb_gold.text = gate.gold.ToString("N0");
+            lb_gem.text = gate.coin.ToString("N0");
+            if (gate.Hero == null) return;
+            this.Level_Number.text = $"{gate.Hero.Level}";
+            this.Username.text = $"{gate.Hero.Name}";
+            var leveUp = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == gate.Hero.Level + 1);
+            lb_exp.text = $"{gate.Hero.Exprices}/{leveUp?.NeedExp ?? '-'}";
             float v = 0;
-            if (leveUp != null) v = (float)gate.hero.Exprices / leveUp.NeedExp;
+            if (leveUp != null) v = (float)gate.Hero.Exprices / leveUp.NeedExp;
             ExpSilder.value = v;
 
             Root.ActiveSelfObject(gate.Group == null);

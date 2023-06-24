@@ -118,7 +118,7 @@ namespace Windows
         {
             needcount = count;
             var gata = UApplication.G<GMainGate>();
-            ListItems = gata.package.Items.Where(t => t.Key != exceptId)
+            ListItems = gata.Package.Items.Where(t => t.Key != exceptId)
                 .Select(t => new DisplayItemData
                 {
                     Item = t.Value,
@@ -129,7 +129,7 @@ namespace Windows
             if (nowear)
             {
                 HashSet<string> wears = new HashSet<string>();
-                foreach (var i in gata.hero.Equips)
+                foreach (var i in gata.Hero.Equips)
                 {
                     wears.Add(i.GUID);
                 }

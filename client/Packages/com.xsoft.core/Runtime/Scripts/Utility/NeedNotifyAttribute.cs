@@ -24,7 +24,7 @@ namespace GameLogic.Utility
             {
                 if (NotifyType.GetProperty(i) == null)
                 {
-                    throw new Exception($"{i} nofound in type{NotifyType}");
+                    throw new Exception($"{i} not found in type{NotifyType}");
                 }
             }
         }

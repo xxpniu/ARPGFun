@@ -69,8 +69,8 @@ namespace Windows
                     var res = await GateManager.S.GateFunction.BuyGoldAsync(request);
                     if (res.Code.IsOk())
                     {
-                        gate.Coin = res.Coin;
-                        gate.Gold = res.Gold;
+                        gate.coin = res.Coin;
+                        gate.gold = res.Gold;
                         UApplication.S.ShowNotify(LanguageManager.S.Format("UUIShopGold_Receive_gold",
                             res.ReceivedGold));
                     }

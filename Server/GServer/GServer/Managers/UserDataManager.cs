@@ -27,24 +27,24 @@ namespace GServer.Managers
     public class UserDataManager :XSingleton<UserDataManager>
     {
 
-        public async Task<GameHeroEntity> FindHeroByPlayerId(string player_uuid)
+        public async Task<GameHeroEntity> FindHeroByPlayerId(string playerUuid)
         {
            
-            var filter = Builders<GameHeroEntity>.Filter.Eq(t => t.PlayerUuid, player_uuid);
+            var filter = Builders<GameHeroEntity>.Filter.Eq(t => t.PlayerUuid, playerUuid);
             var query = await  DataBase.S.Heros.FindAsync(filter);
 
             return query.Single();
         }
 
-        public async Task<GameHeroEntity> FindHeroByAccountId(string accountID)
+        public async Task<GameHeroEntity> FindHeroByAccountId(string accountId)
         {
-            var player = await FindPlayerByAccountId(accountID);
+            var player = await FindPlayerByAccountId(accountId);
             return await FindHeroByPlayerId(player.Uuid);
         }
 
-        public async Task<string> ProcessBattleReward(string account_uuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> RemoveItems, int exp, int level, int gold,int hp, int mp)
+        public async Task<string> ProcessBattleReward(string accountUuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> RemoveItems, int exp, int level, int gold,int hp, int mp)
         {
-            var player = await FindPlayerByAccountId(account_uuid);
+            var player = await FindPlayerByAccountId(accountUuid);
             if (player == null) return null;
             var pupdate = Builders<GamePlayerEntity>.Update.Inc(t =>t.Gold, gold);
             await DataBase.S.Playes.UpdateOneAsync(t => t.Uuid== player.Uuid, pupdate);
@@ -890,6 +890,15 @@ namespace GServer.Managers
                 h => h.Uuid == hero.Uuid,
                 inc);
             return doc != null;
+        }
+
+        public async Task<GamePlayerEntity> FindAndUpdateLastLogin(string uuid, string peer)
+        {
+            var player = await DataBase.S.Playes
+                .FindOneAndUpdateAsync(t => t.AccountUuid == uuid,
+                    Builders<GamePlayerEntity>.Update.Set(t => t.LastIp,peer ?? string.Empty));
+
+            return player;
         }
     }
 }

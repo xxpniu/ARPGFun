@@ -71,12 +71,12 @@ namespace Windows
         {
             var equip = new List<PlayerEquipItem>();
             var g = UApplication.G<GMainGate>();
-            foreach (var i in g.package.Items)
+            foreach (var i in g.Package.Items)
             {
                 var item = ExcelToJSONConfigManager.GetId<ItemData>(i.Value.ItemID);
                 if ((ItemType)item.ItemType != ItemType.ItEquip) continue;
                 var wear = false;
-                foreach (var e in g.hero.Equips)
+                foreach (var e in g.Hero.Equips)
                 {
                     if (e.GUID != i.Key) continue;
                     wear = true;

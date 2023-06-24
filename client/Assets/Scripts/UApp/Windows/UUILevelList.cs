@@ -67,7 +67,7 @@ namespace Windows
                 () => GoToServer(item.Data.ID),
                 () =>
                 {
-                    UApplication.S.StartLocalLevel(gate.hero, gate.package, item.Data.ID);
+                    UApplication.S.StartLocalLevel(gate.Hero, gate.Package, item.Data.ID);
                 });
 #else
             GoToServer(item.Data.ID);

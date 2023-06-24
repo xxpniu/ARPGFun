@@ -84,14 +84,14 @@ namespace Windows
             bt_level_up.SetKey("UUIMagic_LevelUp");
             var gata = UApplication.G<GMainGate>();
             int index = 0;
-            var configs = ExcelToJSONConfigManager.Find<CharacterMagicData>(t => t.CharacterID == gata.hero.HeroID
+            var configs = ExcelToJSONConfigManager.Find<CharacterMagicData>(t => t.CharacterID == gata.Hero.HeroID
                 && ExcelToJSONConfigManager.Find<MagicLevelUpData>(l=>l.MagicID == t.ID)?.Count()>0);
 
 
             ContentTableManager.Count = configs.Length;
             foreach (var i in ContentTableManager)
             {
-                TryGetHeto(gata.hero, configs[index].ID, out HeroMagic m);
+                TryGetHeto(gata.Hero, configs[index].ID, out HeroMagic m);
                 i.Model.SetMagic(configs[index], m);
                 i.Model.OnClick = OnItemClick;
                 i.Model.UnSelected();

@@ -60,10 +60,10 @@ namespace Windows
                     {
                         var gate = UApplication.G<GMainGate>();
                         var res = await GateManager.S.GateFunction
-                            .BuyPackageSizeAsync(new C2G_BuyPackageSize { SizeCurrent = gate.package.MaxSize });
+                            .BuyPackageSizeAsync(new C2G_BuyPackageSize { SizeCurrent = gate.Package.MaxSize });
                         if (res.Code.IsOk())
                         {
-                            gate.package.MaxSize = res.PackageCount;
+                            gate.Package.MaxSize = res.PackageCount;
                             OnUpdateUIData();
                         }
                         else  UApplication.S.ShowError(res.Code);
@@ -91,13 +91,13 @@ namespace Windows
             base.OnUpdateUIData();
             var gate = UApplication.G<GMainGate>();
 
-            lb_TextCountCur.text = $"{ gate.package.Items.Count}";
-            lb_TextCountSize.text = $"/{gate.package.MaxSize}";
+            lb_TextCountCur.text = $"{ gate.Package.Items.Count}";
+            lb_TextCountSize.text = $"/{gate.Package.MaxSize}";
            
-            var hero = gate.hero;
+            var hero = gate.Hero;
             int index = 0;
 
-            var items = gate.package.Items
+            var items = gate.Package.Items
                 .Select(t => t.Value).OrderBy(t => t.CreateTime).ToArray();
             ContentTableManager.Count = items.Length;
             foreach (var item in items)

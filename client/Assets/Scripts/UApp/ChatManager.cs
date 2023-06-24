@@ -99,63 +99,7 @@ namespace UApp
 
             ChatHandleChannel = new ResponseChannel<Any>(LoginCall.ResponseStream, true, tag: "ChatHandle")
             {
-                OnReceived = async (any) =>
-                {
-                    await UniTask.SwitchToMainThread();
-                    Debuger.Log($"{any}");
-                    if (any.TryUnpack(out Chat msg))
-                    {
-                        Debuger.Log($"State:{msg}");
-                        OnReceivedChat?.Invoke(msg);
-                    }
-                    else if (any.TryUnpack(out PlayerState stat))
-                    {
-                        Debuger.Log($"State:{stat}");
-
-                        Friends.Remove(stat.User.Uuid);
-                        Friends.Add(stat.User.Uuid, stat);
-
-                        OnReceivePlayerStateChange?.Invoke(stat);
-
-                        UApplication.S.ShowNotify(stat.State == PlayerState.Types.StateType.Online
-                            ? "User_Online".GetAsKeyFormat(stat.User.UserName)
-                            : "User_Offline".GetAsKeyFormat(stat.User.UserName));
-                    }
-                    else if (any.TryUnpack(out N_Notify_BattleServer battleServer))
-                    {
-                        OnStartBattle?.Invoke(battleServer);
-                        if (!battleServer.ReTry)
-                        {
-                            UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID);
-                        }
-                        else
-                        {
-                            Windows.UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(), "BattleJoinContent".GetLanguageWord(),
-                                    () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID),
-                                    async () =>
-                                    {
-                                        var (b, g) =GateManager.TryGet();
-                                        if(b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
-                                    })
-                                ;
-                        }
-                        Debuger.Log(battleServer);
-                    }
-                    else if (any.TryUnpack(out N_Notify_MatchGroup group))
-                    {
-                        OnMatchGroup?.Invoke(group);
-                        //add player
-                    }
-                    else if (any.TryUnpack(out N_Notify_InviteJoinMatchGroup invite))
-                    {
-                        //start
-                        OnInviteJoinMatchGroup?.Invoke(invite);
-                    }
-                    else
-                    {
-                        Debuger.LogError($"Need handle:{any}");
-                    }
-                },
+                OnReceived = OnReceived,
                 OnDisconnect = TryConnected
             };
 
@@ -165,6 +109,62 @@ namespace UApp
             if(s)  await gate.GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState { });
    
             return true;
+        }
+
+        private async void OnReceived(Any any)
+        {
+            await UniTask.SwitchToMainThread();
+            Debuger.Log($"{any}");
+            if (any.TryUnpack(out Chat msg))
+            {
+                Debuger.Log($"State:{msg}");
+                OnReceivedChat?.Invoke(msg);
+            }
+            else if (any.TryUnpack(out PlayerState stat))
+            {
+                Debuger.Log($"State:{stat}");
+
+                Friends.Remove(stat.User.Uuid);
+                Friends.Add(stat.User.Uuid, stat);
+
+                OnReceivePlayerStateChange?.Invoke(stat);
+
+                UApplication.S.ShowNotify(stat.State == PlayerState.Types.StateType.Online
+                    ? "User_Online".GetAsKeyFormat(stat.User.UserName)
+                    : "User_Offline".GetAsKeyFormat(stat.User.UserName));
+            }
+            else if (any.TryUnpack(out N_Notify_BattleServer battleServer))
+            {
+                OnStartBattle?.Invoke(battleServer);
+                if (!battleServer.ReTry)
+                {
+                    UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID);
+                }
+                else
+                {
+                    Windows.UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(), "BattleJoinContent".GetLanguageWord(), () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID), async () =>
+                    {
+                        var (b, g) = GateManager.TryGet();
+                        if (b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
+                    });
+                }
+
+                Debuger.Log(battleServer);
+            }
+            else if (any.TryUnpack(out N_Notify_MatchGroup group))
+            {
+                OnMatchGroup?.Invoke(group);
+                //add player
+            }
+            else if (any.TryUnpack(out N_Notify_InviteJoinMatchGroup invite))
+            {
+                //start
+                OnInviteJoinMatchGroup?.Invoke(invite);
+            }
+            else
+            {
+                Debuger.LogError($"Need handle:{any}");
+            }
         }
 
         private void TryConnected()

@@ -17,12 +17,12 @@ namespace App.Core.Core
         {
             get
             {
+                if (_instance != null) return _instance;
                 if (!_instance) _instance = FindObjectOfType(typeof(T)) as T;
                 if (!_instance) _instance = new GameObject(typeof(T).ToString()).AddComponent<T>();
                 return _instance;
             }
         }
-
 
         public static void Reset()
         {

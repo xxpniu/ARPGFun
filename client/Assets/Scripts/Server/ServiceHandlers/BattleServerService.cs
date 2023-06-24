@@ -11,16 +11,17 @@ using Server.ServiceHandlers;
 using System.Linq;
 using System;
 using App.Core.Core;
+using Cysharp.Threading.Tasks;
 using Google.Protobuf;
 
 namespace Server
 {
     public class BattleServerService : Proto.BattleServerService.BattleServerServiceBase
     {
-        private readonly ConcurrentDictionary<string, StreamBuffer<Any>> PushChannels = new ConcurrentDictionary<string, StreamBuffer<Any>>();
-        private readonly ConcurrentDictionary<string, StreamBuffer<Any>> RequestChannels = new ConcurrentDictionary<string, StreamBuffer<Any>>();
+        private readonly ConcurrentDictionary<string, StreamBuffer<Any>> _pushChannels = new();
+        private readonly ConcurrentDictionary<string, StreamBuffer<Any>> _requestChannels = new();
 
-        public LogServer Server { get; }
+        private LogServer Server { get; }
 
         public BattleServerService(LogServer server)
         {
@@ -29,6 +30,7 @@ namespace Server
 
         public override async Task<B2C_ExitBattle> ExitBattle(C2B_ExitBattle req, ServerCallContext context)
         {
+            await UniTask.SwitchToMainThread();
             var accountUuid = context.GetAccountId();
             var matchServer = BattleServerApp.S.MatchServer.FirstOrDefault();
             if (matchServer == null) return new B2C_ExitBattle { Code = ErrorCode.Ok };
@@ -57,7 +59,9 @@ namespace Server
         [Auth]
         public override async Task<B2C_JoinBattle> JoinBattle(C2B_JoinBattle request, ServerCallContext context)
         {
+            await UniTask.SwitchToMainThread();
             var simulator = BattleServerApp.S.BattleSimulator;
+            
             if (!simulator) return new B2C_JoinBattle();
             if (!simulator.HavePlayer(request.AccountUuid)) return new B2C_JoinBattle();
 
@@ -97,15 +101,16 @@ namespace Server
 
         internal void CloseAllChannel()
         {
-            foreach (var i in PushChannels)
+            foreach (var i in _pushChannels)
                 i.Value.Close();
 
-            foreach (var i in RequestChannels)
+            foreach (var i in _requestChannels)
                 i.Value.Close();
         }
 
         public override async Task<B2C_ViewPlayerHero> ViewPlayerHero(C2B_ViewPlayerHero req,ServerCallContext context)
         {
+            await UniTask.SwitchToMainThread();
             var simulator = BattleServerApp.S.BattleSimulator;
             if (!simulator) return new B2C_ViewPlayerHero { Code = ErrorCode.Error };
 
@@ -137,17 +142,18 @@ namespace Server
 
         public override async Task BattleChannel(IAsyncStreamReader<Any> requestStream, IServerStreamWriter<Any> responseStream, ServerCallContext context)
         {
+            await UniTask.SwitchToMainThread();
             var simulator = BattleServerApp.S.BattleSimulator;
             var account = context.GetAccountId();
-            var puschannel = new ServerPushChannel<Any>(500);
-            PushChannels.TryAdd(account, puschannel);
+            var pushChannel = new ServerPushChannel<Any>(500);
+            _pushChannels.TryAdd(account, pushChannel);
             var channel = new StreamBuffer<Any>(100);
-            RequestChannels.TryAdd(account, channel);
-            simulator.BindUserChannel(account, pushChannel: puschannel, requestChannel: channel);
+            _requestChannels.TryAdd(account, channel);
+            simulator.BindUserChannel(account, pushChannel: pushChannel, requestChannel: channel);
 
             var push = Task.Factory.StartNew(async () =>
             {
-                await puschannel.ProcessAsync(responseStream).ConfigureAwait(false);
+                await pushChannel.ProcessAsync(responseStream).ConfigureAwait(false);
             }, context.CancellationToken);
 
             try
@@ -168,22 +174,22 @@ namespace Server
 
             Debuger.Log($"Exit user {account}");
 
-            PushChannels.TryRemove(account, out _);
-            puschannel.Close();
-            RequestChannels.TryRemove(account, out _);
+            _pushChannels.TryRemove(account, out _);
+            pushChannel.Close();
+            _requestChannels.TryRemove(account, out _);
             channel.Close();
         }
 
         public void CloseChannel(string userID)
         {
-            if (PushChannels.TryRemove(userID, out StreamBuffer<Any> push)) push.Close();
-            if (RequestChannels.TryRemove(userID, out StreamBuffer<Any> req)) req.Close();
+            if (_pushChannels.TryRemove(userID, out StreamBuffer<Any> push)) push.Close();
+            if (_requestChannels.TryRemove(userID, out StreamBuffer<Any> req)) req.Close();
         }
 
         public void PushToAll(IMessage msg)
         {
             var any = Any.Pack(msg);
-            foreach (var i in PushChannels)
+            foreach (var i in _pushChannels)
             {
                 i.Value.Push(any);
             }

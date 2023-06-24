@@ -275,7 +275,7 @@ namespace Windows
             if (refreshItem != null)
             {
                 var gata = UApplication.G<GMainGate>();
-                if (gata.package.Items.TryGetValue(refreshItem.GUID, out refreshItem))
+                if (gata.Package.Items.TryGetValue(refreshItem.GUID, out refreshItem))
                 {
                     OnSelectRefresh(new List<PlayerItem> { refreshItem });
                 }

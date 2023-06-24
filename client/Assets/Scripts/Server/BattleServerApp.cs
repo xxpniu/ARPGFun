@@ -22,7 +22,6 @@ using UnityEngine.SceneManagement;
 using Extends = Utility.Extends;
 
 
-[DestroyOnLoad]
 public class BattleServerApp : XSingleton<BattleServerApp>
 {
     private class ZkWatcher : Watcher
@@ -62,7 +61,6 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     {
         if (BattleSimulator) return false;
         await UnRegBattleServer();
-        await UniTask.SwitchToMainThread();
         await BeginSimulatorWorker(players, levelID);
         Debuger.Log($"start simulator of Level:{levelID}");
         return BattleSimulator;

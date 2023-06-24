@@ -279,12 +279,14 @@ namespace GServer.RPCResponsor
         public override async Task<G2C_Login> Login(C2G_Login request, ServerCallContext context)
         {
             if (string.IsNullOrWhiteSpace(request.Session)) return new G2C_Login { Code = ErrorCode.Error };
+            
             var check = new S2L_CheckSession
             {
                 Session = request.Session,
                 UserID = request.UserID
             };
 
+            //random 修改策略
             var loginServer = Application.S.LoginServers.FirstOrDefault();
             if (loginServer == null)
             {
@@ -300,14 +302,11 @@ namespace GServer.RPCResponsor
     
             if (req.Code != ErrorCode.Ok)
             {
-                return new G2C_Login { Code = ErrorCode.Error };
+                return new G2C_Login { Code =req.Code };
             }
-            
-            var player = await DataBase.S.Playes.FindOneAndUpdateAsync(t => t.AccountUuid == request.UserID,
-                Builders<GamePlayerEntity>.Update.Set(t => t.LastIp, context.Peer ?? string.Empty));
 
-            if (!(await context.WriteSession(request.UserID, Application.S.ListenServer)))
-                return new G2C_Login();
+            var player = await UserDataManager.S.FindAndUpdateLastLogin(request.UserID, context.Peer);
+            if (!await context.WriteSession(request.UserID, Application.S.ListenServer)) return new G2C_Login();
 
             DHero dHero = null;
             PlayerPackage playerPackage = null;

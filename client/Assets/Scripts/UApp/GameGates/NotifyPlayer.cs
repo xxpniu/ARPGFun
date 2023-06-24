@@ -26,8 +26,8 @@ namespace UApp.GameGates
             public MethodInfo Method { set; get; }
             public System. Type Type { set; get; }
         }
-        private readonly Dictionary<string, NotifyMapping> _perceptionInvokes = new Dictionary<string, NotifyMapping>();
-        private readonly Dictionary<string, NotifyMapping> _elementInvokes = new Dictionary<string, NotifyMapping>();
+        private readonly Dictionary<string, NotifyMapping> _perceptionInvokes = new();
+        private readonly Dictionary<string, NotifyMapping> _elementInvokes = new();
 
         public IBattlePerception PerView { set; get; }
  
@@ -48,7 +48,7 @@ namespace UApp.GameGates
             {
                 var att = i.GetCustomAttribute<NeedNotifyAttribute>();
                 if (att == null) continue;
-                _perceptionInvokes.Add(att.NotifyType.FullName, new NotifyMapping
+                _perceptionInvokes.Add(att.NotifyType.FullName!, new NotifyMapping
                 {
                     Type = att.NotifyType,
                     Method = i,
@@ -70,7 +70,7 @@ namespace UApp.GameGates
             {
                 var att = i.GetCustomAttribute<NeedNotifyAttribute>();
                 if (att == null) continue;
-                if (_elementInvokes.ContainsKey(att.NotifyType.FullName))
+                if (_elementInvokes.ContainsKey(att.NotifyType.FullName!))
                 {
                     Debug.LogError($"{att.NotifyType} had add");
                     continue;
@@ -80,59 +80,59 @@ namespace UApp.GameGates
             }
         }
 
-        private const string INDEX = "Index";
+        private const string Index = "Index";
     
         /// <summary>
         /// 处理网络包的解析
         /// </summary>
-        /// <param name="notify">Notify.</param>
+        /// <param name="any">Notify.</param>
         public void Process(Any any)
         {
 
-            //Debuger.Log(any);
             var type = any.TypeUrl.Split('/')[1];
             //Debug.Log($"{notify.GetType().Name}->{notify}");
             //优先处理 perception 创建元素
-            if (_perceptionInvokes.TryGetValue(type, out NotifyMapping m))
+            if (_perceptionInvokes.TryGetValue(type, out var m))
             {
                 var notify = Activator.CreateInstance(m.Type) as IMessage;
                 notify.MergeFrom(any.Value.ToByteArray());
                 var ps = new List<object>();
                 foreach (var i in m.Attr.FieldNames)
                 {
-                    ps.Add(m.Type.GetProperty(i).GetValue(notify));
+                    ps.Add(m.Type.GetProperty(i)!.GetValue(notify));
                 }
                 var go = m.Method.Invoke(PerView, ps.ToArray());
 
                 if (go is UElementView el)
                 {
                     el.SetPerception(PerView as UPerceptionView);
-                    if((el is IBattleElement b)) b.JoinState((int)notify.GetType().GetProperty(INDEX).GetValue(notify));
+                    if((el is IBattleElement b)) b.JoinState((int)notify.GetType().GetProperty(Index).GetValue(notify));
                 }
 
-                if (go is UCharacterView c)
+                switch (go)
                 {
-                    c.TryAdd<HpTipShower>();
-                    OnCreateUser?.Invoke(c);
+                    case UCharacterView c:
+                        c.TryAdd<HpTipShower>();
+                        OnCreateUser?.Invoke(c);
+                        break;
+                    case UBattleItem item:
+                        Debug.Log($"Drop: {item}");
+                        item.TryAdd<HpItemNameShower>();
+                        break;
                 }
 
-                if (go is UBattleItem item)
-                {
-                    Debug.Log($"Drop: {item}");
-                    item.TryAdd<HpItemNameShower>();
-                }
                 Debuger.Log(notify);
                 return;
             }
 
-            if (_elementInvokes.TryGetValue(type, out NotifyMapping em))
+            if (_elementInvokes.TryGetValue(type, out var em)) 
             {
                 var notify = Activator.CreateInstance(em.Type) as IMessage;
                 notify.MergeFrom(any.Value.ToByteArray());
-                var property = notify.GetType().GetProperty(INDEX);
-                var index = (int)property.GetValue(notify);
+                var property = notify!.GetType().GetProperty(Index);
+                var index = (int)property!.GetValue(notify);
                 var per = PerView as UPerceptionView;
-                var v = per.GetViewByIndex<UElementView>(index);
+                var v = per!.GetViewByIndex<UElementView>(index);
                 if (v == null)
                 {
                     Debug.LogError($"No found index {index} by {notify.GetType()} -> {notify}");
@@ -141,7 +141,7 @@ namespace UApp.GameGates
                 var ps = new List<object>();
                 foreach (var f in em.Attr.FieldNames)
                 {
-                    ps.Add(notify.GetType().GetProperty(f).GetValue(notify));
+                    ps.Add(notify.GetType().GetProperty(f)!.GetValue(notify));
                 }
                 em.Method.Invoke(v, ps.ToArray());
                 Debuger.Log(notify);

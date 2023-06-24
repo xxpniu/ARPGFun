@@ -22,8 +22,8 @@ namespace GameLogic.Game.Perceptions
         /// <summary>
         /// 当前的时间仿真
         /// </summary>
-        /// <returns>The time simulater.</returns>
-        ITimeSimulator GetTimeSimulater();
+        /// <returns>The time simulator.</returns>
+        ITimeSimulator GetTimeSimulator();
 
         /// <summary>
         /// Gets the AIT ree.
@@ -58,22 +58,26 @@ namespace GameLogic.Game.Perceptions
             "AccountUuid", "ConfigID", "TeamIndex",
             "Position", "Forward", "Level", "Name",  "Cds","OwnerIndex", "Properties","Hp","Mp")]
         IBattleCharacter CreateBattleCharacterView
-            (string account_id,int config, int teamId,
+            (string accountID,int config, int teamId,
             Proto.Vector3 pos, Proto.Vector3 forward,int level,string name, IList<HeroMagicData> cds,int ownerIndex,IList<HeroProperty> properties,int hp, int mp);
 
        
-        [NeedNotify(typeof(Notify_CreateReleaser), "OPostion", "ORotation", "ReleaserIndex", "TargetIndex", "MagicKey", "Position", "RMType")]
+        [NeedNotify(typeof(Notify_CreateReleaser), "OPosition", "ORotation", "ReleaserIndex", "TargetIndex", "MagicKey", "Position", "RMType")]
         IMagicReleaser CreateReleaserView(Proto.Vector3 pos, Proto.Vector3 rotation, int releaser, int target, string magicKey, Proto.Vector3 targetPos, Proto.ReleaserModeType rmType);
 
         /// <summary>
         /// Creates the missile.
         /// </summary>
         /// <param name="releaseIndex"></param>
+        /// <param name="targetIndex"></param>
         /// <param name="res"></param>
         /// <param name="offset"></param>
         /// <param name="fromBone"></param>
         /// <param name="toBone"></param>
         /// <param name="speed"></param>
+        /// <param name="mType"></param>
+        /// <param name="maxDis"></param>
+        /// <param name="maxLiftTime"></param>
         /// <returns></returns>
         [NeedNotify(typeof(Notify_CreateMissile), "ReleaserIndex", "TargetIndex",
             "ResourcesPath","Offset", "FromBone", "ToBone", "Speed", "MType", "MaxDis", "MaxLifeTime")]
@@ -84,8 +88,7 @@ namespace GameLogic.Game.Perceptions
         /// 
         /// </summary>
         /// <param name="pos"></param>
-        /// <param name="itemID"></param>
-        /// <param name="num"></param>
+        /// <param name="item"></param>
         /// <param name="teamIndex"></param>
         /// <param name="groupId"></param>
         /// <returns></returns>

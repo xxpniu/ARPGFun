@@ -13,7 +13,7 @@ namespace GameLogic.Game.Elements
         Quaternion Rotation { get; }
         MagicData MagicData { set; get; }
         //for editor test 
-        void ShowDamageRanger(DamageLayout layout, UnityEngine.Vector3 tar, UnityEngine.Quaternion rototion);
+        void ShowDamageRanger(DamageLayout layout, UnityEngine.Vector3 tar, UnityEngine.Quaternion rotation);
         void PlayTest(int pIndex, TimeLine line);
         //end
 
