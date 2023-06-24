@@ -43,7 +43,7 @@ namespace XNet.Libs.Utility
 
         static Debuger()
         {
-           // Loger = new DefaultLoger();
+           //Loger = new DefaultLoger();
         }
 
         public static Loger Loger { set; get; }

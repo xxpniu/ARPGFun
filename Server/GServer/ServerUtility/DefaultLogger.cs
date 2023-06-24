@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Confluent.Kafka;
 using Grpc.Core.Logging;
 using XNet.Libs.Utility;
-using Console = Colorful.Console;
 
 namespace ServerUtility
 {
@@ -17,6 +14,45 @@ namespace ServerUtility
     public class DefaultLogger : Loger, ILogger, IDisposable
     {
 
+        internal static string GetForegroundColorEscapeCode(ConsoleColor color)
+        {
+            switch (color)
+            {
+                case ConsoleColor.Black:
+                    return "\x1B[30m";
+                case ConsoleColor.DarkRed:
+                    return "\x1B[31m";
+                case ConsoleColor.DarkGreen:
+                    return "\x1B[32m";
+                case ConsoleColor.DarkYellow:
+                    return "\x1B[33m";
+                case ConsoleColor.DarkBlue:
+                    return "\x1B[34m";
+                case ConsoleColor.DarkMagenta:
+                    return "\x1B[35m";
+                case ConsoleColor.DarkCyan:
+                    return "\x1B[36m";
+                case ConsoleColor.Gray:
+                    return "\x1B[37m";
+                case ConsoleColor.Red:
+                    return "\x1B[1m\x1B[31m";
+                case ConsoleColor.Green:
+                    return "\x1B[1m\x1B[32m";
+                case ConsoleColor.Yellow:
+                    return "\x1B[1m\x1B[33m";
+                case ConsoleColor.Blue:
+                    return "\x1B[1m\x1B[34m";
+                case ConsoleColor.Magenta:
+                    return "\x1B[1m\x1B[35m";
+                case ConsoleColor.Cyan:
+                    return "\x1B[1m\x1B[36m";
+                case ConsoleColor.White:
+                default:
+                    return "\x1B[1m\x1B[37m";
+
+            }
+            // default foreground color
+        }
         public string Topic { get; }
 
         public DefaultLogger(IList<string> kafka, string topic,string clientID)
@@ -103,18 +139,26 @@ namespace ServerUtility
             switch (log.Type)
             {
                 case LogerType.Error:
-                    Console.WriteLine(str,Color.Red );
+                {
+                    var text = $"GetForegroundColorEscapeCode(ConsoleColor.Red){str}";
+                    Console.WriteLine(text);
+                }
                     break;
                 case LogerType.Waring:
                 case LogerType.Debug:
-                    Console.WriteLine(str,Color.Yellow);
-                    break;
+                {
+                    var text = $"{GetForegroundColorEscapeCode(ConsoleColor.Yellow)}{str}";
+                    Console.WriteLine(text);
+                } break;
                 default:
-                    Console.WriteLine(str);
+                {
+                    var text = $"{GetForegroundColorEscapeCode(ConsoleColor.White)}{str}";
+                    Console.WriteLine(text);
+                }
                     break;
-            } 
+            }
 
-             
+
 
         }
     }

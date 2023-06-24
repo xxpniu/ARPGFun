@@ -20,6 +20,7 @@ namespace ServerUtility
            
             using IHost host = new HostBuilder()
                 .ConfigureLogging(l => l.AddConsole()).Build();
+            
             host.Start();
             
             await Start(link.Token);
