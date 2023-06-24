@@ -439,26 +439,19 @@ namespace GServer.RPCResponsor
             return res;
         }
 
-        public override async Task<G2C_ReloadMatchState> ReloadMatchState(C2G_ReloadMatchState request, ServerCallContext context)
+        public override async Task<G2C_ReloadMatchState> ReloadMatchState(C2G_ReloadMatchState request,
+            ServerCallContext context)
         {
-            try
-            {
-                var matchSever = Application.S.MatchServers.FirstOrDefault();
-                if (matchSever != null)
-                {
-                    await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
-                            matchSever.ServicsHost,
-                            async (c) => await c.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch
-                                { Account = context.GetAccountId() }))
-                        ;
-                }
-            }
-            catch
-            {
-                // ignored
-            }
+            var matchSever = Application.S.MatchServers.FirstOrDefault();
+            if (matchSever == null) return new G2C_ReloadMatchState { Code = ErrorCode.Error };
+            
+            var rejoin = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                matchSever.ServicsHost,
+                async (c) => 
+                    await c.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = context.GetAccountId() })
+            );
 
-            return new G2C_ReloadMatchState { Code = ErrorCode.Ok };
+            return new G2C_ReloadMatchState { Code = rejoin.Code };
         }
     }
 }

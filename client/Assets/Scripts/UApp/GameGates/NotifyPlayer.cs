@@ -40,7 +40,7 @@ namespace UApp.GameGates
         public Action<Notify_BattleEnd> OnBattleEnd;
         #endregion
 
-        public NotifyPlayer(UPerceptionView view)
+        public NotifyPlayer(IBattlePerception view)
         {
             PerView = view;
             var invokes = typeof(IBattlePerception).GetMethods();
@@ -62,7 +62,6 @@ namespace UApp.GameGates
             AddType<IMagicReleaser>();
             AddType<IBattleItem>();
         }
-
         private void AddType<T>()
         {
             var invokes = typeof(T).GetMethods();
@@ -106,7 +105,13 @@ namespace UApp.GameGates
                 if (go is UElementView el)
                 {
                     el.SetPerception(PerView as UPerceptionView);
-                    if((el is IBattleElement b)) b.JoinState((int)notify.GetType().GetProperty(Index).GetValue(notify));
+
+                    if (el is IBattleElement b)
+                    {
+                        var elIndex = notify!.GetType().GetProperty(Index);
+                        var indexValue = (int)elIndex!.GetValue(notify);
+                        b.JoinState( indexValue);
+                    }
                 }
 
                 switch (go)

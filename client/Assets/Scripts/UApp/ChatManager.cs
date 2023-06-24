@@ -104,10 +104,6 @@ namespace UApp
             };
 
             await Task.Delay(1000);
-
-            var (s, gate) =GateManager.TryGet();
-            if(s)  await gate.GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState { });
-   
             return true;
         }
 

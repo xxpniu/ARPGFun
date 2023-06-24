@@ -96,31 +96,27 @@ namespace UApp.GameGates
             var serverIP = $"{_serverInfo.IpAddress}:{_serverInfo.Port}";
             Debuger.Log($"Gat:{serverIP}");
 
-   
-            GateManager.S.OnSyncHero = OnSyncHero; 
+
+            GateManager.S.OnSyncHero = OnSyncHero;
             GateManager.S.OnSyncPackage = OnSyncPackage;
             GateManager.S.OnModifyItem = OnModifyItem;
             GateManager.S.OnPackageSize = OnPackageSize;
             GateManager.S.OnCoinAndGold = OnCoinAndGold;
             ChatManager.S.OnMatchGroup = RefreshMatchGroup;
             ChatManager.S.OnInviteJoinMatchGroup = InviteJoinGroup;
-
             var r = await GateManager.S.TryToConnectedGateServer(_serverInfo);
-            //UApplication.S.GotoLoginGate();
-            if (r.Code.IsOk())
-            {
-                if (await ChatManager.S.TryConnectChatServer(UApplication.S.ChatServer, r.Hero?.Name) == false)
-                {
-                    UApplication.S.ShowError(ErrorCode.Error);
-                }
-                ShowPlayer(r);
-            }
-            else
+            if (!r.Code.IsOk())
             {
                 UUITipDrawer.S.ShowNotify("GateServer Response:" + r.Code);
                 UApplication.S.GotoLoginGate();
+                return;
             }
-            
+            if (await ChatManager.S.TryConnectChatServer(UApplication.S.ChatServer, r.Hero?.Name) == false)
+            {
+                UApplication.S.ShowError(ErrorCode.Error);
+            }
+            ShowPlayer(r);
+            await GateManager.S.GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState());
             _gm = gameObject.AddComponent<GameGMTools>();
             _gm.ShowGM = true;
         }

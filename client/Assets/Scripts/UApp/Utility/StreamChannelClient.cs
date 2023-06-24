@@ -60,7 +60,6 @@ namespace UApp.Utility
                 IsWorking = false;
                 if (!TryCancel()) return;
                 await ShutDownProcessAsync();
-                //await UniTask.SwitchToMainThread();
                 if (haveCallBack) OnDisconnect?.Invoke();
                 OnDisconnect = null;
                 InvokeCall(() => { Destroy(Com.gameObject); });
@@ -123,13 +122,12 @@ namespace UApp.Utility
                     Debuger.LogError(ex);
                     Debug.LogException(ex);
                 }
-
                 Buffer.Close();
             }
 
             protected override void OnUpdate()
             {
-                while (this.Buffer.TryPull(out var data))
+                while (Buffer.TryPull(out var data))
                 {
                     OnReceived?.Invoke(data);
                 }

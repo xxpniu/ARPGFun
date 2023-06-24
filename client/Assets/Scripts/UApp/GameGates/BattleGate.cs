@@ -20,8 +20,6 @@ using XNet.Libs.Utility;
 using Vector3 = UnityEngine.Vector3;
 using static UApp.Utility.Stream;
 
-
-
 namespace UApp.GameGates
 {
     public class BattleGate : UGate,IBattleGate
@@ -75,7 +73,6 @@ namespace UApp.GameGates
         public LogChannel Client { set; get; }
         private BattleServerService.BattleServerServiceClient _battleService;
         public UPerceptionView PreView { get; internal set; }
-
         #region implemented abstract members of UGate
         protected override async  Task JoinGate(params object[] args)
         {
@@ -144,9 +141,7 @@ namespace UApp.GameGates
                 #endregion
 
                 #region OnDropGold
-
                 OnDropGold = OnDropGold,
-                
                 #endregion
 
                 #region OnSyncServerTime
@@ -160,24 +155,20 @@ namespace UApp.GameGates
             await ConnectChannel();
             State = StateType.Running;
         }
-
         #region Events
         private void OnBattleEnd(Notify_BattleEnd end)
         {
             EndTime = end.EndTime;
             State = StateType.Ending;
         }
-
         private void OnSyncServerTime(Notify_SyncServerTime sTime)
         {
             _serverStartTime = sTime.ServerNow;
         }
-
         private void OnDropGold(Notify_DropGold gold)
         {
             UApplication.S.ShowNotify($"获得金币{gold.Gold}");
         }
-
         private async void OnAddExp(Notify_CharacterExp exp)
         {
             Hero.Exprices = exp.Exp;
@@ -191,7 +182,6 @@ namespace UApp.GameGates
             UUIManager.S.UpdateUIData();
             //UUIManager.S.GetUIWindow<UUIBattle>()?.InitHero(Hero);
         }
-
         private void OnJoined(Notify_PlayerJoinState initPack)
         {
             _startTime = Time.time;
@@ -200,7 +190,6 @@ namespace UApp.GameGates
             Hero = initPack.Hero;
             UUIManager.S.UpdateUIData();
         }
-
         private async void OnCreateUser(IBattleCharacter view)
         {
             var character = view as UCharacterView;
@@ -228,7 +217,6 @@ namespace UApp.GameGates
         }
 
         #endregion
-        
         public float EndTime { private set; get; } = -1f;
         public RenderTexture LookAtView {private set; get; }
         private void TriggerItem(UBattleItem item)
