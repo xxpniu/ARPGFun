@@ -20,6 +20,7 @@ using UnityEngine;
 using CM = ExcelConfig.ExcelToJSONConfigManager;
 using Google.Protobuf;
 using GameLogic.Game.LayoutLogics;
+using UnityEngine.Serialization;
 using XNet.Libs.Utility;
 
 
@@ -81,15 +82,16 @@ namespace Server
 
         }
 
-        ITimeSimulator _timeSimulator;
+        private ITimeSimulator _timeSimulator;
         public UPerceptionView PerView;
         public BattleLevelData LevelData;
 
         public BattleState State { private set; get; }
         public GTime GetTime() { return _timeSimulator.Now; }
         public MapConfig Config { private set; get; }
-        public GTime TimeNow { get { return GetTime(); } }
-        public float TotalTime = 0f;
+        public GTime TimeNow => GetTime();
+        
+        public float totalTime = 0f;
 
 
         public async  Task Init(BattleSimulator simulator, BattleLevelData data, UPerceptionView view)
@@ -111,7 +113,7 @@ namespace Server
 
         protected virtual void OnLoadCompleted()
         {
-            TotalTime = LevelData.LimitTime;
+            totalTime = LevelData.LimitTime;
         }
 
         public BattlePerception Per { get { return State.Perception as BattlePerception; } }
@@ -205,12 +207,12 @@ namespace Server
 
         protected virtual void OnTick()
         {
-            if (TotalTime > 0) TotalTime -= TimeNow.DeltaTime;
+            if (totalTime > 0) totalTime -= TimeNow.DeltaTime;
         }
 
         public virtual bool CheckEnd()
         {
-            if (TotalTime <= 0)
+            if (totalTime <= 0)
             {
                 return true;
             }

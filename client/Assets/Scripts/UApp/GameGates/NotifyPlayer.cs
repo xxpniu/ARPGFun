@@ -126,7 +126,6 @@ namespace UApp.GameGates
                         break;
                 }
 
-                Debuger.Log(notify);
                 return;
             }
 

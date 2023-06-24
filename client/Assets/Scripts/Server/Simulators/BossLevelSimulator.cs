@@ -29,7 +29,7 @@ namespace Server
             base.OnLoadCompleted();
 
             
-            Debuger.Log($"Total Time:{TotalTime}");
+            Debuger.Log($"Total Time:{totalTime}");
 
             _spawn = new MapElementSpawn(Per, this.Config)
             {

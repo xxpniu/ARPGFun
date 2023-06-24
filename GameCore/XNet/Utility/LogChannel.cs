@@ -118,16 +118,12 @@ namespace Utility
             ChannelCredentials.Insecure)
         {
         }
-
-
-
+        
         public LogChannel(string target, ChannelCredentials credentials) : base(target, credentials)
         {
-            Debuger.Log($"LogChannel:{target}");
-
+            Debuger.Log($"LogChannel Request Server Ip:{target}");
         }
         
-
         private CallInvoker CreateLogCallInvoker()
         {
             return this.Intercept(new ClientLoggerInterceptor(this));
@@ -145,9 +141,7 @@ namespace Utility
         {
             return Activator.CreateInstance(typeof(T), this.CreateLogCallInvoker()) as T;
         }
-
-
-       
+        
     }
 
 
@@ -158,17 +152,11 @@ namespace Utility
         {
         }
 
-        private C(string target, ChannelCredentials credentials) : base(target, credentials)
-        {
-        }
-
         public static async Task<TRes> RequestOnceAsync<TRes>(
             ServiceAddress ip,
             Func<TClient, Task<TRes>> expression,
             DateTime? deadTime = default)
         {
-
-            Debuger.Log($"Server:{ip}");
             var server = new C<TClient>(ip);
             var client = await server.CreateClientAsync<TClient>(deadTime);
             try

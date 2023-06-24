@@ -414,9 +414,9 @@ namespace GameLogic.Game.Elements
 
         public void AttachMagicHistory(int magicID, float now, float? cdTime =null)
         {
-            if (!Magics.TryGetValue(magicID, out BattleCharacterMagic magic)) return;
-            var cd = (cdTime ?? magic.CdTime);
-            magic.CdCompletedTime = now+ (cdTime ?? magic.CdTime);
+            if (!Magics.TryGetValue(magicID, out var magic)) return; 
+            var cd = cdTime ?? magic.CdTime;
+            magic.CdCompletedTime = now + (cdTime ?? magic.CdTime);
             View.AttachMagic(magic.Type, magic.ConfigId, magic.CdCompletedTime ,cd);
         }
 

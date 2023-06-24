@@ -33,7 +33,7 @@ public class BattleSimulator : ComponentAsync
 {
     private readonly ConcurrentQueue<BindPlayer> _addTemp = new ConcurrentQueue<BindPlayer>();
     private readonly ConcurrentQueue<string> _kickUsers = new ConcurrentQueue<string>();
-    private readonly Dictionary<string, BattlePlayer> BattlePlayers = new Dictionary<string, BattlePlayer>();
+    private readonly Dictionary<string, BattlePlayer> _battlePlayers = new Dictionary<string, BattlePlayer>();
     private readonly ConcurrentDictionary<string, BattlePlayer> _tempPlayers = new ConcurrentDictionary<string, BattlePlayer>();
 
     public BattleLevelSimulator simulator;
@@ -41,12 +41,12 @@ public class BattleSimulator : ComponentAsync
 
     private HashSet<string> Players { get; } = new();
 
-    public async  Task<BattleLevelSimulator> Begin(BattleLevelData level, IList<string> players)
+    public async Task<BattleLevelSimulator> Begin(BattleLevelData level, IList<string> players)
     {
         var per = UPerceptionView.Create(BattleServerApp.S.Constant);
         var levelSimulator = BattleLevelSimulator.Create(level);
         foreach (var i in players) Players.Add(i);
-          await  levelSimulator.Init(this, level, per);
+        await levelSimulator.Init(this, level, per);
         simulator = levelSimulator;
         stateOfRun = RunState.Waiting;
         _waitingTime = BattleServerApp.S.Constant.WAITING_TIME;
@@ -55,7 +55,7 @@ public class BattleSimulator : ComponentAsync
 
     private float _waitingTime = 60;
 
-    private volatile bool _exited = false;
+    private volatile bool _exited;
 
     private void StopAll()
     {
@@ -122,13 +122,13 @@ public class BattleSimulator : ComponentAsync
                 this.stateOfRun = RunState.Running;
 
             Debuger.Log($"Add Client:{client.Account}");
-            BattlePlayers.Remove(client.Account);
+            _battlePlayers.Remove(client.Account);
             var createNotify = simulator.GetInitNotify();
             var c = simulator.CreateUser(client.Player);
             if (c != null)
             {
                 client.Player.HeroCharacter = c;
-                BattlePlayers.Add(client.Account, client.Player);
+                _battlePlayers.Add(client.Account, client.Player);
                 var package = client.Player.GetNotifyPackage();
                 package.TimeNow = simulator.TimeNow.Time;
                 client.Player.PushChannel?.Push(Any.Pack(package));
@@ -145,7 +145,7 @@ public class BattleSimulator : ComponentAsync
 
         while (_kickUsers.TryDequeue(out var u))
         {
-            if (BattlePlayers.TryGetValue(u, out var p))
+            if (_battlePlayers.TryGetValue(u, out var p))
             {
                 ExitPlayer(u, p);
             }
@@ -156,7 +156,7 @@ public class BattleSimulator : ComponentAsync
     private void ExitPlayer(string uid, BattlePlayer p)
     {
         if (p.HeroCharacter) GObject.Destroy(p.HeroCharacter);
-        BattlePlayers.Remove(p.AccountId);
+        _battlePlayers.Remove(p.AccountId);
         if (!p.Dirty) return;
         _ = SendReword(uid, p);
     }
@@ -204,7 +204,7 @@ public class BattleSimulator : ComponentAsync
 
     public async Task<bool> ExitAllPlayer()
     {
-        foreach (var i in BattlePlayers)
+        foreach (var i in _battlePlayers)
         {
             await SendReword(i.Key, i.Value);
         }
@@ -223,7 +223,7 @@ public class BattleSimulator : ComponentAsync
             buffer.Add(Any.Pack(i));
         }
 
-        foreach (var i in BattlePlayers)
+        foreach (var i in _battlePlayers)
         {
             if (!i.Value.PushChannel.IsWorking)
             {
@@ -238,7 +238,7 @@ public class BattleSimulator : ComponentAsync
 
     private void ProcessAction()
     {
-        foreach (var i in BattlePlayers)
+        foreach (var i in _battlePlayers)
         {
             if (i.Value.RequestChannel?.IsWorking != true)
             {
@@ -329,7 +329,7 @@ public class BattleSimulator : ComponentAsync
 
     public bool TryGetPlayer(string accountUuid, out BattlePlayer player)
     {
-        return BattlePlayers.TryGetValue(accountUuid, out player);
+        return _battlePlayers.TryGetValue(accountUuid, out player);
     }
 
     public bool BindUserChannel(string accountUuid, StreamBuffer<Any> pushChannel = null, StreamBuffer<Any> requestChannel = null)

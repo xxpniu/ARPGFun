@@ -408,8 +408,7 @@ namespace BattleViews.Views
 
         public bool TryGetMagicData(int magicID, out HeroMagicData data)
         {
-            if (_magicCds.TryGetValue(magicID, out data)) return true;
-            return false;
+            return _magicCds.TryGetValue(magicID, out data);
         }
 
         public bool TryGetMagicByType(MagicType type, out HeroMagicData data)
@@ -417,11 +416,9 @@ namespace BattleViews.Views
             data = null;
             foreach (var i in _magicCds)
             {
-                if (i.Value.MType == type)
-                {
-                    data = i.Value;
-                    return true;
-                }
+                if (i.Value.MType != type) continue;
+                data = i.Value;
+                return true;
             }
             return false;
         }
@@ -440,7 +437,7 @@ namespace BattleViews.Views
             return  data.Count >0;
         }
 
-        public IList<HeroMagicData> Magics { get { return _magicCds.Values.ToList() ; } }
+        public IList<HeroMagicData> Magics => _magicCds.Values.ToList();
 
         void IBattleCharacter.SetLookRotation(float rotationY)
         {
@@ -459,12 +456,12 @@ namespace BattleViews.Views
 
         }
 
-        Quaternion IBattleCharacter.Rotation { get { return _viewRoot ? _viewRoot.transform.rotation : Quaternion.identity; } }
-        float IBattleCharacter.Radius { get { return _agent ? _agent.radius : 0; } }
+        Quaternion IBattleCharacter.Rotation => _viewRoot ? _viewRoot.transform.rotation : Quaternion.identity;
+        float IBattleCharacter.Radius => _agent ? _agent.radius : 0;
         public bool IsDeath { get; private set; } = false;
-        Transform IBattleCharacter.Transform { get { return _viewRoot ? _viewRoot.transform : null; } }
-        Transform IBattleCharacter.RootTransform { get { return this ? transform : null; } }
-  
+        Transform IBattleCharacter.Transform => _viewRoot ? _viewRoot.transform : null;
+        Transform IBattleCharacter.RootTransform => this ? transform : null;
+
         private bool TryToSetPosition(Vector3 pos)
         {
             if (!(Vector3.Distance(pos, transform.position) > .05f)) return false;
@@ -498,7 +495,7 @@ namespace BattleViews.Views
         }
 
 
-        public IList<HeroProperty> properties = new List<HeroProperty>();
+        public IList<HeroProperty> Properties = new List<HeroProperty>();
 
         void IBattleCharacter.PropertyChange(HeroPropertyType type, int finalValue)
         {
@@ -506,13 +503,13 @@ namespace BattleViews.Views
 #if UNITY_SERVER || UNITY_EDITOR
             CreateNotify(new Notify_PropertyValue { Index = Index, Type = type, FinallyValue = finalValue });
 #endif
-            foreach (var i in properties)
+            foreach (var i in Properties)
             {
                 if (i.Property != type) continue;
                 i.Value = finalValue;
                 return;
             }
-            properties.Add(new  HeroProperty {  Property = type, Value = finalValue });
+            Properties.Add(new  HeroProperty {  Property = type, Value = finalValue });
         }
 
         public void PlayMotion(string motion)
@@ -592,13 +589,13 @@ namespace BattleViews.Views
 #endif
         }
 
-        void IBattleCharacter.ShowMPChange(int mp, int cur, int maxMP)
+        void IBattleCharacter.ShowMPChange(int mp, int cur, int maxMp)
         {
             if (!this) return;
-            MpMax = maxMP;
+            MpMax = maxMp;
             MP = cur;
 #if UNITY_SERVER || UNITY_EDITOR
-            CreateNotify(new Notify_MPChange { Cur = cur, Index = Index, Max = maxMP, Mp = mp });
+            CreateNotify(new Notify_MPChange { Cur = cur, Index = Index, Max = maxMp, Mp = mp });
 #endif
 #if !UNITY_SERVER
             if (mp > 0) this.PerView.ShowMpCure(this.GetBoneByName(BodyBone).position, mp);
@@ -644,7 +641,7 @@ namespace BattleViews.Views
 
         public override IMessage ToInitNotify()
         {
-            var createNotity = new Notify_CreateBattleCharacter
+            var createNotify = new Notify_CreateBattleCharacter
             {
                 Index = Index,
                 AccountUuid = this.accountUuid,
@@ -659,16 +656,16 @@ namespace BattleViews.Views
                 Mp = this.MP
             };
 
-            foreach (var i in properties)
+            foreach (var i in Properties)
             {
-                createNotity.Properties.Add(i);
+                createNotify.Properties.Add(i);
             }
 
             foreach (var i in _magicCds)
             {
-                createNotity.Cds.Add(i.Value);
+                createNotify.Cds.Add(i.Value);
             }
-            return createNotity;
+            return createNotify;
         }
 
         public int lockDataValue = 0;
@@ -701,10 +698,7 @@ namespace BattleViews.Views
         public bool IsLock(ActionLockType type)
         {
             return (lockDataValue &(1 << (int)type )) > 0;
-        }
-
-        //public AssetReferenceGameObject obj;
-
+        } 
         public async void ShowRange(float r)
         {
             if (_range == null)

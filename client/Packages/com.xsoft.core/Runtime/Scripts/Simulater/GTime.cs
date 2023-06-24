@@ -17,7 +17,7 @@ namespace EngineCore.Simulater
 
 		private double _timeNow;
 		public float Time => (float)_timeNow;
-		public float DeltaTime { get; set; }
+		public float DeltaTime { get; private set; }
 
 		public void TickTime(float delta)
 		{

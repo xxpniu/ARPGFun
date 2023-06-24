@@ -337,7 +337,7 @@ namespace BattleViews.Views
             view.accountUuid = accountId;
             view.Name = characterName;
             view.OwnerIndex  = owner;
-            view.properties = properties;
+            view.Properties = properties;
             if (cds != null) { foreach (var i in cds) view.AddMagicCd(i.MagicID, i.CDCompletedTime, i.MType,i.CdTotalTime,i.MPCost); }
             if (view is IBattleCharacter ch) ch.SetHpMp(hp, dic[HeroPropertyType.MaxHp], mp, dic[HeroPropertyType.MaxMp]);
             view.SetCharacter(body, data.ResourcesPath);

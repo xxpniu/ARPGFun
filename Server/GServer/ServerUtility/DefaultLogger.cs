@@ -13,8 +13,7 @@ namespace ServerUtility
     /// </summary>
     public class DefaultLogger : Loger, ILogger, IDisposable
     {
-
-        internal static string GetForegroundColorEscapeCode(ConsoleColor color)
+        private static string GetForegroundColorEscapeCode(ConsoleColor color)
         {
             switch (color)
             {

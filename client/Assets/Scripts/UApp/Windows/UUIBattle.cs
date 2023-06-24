@@ -52,8 +52,8 @@ namespace Windows
 
             public void ClickItem(Vector2? dir)
             {
-                if ((lastTime + 0.3f > UnityEngine.Time.time)) return;
-                lastTime = Time.time;
+                if ((_lastTime + 0.3f > UnityEngine.Time.time)) return;
+                _lastTime = Time.time;
                 if (dir.HasValue)
                 {
                     var lookV = new Vector3(dir.Value.x, 0, dir.Value.y);
@@ -68,37 +68,37 @@ namespace Windows
             public async void SetMagic(HeroMagicData  data,IBattleGate battle, KeyCode key )
             {
                 Data = data;
-                if (magicID == data.MagicID) return;
-                magicID = data.MagicID;
+                if (_magicID == data.MagicID) return;
+                _magicID = data.MagicID;
                 MagicData = ExcelToJSONConfigManager.GetId<CharacterMagicData>(data.MagicID);
                 var per = battle.PreView as IBattlePerception;
-                LMagicData = per.GetMagicByKey(MagicData.MagicKey);
+                _lMagicData = per.GetMagicByKey(MagicData.MagicKey);
                 Template.Icon.sprite =await ResourcesManager.S.LoadIcon(MagicData);
                 Template.tb_key.text = $"{key}";
             }
-            private int magicID = -1;
+            private int _magicID = -1;
             public CharacterMagicData MagicData;
-            private float cdTime = 0.01f;
-            private float lastTime = 0;
-            private MagicData LMagicData;
+            private float _cdTime = 0.01f;
+            private float _lastTime = 0;
+            private MagicData _lMagicData;
 
             public void Update(UCharacterView view, float now,bool haveKey)
             {
-                if (LMagicData == null) return;
-                if (LMagicData.unique)  Button.interactable = !haveKey;
+                if (_lMagicData == null) return;
+                if (_lMagicData.unique)  Button.interactable = !haveKey;
                 else  Button.interactable = true;
 
-                if (!view.TryGetMagicData(magicID, out var data)) return;
+                if (!view.TryGetMagicData(_magicID, out var data)) return;
                 var time = Mathf.Max(0, data.CDCompletedTime - now);
                 this.Template.CDTime.text = time > 0 ? $"{time:0.0}" : string.Empty;
-                cdTime = Mathf.Max(0.01f, data.CdTotalTime);
+                _cdTime = Mathf.Max(0.01f, data.CdTotalTime);
                 if (time > 0)
                 {
-                    lastTime = Time.time;
+                    _lastTime = Time.time;
                 }
-                if (cdTime > 0)
+                if (_cdTime > 0)
                 {
-                    Template.ICdMask.fillAmount = time / cdTime;
+                    Template.ICdMask.fillAmount = time / _cdTime;
                 }
                 else
                 {
@@ -108,21 +108,21 @@ namespace Windows
         }
 
         public Texture2D Map;
-        private Color32[] Colors;
-        private readonly int size=75;
+        private Color32[] _colors;
+        private const int Size = 75;
 
         protected override void InitModel()
         {
             base.InitModel();
 
-            Map = new Texture2D(size, size, TextureFormat.RGBA32, false, true);
+            Map = new Texture2D(Size, Size, TextureFormat.RGBA32, false, true);
             var a = new Color(1, 1, 1, 0);
-            Colors = new Color32[size * size];
-            for (var x =0; x< size; x++)
+            _colors = new Color32[Size * Size];
+            for (var x =0; x< Size; x++)
             {
-                for (var y = 0; y < size; y++)
+                for (var y = 0; y < Size; y++)
                 {
-                    Colors[x + y* size] = a;
+                    _colors[x + y* Size] = a;
                 }
             }
 
@@ -213,24 +213,23 @@ namespace Windows
             BattleGate?.SendUseItem(ItemType.ItHpitem);
         }
 
-        private string keyHp = string.Empty;
+        private string _keyHp = string.Empty;
 
-        private string keyMp = string.Empty;
+        private string _keyMp = string.Empty;
 
         private void InitHero(DHero hero)
         {
-            this.Level_Number.text = $"{hero.Level}";
-            this.Username.text = $"{hero.Name}";
+            Level_Number.text = $"{hero.Level}";
+            Username.text = $"{hero.Name}";
             var data = ExcelToJSONConfigManager.GetId<CharacterData>(hero.HeroID);
             //var character = ExcelToJSONConfigManager.Current.FirstConfig<CharacterPlayerData>(t => t.CharacterID == hero.HeroID);
             _normalAtt = data?.NormalAttack??-1;
-            this.Level_Number.text = $"{hero.Level}";
-            this.Username.text = $"{hero.Name}";
+            Level_Number.text = $"{hero.Level}";
+            Username.text = $"{hero.Name}";
             var leveUp = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == hero.Level + 1);
             //lb_exp.text = $"{hero.Exprices}/{leveUp?.NeedExprices ?? '-'}";
             float v = 0;
-            if (leveUp != null)
-                v = (float)hero.Exprices / leveUp.NeedExp;
+            if (leveUp != null) v = (float)hero.Exprices / leveUp.NeedExp;
             user_exp.fillAmount = v;
         }
 
@@ -253,11 +252,11 @@ namespace Windows
                 var config = ExcelToJSONConfigManager.GetId<ItemData>(i.Value.ItemID);
                 if ((ItemType)config.ItemType == ItemType.ItHpitem)
                 {
-                    keyHp = config.Params1;
+                    _keyHp = config.Params1;
                 }
                 if ((ItemType)config.ItemType == ItemType.ItMpitem)
                 {
-                    keyMp = config.Params1;
+                    _keyMp = config.Params1;
                 }
             }
             InitCharacter(BattleGate.Owner);
@@ -338,8 +337,8 @@ namespace Windows
                     this.AttCdMask.fillAmount = 0;
                 }
             }
-            bt_hp.interactable = !BattleGate.PreView.HaveOwnerKey(keyHp);
-            bt_mp.interactable = !BattleGate.PreView.HaveOwnerKey(keyMp);
+            bt_hp.interactable = !BattleGate.PreView.HaveOwnerKey(_keyHp);
+            bt_mp.interactable = !BattleGate.PreView.HaveOwnerKey(_keyMp);
 
             //Debug.Log(BattleGate.LeftTime);
 
@@ -355,27 +354,27 @@ namespace Windows
            
             if (!BattleGate.Owner) return;
             var a = new Color(1, 1, 1, 0);
-            for (var x = 0; x < size; x++)
+            for (var x = 0; x < Size; x++)
             {
-                for (var y = 0; y < size; y++)
+                for (var y = 0; y < Size; y++)
                 {
-                    Colors[x+ y* size] =a;
+                    _colors[x+ y* Size] =a;
                 }
             }
 
             var lookRotation = Quaternion.Euler(0, 0, ThirdPersonCameraContollor.Current.transform.rotation.eulerAngles.y);
             this.ViewForward.localRotation = lookRotation;
 
-            var r = size / 2f;// 16; 
+            var r = Size / 2f;// 16; 
             BattleGate.PreView.Each<UCharacterView>(t =>
             {
                 var offset = t.transform.position - BattleGate.Owner.transform.position;
                 if (offset.magnitude > r) return false;
-                Colors[(int)(offset.x + r)+ (int)(offset.z + r)* size] = t.TeamId == BattleGate.Owner.TeamId ? Color.green : Color.red;
+                _colors[(int)(offset.x + r)+ (int)(offset.z + r)* Size] = t.TeamId == BattleGate.Owner.TeamId ? Color.green : Color.red;
                 return false;
             });
 
-            Map.SetPixels32(Colors);
+            Map.SetPixels32(_colors);
             Map.Apply();
         }
         
@@ -385,8 +384,8 @@ namespace Windows
             
             if (view.TryGetMagicsType(MagicType.MtMagic, out var list))
             {
-                this.GridTableManager.Count = list.Count;
-                int index = 0;
+                GridTableManager.Count = list.Count;
+                var index = 0;
                 foreach (var i in GridTableManager)
                 {
                     i.Model.SetMagic(list[index],BattleGate, _keyCodes[index]);

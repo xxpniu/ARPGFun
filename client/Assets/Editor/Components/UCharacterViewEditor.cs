@@ -46,7 +46,7 @@ public class UCharacterViewEditor : Editor
 		showProperties = EditorGUILayout.Toggle("Display Properties", showProperties);
 		if (showProperties)
 		{
-			foreach (var i in uCharacterView!.properties)
+			foreach (var i in uCharacterView!.Properties)
 			{
 				EditorGUILayout.LabelField($"[{(int)i.Property}]{i.Property}:{i.Value}");
 			}
