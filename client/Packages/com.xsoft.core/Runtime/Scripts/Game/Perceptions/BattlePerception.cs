@@ -163,7 +163,7 @@ namespace GameLogic.Game.Perceptions
 
         #region Character
         public BattleCharacter CreateCharacter(
-            GControllor controllor,
+            GControllor controller,
             int level,
             CharacterData data,
             IList<BattleCharacterMagic> magics,
@@ -185,7 +185,7 @@ namespace GameLogic.Game.Perceptions
                 properties[HeroPropertyType.MaxMp]
                 );
 
-            var battleCharacter = new BattleCharacter(data,magics, controllor,
+            var battleCharacter = new BattleCharacter(data,magics, controller,
                 view, accountUuid,teamIndex,  properties, ownerIndex);
 
             battleCharacter.EachMagicByType(MagicType.MtMagic, (m) =>
@@ -200,8 +200,8 @@ namespace GameLogic.Game.Perceptions
             battleCharacter.Category = (HeroCategory)data.Category;
             battleCharacter.Name = data.Name;
             battleCharacter.ResetHPMP(hp, mp);
+            JoinElement(battleCharacter);
             view.SetPriorityMove(data.PriorityMove);
-            this.JoinElement(battleCharacter);
             return battleCharacter;
         }
 

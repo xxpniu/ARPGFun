@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using App.Core.Core.Components;
+using Cysharp.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Core;
 using UnityEngine;
@@ -59,9 +60,10 @@ namespace UApp.Utility
                 IsWorking = false;
                 if (!TryCancel()) return;
                 await ShutDownProcessAsync();
+                //await UniTask.SwitchToMainThread();
                 if (haveCallBack) OnDisconnect?.Invoke();
-                else OnDisconnect = null;
-                if (Com) Com.Invoke(() => { Destroy(Com.gameObject); });
+                OnDisconnect = null;
+                InvokeCall(() => { Destroy(Com.gameObject); });
             }
 
             private bool TryCancel()
@@ -72,9 +74,9 @@ namespace UApp.Utility
                 return true;
             }
 
-            protected virtual void OnDestroy()
+            protected virtual async void OnDestroy()
             {
-                _ = ShutDownAsync(false);
+                await ShutDownAsync(false);
             }
 
             protected virtual void OnUpdate()
@@ -85,7 +87,7 @@ namespace UApp.Utility
 
             public Action OnDisconnect;
 
-            protected void InvokeCall(Action action)
+            private void InvokeCall(Action action)
             {
                 if (Com) Com.Invoke(action);
             }
