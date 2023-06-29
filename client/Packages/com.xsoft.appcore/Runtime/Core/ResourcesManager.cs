@@ -96,7 +96,6 @@ namespace App.Core.Core
 		public AsyncOperationHandle<SceneInstance> LoadLevelAsync(BattleLevelData map)
 		{
 			var path = $"Assets/Levels/{map.LevelName}.unity";
-			//Debuger.Log(path);
 			return Addressables.LoadSceneAsync(path);
 		}
 	}

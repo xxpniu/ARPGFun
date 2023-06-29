@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Windows;
 using App.Core.Core;
 using BattleViews.Components;
@@ -33,21 +34,27 @@ namespace UApp.GameGates
         UPerceptionView IBattleGate.PreView => PreView;
         Texture IBattleGate.LookAtView => LookAtView;
         UCharacterView IBattleGate.Owner => Owner;
-        void IBattleGate.Exit()
+
+        async void IBattleGate.Exit()
         {
-            Task.Factory.StartNew(async () =>
+            var r = await _battleService.ExitBattleAsync(new C2B_ExitBattle
             {
-                var r = await _battleService.ExitBattleAsync(new C2B_ExitBattle
-                {
-                    AccountUuid = UApplication.S.accountUuid
-                });
-                await Client.ShutdownAsync();
-            
-                UApplication.S.GoBackToMainGate();
-                if (!r.Code.IsOk()) UApplication.S.ShowError(r.Code);
+                AccountUuid = UApplication.S.accountUuid
             });
+            try
+            {
+                await Client.ShutdownAsync();
+            }
+            catch(Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+
+            UApplication.S.GoBackToMainGate();
+            if (!r.Code.IsOk()) UApplication.S.ShowError(r.Code);
 
         }
+
         PlayerPackage IBattleGate.Package => Package;
         DHero IBattleGate.Hero => Hero;
         private void SetServer(ServiceAddress serverInfo, int levelID)

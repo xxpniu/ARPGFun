@@ -69,7 +69,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     private async Task BeginSimulatorWorker(IList<string> players, int levelID)
     {
         var level = CM.GetId<BattleLevelData>(levelID);
-        await  ResourcesManager.S.LoadLevelAsync(level);
+        await  ResourcesManager.S.LoadLevelAsync(level).Task;
 
         var go = new GameObject($"Simulator_{levelID}", typeof(BattleSimulator));
         var si = go.GetComponent<BattleSimulator>();
@@ -175,7 +175,6 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         Debuger.Log("Starting");
         await StartServerAsync(cts.Token);
         Debuger.Log($"Listen:{Config.ServicsHost}");
-        
         Debuger.Log($"Start task finish:{cts.IsCancellationRequested}");
     }
 
