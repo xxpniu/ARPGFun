@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,7 +64,6 @@ namespace MatchServer
                     {
                         continue;
                     }
-
                     config = c;
                     break;
                 }
@@ -75,6 +75,7 @@ namespace MatchServer
                     //no found free server 
                     return (null, null);
                 }
+                Debuger.Log($"BattleServer:{config}");
 
                 var re = new M2B_StartBattle {LevelID = levelId};
                 foreach (var i in player)
@@ -85,7 +86,8 @@ namespace MatchServer
                 var rs = await C<BattleInnerServices.BattleInnerServicesClient>
                     .RequestOnceAsync(
                         config.ServicsHost,
-                        async (c) => await c.StartBatleAsync(re));
+                        async (c) => await c.StartBatleAsync(re),
+                        deadTime: DateTime.UtcNow.AddSeconds(3));
                
 
                 if (rs.Code != ErrorCode.Ok) return (null, null);
