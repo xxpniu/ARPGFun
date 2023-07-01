@@ -37,7 +37,17 @@ namespace GameLogic.Game.Elements
         
         private MagicLevelUpData LevelData { set; get; }
 
-        public float CdTime { get; set; }
+        private float _cdTime = 0f;
+        public float CdTime
+        {
+            get => _cdTime;
+            set
+            {
+                
+                Debug.Log($"ValueOf:{value}");
+                _cdTime = value;
+            }
+        }
 
         public float CdCompletedTime { set; get; }
 
@@ -81,7 +91,7 @@ namespace GameLogic.Game.Elements
         public int GroupIndex {set;get;}
         public int MaxHP => this[P.MaxHp];
         public int MaxMP => this[P.MaxMp];
-        public float NormalCdTime => 1000f/ this[P.AttackSpeed];
+        public float NormalCdTime =>  1000f/ Mathf.Min( 20f, this[P.AttackSpeed]);
         public string Name { set; get; }
         public int TeamIndex { private set; get; }
         public int Level { set; get; }

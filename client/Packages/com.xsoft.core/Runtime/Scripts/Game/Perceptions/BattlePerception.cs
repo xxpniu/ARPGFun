@@ -188,7 +188,7 @@ namespace GameLogic.Game.Perceptions
             var battleCharacter = new BattleCharacter(data,magics, controller,
                 view, accountUuid,teamIndex,  properties, ownerIndex);
 
-            battleCharacter.EachMagicByType(MagicType.MtMagic, (m) =>
+            battleCharacter.EachMagicByType(MagicType.MtNormal, (m) =>
             {
                 m.CdTime = battleCharacter.NormalCdTime;
                 return false;
