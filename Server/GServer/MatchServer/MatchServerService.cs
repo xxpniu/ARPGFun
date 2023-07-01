@@ -119,18 +119,14 @@ namespace MatchServer
         {
             this.NotifyServers = notifyClient;
             this.BattleWatcher = battleWatcher;
-            this.BattleWatcher.OnRefreshed = () =>
+            this.BattleWatcher.OnRefreshed = async () =>
             {
-                _ = RemoveMatch();
+                foreach (var i in BattleWatcher)
+                {
+                    await DataBaseTool.S.RemoveMatchByServerId(i.ServerID);
+                    Debuger.Log($"RemoveBattle:{i}");
+                }
             };
-        }
-
-        private async Task RemoveMatch()
-        {
-            foreach (var i in BattleWatcher)
-            {
-                await DataBaseTool.S.RemoveMatchByServerId(i.ServerID);
-            }
         }
 
         public override async Task<M2S_CreateMatchGroup> CreateMatchGroup(S2M_CreateMatchGroup request, ServerCallContext context)

@@ -261,12 +261,12 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         await Exit();
     }
 
-    private volatile bool Exited = false;
+    private volatile bool _exited = false;
 
     private async Task Exit()
     {
-        if (Exited) return;
-        Exited = true;
+        if (_exited) return;
+        _exited = true;
         Debuger.Log($"exit server");
         await Zk.closeAsync();
         await ServerHost.ShutdownAsync();
