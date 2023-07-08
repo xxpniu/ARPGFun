@@ -9,7 +9,7 @@ namespace BattleViews.Utility
         {
 
 #if UNITY_SERVER
-        System.Console.WriteLine(log.ToString());
+            System.Console.WriteLine(log.ToString());
 #else
             switch (log.Type)
             {

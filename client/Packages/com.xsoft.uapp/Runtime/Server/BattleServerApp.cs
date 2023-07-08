@@ -187,7 +187,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 #endif
     }
 
-    public LogServer ListenServer { get; private set; }
+    private LogServer ListenServer { get; set; }
     public Server.BattleServerService Services { private set; get; }
 
     private async Task StartServerAsync(CancellationToken token = default) 
@@ -261,7 +261,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         await Exit();
     }
 
-    private volatile bool _exited = false;
+    private volatile bool _exited;
 
     private async Task Exit()
     {

@@ -26,12 +26,6 @@ using XNet.Libs.Utility;
 
 namespace Server
 {
-
-    public class LevelSimulaterAttribute : Attribute
-    {
-        public MapType MType { set; get; }
-    }
-
     [Serializable]
     public class BattleLevelSimulator :  IStateLoader, IAIRunner
     {
@@ -39,23 +33,20 @@ namespace Server
         public BattleSimulator Simulator { private set; get; }
 
         #region AI RUN
-        private BattleCharacter aiAttach;
+        private BattleCharacter _aiAttach;
         AITreeRoot IAIRunner.RunAI(TreeNode ai)
         {
-            if (aiAttach == null)
+            if (_aiAttach == null)
             {
-                Debug.LogError($"Need attach a battlecharacter");
+                Debug.LogError($"Need attach a battle character");
                 return null;
             }
 
-            if (this.State.Perception is BattlePerception p)
-            {
-                var root = p.ChangeCharacterAI(ai, this.aiAttach);
-                root.IsDebug = true;
-                return root;
-            }
+            if (this.State.Perception is not BattlePerception p) return null;
+            var root = p.ChangeCharacterAI(ai, this._aiAttach);
+            root.IsDebug = true;
+            return root;
 
-            return null;
         }
 
         bool IAIRunner.IsRunning(Layout.EventType eventType)
@@ -70,7 +61,7 @@ namespace Server
 
         void IAIRunner.Attach(BattleCharacter character)
         {
-            aiAttach = character;
+            _aiAttach = character;
             if (character.AiRoot == null) return;
             character.AiRoot.IsDebug = true;
         }
@@ -83,7 +74,7 @@ namespace Server
         }
 
         private ITimeSimulator _timeSimulator;
-        public UPerceptionView PerView;
+        public UPerceptionView perView;
         public BattleLevelData LevelData;
 
         public BattleState State { private set; get; }
@@ -98,15 +89,15 @@ namespace Server
         {
             this.Simulator = simulator;
             LevelData = data;
-            this.PerView = view;
-            _timeSimulator = PerView;
+            this.perView = view;
+            _timeSimulator = perView;
             AIRunner.Current = this;
             await ResourcesManager.S.LoadResourcesWithExName<TextAsset>(LevelData.ElementConfigPath,(res)=> {
                 Config = res.text?.Parser<MapConfig>();
             });
 
             Debuger.Log($"Map:{Config}");
-            State = new BattleState(PerView, this, PerView);
+            State = new BattleState(perView, this, perView);
             State.Start(this.GetTime());
             OnLoadCompleted();
         }
@@ -194,7 +185,7 @@ namespace Server
 
         public IMessage[] GetInitNotify()
         {
-            return PerView.GetInitNotify();
+            return perView.GetInitNotify();
         }
 
         public (bool end, IMessage[] msgs) Tick()
@@ -202,7 +193,7 @@ namespace Server
             if (State == null) return (false,null);
             OnTick();
             GState.Tick(State, TimeNow);
-            return (CheckEnd(), PerView.GetAndClearNotify());
+            return (CheckEnd(), perView.GetAndClearNotify());
         }
 
         protected virtual void OnTick()
@@ -237,22 +228,22 @@ namespace Server
             foreach (var i in types)
             {
                 if (!i.IsSubclassOf(t)) continue;
-                if (!(i.GetCustomAttributes(typeof(LevelSimulaterAttribute), false) is LevelSimulaterAttribute[] atts) || atts.Length == 0) continue;
+                if (!(i.GetCustomAttributes(typeof(LevelSimulatorAttribute), false) is LevelSimulatorAttribute[] atts) || atts.Length == 0) continue;
                 Types.Add(atts[0].MType, i);
             }
         }
 
         public static BattleLevelSimulator Create( BattleLevelData level)
         {
-            var MType = (MapType)level.MapType;
-            Debuger.Log($"LoadType:{MType}");
-            if (Types.TryGetValue(MType, out Type t))
+            var mType = (MapType)level.MapType;
+            Debuger.Log($"LoadType:{mType}");
+            if (Types.TryGetValue(mType, out Type t))
             {
                 var si = Activator.CreateInstance(t) as BattleLevelSimulator;
-                Debuger.Log($"Simualter:{si.GetType()}");
+                Debuger.Log($"Simulator:{si.GetType()}");
                 return si;
             }
-            Debug.LogError($"nofound {MType}");
+            Debug.LogError($"not found {mType}");
             return null;
         }
     }

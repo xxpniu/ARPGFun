@@ -23,7 +23,7 @@ namespace BattleViews.Utility
         {
             return new Vector3(v3.X, v3.Y, v3.Z);
         }
-        public static UnityEngine.Vector3 ToVer3(this Proto.Vector3 v3)
+        public static Vector3 ToVer3(this Proto.Vector3 v3)
         {
             return new Vector3(v3.X, v3.Y, v3.Z);
         }

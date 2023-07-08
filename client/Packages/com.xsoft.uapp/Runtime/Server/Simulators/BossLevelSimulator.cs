@@ -16,7 +16,7 @@ using Vector3 = UnityEngine.Vector3;
 namespace Server
 {
 
-    [LevelSimulater(MType = MapType.Boss)]
+    [LevelSimulator(MType = MapType.Boss)]
     [Serializable]
     public class BossLevelSimulator:BattleLevelSimulator
     {

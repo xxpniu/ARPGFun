@@ -8,7 +8,7 @@ namespace BattleViews
     public interface IAIRunner
     {
         AITreeRoot RunAI(TreeNode ai);
-        bool IsRunning(Layout.EventType eventType);
+        bool IsRunning(EventType eventType);
         bool ReleaseMagic(MagicData data);
         void Attach(BattleCharacter character);
     }

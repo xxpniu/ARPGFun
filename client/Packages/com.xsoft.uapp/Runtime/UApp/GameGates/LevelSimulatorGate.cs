@@ -264,14 +264,6 @@ namespace UApp.GameGates
         bool IBattleGate.TrySendLookForward(bool force)
         {
             return false;
-            /*
-        if (Owner is IBattleCharacter c)
-        {
-            if (c.IsMoving) return false;
-        }
-        if (Owner.IsDeath) return false;
-        CharacterOwner.LookRotation(ThridPersionCameraContollor.Current.RotationY);
-        */
         }
 
         bool IBattleGate.DoNormalAttack()

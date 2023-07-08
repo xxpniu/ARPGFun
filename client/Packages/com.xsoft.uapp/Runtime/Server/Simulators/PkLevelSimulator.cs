@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    [LevelSimulater(MType = Proto.MapType.Pk)]
+    [LevelSimulator(MType = Proto.MapType.Pk)]
     internal class PkLevelSimulator : BattleLevelSimulator
     {
 
