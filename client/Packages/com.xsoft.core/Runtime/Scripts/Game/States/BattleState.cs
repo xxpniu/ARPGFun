@@ -15,12 +15,6 @@ namespace GameLogic.Game.States
             loader.Load(this);
         }
         public IViewBase ViewBase { private set; get; }
-
-        protected override void Tick(GTime time)
-        {
-            base.Tick(time);
-        }
-
     }
 }
 

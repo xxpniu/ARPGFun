@@ -51,7 +51,7 @@ namespace MatchServer
             return false;
         }
 
-        private async Task<(string id, BattleServerConfig config)> StartBattleServer(IList<string> player, int levelId)
+        private async Task<(ErrorCode code ,string id, BattleServerConfig config)> StartBattleServer(IList<string> player, int levelId)
         {
             //only one in time
             await _semaphoreSlim.WaitAsync();
@@ -64,20 +64,21 @@ namespace MatchServer
                     {
                         continue;
                     }
+
                     config = c;
                     break;
                 }
-
 
                 if (config == null)
                 {
                     Debuger.Log("NO found Free battle server!");
                     //no found free server 
-                    return (null, null);
+                    return (ErrorCode.NofreeBattleServer, null, null);
                 }
+
                 Debuger.Log($"BattleServer:{config}");
 
-                var re = new M2B_StartBattle {LevelID = levelId};
+                var re = new M2B_StartBattle { LevelID = levelId };
                 foreach (var i in player)
                 {
                     re.Players.Add(i);
@@ -88,9 +89,14 @@ namespace MatchServer
                         config.ServicsHost,
                         async (c) => await c.StartBatleAsync(re),
                         deadTime: DateTime.UtcNow.AddSeconds(3));
-               
 
-                if (rs.Code != ErrorCode.Ok) return (null, null);
+
+                if (rs.Code != ErrorCode.Ok)
+                {
+                    Debuger.LogError($" Try to start battle server error:{rs.Code} ");
+                    return (rs.Code, null, null);
+                }
+
                 var notify = new N_Notify_BattleServer
                 {
                     ServerUUID = config.ServerID,
@@ -104,10 +110,13 @@ namespace MatchServer
                     },
                     LevelID = levelId
                 };
-                if (!await SendNotify(notify, player.ToArray())) return (null, null);
-                var match = await DataBaseTool.S.CreateMatch(player, config, levelId);
-                
-                return (config.ServerID, config);
+                if (!await SendNotify(notify, player.ToArray()))
+                {
+                    Debuger.LogError($"Not found notify server");
+                    return (ErrorCode.Error, null, null);
+                }
+                await DataBaseTool.S.CreateMatch(player, config, levelId);
+                return (ErrorCode.Ok, config.ServerID, config);
             }
             finally
             {
@@ -156,8 +165,8 @@ namespace MatchServer
         {
             var group = await DataBaseTool.S.QueryMatchGroup(request.GroupID);
             if (group == null) return new M2S_StartMatch { Code = ErrorCode.NoFoundMatch };
-            var (_, config) = await StartBattleServer(group.Players.Select(t=>t.AccountID).ToList(), group.LevelID);
-            return new M2S_StartMatch { Code = config == null ? ErrorCode.NofreeBattleServer: ErrorCode.Ok };
+            var (errorCode, _, config) = await StartBattleServer(group.Players.Select(t=>t.AccountID).ToList(), group.LevelID);
+            return new M2S_StartMatch { Code = config == null ?  errorCode: ErrorCode.Ok };
         }
 
         public override async Task<M2S_TryToReJoinMatch> TryToReJoinMatch(S2M_TryToReJoinMatch request, ServerCallContext context)

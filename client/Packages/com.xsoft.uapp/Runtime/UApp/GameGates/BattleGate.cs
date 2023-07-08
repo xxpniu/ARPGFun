@@ -119,8 +119,9 @@ namespace UApp.GameGates
             HandleChannel = new ResponseChannel<Any>(ChannelCall.ResponseStream, tag: "BattleHandle")
             {
                 OnReceived = (any) => { _player.Process(any); },
-                OnDisconnect = () =>
+                OnDisconnect = async () =>
                 {
+                    await UniTask.SwitchToMainThread();
                     Debuger.Log($"Exit handle from battle server");
                     UApplication.S.GoBackToMainGate();
                 }
@@ -238,9 +239,9 @@ namespace UApp.GameGates
             }
         }
         public UCharacterView Owner { private set; get; }
-        public RequestChannel<Any> PushToChannel { get; private set; }
-        public AsyncDuplexStreamingCall<Any, Any> ChannelCall { get; private set; }
-        public ResponseChannel<Any> HandleChannel { get; private set; }
+        private RequestChannel<Any> PushToChannel { get; set; }
+        private AsyncDuplexStreamingCall<Any, Any> ChannelCall { get; set; }
+        private ResponseChannel<Any> HandleChannel { get; set; }
         float IBattleGate.LeftTime {
             get
             {
@@ -265,44 +266,28 @@ namespace UApp.GameGates
             {
                 var dn = new Vector3(dir.x, 0, dir.z);
                 dn = dn.normalized;
-                Vector3 willPos = Owner.MoveJoystick(dn);
-                if (_lastSyncTime + 0.2f < Time.time)
+                var willPos = Owner.MoveJoystick(dn);
+                if (!(_lastSyncTime + 0.2f < Time.time)) return true;
+                var joystickMove = new Action_MoveJoystick
                 {
-                    var joystickMove = new Action_MoveJoystick
-                    {
-                        Position = pos.ToPV3(),
-                        WillPos = willPos.ToPV3()
-                    };
-                    SendAction(joystickMove);
-                    _lastSyncTime = Time.time;
-                }
+                    Position = pos.ToPV3(),
+                    WillPos = willPos.ToPV3()
+                };
+                SendAction(joystickMove);
+                _lastSyncTime = Time.time;
                 return true;
             }
-            else
+
+            var stopMove = new Action_StopMove { StopPos = pos.ToPV3() };
+            if (Owner.DoStopMove())
             {
-                var stopMove = new Action_StopMove { StopPos = pos.ToPV3() };
-                if (Owner.DoStopMove())
-                {
-                    SendAction(stopMove);
-                }
-                return true;
+                SendAction(stopMove);
             }
+            return true;
         }
         bool IBattleGate.TrySendLookForward(bool force)
         {
-            if (!force)
-            {
-                if (!Owner) return false;
-
-                if (Owner is IBattleCharacter view)
-                {
-                    if (view.IsMoving) return false;
-                }
-                if (Owner.InStartLayout) return false;
-            }
-            var act = new Action_LookRotation { LookRotationY = ThirdPersonCameraContollor.Current.rotationY };
-            SendAction(act);
-            return true;
+            return false;
         }
         bool IBattleGate.IsMpFull() =>Owner && Owner.IsFullMp;
         bool IBattleGate.IsHpFull() => Owner && Owner.IsFullHp;
@@ -317,7 +302,7 @@ namespace UApp.GameGates
             await HandleChannel?.ShutDownAsync(false)!;
             ChannelCall?.Dispose();
             ChannelCall = null;
-            await Client?.ShutdownAsync()!;
+            if(Client !=null) await Client.ShutdownAsync()!;
             Client = null;
         }
         protected override void Tick()

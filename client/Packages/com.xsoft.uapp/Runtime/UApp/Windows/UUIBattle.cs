@@ -158,9 +158,8 @@ namespace Windows
             swipeEv.OnSwiping.AddListener((v) =>
             {
                 v *= .5f;
-                
                 ThirdPersonCameraContollor.Current.RotationByX(v.y).RotationByY(v.x);
-                BattleGate?.TrySendLookForward(false);
+                //BattleGate?.TrySendLookForward(false);
             });
 
             bt_normal_att.onClick.AddListener(() =>

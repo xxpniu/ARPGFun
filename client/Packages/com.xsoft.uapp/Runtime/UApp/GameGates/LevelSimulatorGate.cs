@@ -80,25 +80,8 @@ namespace UApp.GameGates
 
             var data = CM.GetId<CharacterData>(Hero.HeroID);
             var magic = Hero.CreateHeroMagic();
-
-            var level = CM.First<CharacterLevelUpData>(t => t.Level == Hero.Level && t.CharacterID == Hero.HeroID);
-            var properties = data.CreatePlayerProperties(level);
-
-            foreach (var i in Hero.Equips)
-            {
-                var equip = GetEquipByGuid(i.GUID);
-                if (equip == null)
-                {
-                    Debug.LogError($"No found equip {i.GUID}");
-                    continue;
-                }
-                var ps = equip.GetProperties();
-                foreach (var p in ps)
-                {
-                    properties.TryToAddBase(p.Key, p.Value);
-                }
-            }
-
+            var properties = BattleUtility.CreateHeroProperties(Hero, Package);
+    
             var playerBornPositions = Config.Elements.Where(t => t.Type == MapElementType.MetPlayerInit)
                 .Select(t => t).ToArray();
 

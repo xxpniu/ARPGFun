@@ -49,7 +49,7 @@ namespace GameLogic.Game.Controllors
                         {
                             var key = t.Config.MagicKey;
                             if (!TryGetReleaserTarget(t.Config, character, out var target)) return true;
-                            if (!character.SubMP(t.MpCost)) return true;
+                            if (!character.SubMp(t.MpCost)) return true;
                             if (!TryReleaseMagic(target, character, key)) return true;
                             character.IsCoolDown(t.ConfigId, time.Time, true, character.NormalCdTime);
                             character[TimeKey] = time.Time;
@@ -63,7 +63,7 @@ namespace GameLogic.Game.Controllors
                     if (!character.TryGetActiveMagicById(skill.MagicId, time.Time, out var data)) break;
                     var key = data.Config.MagicKey;
                     if (!TryGetReleaserTarget(data.Config, character, out var target)) break;
-                    if (!character.SubMP(data.MpCost)) break;
+                    if (!character.SubMp(data.MpCost)) break;
                     if (!TryReleaseMagic(target, character,key, Quaternion.Euler(skill.Rotation.ToUV3()),  data.Params)) break;
                     character.IsCoolDown(skill.MagicId, time.Time, true);
                     character[TimeKey] = time.Time;

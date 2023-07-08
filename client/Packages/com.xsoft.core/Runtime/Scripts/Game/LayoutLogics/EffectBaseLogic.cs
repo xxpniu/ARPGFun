@@ -84,7 +84,7 @@ namespace GameLogic.Game.LayoutLogics
                     var cureHp = (int)(result.Damage * releaser.Releaser[P.HpDrain] / 10000f);
                     if (cureHp > 0) releaser.Releaser.AddHP(cureHp); 
                     var cureMp = (int)(result.Damage * releaser.Releaser[P.MpDrain] / 10000f);
-                    if (cureMp > 0) releaser.Releaser.AddMP(cureMp);
+                    if (cureMp > 0) releaser.Releaser.AddMp(cureMp);
                 }
             }
 
@@ -114,7 +114,7 @@ namespace GameLogic.Game.LayoutLogics
         {
             var effect = e as CureMPEffect;
             var cure = GetValueBy(releaser.Releaser, effectTarget, effect!.valueType, effect.value.ProcessValue(releaser));
-            if (cure > 0) effectTarget.AddMP(cure);
+            if (cure > 0) effectTarget.AddMp(cure);
         }
 
         [EffectHandle(typeof(AddBufEffect))]

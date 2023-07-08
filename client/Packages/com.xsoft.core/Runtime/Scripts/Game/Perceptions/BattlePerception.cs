@@ -24,9 +24,9 @@ namespace GameLogic.Game.Perceptions
     /// </summary>
 	public class BattlePerception : GPerception
     {
-        public class EmptyControllor : GControllor
+        public class EmptyController : GControllor
         {
-            public EmptyControllor(BattlePerception p) : base(p) { }
+            public EmptyController(BattlePerception p) : base(p) { }
             public override GAction GetAction(GTime time, GObject current)
             {
                 return GAction.Empty;
@@ -44,18 +44,17 @@ namespace GameLogic.Game.Perceptions
             return Math.Max(0, (c1.Position - c2).magnitude - c1.Radius);
         }
 
-        public static bool InviewSide(BattleCharacter ower , BattleCharacter target, float viewDistance, float angle)
+        public static bool InViewSide(BattleCharacter owner , BattleCharacter target, float viewDistance, float angle)
         {
-            if (Distance(ower, target) > viewDistance) return false;
-            var forward = target.Position - ower.Position;
-            if (angle / 2 < UVector3.Angle(forward, ower.Forward)) return false;
-            return true;
+            if (Distance(owner, target) > viewDistance) return false;
+            var forward = target.Position - owner.Position;
+            return !(angle / 2 < UVector3.Angle(forward, owner.Forward));
         }
 
         public BattlePerception(GState state, IBattlePerception view) : base(state)
         {
             View = view;
-            Empty = new EmptyControllor(this);
+            Empty = new EmptyController(this);
             ReleaserControllor = new MagicReleaserControllor(this);
             BattleMissileControllor = new BattleMissileControllor(this);
             AIControllor = new AIControllor(this);
@@ -71,7 +70,7 @@ namespace GameLogic.Game.Perceptions
         public MagicReleaserControllor ReleaserControllor { private set; get; }
         public AIControllor AIControllor { private set; get; }
         public BattleItemControllor BattleItemControllor { private set; get; }
-        public EmptyControllor Empty { private set; get; }
+        public EmptyController Empty { private set; get; }
         public ControllorState StateControllor { private set; get; }
         #endregion
 
@@ -186,20 +185,21 @@ namespace GameLogic.Game.Perceptions
                 );
 
             var battleCharacter = new BattleCharacter(data,magics, controller,
-                view, accountUuid,teamIndex,  properties, ownerIndex);
-
+                view, accountUuid,teamIndex,  properties, ownerIndex)
+            {
+              
+                Level = level,
+                TDamage = Proto.DamageType.Confusion,
+                TDefance = DefanceType.Normal,
+                Category = (HeroCategory)data.Category,
+                Name = data.Name
+            };
             battleCharacter.EachMagicByType(MagicType.MtNormal, (m) =>
             {
-                m.CdTime = battleCharacter.NormalCdTime;
-                return false;
+              m.CdTime = battleCharacter.NormalCdTime;
+              return false;
             });
-
-            battleCharacter.Level = level;
-            battleCharacter.TDamage =Proto.DamageType.Confusion;
-            battleCharacter.TDefance = DefanceType.Normal;
-            battleCharacter.Category = (HeroCategory)data.Category;
-            battleCharacter.Name = data.Name;
-            battleCharacter.ResetHPMP(hp, mp);
+            battleCharacter.ResetHpMp(hp, mp);
             JoinElement(battleCharacter);
             view.SetPriorityMove(data.PriorityMove);
             return battleCharacter;
@@ -288,7 +288,7 @@ namespace GameLogic.Game.Perceptions
                         return false;
                 }
 
-                if (!InviewSide(character, t, distance, view)) return false;
+                if (!InViewSide(character, t, distance, view)) return false;
                 switch (filterType)
                 {
                     case TargetFilterType.Hurt:

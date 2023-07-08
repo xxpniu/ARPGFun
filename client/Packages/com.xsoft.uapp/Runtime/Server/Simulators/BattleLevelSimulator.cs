@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using App.Core.Core;
 using BattleViews;
+using BattleViews.Utility;
 using BattleViews.Views;
 using UnityEngine;
 using CM = ExcelConfig.ExcelToJSONConfigManager;
@@ -122,6 +123,7 @@ namespace Server
 
         protected virtual int PlayerTeamIndex  { get; } = 1;
 
+        [Obsolete]
         public BattleCharacter CreateUser(BattlePlayer user)
         {
             BattleCharacter character = null;
@@ -136,29 +138,11 @@ namespace Server
             if (character != null) return character;
             var per = State.Perception as BattlePerception;
             var data = CM.GetId<CharacterData>(user.GetHero().HeroID);
-            var level = CM.First<CharacterLevelUpData>(t => t.Level == user.GetHero().Level);
-            var properties = data.CreatePlayerProperties(level);
+            var properties = BattleUtility.CreateHeroProperties(user.GetHero(), user.Package.Package);
             
             Debuger.Log($"Hero: {user.GetHero()}");
             var magic = user.GetHero().CreateHeroMagic();
-            Debuger.Log($"Magic Count:{magic.Count}");
-            
-            
-
-            foreach (var i in user.GetHero().Equips)
-            {
-                var equip = user.GetEquipByGuid(i.GUID);
-                if (equip == null)
-                {
-                    Debug.LogError($"No found equip {i.GUID}");
-                    continue;
-                }
-                var ps = equip.GetProperties();
-                foreach (var p in ps)
-                {
-                    properties.TryAdd(p.Key, p.Value);
-                }
-            }
+         
             //hp
             //mp
             var hero = user.GetHero();

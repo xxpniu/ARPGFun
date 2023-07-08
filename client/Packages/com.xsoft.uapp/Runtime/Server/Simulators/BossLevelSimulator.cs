@@ -54,7 +54,7 @@ namespace Server
                 if (newLevel != old)
                 {
                     player.HeroCharacter.SetLevel(newLevel);
-                    player.HeroCharacter.ResetHPMP();//full mp and hp
+                    player.HeroCharacter.ResetHpMp();//full mp and hp
                 }
                 var expNotify = new Notify_CharacterExp { Exp = expNew, Level = newLevel, OldExp = exp, OldLeve = old };
                 player.PushChannel?.Push( Any.Pack(expNotify) );

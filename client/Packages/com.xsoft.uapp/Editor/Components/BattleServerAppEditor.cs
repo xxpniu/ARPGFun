@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Server;
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(BattleServerApp))]

@@ -148,7 +148,9 @@ namespace UApp.GameGates
                     ps.Add(notify.GetType().GetProperty(f)!.GetValue(notify));
                 }
                 em.Method.Invoke(v, ps.ToArray());
+#if DEVELOPMENT_BUILD                
                 Debuger.Log($"{notify.GetType()} - {notify}");
+#endif
                 return;
 
             }

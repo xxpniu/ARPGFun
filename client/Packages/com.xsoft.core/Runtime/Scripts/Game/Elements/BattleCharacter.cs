@@ -14,61 +14,7 @@ using Google.Protobuf;
 
 namespace GameLogic.Game.Elements
 {
-    public class BattleCharacterMagic
-    {
-        public MagicType Type { private set; get; }
-
-        public int MpCost { private set; get; }
-
-        public CharacterMagicData Config { private set; get; }
-
-        public int ConfigId => Config.ID;
-
-        public BattleCharacterMagic(MagicType type, CharacterMagicData config, MagicLevelUpData lv = null, float? cdTime = null)
-        {
-            Type = type;
-            Config = config;
-            this.LevelData = lv;
-            MpCost = config.MPCost;
-            MpCost = lv?.MPCost ?? MpCost;
-            if (cdTime.HasValue) CdTime = cdTime.Value;
-            else CdTime = config.TickTime / 1000f;
-        }
-        
-        private MagicLevelUpData LevelData { set; get; }
-
-        private float _cdTime = 0f;
-        public float CdTime
-        {
-            get => _cdTime;
-            set
-            {
-                
-                Debug.Log($"ValueOf:{value}");
-                _cdTime = value;
-            }
-        }
-
-        public float CdCompletedTime { set; get; }
-
-        public string[] Params => new[]
-        {
-            LevelData?.Param1, LevelData?.Param2, LevelData?.Param3, LevelData?.Param4, LevelData?.Param5
-        };
-
-        public bool IsCoolDown(float time) => time > CdCompletedTime;
-
-    }
-
     public delegate bool EachWithBreak(BattleCharacterMagic item);
-
-    public class DamageWatch
-    {
-        public int Index { set; get; }
-        public int TotalDamage { set; get; }
-        public float LastTime { set; get; }
-        public float FristTime { get; internal set; }
-    }
 
     public class BattleCharacter : BattleElement<IBattleCharacter>
     {
@@ -91,7 +37,7 @@ namespace GameLogic.Game.Elements
         public int GroupIndex {set;get;}
         public int MaxHP => this[P.MaxHp];
         public int MaxMP => this[P.MaxMp];
-        public float NormalCdTime =>  1000f/ Mathf.Min( 20f, this[P.AttackSpeed]);
+        public float NormalCdTime =>  1000f/ this[P.AttackSpeed];
         public string Name { set; get; }
         public int TeamIndex { private set; get; }
         public int Level { set; get; }
@@ -346,7 +292,7 @@ namespace GameLogic.Game.Elements
             View.LookAtTarget(character.Index, force);
         }
 
-        public bool SubMP(int mp)
+        public bool SubMp(int mp)
         {
             if (mp == 0) return true;
             if (mp < 0) return false;
@@ -356,7 +302,7 @@ namespace GameLogic.Game.Elements
             return true;
         }
 
-        public bool AddMP(int mp)
+        public bool AddMp(int mp)
         {
             var temp = MP;
             MP += mp;
@@ -404,7 +350,7 @@ namespace GameLogic.Game.Elements
             AiRoot?.Tick();
         }
 
-        public void ResetHPMP(int hp = -1, int mp = -1)
+        public void ResetHpMp(int hp = -1, int mp = -1)
         {
             this.HP = hp == -1 ? MaxHP : (int)Mathf.Max(MaxHP * 0.1f, hp);
             this.MP = mp == -1 ? MaxMP : mp;
@@ -412,7 +358,7 @@ namespace GameLogic.Game.Elements
         }
 
 
-		protected void OnDeath()
+        private void OnDeath()
 		{
             FireEvent(BattleEventType.Death, this);
 			View.Death();
@@ -522,7 +468,7 @@ namespace GameLogic.Game.Elements
             }
             else
             {
-                w = new DamageWatch { Index = sources, TotalDamage = damage, FristTime = time };
+                w = new DamageWatch { Index = sources, TotalDamage = damage, FirstTime = time };
                 Watch.Add(sources, w);
             }
             w.LastTime = time;

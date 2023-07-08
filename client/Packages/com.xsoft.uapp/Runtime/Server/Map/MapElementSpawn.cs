@@ -246,7 +246,7 @@ namespace Server.Map
                 if (el["__Drop"] is DropGroupData d
                 && el["__Monster"] is MonsterData mData)
                 {
-                    var os = el.Watch.Values.OrderBy(t => t.FristTime).ToList();
+                    var os = el.Watch.Values.OrderBy(t => t.FirstTime).ToList();
                     foreach (var e in os)
                     {
                         var owner = Per.FindTarget(e.Index);

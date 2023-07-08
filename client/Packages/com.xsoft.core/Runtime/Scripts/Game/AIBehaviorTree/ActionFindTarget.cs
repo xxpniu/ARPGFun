@@ -42,7 +42,7 @@ namespace GameLogic.Game.AIBehaviorTree
 				root.TryGetTarget(out var targetCharacter); 
 				if (targetCharacter && !targetCharacter.IsDeath)
 				{
-					if (BattlePerception.InviewSide(root.Character, targetCharacter, distance, view))
+					if (BattlePerception.InViewSide(root.Character, targetCharacter, distance, view))
 					{
 						yield return RunStatus.Success;
 						yield break;
