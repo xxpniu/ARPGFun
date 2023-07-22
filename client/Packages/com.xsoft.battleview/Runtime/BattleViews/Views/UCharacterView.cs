@@ -403,8 +403,8 @@ namespace BattleViews.Views
         public int HP { get; private set; }
         public int HpMax { get; private set; }
 
-        public bool IsFullMp { get { return MP == MpMax; } }
-        public bool IsFullHp { get { return HP == HpMax; } }
+        public bool IsFullMp => MP == MpMax;
+        public bool IsFullHp => HP == HpMax;
 
         public bool TryGetMagicData(int magicID, out HeroMagicData data)
         {
@@ -443,17 +443,14 @@ namespace BattleViews.Views
         {
             if (!this) return;
             if (_lockRotationTime > Time.time) return;
+            LookQuaternion = targetLookQuaternion = Quaternion.Euler(0, rotationY, 0);
 #if UNITY_SERVER || UNITY_EDITOR
-            this.LookQuaternion = targetLookQuaternion = Quaternion.Euler(0, rotationY,0);
             CreateNotify(new Notify_CharacterRotation
             {
                 RotationY = rotationY,
                 Index = Index
             });
-#else
-             this.LookQuaternion = targetLookQuaternion = Quaternion.Euler(0,rotationY,0);//use smooth
 #endif
-
         }
 
         Quaternion IBattleCharacter.Rotation => _viewRoot ? _viewRoot.transform.rotation : Quaternion.identity;
@@ -465,7 +462,7 @@ namespace BattleViews.Views
         private bool TryToSetPosition(Vector3 pos)
         {
             if (!(Vector3.Distance(pos, transform.position) > .05f)) return false;
-            this.MoveToPos(pos);
+            MoveToPos(pos);
             return true;
         }
 
@@ -584,8 +581,7 @@ namespace BattleViews.Views
             this.HpMax = max;
 #if !UNITY_SERVER
             if (hp > 0) this.PerView.ShowHpCure(this.GetBoneByName(BodyBone).position, hp);
-            else
-                SendMessage("OnHpChanged", SendMessageOptions.DontRequireReceiver);
+            else SendMessage("OnHpChanged", SendMessageOptions.DontRequireReceiver);
 #endif
         }
 
@@ -691,7 +687,7 @@ namespace BattleViews.Views
             }
             else
             {
-                this._viewRoot.SetActive(!IsLock(ActionLockType.NoInhiden));
+                _viewRoot.SetActive(!IsLock(ActionLockType.NoInhiden));
             }
         }
 

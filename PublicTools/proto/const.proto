@@ -33,6 +33,8 @@ enum ErrorCode
     MatchGroupIsFull = 14;//小组已经满了
     NoFoundMatch =15;//不存在小组
     InMatch = 16;
+    ServerHostOffLine =17;//服务器连接失败
+    
 
     NOFoundItem =100; //没有道具
     NOEnoughItem =101;//道具数量不足
@@ -54,5 +56,7 @@ enum ErrorCode
     NoFoundEquipmentConfig =117;//没有发现装备配置
     NoenoughTP = 118;//没有足够的天赋点
     NoActiveNeedTP = 119;
+
+    
 }
 

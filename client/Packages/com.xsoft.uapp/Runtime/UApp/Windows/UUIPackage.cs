@@ -28,12 +28,12 @@ namespace Windows
             }
             public Action<ContentTableModel> OnClickItem;
             public ItemData Config;
-            public PlayerItem pItem;
+            public PlayerItem PItem;
             public async void SetItem(PlayerItem item,bool isWear)
             {
                 var itemConfig = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
                 Config = itemConfig;
-                pItem = item; 
+                PItem = item; 
                 Template.ItemCount.ActiveSelfObject(item.Num > 1);
                 Template.lb_count.text = item.Num>1? item.Num.ToString():string.Empty;
                 Template.icon.sprite = await ResourcesManager.S.LoadIcon(itemConfig);
@@ -81,11 +81,6 @@ namespace Windows
             OnUpdateUIData();
 
         }
-        protected override void OnHide()
-        {
-            base.OnHide();
-        }
-
         protected override void OnUpdateUIData()
         {
             base.OnUpdateUIData();
@@ -95,7 +90,7 @@ namespace Windows
             lb_TextCountSize.text = $"/{gate.Package.MaxSize}";
            
             var hero = gate.Hero;
-            int index = 0;
+            var index = 0;
 
             var items = gate.Package.Items
                 .Select(t => t.Value).OrderBy(t => t.CreateTime).ToArray();
@@ -118,7 +113,7 @@ namespace Windows
 
         private async void ClickItem(ContentTableModel item)
         {
-            await UUIManager.S.CreateWindowAsync<UUIDetail>(ui => ui.Show(item.pItem));
+            await UUIManager.S.CreateWindowAsync<UUIDetail>(ui => ui.Show(item.PItem));
         }
     }
 }

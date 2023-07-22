@@ -53,9 +53,9 @@ namespace Server
             Package = new BattlePackage(package);
             _hero = hero;
             _baseGold = gold;
-            this.AccountId = account;
-            this.PushChannel = pushChannel;
-            this.RequestChannel = requestChannel;
+            AccountId = account;
+            PushChannel = pushChannel;
+            RequestChannel = requestChannel;
             GateServer = info;
         }
 
@@ -101,7 +101,7 @@ namespace Server
             return result;
         }
 
-        public int CurrentSize => Package.Items.Count;
+        private int CurrentSize => Package.Items.Count;
 
         public bool AddDrop(PlayerItem item)
         {

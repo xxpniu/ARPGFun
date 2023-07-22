@@ -1,6 +1,6 @@
 {
     "name": "Application",
-    "rootNamespace": "",
+    "rootNamespace": ".",
     "references": [
         "GUID:c0714e3101b644d28bc9124e6411f1fc",
         "GUID:84651a3751eca9349aac36a66bba901b",

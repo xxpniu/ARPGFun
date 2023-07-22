@@ -1,13 +1,9 @@
 using System.Collections.Generic;
-using Confluent.Kafka;
 using EConfig;
 using GameLogic;
 using GameLogic.Game;
-using GameLogic.Game.Elements;
-using GameLogic.Game.Perceptions;
 using Proto;
 using UnityEngine;
-using XNet.Libs.Utility;
 using  CM = ExcelConfig.ExcelToJSONConfigManager;
 using P = Proto.HeroPropertyType;
 namespace BattleViews.Utility

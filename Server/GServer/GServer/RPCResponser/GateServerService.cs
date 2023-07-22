@@ -216,7 +216,7 @@ namespace GServer.RPCResponsor
             {
                 case "level":
                 {
-                    if (int.TryParse(args[1], out int level))
+                    if (int.TryParse(args[1], out var level))
                     {
                         var update = Builders<GameHeroEntity>.Update.Set(t => t.Level, level);
                         await DataBase.S.Heros.FindOneAndUpdateAsync(t => t.PlayerUuid == player.Uuid, update);
@@ -246,7 +246,7 @@ namespace GServer.RPCResponsor
                 case "addexp":
                 {
                     var exp = int.Parse(args[1]);
-                    await UserDataManager.S.HeroGetExprise(player.Uuid, exp);
+                    await UserDataManager.S.HeroGetExperiences(player.Uuid, exp);
                 }
 
                     break;

@@ -239,6 +239,7 @@ namespace Server
                 var hero = i.Value.HeroCharacter;
                 while (i.Value.RequestChannel.TryPull(out var action))
                 {
+                    Debuger.Log($"{i.Key} - {action.TypeUrl}");
                     if (i.Value.HeroCharacter.IsDeath)
                     {
                         if (action.TryUnpack(out Action_Relive re))
@@ -309,6 +310,7 @@ namespace Server
                     {
                         Debuger.LogError($"Not found Type:{action.TypeUrl} of {action}");
                     }
+                    
                 }
                 if (!needNotifyPackage) continue;
                 var init = i.Value.GetNotifyPackage();

@@ -110,7 +110,7 @@ namespace UApp
         private async void OnReceived(Any any)
         {
             await UniTask.SwitchToMainThread();
-            Debuger.Log($"{any}");
+            Debuger.Log($"OnReceived Chat:{any}");
             if (any.TryUnpack(out Chat msg))
             {
                 Debuger.Log($"State:{msg}");

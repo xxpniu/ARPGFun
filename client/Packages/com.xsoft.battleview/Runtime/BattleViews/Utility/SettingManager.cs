@@ -19,10 +19,7 @@ namespace BattleViews.Utility
                 save_power = value;
                 PlayerPrefs.SetInt("__SETTING_Save_Power", 1);
             }
-            get
-            {
-                return save_power;
-            }
+            get => save_power;
         }
         private float _BgmValue = 1f;
         public float BgmValue
@@ -32,10 +29,7 @@ namespace BattleViews.Utility
                 _BgmValue = value;
                 PlayerPrefs.SetFloat("__SETTING_Bgm_Value", value);
             }
-            get
-            {
-                return _BgmValue;
-            }
+            get => _BgmValue;
         }
 
         private bool _notice;
@@ -46,10 +40,7 @@ namespace BattleViews.Utility
                 _notice = value;
                 PlayerPrefs.SetInt("__SETTING_notice", 1);// == 1;
             }
-            get
-            {
-                return _notice;
-            }
+            get => _notice;
         }
 
         public string Language { set; get; }
@@ -63,10 +54,7 @@ namespace BattleViews.Utility
                 music = value;
                 PlayerPrefs.SetFloat("__SETTING_music_Value", value);
             }
-            get
-            {
-                return music;
-            }
+            get => music;
         }
 
         protected override void Awake()

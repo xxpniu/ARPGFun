@@ -8,7 +8,7 @@ namespace BattleViews.Utility
         public override void WriteLog(DebugerLog log)
         {
 
-#if UNITY_SERVER
+#if UNITY_SERVER &&!UNITY_EDITOR
             System.Console.WriteLine(log.ToString());
 #else
             switch (log.Type)

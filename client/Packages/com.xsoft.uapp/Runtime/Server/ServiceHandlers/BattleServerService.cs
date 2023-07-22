@@ -75,28 +75,39 @@ namespace Server
             {
                 Debuger.LogError($"no found login");
                 return new B2C_JoinBattle { Code = ErrorCode.NofoundServerId };
-            } 
-            var seResult = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>
-                .RequestOnceAsync(loginServer.ServicsHost, 
-                    async (c) => await c.CheckSessionAsync(re));
-
-            if (!seResult.Code.IsOk()) return new B2C_JoinBattle();
-            
-            {
-                var pack = await C<GateServerInnerService.GateServerInnerServiceClient>
-                    .RequestOnceAsync(seResult.GateServerInnerHost,
-                        async (c)=> await c.GetPlayerInfoAsync(new B2G_GetPlayerInfo { AccountUuid = request.AccountUuid }));
-
-                if (!pack.Code.IsOk()) return new B2C_JoinBattle();
-                if (!Server.TryCreateSession(request.AccountUuid, out var key)) return new B2C_JoinBattle();
-                //session-key
-                await context.WriteResponseHeadersAsync(new Metadata { { "session-key", key } });
-                Debuger.Log($"Add:{request.AccountUuid} -> {key}");
-                var battlePlayer = new BattlePlayer(request.AccountUuid, pack.Package, pack.Hero, pack.Gold, seResult);
-                simulator.AddPlayer(request.AccountUuid, battlePlayer);
             }
 
-            return new B2C_JoinBattle { Code = ErrorCode.Ok };
+            try
+            {
+                var seResult = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>
+                    .RequestOnceAsync(loginServer.ServicsHost,
+                        async (c) => await c.CheckSessionAsync(re));
+
+                if (!seResult.Code.IsOk()) return new B2C_JoinBattle();
+
+                {
+                    var pack = await C<GateServerInnerService.GateServerInnerServiceClient>
+                        .RequestOnceAsync(seResult.GateServerInnerHost,
+                            async (c) => await c.GetPlayerInfoAsync(new B2G_GetPlayerInfo
+                                { AccountUuid = request.AccountUuid }));
+
+                    if (!pack.Code.IsOk()) return new B2C_JoinBattle();
+                    if (!Server.TryCreateSession(request.AccountUuid, out var key)) return new B2C_JoinBattle();
+                    //session-key
+                    await context.WriteResponseHeadersAsync(new Metadata { { "session-key", key } });
+                    Debuger.Log($"Add:{request.AccountUuid} -> {key}");
+                    var battlePlayer = new BattlePlayer(request.AccountUuid, pack.Package, pack.Hero, pack.Gold, seResult);
+                    simulator.AddPlayer(request.AccountUuid, battlePlayer);
+                }
+                return new B2C_JoinBattle { Code = ErrorCode.Ok };
+            }
+            catch (Exception ex)
+            {
+                Debuger.LogError(ex);
+                return new B2C_JoinBattle { Code = ErrorCode.Error };
+            }
+
+
         }
 
         internal void CloseAllChannel()

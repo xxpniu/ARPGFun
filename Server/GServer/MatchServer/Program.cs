@@ -67,6 +67,7 @@ namespace MatchServer
 
             var zk = new ZooKeeper(GRandomer.RandomList(config.ZkServer), 3000, new DefaultWatcher());
 
+            
             var battleWatcher =
                 new WatcherServer<string, BattleServerConfig>(zk, config.BattleServerRoot, (s) => s.ServerID)
                 {
@@ -103,7 +104,13 @@ namespace MatchServer
         private static async void OnBattleChanged(BattleServerConfig[] old, BattleServerConfig[] newList)
         {
             var newServerIds = newList.Select(t => t.ServerID);
-            var diff = old.Where(t => !newServerIds.Contains(t.ServerID)).Select(t=>t.ServerID).ToArray();
+            var diff = old.Where(t => !newServerIds.Contains(t.ServerID))
+                .Select(t=>t.ServerID).ToArray();
+            
+            foreach (var b in newList)
+            {
+              Debuger.Log($"LoadServer:{b}");   
+            }
             foreach (var d in diff)
             {
                 Debuger.Log($"Remove Battle match:{d}");

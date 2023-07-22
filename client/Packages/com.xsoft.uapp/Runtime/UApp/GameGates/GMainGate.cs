@@ -28,7 +28,15 @@ namespace UApp.GameGates
     public class GMainGate : UGate
     {
 
-        public N_Notify_MatchGroup Group;
+        private N_Notify_MatchGroup _matchGroup;
+        public N_Notify_MatchGroup Group {
+            set
+            {
+                print($"value Set:{value}");
+                _matchGroup = value;
+            }
+            get => _matchGroup;
+        }
         public UPerceptionView view;
         public MainData data;
         public int gold;

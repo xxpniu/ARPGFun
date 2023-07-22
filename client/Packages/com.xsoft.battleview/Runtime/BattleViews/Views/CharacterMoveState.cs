@@ -6,7 +6,7 @@ namespace BattleViews.Views
 {
     public enum MoveCategory
     {
-        NONE,
+        None,
         Destination,
         Forward,
         Push

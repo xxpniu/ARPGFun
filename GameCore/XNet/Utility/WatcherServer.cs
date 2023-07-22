@@ -42,7 +42,11 @@ namespace Utility
                     case Event.EventType.NodeChildrenChanged:
                     case Event.EventType.NodeCreated:
                     case Event.EventType.NodeDeleted:
+                    case Event.EventType.NodeDataChanged:
                         await _watcherServer.RefreshData();
+                        break;
+                    case Event.EventType.None:
+
                         break;
                 }
             }
@@ -69,7 +73,7 @@ namespace Utility
 
         private async Task<bool> LoadServerAsync(string path)
         {
-            var node = await Zk.getDataAsync(path).ConfigureAwait(false);
+            var node = await Zk.getDataAsync(path);
             var json = Encoding.UTF8.GetString(node.Data);
             var server = json.TryParseMessage<TServer>();
             var key = _keyHandler(server);
@@ -128,12 +132,12 @@ namespace Utility
 
         public IEnumerator<TServer> GetEnumerator()
         {
-            return this._serverConfigs.Values.GetEnumerator();
+            return _serverConfigs.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         public Action OnRefreshed;

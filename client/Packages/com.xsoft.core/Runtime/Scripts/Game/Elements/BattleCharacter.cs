@@ -11,6 +11,7 @@ using P = Proto.HeroPropertyType;
 using Layout.AITree;
 using UnityEngine;
 using Google.Protobuf;
+using XNet.Libs.Utility;
 
 namespace GameLogic.Game.Elements
 {
@@ -312,13 +313,16 @@ namespace GameLogic.Game.Elements
             return true;
         }
 
-        private readonly Queue<AITreeRoot> _next = new Queue<AITreeRoot>();
+        private readonly Queue<AITreeRoot> _next = new();
 
+        private const int MaxActionBuffer = 20;
 
         public T AddNetAction<T>(T action) where T : IMessage
         {
             _actions.Enqueue(action);
-            if (_actions.Count > 20) _actions.Dequeue();
+            if (_actions.Count <= MaxActionBuffer) return action;
+            Debuger.LogWaring($"{this.AccountUuid} have more than {MaxActionBuffer}");
+            _actions.Dequeue();
             return action;
         }
 

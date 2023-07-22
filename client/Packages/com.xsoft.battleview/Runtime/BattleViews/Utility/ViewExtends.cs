@@ -34,14 +34,14 @@ namespace BattleViews.Utility
         }
 
 
-        public static void LookView(this UCharacterView character, RenderTexture LookAtView)
+        public static void LookView(this UCharacterView character, RenderTexture lookAtView)
         {
             var go = new GameObject("Look", typeof(Camera));
             character.transform.SetLayer(LayerMask.NameToLayer("Player"));
             go.transform.SetParent(character.GetBoneByName(UCharacterView.RootBone), false);
             go.transform.RestRTS();
             var c = go.GetComponent<Camera>();
-            c.targetTexture = LookAtView;
+            c.targetTexture = lookAtView;
             c.cullingMask = LayerMask.GetMask("Player");
             go.transform.localPosition = new Vector3(0, 1.1f, 1.5f);
             c.farClipPlane = 5;

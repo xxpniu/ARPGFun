@@ -18,7 +18,7 @@ namespace ServerUtility
             _source = new CancellationTokenSource();
             var link = CancellationTokenSource.CreateLinkedTokenSource(_source.Token, token);
            
-            using IHost host = new HostBuilder()
+            using var host = new HostBuilder()
                 .ConfigureLogging(l => l.AddConsole()).Build();
             
             host.Start();
