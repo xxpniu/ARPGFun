@@ -27,7 +27,7 @@ namespace App.Core.Core
 
 		public string LoadText(string path)
 		{
-			var exPath = path[..path.LastIndexOf('.')];
+			var exPath = path.Substring(0,path.LastIndexOf('.'));
 			var asst = Resources.Load<TextAsset>(exPath);
 			if (asst) return asst.text;
 			Debuger.LogError($"{exPath} no found");

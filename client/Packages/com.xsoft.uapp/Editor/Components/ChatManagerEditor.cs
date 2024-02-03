@@ -15,9 +15,9 @@ public class ChatManagerEditor:Editor
         if (_showFriends)
         {
             var friends = chatManager!.Friends;
-            foreach (var (k,v) in friends)
+            foreach (var kv in friends)
             {
-                EditorGUILayout.LabelField($"{v.User.UserName}",$"{v.State}");
+                EditorGUILayout.LabelField($"{kv.Value.User.UserName}",$"{kv.Value.State}");
             }
         }
     }
