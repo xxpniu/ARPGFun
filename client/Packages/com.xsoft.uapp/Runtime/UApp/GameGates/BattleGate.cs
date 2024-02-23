@@ -210,7 +210,7 @@ namespace UApp.GameGates
             PreView.OwnerTeamIndex = character.TeamId;
             PreView.OwnerIndex = character.Index;
 
-            FindObjectOfType<ThirdPersonCameraContollor>()
+            FindFirstObjectByType<ThirdPersonCameraContollor>()
                 .SetLookAt(Owner.GetBoneByName(UCharacterView.RootBone))
                 .SetXY(40, Owner.GetBoneByName(UCharacterView.RootBone).rotation.eulerAngles.y)
                 .SetDis(18.2f);

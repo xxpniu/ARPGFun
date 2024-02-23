@@ -4,14 +4,15 @@ using GameLogic;
 using GameLogic.Game;
 using Proto;
 using UnityEngine;
-using  CM = ExcelConfig.ExcelToJSONConfigManager;
+using CM = ExcelConfig.ExcelToJSONConfigManager;
 using P = Proto.HeroPropertyType;
+
 namespace BattleViews.Utility
 {
     public static class BattleUtility
     {
-        
-        public static Dictionary<P, ComplexValue>  CreateHeroProperties(DHero hero,PlayerPackage package)
+
+        public static Dictionary<P, ComplexValue> CreateHeroProperties(DHero hero, PlayerPackage package)
         {
             var data = CM.GetId<CharacterData>(hero.HeroID);
             var level = CM.First<CharacterLevelUpData>(t => t.Level == hero.Level && t.CharacterID == hero.HeroID);
@@ -25,6 +26,7 @@ namespace BattleViews.Utility
                     Debug.LogError($"No found equip {i.GUID}");
                     continue;
                 }
+
                 var ps = equip.GetProperties();
                 foreach (var p in ps)
                 {

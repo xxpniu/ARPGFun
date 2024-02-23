@@ -81,17 +81,12 @@ namespace UApp
             var old = _gate;
             var oType = _gate == null ? null : _gate.GetType();
             Debug.Log($"from {oType} to {typeof(T)}");
-            _gate = null;
-            var nGate = gameObject.AddComponent<T>();
-            await UGate.DoJoinGate(nGate, args);
-            if (old != null)
-            {
-                await UGate.DoExitGate(old);
-                Destroy(old);
-            }
-
-            _gate = nGate;
-            return nGate;
+            _gate = gameObject.AddComponent<T>();
+            await UGate.DoJoinGate(_gate, args);
+            if (old == null) return (T)_gate;
+            await UGate.DoExitGate(old);
+            Destroy(old);
+            return (T)_gate;
         }
 
         private UGate _gate;

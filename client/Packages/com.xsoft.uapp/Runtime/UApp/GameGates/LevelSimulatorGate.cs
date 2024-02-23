@@ -149,6 +149,7 @@ namespace UApp.GameGates
 
         private void TryToSpawnMonster()
         {
+            if(_mCreator ==null) return;
             if(!_mCreator.IsAllMonsterDeath()) return;
             _mCreator.Spawn();
         }

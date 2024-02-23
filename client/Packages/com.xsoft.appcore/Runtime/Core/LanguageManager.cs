@@ -16,7 +16,7 @@ namespace App.Core.Core
 
         public LanguageType LType = LanguageType.Zh;
 
-        public readonly Dictionary<string, string> Keys = new Dictionary<string, string>();
+        public readonly Dictionary<string, string> Keys = new();
 
         protected override void Awake()
         {

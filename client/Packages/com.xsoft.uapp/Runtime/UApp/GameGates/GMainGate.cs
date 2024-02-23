@@ -91,6 +91,7 @@ namespace UApp.GameGates
         private float _timeTo = -1f;
         private GameGMTools _gm;
 
+        // ReSharper disable Unity.PerformanceAnalysis
         protected override async Task JoinGate(params object[] args)
         {
             LookAtView = new RenderTexture(128, 128, 32);
@@ -99,7 +100,7 @@ namespace UApp.GameGates
             UUIManager.Singleton.HideAll();
             UUIManager.Singleton.ShowMask(true);
             await SceneManager.LoadSceneAsync("Main");
-            data = FindObjectOfType<MainData>();
+            data = FindFirstObjectByType<MainData>();
             view = UPerceptionView.Create(UApplication.S.Constant);
             var serverIP = $"{_serverInfo.IpAddress}:{_serverInfo.Port}";
             Debuger.Log($"Gat:{serverIP}");
@@ -193,7 +194,6 @@ namespace UApp.GameGates
                 this.Package = result.Package;
                 this.gold = result.Gold;
                 this.coin = result.Coin;
-
                 ShowMain();
             }
             else
@@ -241,12 +241,12 @@ namespace UApp.GameGates
 
         public async void ShowMain()
         {
+            //await UniTask.Delay(10);
             await UUIManager.S.CreateWindowAsync<UUIMain>((ui) =>
             {
                 ui.ShowWindow();
                 UUIManager.S.ShowMask(false);
             });
-       
         }
 
         protected override async Task ExitGate()
