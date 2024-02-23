@@ -13,6 +13,8 @@ using System.Collections.Concurrent;
 using System.Threading;
 using Google.Protobuf.WellKnownTypes;
 using ChatTool;
+using ChatServerService = ChatServer.Services.ChatServerService;
+using ChatService = ChatServer.Services.ChatService;
 
 namespace ChatServer
 {

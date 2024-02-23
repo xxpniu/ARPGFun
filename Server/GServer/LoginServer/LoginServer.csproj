@@ -33,7 +33,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.10.4" />
-    <PackageReference Include="mongocsharpdriver" Version="2.10.4" />
+    <PackageReference Include="mongocsharpdriver" Version="2.24.0" />
     <PackageReference Include="Google.Protobuf" Version="3.15.8" />
     <PackageReference Include="ZooKeeperNetEx" Version="3.4.12.4" />
   </ItemGroup>

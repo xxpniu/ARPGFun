@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
 
-namespace ChatServer
+namespace ChatServer.Services
 {
 
     //消息转发

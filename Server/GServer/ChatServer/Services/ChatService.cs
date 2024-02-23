@@ -1,17 +1,16 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
+using ChatTool;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
-using System.Collections.Concurrent;
+using ServerUtility;
 using Utility;
 using XNet.Libs.Utility;
-using System.Collections.Generic;
-using Google.Protobuf.WellKnownTypes;
-using ServerUtility;
-using ChatTool;
-using System.Linq;
 
-namespace ChatServer
+namespace ChatServer.Services
 {
     public class ChatService:Proto.ChatService.ChatServiceBase
     {
