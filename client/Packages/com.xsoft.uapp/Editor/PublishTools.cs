@@ -6,6 +6,10 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
+#if UNITY_IOS
+
+#endif
+
 
 public sealed class PublishTools
 {
