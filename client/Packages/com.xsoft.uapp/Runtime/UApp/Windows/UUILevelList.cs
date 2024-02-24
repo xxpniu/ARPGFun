@@ -7,6 +7,7 @@ using App.Core.Core;
 using App.Core.UICore.Utility;
 using UApp;
 using UApp.GameGates;
+using UnityEngine;
 
 namespace Windows
 {
@@ -62,16 +63,22 @@ namespace Windows
         private void OnItemClick(ContentTableModel item)
         {
             var gate = UApplication.G<GMainGate>();
-#if DEVELOPMENT_BUILD ||UNITY_EDITOR
-            UUIPopup.ShowConfirm("GoToServer", "Cancel to local",
-                () => GoToServer(item.Data.ID),
-                () =>
-                {
+            var runType = (Proto.LevelRunType)item.Data.RunType;
+            switch (runType)
+            {
+                case LevelRunType.LrtLocal:
                     UApplication.S.StartLocalLevel(gate.Hero, gate.Package, item.Data.ID);
-                });
-#else
-            GoToServer(item.Data.ID);
-#endif
+                    break;
+                case LevelRunType.LrtTeam:
+                    GoToServer(item.Data.ID);
+                    break;
+                case LevelRunType.LrtServer:
+                    Debug.LogError($"not supported:{runType}");
+                    break;
+                default:
+                    //donothing
+                    break;
+            }
         }
 
         private async void GoToServer(int leveID)
