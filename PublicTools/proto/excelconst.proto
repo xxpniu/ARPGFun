@@ -174,3 +174,11 @@ enum TalentReleaseType
 	TRT_BeHurt = 2;   //被攻击
 	TRT_OnAttack = 3;   //攻击时候
 }
+
+enum LevelRunType
+{
+	LRT_NONE =0;
+	LRT_Local = 1;
+	LRT_Server = 2;
+	LRT_Team = 3;
+}
