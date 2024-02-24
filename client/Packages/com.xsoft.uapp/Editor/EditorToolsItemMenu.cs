@@ -104,7 +104,7 @@ public sealed class EditorToolsItemMenu
         var file = EditorUtility.SaveFilePanel("Import Map Config", path, "level", "json");
         if (string.IsNullOrEmpty(file)) return;
 
-        var groups = Object.FindObjectsOfType<MonsterGroupPosition>();
+        var groups = Object.FindObjectsByType<MonsterGroupPosition>(FindObjectsSortMode.None);
         var config = new Proto.MapConfig();
         foreach (var i in groups)
         {
