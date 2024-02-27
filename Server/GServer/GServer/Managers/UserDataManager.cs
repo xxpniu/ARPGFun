@@ -799,13 +799,9 @@ namespace GServer.Managers
                 var val =  ExcelToJSONConfigManager.GetId<RefreshPropertyValueData>((int)selected);
                 var appendValue = val.Value * property;
                 //Debug.Assert(equip.EquipData != null, "equip.EquipData != null");
-                if (equip.EquipData.Properties.ContainsKey(selected))
+                if (!equip.EquipData.Properties.TryAdd(selected, appendValue))
                 {
                     equip.EquipData.Properties[selected] += appendValue;
-                }
-                else
-                {
-                    equip.EquipData.Properties.Add(selected, appendValue);
                 }
             }
 
@@ -816,8 +812,10 @@ namespace GServer.Managers
             var modify = new UpdateOneModel<GamePackageEntity>(
                      Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid, package.Uuid)
                      & Builders<GamePackageEntity>.Filter.ElemMatch(t => t.Items, c=>c.Uuid == equip.Uuid),
-                      Builders<GamePackageEntity>.Update.Set(t => t.Items[-1], equip)
+                     Builders<GamePackageEntity>.Update.Set("Items.$", equip)
+            // Builders<GamePackageEntity>.Update.Set(t => t.Items[-1], equip)         
                 );
+            
             models.Add(modify);
 
             foreach (var i in removes)
