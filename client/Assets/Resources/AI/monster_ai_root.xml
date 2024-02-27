@@ -171,16 +171,40 @@
                           <MTpye>MtNormal</MTpye>
                           <resultType>Random</resultType>
                         </TreeNode>
-                        <TreeNode xsi:type="TreeNodeMoveCloseTarget">
-                          <childs />
-                          <name>靠近目标</name>
-                          <guid>68928820-cfe0-4fa3-95c8-3eb9ee4a0d39</guid>
-                          <valueOf>BlackboardMagicRangeMax</valueOf>
-                          <distance>
-                            <min>0</min>
-                            <max>100</max>
-                            <type>Fixed</type>
-                          </distance>
+                        <TreeNode xsi:type="TreeNodeSelector">
+                          <childs>
+                            <TreeNode xsi:type="TreeNodeMoveCloseTarget">
+                              <childs />
+                              <name>靠近目标</name>
+                              <guid>68928820-cfe0-4fa3-95c8-3eb9ee4a0d39</guid>
+                              <valueOf>BlackboardMagicRangeMax</valueOf>
+                              <distance>
+                                <min>0</min>
+                                <max>100</max>
+                                <type>Fixed</type>
+                              </distance>
+                            </TreeNode>
+                            <TreeNode xsi:type="TreeNodeBreakTreeAndRunChild">
+                              <childs>
+                                <TreeNode xsi:type="TreeNodeSetIntKey">
+                                  <childs />
+                                  <name>操作黑板值(Int)</name>
+                                  <guid>9c1b47ea-d8ae-413d-815e-04390a912e48</guid>
+                                  <Key>attack_state</Key>
+                                  <operatorType>Reset</operatorType>
+                                  <OperatorValue>
+                                    <min>0</min>
+                                    <max>0</max>
+                                    <type>Fixed</type>
+                                  </OperatorValue>
+                                </TreeNode>
+                              </childs>
+                              <name>终止树并启动子树</name>
+                              <guid>19611617-61ec-4ce9-bd2b-f74a4dd456d9</guid>
+                            </TreeNode>
+                          </childs>
+                          <name>选择节点</name>
+                          <guid>7ba56d39-0742-4c41-94c3-5610ab7a0a00</guid>
                         </TreeNode>
                         <TreeNode xsi:type="TreeNodeReleaseMagic">
                           <childs />
@@ -201,6 +225,111 @@
               </childs>
               <name>追击</name>
               <guid>35e4ffdc-2178-43de-b1aa-299567ba68f2</guid>
+            </TreeNode>
+            <TreeNode xsi:type="TreeNodeSequence">
+              <childs>
+                <TreeNode xsi:type="TreeNodeNegation">
+                  <childs>
+                    <TreeNode xsi:type="TreeNodeDistancTarget">
+                      <childs />
+                      <name>判断目标距离</name>
+                      <guid>ba382d28-4858-4e5f-b9d5-4ae698851f80</guid>
+                      <valueOf>ViewDistance</valueOf>
+                      <distance>
+                        <min>100</min>
+                        <max>100</max>
+                        <type>Fixed</type>
+                      </distance>
+                      <ValueMul>
+                        <min>10000</min>
+                        <max>10000</max>
+                        <type>Fixed</type>
+                      </ValueMul>
+                      <compareType>Less</compareType>
+                    </TreeNode>
+                  </childs>
+                  <name>结果取反</name>
+                  <guid>4f6bfa2f-beab-48f8-9e26-94630bb8086d</guid>
+                </TreeNode>
+                <TreeNode xsi:type="TreeNodeParallelSelector">
+                  <childs>
+                    <TreeNode xsi:type="TreeNodeTickUntilSuccess">
+                      <childs>
+                        <TreeNode xsi:type="TreeNodeFindTarget">
+                          <childs />
+                          <name>查找目标</name>
+                          <guid>4c8dcee0-afdb-4c2b-ba2d-2e47be1f04b6</guid>
+                          <valueOf>ViewDistance</valueOf>
+                          <Distance>
+                            <min>0</min>
+                            <max>0</max>
+                            <type>Fixed</type>
+                          </Distance>
+                          <ValueMul>
+                            <min>20000</min>
+                            <max>10000</max>
+                            <type>Fixed</type>
+                          </ValueMul>
+                          <View>
+                            <min>360</min>
+                            <max>360</max>
+                            <type>Fixed</type>
+                          </View>
+                          <selectType>Nearest</selectType>
+                          <filter>None</filter>
+                          <useMagicConfig>false</useMagicConfig>
+                          <teamType>Enemy</teamType>
+                          <findNew>false</findNew>
+                        </TreeNode>
+                      </childs>
+                      <name>间隔时间执行直到返回Success</name>
+                      <guid>043a58d1-a80c-4167-80cf-243949a1740e</guid>
+                      <tickTime>
+                        <min>500</min>
+                        <max>1000</max>
+                        <type>Fixed</type>
+                      </tickTime>
+                    </TreeNode>
+                    <TreeNode xsi:type="TreeNodeReturnSuccss">
+                      <childs>
+                        <TreeNode xsi:type="TreeNodeSequence">
+                          <childs>
+                            <TreeNode xsi:type="TreeNodeAroundBornPosMove">
+                              <childs />
+                              <name>出生点范围内移动</name>
+                              <guid>f9c95e0a-f581-4785-9535-850ed43ff317</guid>
+                              <Value>ViewDistance</Value>
+                              <distance>
+                                <min>0</min>
+                                <max>100</max>
+                                <type>Fixed</type>
+                              </distance>
+                            </TreeNode>
+                            <TreeNode xsi:type="TreeNodeWaitForSeconds">
+                              <childs />
+                              <name>等待时间</name>
+                              <guid>d86bf6e7-e246-4f1c-a222-9ffd83f7f8a4</guid>
+                              <seconds>
+                                <min>3000</min>
+                                <max>1000</max>
+                                <type>Fixed</type>
+                              </seconds>
+                            </TreeNode>
+                          </childs>
+                          <name>巡逻</name>
+                          <guid>6e6eae10-4b6c-45e6-b069-e449b2119eb0</guid>
+                        </TreeNode>
+                      </childs>
+                      <name>结果始终为Success</name>
+                      <guid>c84fa1c5-e0aa-46e9-84c4-8576ea6ed7a1</guid>
+                    </TreeNode>
+                  </childs>
+                  <name>并行选择节点</name>
+                  <guid>4948e29a-53f1-4a8a-b91a-2847e5190cca</guid>
+                </TreeNode>
+              </childs>
+              <name>巡逻</name>
+              <guid>f4589cb8-c356-423c-b956-3314fd6cad7c</guid>
             </TreeNode>
             <TreeNode xsi:type="TreeNodeSequence">
               <childs>
@@ -356,111 +485,6 @@
               </childs>
               <name>警戒</name>
               <guid>9cfc12be-ad04-42c9-a238-9a7709da4d38</guid>
-            </TreeNode>
-            <TreeNode xsi:type="TreeNodeSequence">
-              <childs>
-                <TreeNode xsi:type="TreeNodeNegation">
-                  <childs>
-                    <TreeNode xsi:type="TreeNodeDistancTarget">
-                      <childs />
-                      <name>判断目标距离</name>
-                      <guid>ba382d28-4858-4e5f-b9d5-4ae698851f80</guid>
-                      <valueOf>ViewDistance</valueOf>
-                      <distance>
-                        <min>100</min>
-                        <max>100</max>
-                        <type>Fixed</type>
-                      </distance>
-                      <ValueMul>
-                        <min>10000</min>
-                        <max>10000</max>
-                        <type>Fixed</type>
-                      </ValueMul>
-                      <compareType>Less</compareType>
-                    </TreeNode>
-                  </childs>
-                  <name>结果取反</name>
-                  <guid>4f6bfa2f-beab-48f8-9e26-94630bb8086d</guid>
-                </TreeNode>
-                <TreeNode xsi:type="TreeNodeParallelSelector">
-                  <childs>
-                    <TreeNode xsi:type="TreeNodeTickUntilSuccess">
-                      <childs>
-                        <TreeNode xsi:type="TreeNodeFindTarget">
-                          <childs />
-                          <name>查找目标</name>
-                          <guid>4c8dcee0-afdb-4c2b-ba2d-2e47be1f04b6</guid>
-                          <valueOf>ViewDistance</valueOf>
-                          <Distance>
-                            <min>0</min>
-                            <max>0</max>
-                            <type>Fixed</type>
-                          </Distance>
-                          <ValueMul>
-                            <min>20000</min>
-                            <max>10000</max>
-                            <type>Fixed</type>
-                          </ValueMul>
-                          <View>
-                            <min>360</min>
-                            <max>360</max>
-                            <type>Fixed</type>
-                          </View>
-                          <selectType>Nearest</selectType>
-                          <filter>None</filter>
-                          <useMagicConfig>false</useMagicConfig>
-                          <teamType>Enemy</teamType>
-                          <findNew>false</findNew>
-                        </TreeNode>
-                      </childs>
-                      <name>间隔时间执行直到返回Success</name>
-                      <guid>043a58d1-a80c-4167-80cf-243949a1740e</guid>
-                      <tickTime>
-                        <min>500</min>
-                        <max>1000</max>
-                        <type>Fixed</type>
-                      </tickTime>
-                    </TreeNode>
-                    <TreeNode xsi:type="TreeNodeReturnSuccss">
-                      <childs>
-                        <TreeNode xsi:type="TreeNodeSequence">
-                          <childs>
-                            <TreeNode xsi:type="TreeNodeAroundBornPosMove">
-                              <childs />
-                              <name>出生点范围内移动</name>
-                              <guid>f9c95e0a-f581-4785-9535-850ed43ff317</guid>
-                              <Value>ViewDistance</Value>
-                              <distance>
-                                <min>0</min>
-                                <max>100</max>
-                                <type>Fixed</type>
-                              </distance>
-                            </TreeNode>
-                            <TreeNode xsi:type="TreeNodeWaitForSeconds">
-                              <childs />
-                              <name>等待时间</name>
-                              <guid>d86bf6e7-e246-4f1c-a222-9ffd83f7f8a4</guid>
-                              <seconds>
-                                <min>3000</min>
-                                <max>1000</max>
-                                <type>Fixed</type>
-                              </seconds>
-                            </TreeNode>
-                          </childs>
-                          <name>巡逻</name>
-                          <guid>6e6eae10-4b6c-45e6-b069-e449b2119eb0</guid>
-                        </TreeNode>
-                      </childs>
-                      <name>结果始终为Success</name>
-                      <guid>c84fa1c5-e0aa-46e9-84c4-8576ea6ed7a1</guid>
-                    </TreeNode>
-                  </childs>
-                  <name>并行选择节点</name>
-                  <guid>4948e29a-53f1-4a8a-b91a-2847e5190cca</guid>
-                </TreeNode>
-              </childs>
-              <name>巡逻</name>
-              <guid>f4589cb8-c356-423c-b956-3314fd6cad7c</guid>
             </TreeNode>
           </childs>
           <name>选择节点</name>

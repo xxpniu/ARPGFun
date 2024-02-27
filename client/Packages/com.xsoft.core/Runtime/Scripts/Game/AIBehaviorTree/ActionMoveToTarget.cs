@@ -40,6 +40,7 @@ namespace GameLogic.Game.AIBehaviorTree
 				if (!target || target.IsDeath || target.IsLock(ActionLockType.NoInhiden) )
 				{
 					if (root.IsDebug) Attach("failure", $"target is isDeath:{target.IsDeath} InHidden:{target.IsLock(ActionLockType.NoInhiden)} ");
+					root.Character?.StopMove();
 					yield return RunStatus.Failure;
 					yield break;
 				}

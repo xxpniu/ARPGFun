@@ -122,7 +122,7 @@ namespace UApp.GameGates
                 }, () => { UApplication.S.GoBackToMainGate(); });
                 //UUIManager.S.CreateWindowAsync<Windows.>
             };   
-            await _mCreator.Spawn();
+            //await _mCreator.Spawn();
         }
     
 
