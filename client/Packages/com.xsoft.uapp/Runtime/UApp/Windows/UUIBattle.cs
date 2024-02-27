@@ -361,7 +361,7 @@ namespace Windows
                 }
             }
 
-            var lookRotation = Quaternion.Euler(0, 0, ThirdPersonCameraContollor.Current.transform.rotation.eulerAngles.y);
+            var lookRotation = Quaternion.Euler(0, 0, -ThirdPersonCameraContollor.Current.transform.rotation.eulerAngles.y);
             this.ViewForward.localRotation = lookRotation;
 
             var r = Size / 2f;// 16; 

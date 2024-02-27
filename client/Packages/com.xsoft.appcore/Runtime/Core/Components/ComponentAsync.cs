@@ -8,7 +8,7 @@ namespace App.Core.Core.Components
     {
         public struct AsyncCall
         {
-            public Action Call;
+            public readonly Action Call;
             public bool IsCompleted { private set; get; }
     
             public AsyncCall(Action call)
@@ -23,12 +23,12 @@ namespace App.Core.Core.Components
             }
         }
 
-        private readonly ConcurrentQueue<AsyncCall> updateCall = new ConcurrentQueue<AsyncCall>();
+        private readonly ConcurrentQueue<AsyncCall> _updateCall = new ConcurrentQueue<AsyncCall>();
 
         protected virtual void Update()
         {
-            if (updateCall.Count == 0) return;
-            while (updateCall.TryDequeue(out AsyncCall c))
+            if (_updateCall.Count == 0) return;
+            while (_updateCall.TryDequeue(out AsyncCall c))
             {
                 c.Call?.Invoke();
                 c.Complete();
@@ -39,7 +39,7 @@ namespace App.Core.Core.Components
         {
             if (call == null) throw new NullReferenceException();
             var asyncCall = new AsyncCall(call);
-            updateCall.Enqueue(asyncCall);
+            _updateCall.Enqueue(asyncCall);
             return asyncCall;
         }
     }
