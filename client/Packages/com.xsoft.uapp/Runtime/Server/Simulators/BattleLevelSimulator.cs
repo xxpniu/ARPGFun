@@ -108,7 +108,7 @@ namespace Server
             totalTime = LevelData.LimitTime;
         }
 
-        public BattlePerception Per { get { return State.Perception as BattlePerception; } }
+        public BattlePerception Per => State.Perception as BattlePerception;
 
         public bool TryGetElementByIndex<T>(int index, out T el) where T : GObject
         {
@@ -221,10 +221,10 @@ namespace Server
         {
             var mType = (MapType)level.MapType;
             Debuger.Log($"LoadType:{mType}");
-            if (Types.TryGetValue(mType, out Type t))
+            if (Types.TryGetValue(mType, out var t))
             {
                 var si = Activator.CreateInstance(t) as BattleLevelSimulator;
-                Debuger.Log($"Simulator:{si.GetType()}");
+                Debuger.Log($"Simulator:{si?.GetType()}");
                 return si;
             }
             Debug.LogError($"not found {mType}");

@@ -289,7 +289,9 @@ namespace GServer.Managers
             if (GRandomer.Probability10000(levelConfig.Pro))
             {
                 item.Level += 1;
-                var update = Builders<GamePackageEntity>.Update.Set(t => t.Items[-1].Level, item.Level);
+                //Items
+                var update = Builders<GamePackageEntity>.Update.Set("Items.$.Level", item.Level);
+                //var update = Builders<GamePackageEntity>.Update.Set(t => t.Items[0].Level, item.Level);
                 var f = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, player.Uuid)
                     & Builders<GamePackageEntity>.Filter.ElemMatch(t => t.Items, x => x.Uuid == item.Uuid);
                 await DataBase.S.Packages.FindOneAndUpdateAsync(f, update);
