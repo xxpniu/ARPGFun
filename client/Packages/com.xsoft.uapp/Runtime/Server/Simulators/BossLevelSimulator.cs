@@ -22,12 +22,11 @@ namespace Server
     {
         private  MapElementSpawn _spawn;
 
-        
+
 
         protected override void OnLoadCompleted()
         {
             base.OnLoadCompleted();
-
             
             Debuger.Log($"Total Time:{totalTime}");
 
@@ -35,7 +34,12 @@ namespace Server
             {
                 OnDrop = DoDrop
             };
-            _spawn.Spawn();
+            BeginSpawn();
+        }
+
+        private async void BeginSpawn()
+        {
+           await _spawn.Spawn();
         }
 
         public override bool CheckEnd()

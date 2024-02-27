@@ -6,3 +6,10 @@ MonoImporter:
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 28118
+  packageName: Easy Touch Controls
+  packageVersion: 2.0.7
+  assetPath: Packages/com.xsoft.core/Runtime/EasyTouchControls/Scripts/ETCTouchPad.cs
+  uploadId: 113887

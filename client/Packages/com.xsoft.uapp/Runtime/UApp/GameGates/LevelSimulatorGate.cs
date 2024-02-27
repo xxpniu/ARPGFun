@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
@@ -121,7 +122,7 @@ namespace UApp.GameGates
                 }, () => { UApplication.S.GoBackToMainGate(); });
                 //UUIManager.S.CreateWindowAsync<Windows.>
             };   
-            _mCreator.Spawn();
+            await _mCreator.Spawn();
         }
     
 
@@ -129,7 +130,7 @@ namespace UApp.GameGates
 
         private PlayerItem GetEquipByGuid(string uuid)
         {
-            return Package.Items.TryGetValue(uuid, out var ite) ? ite : null;
+            return Package.Items.GetValueOrDefault(uuid);
         }
 
         private BattleCharacter _characterOwner;
@@ -147,11 +148,11 @@ namespace UApp.GameGates
             //throw new System.NotImplementedException();
         }
 
-        private void TryToSpawnMonster()
+        private async void TryToSpawnMonster()
         {
             if(_mCreator ==null) return;
             if(!_mCreator.IsAllMonsterDeath()) return;
-            _mCreator.Spawn();
+            await _mCreator.Spawn();
         }
 
         protected override void Tick()

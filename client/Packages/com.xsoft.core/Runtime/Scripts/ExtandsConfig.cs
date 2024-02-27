@@ -211,7 +211,8 @@ namespace GameLogic
         public static Dictionary<P, ComplexValue> CreateMonsterProperties(this CharacterData data, MonsterData monster )
         {
             var p = GetInitStat();
-            p.TryAddBase(data.Properties, data.PropertyValues);
+            //Monster no character base
+            //p.TryAddBase(data.Properties, data.PropertyValues);
             p.TryAddBase(monster.Properties, monster.PropertyValues);
             return p;
         }

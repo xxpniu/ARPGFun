@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using App.Core.Core;
 using BattleViews.Utility;
+using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;
 using GameLogic;
@@ -44,7 +46,7 @@ namespace Server.Map
             this.Config = config;
         }
 
-        public void Spawn()
+        public async Task Spawn()
         {
             foreach (var i in Config.Elements)
             {
@@ -52,27 +54,27 @@ namespace Server.Map
                 switch (i.Type)
                 {
                     case MapElementType.MetMonsterGroup:
-                        {
-                            var data = CM.GetId<MonsterGroupData>(i.ConfigID);
-                            if (data != null)
-                                SpawnMonster(i.Position.ToVer3(), i.Forward.ToVer3(), data);
-                            else
-                                Debuger.LogError($"No found monster group {i.ConfigID}");
-                        }
+                    {
+                        var data = CM.GetId<MonsterGroupData>(i.ConfigID);
+                        if (data != null)
+                            await SpawnMonster(i.Position.ToVer3(), i.Forward.ToVer3(), data);
+                        else
+                            Debuger.LogError($"No found monster group {i.ConfigID}");
+                    }
                         break;
                     case MapElementType.MetElementGroup:
-                        {
-                            var data = CM.GetId<MapElementGroup>(i.ConfigID);
-                            if (data != null)
-                                SpawnElement(i.Position.ToUV3(), i.Forward.ToUV3() ,i.LinkPos.ToUV3(), data);
-                            else
-                                Debuger.LogError($"No found monster group {i.ConfigID}");
-                        }
+                    {
+                        var data = CM.GetId<MapElementGroup>(i.ConfigID);
+                        if (data != null)
+                            SpawnElement(i.Position.ToUV3(), i.Forward.ToUV3(), i.LinkPos.ToUV3(), data);
+                        else
+                            Debuger.LogError($"No found monster group {i.ConfigID}");
+                    }
                         break;
                     case MapElementType.MetNpc:
                         break;
                     case MapElementType.MetMonster:
-                        CreateMonster(i.ConfigID, i.Position.ToUV3(), i.Forward.ToUV3());
+                        await CreateMonster(i.ConfigID, i.Position.ToUV3(), i.Forward.ToUV3());
                         break;
                     //case MapElementType.MetElementGroup:
                     //    CreateTransport(i.ConfigID, i.Position.ToUV3(), i.Forward.ToUV3(), i.LinkPos.ToUV3());
@@ -121,7 +123,7 @@ namespace Server.Map
 
         public Action<DropItem> OnDrop;
 
-        private void SpawnMonster(Vector3 pos, Vector3 forward, MonsterGroupData monsterGroup)
+        private async Task SpawnMonster(Vector3 pos, Vector3 forward, MonsterGroupData monsterGroup)
         {
             var standPos = new List<BattleStandData>();
             var monsterID = new List<int>();
@@ -197,8 +199,11 @@ namespace Server.Map
 
             for (var i = 0; i < maxCount; i++)
             {
-                CreateMonster( monsterID[i], standPos[i].Pos, standPos[i].Forward);
+               await  CreateMonster( monsterID[i], standPos[i].Pos, standPos[i].Forward);
+               await UniTask.Yield();
             }
+
+            await Task.CompletedTask;
         }
 
         public bool IsAllMonsterDeath()
@@ -208,7 +213,7 @@ namespace Server.Map
 
         private int AliveCount { get; set; } = 0;
 
-        private void CreateMonster(int id, Vector3 pos,Vector3 forward)
+        private async Task CreateMonster(int id, Vector3 pos,Vector3 forward)
         {
             var monsterData = CM.GetId<MonsterData>(id);
             if (monsterData == null)
@@ -267,6 +272,8 @@ namespace Server.Map
 
                 };
             };
+
+            await Task.CompletedTask;
         }
     }
 }
