@@ -39,19 +39,20 @@ public class UICreater : EditorWindow
         GUILayout.Space(20);
         if (currentSelect != null && Names != null)
         {
-            GUILayout.Label(string.Format("找到{0}个UI控件",Names.Count));
+            GUILayout.Label($"找到{Names.Count}个UI控件");
             GUILayout.BeginHorizontal();
             windowsRoot = EditorGUILayout.TextField("Code Path:", windowsRoot);
             if(GUILayout.Button("Select",GUILayout.Width(100)))
             {
-                windowsRoot = EditorUtility.SaveFolderPanel("Selet Code Path",Path.Combine(Application.dataPath, "Scripts/Application/Windows"),"");
+                windowsRoot = EditorUtility.SaveFolderPanel("Select Code Path",Path.Combine(Application.dataPath, "Scripts/Application/Windows"),"");
             }
             GUILayout.EndHorizontal();
             EditorGUILayout.TextField("ClassName:", className);
-            GUILayout.Label("UITemplate File Name:" + className + ".ui.cs");
+            GUILayout.Label("UITemplate File Name:" + className + ".Designer.cs");
 
             createModelFile = EditorGUILayout.ToggleLeft("创建逻辑文件（PS:将覆盖原有逻辑文件，非首次创建建议不要选择）", createModelFile);
-            if (showExample = EditorGUILayout.Foldout(showExample, "代码概要"))
+            showExample = EditorGUILayout.Foldout(showExample, "代码概要");
+            if (showExample)
             {
                 scroll = GUILayout.BeginScrollView(scroll, GUILayout.Height(200));
                 EditorGUILayout.BeginVertical();
@@ -59,14 +60,16 @@ public class UICreater : EditorWindow
                 {
                     GUILayout.Label(string.Format("public {1} {0}", i.Key, i.Value) + " {set;get;}");
                 }
-                foreach(var i in Tables)
+
+                foreach (var i in Tables)
                 {
-                    GUILayout.Label("Table:"+ i.Key);
-                    foreach(var f in i.Value.Components)
+                    GUILayout.Label("Table:" + i.Key);
+                    foreach (var f in i.Value.Components)
                     {
                         GUILayout.Label(string.Format("   public {1} {0}", f.Key, f.Value) + " {set;get;}");
                     }
                 }
+
                 EditorGUILayout.EndVertical();
                 GUILayout.EndScrollView();
             }
@@ -85,12 +88,11 @@ public class UICreater : EditorWindow
 
     }
 
-    private  static readonly string tableTemplateField =
-@"            public [Type] [Name];";
-    private static readonly string tableTemlateFindField =
-@"                [Name] = FindChild<[Type]>("+"\"[Name]\""+");";
-    private static readonly string tableTemplateClass =
-@"        public class [TableName]TableTemplate : TableItemTemplate
+    private const string TableTemplateField = @"            public [Type] [Name];";
+
+    private const string TableTemlateFindField = @"                [Name] = FindChild<[Type]>(" + "\"[Name]\"" + ");";
+
+    private const string TableTemplateClass = @"        public class [TableName]TableTemplate : TableItemTemplate
         {
             public [TableName]TableTemplate(){}
 [TableTemplateField]
@@ -99,16 +101,16 @@ public class UICreater : EditorWindow
 [TableTemplateFindField]
             }
         }";
-private static string templateFields =
-        @"        protected [Type] [Name];";
-    private static string templateTableManager=
-        @"        protected UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>> [TableName]TableManager = new UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>>();";
-    private static string templateFieldFind=
-@"            [Name] = FindChild<[Type]>("+"\"[Name]\""+");";
-    private static string templateInitTable =
-@"            [TableName]TableManager.InitFromLayout([TableName]);";
-    private static string templateFile =
-@"using System;
+
+    private const string TemplateFields = @"        protected [Type] [Name];";
+
+    private const string TemplateTableManager = @"        protected UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>> [TableName]TableManager = new UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>>();";
+
+    private const string TemplateFieldFind = @"            [Name] = FindChild<[Type]>(" + "\"[Name]\"" + ");";
+
+    private const string TemplateInitTable = @"            [TableName]TableManager.InitFromLayout([TableName]);";
+
+    private const string TemplateFile = @"using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -135,8 +137,8 @@ namespace Windows
         }
     }
 }";
-    private static readonly string tableModelClass =
-@"        public class [TableName]TableModel : TableItemModel<[TableName]TableTemplate>
+
+    private const string TableModelClass = @"        public class [TableName]TableModel : TableItemModel<[TableName]TableTemplate>
         {
             public [TableName]TableModel(){}
             public override void InitModel()
@@ -144,8 +146,8 @@ namespace Windows
                 //todo
             }
         }";
-    private static readonly string modelFile =
-@"using System;
+
+    private const string ModelFile = @"using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -179,8 +181,8 @@ namespace Windows
         var fieldFinds = new StringBuilder();
         foreach (var i in Names)
         {
-            fields.AppendLine(templateFields.Replace("[Name]", i.Key).Replace("[Type]", i.Value));
-            fieldFinds.AppendLine(templateFieldFind.Replace("[Name]", i.Key).Replace("[Type]", i.Value));
+            fields.AppendLine(TemplateFields.Replace("[Name]", i.Key).Replace("[Type]", i.Value));
+            fieldFinds.AppendLine(TemplateFieldFind.Replace("[Name]", i.Key).Replace("[Type]", i.Value));
         }
 
         var tableModel = new StringBuilder();
@@ -189,33 +191,33 @@ namespace Windows
         var tableManager = new StringBuilder();
         foreach (var i in Tables)
         {
-            var tempModel = tableModelClass.Replace("[TableName]", i.Key);
-            var tempTemplate = tableTemplateClass.Replace("[TableName]", i.Key);
+            var tempModel = TableModelClass.Replace("[TableName]", i.Key);
+            var tempTemplate = TableTemplateClass.Replace("[TableName]", i.Key);
 
             var tfields = new StringBuilder();
             var tfieldFinds = new StringBuilder();
             foreach (var f in i.Value.Components)
             {
-                tfields.AppendLine(tableTemplateField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
-                tfieldFinds.AppendLine(tableTemlateFindField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
+                tfields.AppendLine(TableTemplateField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
+                tfieldFinds.AppendLine(TableTemlateFindField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
             }
             tempTemplate = tempTemplate.Replace("[TableTemplateField]", tfields.ToString()).Replace("[TableTemplateFindField]", tfieldFinds.ToString());
             //tempModel.Replace();
             tableModel.AppendLine(tempModel);
             tableTemplate.AppendLine(tempTemplate);
-            tableManager.AppendLine(templateTableManager.Replace("[TableName]", i.Key));
+            tableManager.AppendLine(TemplateTableManager.Replace("[TableName]", i.Key));
             //TableType
-            tableInt.AppendLine(templateInitTable.Replace("[TableName]", i.Key)
+            tableInt.AppendLine(TemplateInitTable.Replace("[TableName]", i.Key)
                 .Replace("[TableType]", i.Value.Type == TableTypes.UIGrid ? "Grid" : "Table"));
         }
 
         if (createModelFile)
         {
-            var modeCode = modelFile.Replace("[TableModels]", tableModel.ToString()).Replace("[ClassName]", className);
+            var modeCode = ModelFile.Replace("[TableModels]", tableModel.ToString()).Replace("[ClassName]", className);
             File.WriteAllText(Path.Combine(windowsRoot, className + ".cs"), modeCode);
         }
 
-        var templateCode = templateFile.Replace("[ClassName]", className)
+        var templateCode = TemplateFile.Replace("[ClassName]", className)
             .Replace("[ResourceName]", className)
             .Replace("[Fields]", fields.ToString())
             .Replace("[FieldFinds]", fieldFinds.ToString())
@@ -351,12 +353,9 @@ namespace Windows
 
     public class TableComponent
     {
-        public TableComponent() {
-            Components = new Dictionary<string, string>();
-        }
         public string Name { set; get; }
 
-        public Dictionary<string, string> Components { set; get; }
+        public Dictionary<string, string> Components { set; get; } = new();
 
         public TableTypes Type { set; get; }
     }

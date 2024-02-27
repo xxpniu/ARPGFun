@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Windows
 {
     [UIResources("UUIBattle")]
-    partial class UUIBattle : UUIAutoGenWindow
+    partial class UUIBattle :UUIAutoGenWindow
     {
         public class GridTableTemplate : TableItemTemplate
         {
