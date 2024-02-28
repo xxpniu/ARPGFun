@@ -57,6 +57,8 @@ enum ErrorCode
     NoenoughTP = 118;//没有足够的天赋点
     NoActiveNeedTP = 119;
 
+
     
+    Exception = 999;//代码异常
 }
 

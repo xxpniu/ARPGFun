@@ -80,8 +80,7 @@ namespace UApp
         {
             await UniTask.SwitchToMainThread();
             this.host = null;
-            var (s, a) = UApplication.TryGet();
-            if(s) a.GotoLoginGate();
+            UApplication.Try()?.GotoLoginGate(); 
             Debuger.LogWaring($"Disconnect form gate server");
         }
 

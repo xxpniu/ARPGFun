@@ -14,8 +14,8 @@ namespace UApp.GameGates
     {
         protected override async Task JoinGate(params object[] args)
         {
-            GateManager.Reset();
-            ChatManager.Reset();
+            GateManager.Try()?.Reset();
+            ChatManager.Try()?.Reset();
             
             await SceneManager.LoadSceneAsync("null");
             UUIManager.Singleton.HideAll();
@@ -35,17 +35,30 @@ namespace UApp.GameGates
 
         private async Task<L2C_Reg> DoReg(string username, string password, Action<L2C_Reg> callback)
         {
-            var channel = new LogChannel(UApplication.S.LoginServer);
-
-            var req = new C2L_Reg
+            L2C_Reg r ;
+            try
             {
-                Password = password,
-                UserName = username,
-                Version = 0
-            };
-            var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
-            var r = await client.RegAsync(req);
-            await channel.ShutdownAsync();
+                var channel = new LogChannel(UApplication.S.LoginServer);
+
+                var req = new C2L_Reg
+                {
+                    Password = password,
+                    UserName = username,
+                    Version = 0
+                };
+                var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
+                r = await client.RegAsync(req);
+                await channel.ShutdownAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                r = new L2C_Reg
+                {
+                    Code = ErrorCode.Exception
+                };
+            }
+
             await UniTask.SwitchToMainThread();
             callback?.Invoke(r);
             return r;
@@ -53,6 +66,8 @@ namespace UApp.GameGates
 
         public async Task<L2C_Login> DoLogin(string userName, string pwd, Action<L2C_Login> callback = default)
         {
+            UUIManager.Try()?.ShowMask(true);
+            L2C_Login r = null;
             try
             {
                 var channel = new LogChannel(UApplication.S.LoginServer);
@@ -66,24 +81,24 @@ namespace UApp.GameGates
 
                 Debug.Log($"Request:{req}");
                 var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
-                var r = await client.LoginAsync(req,
+                r = await client.LoginAsync(req,
                     deadline: DateTime.UtcNow.AddSeconds(10));
                 await channel.ShutdownAsync();
                 await UniTask.Yield();
                 callback?.Invoke(r);
-                return r;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                var res = new L2C_Login
+                r = new L2C_Login
                 {
                     Code = ErrorCode.Error
                 };
                 Debug.LogException(ex);
-                callback?.Invoke(res);
-
-                return res;
             }
+
+            callback?.Invoke(r);
+            UUIManager.Try()?.ShowMask(false);
+            return r;
         }
     }
 }
