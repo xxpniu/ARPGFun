@@ -1609,6 +1609,11 @@
             没有足够的天赋点
              </summary>
         </member>
+        <member name="F:Proto.ErrorCode.Exception">
+             <summary>
+            代码异常
+             </summary>
+        </member>
         <member name="T:Proto.Void">
              <summary>
             empty text
