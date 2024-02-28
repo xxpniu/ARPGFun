@@ -18,6 +18,7 @@ using UGameTools;
 
 namespace Windows
 {
+    
     partial class UUIBattle
     {
         public class GridTableModel : TableItemModel<GridTableTemplate>

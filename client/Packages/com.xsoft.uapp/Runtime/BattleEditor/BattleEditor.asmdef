@@ -1,6 +1,6 @@
 {
     "name": "BattleEditor",
-    "rootNamespace": "",
+    "rootNamespace": ".",
     "references": [
         "GUID:c0714e3101b644d28bc9124e6411f1fc",
         "GUID:2aabdf7acfca649068f34bec3c6dfdae",

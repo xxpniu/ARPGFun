@@ -9,7 +9,8 @@ using UnityEngine.UI;
 namespace Windows
 {
     [UIResources("UUIBattle")]
-    partial class UUIBattle :UUIAutoGenWindow
+    // ReSharper disable once InconsistentNaming
+    partial class UUIBattle : UUIAutoGenWindow
     {
         public class GridTableTemplate : TableItemTemplate
         {

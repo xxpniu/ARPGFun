@@ -90,7 +90,7 @@ public class UICreater : EditorWindow
 
     private const string TableTemplateField = @"            public [Type] [Name];";
 
-    private const string TableTemlateFindField = @"                [Name] = FindChild<[Type]>(" + "\"[Name]\"" + ");";
+    private const string TableTemplateFindField = @"                [Name] = FindChild<[Type]>(" + "\"[Name]\"" + ");";
 
     private const string TableTemplateClass = @"        public class [TableName]TableTemplate : TableItemTemplate
         {
@@ -195,14 +195,14 @@ namespace Windows
             var tempModel = TableModelClass.Replace("[TableName]", i.Key);
             var tempTemplate = TableTemplateClass.Replace("[TableName]", i.Key);
 
-            var tfields = new StringBuilder();
-            var tfieldFinds = new StringBuilder();
+            var tFields = new StringBuilder();
+            var tFieldFinds = new StringBuilder();
             foreach (var f in i.Value.Components)
             {
-                tfields.AppendLine(TableTemplateField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
-                tfieldFinds.AppendLine(TableTemlateFindField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
+                tFields.AppendLine(TableTemplateField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
+                tFieldFinds.AppendLine(TableTemplateFindField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
             }
-            tempTemplate = tempTemplate.Replace("[TableTemplateField]", tfields.ToString()).Replace("[TableTemplateFindField]", tfieldFinds.ToString());
+            tempTemplate = tempTemplate.Replace("[TableTemplateField]", tFields.ToString()).Replace("[TableTemplateFindField]", tFieldFinds.ToString());
             //tempModel.Replace();
             tableModel.AppendLine(tempModel);
             tableTemplate.AppendLine(tempTemplate);
@@ -225,7 +225,7 @@ namespace Windows
             .Replace("[InitTables]", tableInt.ToString())
             .Replace("[TableTemplates]", tableTemplate.ToString())
             .Replace("[TableManagers]", tableManager.ToString());
-        File.WriteAllText(Path.Combine(windowsRoot, className + ".ui.cs"), templateCode);
+        File.WriteAllText(Path.Combine(windowsRoot, className + ".Designer.cs"), templateCode);
         AssetDatabase.Refresh();
     }
 
@@ -254,13 +254,12 @@ namespace Windows
         typeof(RawImage)
     };
 
-    private Component GetComponet(Transform root)
+    private Component GetComponent(Transform root)
     {
         foreach (var i in types)
         {
             var t = root.GetComponent(i);
-            if (t == null)
-                continue;
+            if (t == null) continue;
             return t;
         }
 
@@ -273,7 +272,7 @@ namespace Windows
         if (root.CompareTag(EXPORT_TAG))
         {
             
-            var ui = GetComponet(root);
+            var ui = GetComponent(root);
             if (ui != null)
             {
                 Debug.Log(string.Format("Name:{0} Tag:{1}", ui.name, root.tag));
@@ -313,7 +312,7 @@ namespace Windows
     {
         if(root.CompareTag(EXPORT_TAG))
         {
-            var ui = this.GetComponet(root);
+            var ui = this.GetComponent(root);
             if(ui!=null)
             {
                 if (!dic.ContainsKey(ui.name))
@@ -352,7 +351,7 @@ namespace Windows
     private GameObject currentSelect;
 
 
-    public class TableComponent
+    private class TableComponent
     {
         public string Name { set; get; }
 
@@ -361,7 +360,7 @@ namespace Windows
         public TableTypes Type { set; get; }
     }
 
-    public enum TableTypes
+    private enum TableTypes
     {
         UITable,
         UIGrid
