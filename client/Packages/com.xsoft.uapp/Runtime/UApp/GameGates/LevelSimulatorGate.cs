@@ -103,7 +103,7 @@ namespace UApp.GameGates
             Owner = _characterOwner.CharacterView as UCharacterView;
             PerView.OwnerTeamIndex = Owner!.TeamId;
             PerView.OwnerIndex = Owner.Index;
-            FindObjectOfType<ThirdPersonCameraContollor>()
+            FindFirstObjectByType<ThirdPersonCameraContollor>()
                 .SetLookAt(Owner.GetBoneByName(UCharacterView.RootBone))
                 //.SetForwardOffset(Vector3.forward * 2f)
                 .SetXY(40, Owner.GetBoneByName(UCharacterView.RootBone).rotation.eulerAngles.y)

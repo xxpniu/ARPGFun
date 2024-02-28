@@ -31,8 +31,9 @@ namespace UApp
         public string Host;
         public int Port;
         
-        private  void ShowConnect()
+        private  async void ShowConnect()
         {
+            await UniTask.SwitchToMainThread();
             Windows.UUIPopup.ShowConfirm("Chat_Disconnect".GetLanguageWord(),
                 "Chat_Disconnect_content".GetLanguageWord(),
                  async () => { await TryConnectChatServer(UApplication.S.ChatServer, HeroName); });
@@ -138,11 +139,14 @@ namespace UApp
                 }
                 else
                 {
-                    Windows.UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(), "BattleJoinContent".GetLanguageWord(), () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID), async () =>
-                    {
-                        var (b, g) = GateManager.TryGet();
-                        if (b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
-                    });
+                    Windows.UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(),
+                        "BattleJoinContent".GetLanguageWord(),
+                        () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID),
+                        async () =>
+                        {
+                            var (b, g) = GateManager.TryGet();
+                            if (b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
+                        });
                 }
 
                 Debuger.Log(battleServer);

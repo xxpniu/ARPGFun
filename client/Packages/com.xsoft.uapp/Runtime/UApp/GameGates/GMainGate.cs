@@ -55,7 +55,7 @@ namespace UApp.GameGates
             }
             _characterView = CreateHero(heroID, heroName);
 
-            var thirdCamera = FindObjectOfType<ThirdPersonCameraContollor>();
+            var thirdCamera = FindFirstObjectByType<ThirdPersonCameraContollor>();
             thirdCamera.SetLookAt(_characterView.GetBoneByName(UCharacterView.BottomBone), true);
             thirdCamera.SetXY(2.8f, 0).SetDis(9f).SetForwardOffset(new Vector3(0,0.87f,0));
             _characterView.ShowName = false;

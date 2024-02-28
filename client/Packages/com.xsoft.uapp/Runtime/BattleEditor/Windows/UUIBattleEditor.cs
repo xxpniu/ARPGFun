@@ -49,15 +49,12 @@ namespace Windows
 
             bt_releaser.onClick.AddListener(() =>
             {
-                int.TryParse(input_Level.text, out int level);
+                int.TryParse(input_Level.text, out var level);
                 level = Mathf.Clamp(level,1, 100);
-
-                if (int.TryParse(input_index.text, out int charId))
-                {
-                    var character = ExcelToJSONConfigManager.GetId<CharacterData>(charId);
-                    if (character == null) return;
-                    EditorStarter.S.ReplaceRelease(level,character, to_do_remove.isOn, to_enable_ai.isOn);
-                }
+                if (!int.TryParse(input_index.text, out int charId)) return;
+                var character = ExcelToJSONConfigManager.GetId<CharacterData>(charId);
+                if (character == null) return;
+                EditorStarter.S.ReplaceRelease(level,character, to_do_remove.isOn, to_enable_ai.isOn);
             });
 
             bt_targe.onClick.AddListener(() =>

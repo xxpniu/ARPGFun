@@ -56,15 +56,13 @@ namespace GameLogic.Game
             var vals = Enum.GetValues(typeof(ActionLockType));
             foreach (var v in vals)
             {
-                if (((int)v & (int)type) > 0)
+                if (((int)v & (int)type) <= 0) continue;
+                var ty = (ActionLockType)v;
+                var isLocked = IsLock(ty);
+                Locks[ty]++;
+                if (isLocked != IsLock(ty))
                 {
-                    var ty = (ActionLockType)v;
-                    bool isLocked = IsLock(ty);
-                    Locks[ty]++;
-                    if (isLocked != IsLock(ty))
-                    {
-                        OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
-                    }
+                    OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
                 }
             }
         }
@@ -74,15 +72,13 @@ namespace GameLogic.Game
             var vals = Enum.GetValues(typeof(ActionLockType));
             foreach (var v in vals)
             {
-                if (((int)v & (int)type) > 0)
+                if (((int)v & (int)type) <= 0) continue;
+                var ty = (ActionLockType)v;
+                var isLocked = IsLock(ty);
+                Locks[ty]--;
+                if (isLocked != IsLock(ty))
                 {
-                    var ty = (ActionLockType)v;
-                    bool isLocked = IsLock(ty);
-                    Locks[ty]--;
-                    if (isLocked != IsLock(ty))
-                    {
-                        OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
-                    }
+                    OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
                 }
             }
         }

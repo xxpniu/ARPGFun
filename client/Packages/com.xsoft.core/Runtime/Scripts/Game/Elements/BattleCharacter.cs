@@ -118,8 +118,7 @@ namespace GameLogic.Game.Elements
             
             foreach (var i in magics)
             {
-                if (Magics.ContainsKey(i.ConfigId)) continue;
-                Magics.Add(i.ConfigId, i);
+                if (!Magics.TryAdd(i.ConfigId, i)) continue;
             }
             var enums = Enum.GetValues(typeof(P));
             foreach (var i in enums)

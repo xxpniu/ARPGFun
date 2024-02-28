@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 using Layout.LayoutEffects;
+using org.apache.zookeeper.data;
 using Proto;
+using XNet.Libs.Utility;
 
 namespace GameLogic.Game
 {
-	public class ValueChanageEventArgs : EventArgs
+	public class ValueChangeEventArgs : EventArgs
 	{
 		public int OldValue { private set; get; }
 		public int NewValue { private set; get; }
 		public int FinalValue { set; get; }
 
-		public ValueChanageEventArgs(int oldValue, int newValue, int finalValue)
+		public ValueChangeEventArgs(int oldValue, int newValue, int finalValue)
 		{
 			OldValue = oldValue;
 			NewValue = newValue;
@@ -42,10 +44,10 @@ namespace GameLogic.Game
 		{
 			if (OnBaseValueChange != null)
 			{
-				var args = new ValueChanageEventArgs(BaseValue, value, value);
+				var args = new ValueChangeEventArgs(BaseValue, value, value);
 				OnBaseValueChange(this, args);
 				BaseValue = args.FinalValue;
-				OnValueChange(this, new EventArgs());
+				OnValueChange(this, EventArgs.Empty);
 			}
 			else
 			{
@@ -56,10 +58,10 @@ namespace GameLogic.Game
 		{
 			if (OnAppendValueChange != null)
 			{
-				var args = new ValueChanageEventArgs(AppendValue, value, value);
+				var args = new ValueChangeEventArgs(AppendValue, value, value);
 				OnAppendValueChange(this, args);
 				AppendValue = args.FinalValue;
-				OnValueChange(this, new EventArgs());
+				OnValueChange(this, EventArgs.Empty);
 			}
 			else
 			{
@@ -70,10 +72,10 @@ namespace GameLogic.Game
 		{
 			if (OnRateChange != null)
 			{
-				var args = new ValueChanageEventArgs(Rate, value, value);
+				var args = new ValueChangeEventArgs(Rate, value, value);
 				OnRateChange(this, args);
 				Rate = args.FinalValue;
-				OnValueChange(this, new EventArgs());
+				OnValueChange(this, EventArgs.Empty);
 			}
 			else
 			{
@@ -84,33 +86,35 @@ namespace GameLogic.Game
 		{
 			get
 			{
-				float value = (float)(BaseValue + AppendValue) * (1 + ((float)Rate / 10000f));
+				var value = (float)(BaseValue + AppendValue) * (1 + ((float)Rate / 10000f));
 				return (int)value;
 			}
 		}
 
-		public EventHandler<ValueChanageEventArgs> OnBaseValueChange;
-		public EventHandler<ValueChanageEventArgs> OnAppendValueChange;
-		public EventHandler<ValueChanageEventArgs> OnRateChange;
+		public EventHandler<ValueChangeEventArgs> OnBaseValueChange ;
+		public EventHandler<ValueChangeEventArgs> OnAppendValueChange;
+		public EventHandler<ValueChangeEventArgs> OnRateChange;
 		public EventHandler<EventArgs> OnValueChange;
 
-		static public implicit operator ComplexValue(int value)
+		public static implicit operator ComplexValue(int value)
 		{
 			return new ComplexValue(value, 0, 0);
 		}
 
-		static public implicit operator int(ComplexValue value)
+		public static implicit operator int(ComplexValue value)
 		{
 			return value.FinalValue;
 		}
 
-		static public bool operator ==(ComplexValue r, ComplexValue l)
+		public static bool operator ==(ComplexValue r, ComplexValue l)
 		{
+			if (r == null || l == null) return false;
 			return r.FinalValue == l.FinalValue;
 		}
 
-		static public bool operator !=(ComplexValue r, ComplexValue l)
+		public static bool operator !=(ComplexValue r, ComplexValue l)
 		{
+			if (r == null || l == null) return true;
 			return r.FinalValue != l.FinalValue;
 		}
 
@@ -121,10 +125,9 @@ namespace GameLogic.Game
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is ComplexValue))
+			if (obj is not ComplexValue complex)
 				return false;
-			var temp = obj as ComplexValue;
-			return temp.FinalValue == this.FinalValue;
+			return complex.FinalValue == this.FinalValue;
 		}
 
 		public void ModifyValueAdd(AddType addType, float add)
@@ -146,6 +149,10 @@ namespace GameLogic.Game
 						SetRate((int)add+Rate);
 					}
 					break;
+				default:
+					//throw new ArgumentOutOfRangeException(nameof(addType), addType, null);
+					Debuger.LogError($"ArgumentOutOfRangeException{nameof(addType)}");
+				break;
 			}
 		}
 
@@ -196,33 +203,12 @@ namespace GameLogic.Game
 
         public override string ToString()
         {
-			//var str = string.Empty;
-
-			if (Rate > 0)
-			{
-				var basev = (int)(BaseValue * (1 + Rate / 10000f));
-				if (AppendValue > 0)
-				{
-					var appv = (int)(AppendValue * (1 + Rate / 10000f));
-					return $"{basev}+{appv}";
-				}
-				else {
-					return $"{basev}";
-				}
-			}
-			else
-			{
-				if (AppendValue > 0)
-				{
-					return $"{BaseValue}+{AppendValue}";
-
-				}
-				else {
-					return $"{BaseValue}";
-                }
-
-			}
-			
+	        //var str = string.Empty;
+	        if (Rate <= 0) return AppendValue > 0 ? $"{BaseValue}+{AppendValue}" : $"{BaseValue}";
+	        var bVal = (int)(BaseValue * (1 + Rate / 10000f));
+			if (AppendValue <= 0) return $"{bVal}";
+			var aVal = (int)(AppendValue * (1 + Rate / 10000f));
+			return $"{bVal}+{aVal}";
         }
     }
 }

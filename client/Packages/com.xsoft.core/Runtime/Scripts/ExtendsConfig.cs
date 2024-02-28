@@ -11,7 +11,7 @@ using P = Proto.HeroPropertyType;
 
 namespace GameLogic
 {
-    public static class ExtandsConfig
+    public static class ExtendsConfig
     {
         public static void TryToAddBase(this Dictionary<HeroPropertyType, ComplexValue> values, HeroPropertyType type,
             ComplexValue value)

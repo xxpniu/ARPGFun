@@ -10,22 +10,18 @@ namespace GameLogic.Game.Controllors
 
         public override GAction GetAction(GTime time, GObject current)
         {
-            if (current is BattleItem item)
+            if (current is not BattleItem item) return GAction.Empty;
+            item.AliveTime += time.DeltaTime;
+            item.LockTime -= time.DeltaTime;
+            if (item.LockTime < 0)
             {
-                item.AliveTime += time.DeltaTime;
-                item.LockTime -= time.DeltaTime;
-
-                if (item.LockTime < 0)
-                {
-                    if (item.GroupIndex > 0)
-                        item.ChangeIndex(-1);
-                }
-                if (item.AliveTime > 60)
-                {
-                    GObject.Destroy(current);
-                }
+                if (item.GroupIndex > 0)
+                    item.ChangeIndex(-1);
             }
-
+            if (item.AliveTime > 60)
+            {
+                GObject.Destroy(current);
+            }
             return GAction.Empty;
         }
     }

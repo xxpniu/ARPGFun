@@ -1,5 +1,6 @@
 {
     "name": "App.GameLogic",
+    "rootNamespace": "GameLogic",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
