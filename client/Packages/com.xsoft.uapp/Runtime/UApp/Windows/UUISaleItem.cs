@@ -21,9 +21,11 @@ namespace Windows
                 saleNum = (int)v;
                 ShowSale();
             });
-            bt_close.onClick.AddListener(() => { this.HideWindow(); });
+            bt_close.onClick.AddListener(this.HideWindow);
 
-            bt_OK.onClick.AddListener(async () =>
+            bt_OK.onClick.AddListener( OkCall);
+            return;
+            async void OkCall()
             {
                 if (saleNum == 0) return;
 
@@ -38,8 +40,7 @@ namespace Windows
                 }
                 else
                     UApplication.S.ShowError(r.Code);
-                
-            });
+            }
         }
 
         protected override void OnShow()

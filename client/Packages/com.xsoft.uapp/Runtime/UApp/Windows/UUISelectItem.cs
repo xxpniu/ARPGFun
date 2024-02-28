@@ -32,15 +32,14 @@ namespace Windows
             public PlayerItem pItem;
             public async void SetItem(PlayerItem item, bool isWear)
             {
-                var itemconfig = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
-                Config = itemconfig;
+                Config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
                 pItem = item;
                 Template.ItemCount.ActiveSelfObject(item.Num > 1);
                 Template.lb_count.text = item.Num > 1 ? item.Num.ToString() : string.Empty;
-                await ResourcesManager.S.LoadIcon(itemconfig, s => Template.icon.sprite = s);
+                await ResourcesManager.S.LoadIcon(Config, s => Template.icon.sprite = s);
                 Template.lb_level.text = item.Level > 0 ? $"+{item.Level}" : string.Empty;
                 Template.ItemLevel.ActiveSelfObject(item.Level > 0);
-                Template.lb_Name.SetKey(itemconfig.Name);
+                Template.lb_Name.SetKey(Config.Name);
                 Template.Locked.ActiveSelfObject(item.Locked);
                 Template.WearOn.ActiveSelfObject(isWear);
                 Template.Selected.ActiveSelfObject(false);
@@ -51,7 +50,7 @@ namespace Windows
                 Template.Selected.ActiveSelfObject(false);
             }
 
-            internal void Uelect()
+            internal void Select()
             {
                 Template.Selected.ActiveSelfObject(true);
             }
@@ -60,17 +59,28 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            ButtonClose.onClick.AddListener(() => HideWindow());
+            ButtonClose.onClick.AddListener(HideWindow);
             //Write Code here
         }
+        
+        private bool IsWear(string guid, DHero hero)
+        {
+            foreach (var i in hero.Equips)
+                if (i.GUID == guid) return true;
+            return false;
+        }
+        
         protected override void OnShow()
         {
             base.OnShow();
+            var hero = UApplication.G<GMainGate>().Hero;
             ContentTableManager.Count = ListItems.Count;
-            int index = 0;
+            var  index = 0;
             foreach (var i in ContentTableManager)
             {
-                i.Model.SetItem(ListItems[index].Item, false);
+                var t = ListItems[index].Item;
+                
+                i.Model.SetItem(t, IsWear(t.GUID, hero));
                 i.Model.OnClickItem = ClickItem;
                 index++;
             }
@@ -88,7 +98,7 @@ namespace Windows
             else
             {
                 selected.Add(obj);
-                obj.Uelect();
+                obj.Select();
 
                 if (selected.Count == needcount)
                 {
