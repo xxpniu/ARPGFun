@@ -1514,6 +1514,11 @@
             服务器连接失败
              </summary>
         </member>
+        <member name="F:Proto.ErrorCode.ServerIsFull">
+             <summary>
+            服务器人数满了
+             </summary>
+        </member>
         <member name="F:Proto.ErrorCode.NofoundItem">
              <summary>
             没有道具
