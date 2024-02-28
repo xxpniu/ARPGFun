@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BattleEditor;
 using BattleViews.Components;
 using UnityEngine.UI;
 using UGameTools;
@@ -12,6 +13,7 @@ using UnityEngine;
 
 namespace Windows
 {
+    // ReSharper disable once InconsistentNaming
     partial class UUIBattleEditor
     {
         public class GridTableModel : TableItemModel<GridTableTemplate>
@@ -98,7 +100,7 @@ namespace Windows
         {
             base.OnUpdate();
             EditorStarter.S.ry = Mathf.Lerp(-180, 180, s_rot_y.value);
-            EditorStarter.S.slider_y = Mathf.Lerp(8,87, s_rot_x.value);
+            EditorStarter.S.sliderY = Mathf.Lerp(8,87, s_rot_x.value);
             EditorStarter.S.distance = Mathf.Lerp(2, 30, s_distance_camera.value);
            
             Time.timeScale =  s_time_scale.value;

@@ -132,36 +132,39 @@ public static class ETCMenu{
 	
 	}
 
-	static GameObject SetupUI(){
+	static GameObject SetupUI()
+	{
 		// Canvas
 		GameObject canvas = GameObject.Find("EasyTouchControlsCanvas");
-		if (canvas == null){
+		if (canvas == null)
+		{
 			canvas = AddCanvas();
 		}
-		
+
 		// Event system
-		if (GameObject.FindObjectOfType(typeof(EventSystem))==null){
+		if (GameObject.FindFirstObjectByType(typeof(EventSystem)) == null)
+		{
 			AddEventSystem();
 		}
 
 		// TouchInput
-		#if !UNITY_5_3
-		if ( GameObject.FindObjectOfType(typeof(TouchInputModule)) ){
-			TouchInputModule tm = (TouchInputModule)GameObject.FindObjectOfType(typeof(TouchInputModule));
-			//tm.allowActivationOnStandalone = true;
-			tm.forceModuleActive = true;
-		}
-		#endif
+#if !UNITY_5_3
+		if (!GameObject.FindFirstObjectByType(typeof(StandaloneInputModule))) return canvas;
+		var tm =
+			(StandaloneInputModule)GameObject.FindFirstObjectByType(typeof(StandaloneInputModule));
+		//tm.allowActivationOnStandalone = true;
+		//tm.forceModuleActive = true;
+#endif
 		return canvas;
 
 	}
-	
+
 	static void AddEventSystem(){
 
 		#if UNITY_5_3
 		new GameObject("EventSystem",typeof(EventSystem), typeof(StandaloneInputModule));
 		#else
-		new GameObject("EventSystem",typeof(EventSystem), typeof(TouchInputModule), typeof(StandaloneInputModule));
+		new GameObject("EventSystem",typeof(EventSystem),   typeof(StandaloneInputModule));
 		#endif
 	}
 

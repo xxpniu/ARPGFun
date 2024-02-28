@@ -121,6 +121,7 @@ using UnityEngine.UI;
 namespace Windows
 {
     [UIResources(" + "\"[ResourceName]\"" + @")]
+    // ReSharper disable once InconsistentNaming
     partial class [ClassName] : UUIAutoGenWindow
     {
 [TableTemplates]

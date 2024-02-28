@@ -5,13 +5,14 @@ using Layout.LayoutElements;
 using System.IO;
 using System.Collections.Generic;
 using App.Core.Core;
+using BattleEditor;
 using Layout.EditorAttributes;
 
 public class LayoutEditorWindow:EditorWindow
 {
 	static LayoutEditorWindow ()
 	{
-		_layouts.Clear ();
+		Layouts.Clear ();
 		var list = typeof(LayoutBase).Assembly.GetTypes ();
 		foreach (var i in list)
         {
@@ -20,7 +21,7 @@ public class LayoutEditorWindow:EditorWindow
             if (attrs!.Length == 0)
                 continue;
 
-            _layouts.Add (i, attrs [0].Name);
+            Layouts.Add (i, attrs [0].Name);
         }
     }
 
@@ -47,13 +48,14 @@ public class LayoutEditorWindow:EditorWindow
 	}
 
 	//提供给调试的显示
-	public static float? currentRunTime = null;
+	public static float? CurrentRunTime = null;
 
 	private string path;
 	private TimeLine line;
 	private string shortPath;
 
-	private static readonly Dictionary<Type,string> _layouts = new Dictionary<Type, string> ();
+	private static readonly Dictionary<Type,string> Layouts = new();
+
     private void PlayLayout()
     {
         if (line == null)
@@ -61,36 +63,31 @@ public class LayoutEditorWindow:EditorWindow
         if (!EditorApplication.isPlaying)
             return;
 
-        var testMaigc = new Layout.MagicData();
-        testMaigc.Containers.Add(new Layout.EventContainer
+        var testMagic = new Layout.MagicData();
+        testMagic.Containers.Add(new Layout.EventContainer
             {
                 type = Layout.EventType.EVENT_START,
                 layoutPath = shortPath,
                 line = line
             }
         );
-        var g = EditorStarter.G();
-        if (g == null) return;
-        g.ReleaseMagic(testMaigc);
-        lastStep = 0;
+        EditorStarter.Try()?.ReleaseMagic(testMagic);
+        _lastStep = 0;
         //time = 0;
     }
 
 
     private void GetPlayingInfo()
     {
-        if (!EditorApplication.isPlaying)
-            return;
-        currentRunTime = EditorStarter.G()
-            ?.currentReleaser?.GetLayoutTimeByPath(this.shortPath);
-
+        if (!EditorApplication.isPlaying)  return;
+        CurrentRunTime = EditorStarter.Try()?.currentReleaser?.GetLayoutTimeByPath(this.shortPath);
     }
 
-	private float lastStep;
+	private float _lastStep;
 	//private float time;
-	private DateTime lastTime;
-	private float s = 0.02f;
-	Vector2 scrollProperty;
+	private DateTime _lastTime;
+	private float _s = 0.02f;
+	private Vector2 _scrollProperty;
 
 	void OnGUI()
     {
@@ -143,18 +140,18 @@ public class LayoutEditorWindow:EditorWindow
                     currentzTime = line.Time * (Event.current.mousePosition.x / rectTop.width);
                     if (EditorApplication.isPaused)
                     {
-                        if (currentzTime < s && Math.Abs(lastStep) > 0.000001)
+                        if (currentzTime < _s && Math.Abs(_lastStep) > 0.000001)
                         {
                             PlayLayout();
                         }
-                        s = Time.deltaTime;
-                        var now = (lastStep - 1) * s;
+                        _s = Time.deltaTime;
+                        var now = (_lastStep - 1) * _s;
                         if (now <= currentzTime)
                         {
-                            if ((DateTime.Now - lastTime).TotalSeconds >= s)
+                            if ((DateTime.Now - _lastTime).TotalSeconds >= _s)
                             {
-                                lastTime = DateTime.Now;
-                                lastStep++;
+                                _lastTime = DateTime.Now;
+                                _lastStep++;
                                 EditorApplication.Step();
                                 //currentzTime = now;
                             }
@@ -174,7 +171,7 @@ public class LayoutEditorWindow:EditorWindow
                 GenericMenu m = new GenericMenu();
                 //m.AddItem (new GUIContent ("查看属性"), false, ShowProperty, line);
                 m.AddSeparator("");
-                foreach (var i in _layouts)
+                foreach (var i in Layouts)
                 {
                     m.AddItem(new GUIContent(i.Value), false, CreateLayout, i.Key);
                 }
@@ -313,7 +310,7 @@ public class LayoutEditorWindow:EditorWindow
 
 
         GUILayout.BeginArea(new Rect(position.width - leftWidth, 0, leftWidth, position.height));
-        scrollProperty = GUILayout.BeginScrollView(scrollProperty);
+        _scrollProperty = GUILayout.BeginScrollView(_scrollProperty);
         GUILayout.BeginVertical(GUILayout.Width(leftWidth - 25), GUILayout.Height(position.height - 2));
         if (currentObj != null)
             PropertyDrawer.DrawObject(currentObj,"LAYOUT");
@@ -363,12 +360,12 @@ public class LayoutEditorWindow:EditorWindow
             GLDraw.DrawLine(new Vector2(0, topHeight), new Vector2(rectTop.width, topHeight), color, 1);
             GLDraw.DrawLine(new Vector2(w, 0), new Vector2(w, position.height), Color.green, 1);
         }
-        if (currentRunTime != null)
+        if (CurrentRunTime != null)
         {
 		
-            var w = rectTop.width * (currentRunTime.Value / line.Time);
+            var w = rectTop.width * (CurrentRunTime.Value / line.Time);
             GUI.Label(new Rect(w, topHeight, 50, 20), string.Format("{0:0.0}s", 
-                    (float)currentRunTime.Value));
+                    (float)CurrentRunTime.Value));
             GLDraw.DrawLine(new Vector2(w, 0), new Vector2(w, position.height), Color.yellow, 2);
 
 

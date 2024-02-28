@@ -41,7 +41,7 @@ namespace BattleViews.Views
         private float _startTime = 0;
         private void Awake()
         {
-            UScene = FindObjectOfType<UGameScene>();
+            UScene = FindFirstObjectByType<UGameScene>();
         }
 
         private async void  Start()

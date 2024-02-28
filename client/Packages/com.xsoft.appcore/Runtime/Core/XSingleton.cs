@@ -60,19 +60,11 @@ namespace App.Core.Core
         {
             return _instance ? (true, _instance) : (false, null);
         }
-
-        /// <summary>
-        /// get don't auto create
-        /// </summary>
-        /// <returns></returns>
-        public static T G()
-        {
-            return _instance ? _instance : null;
-        }
-
+        
         public static T Try()
         {
-            return G();
+            var ins = _instance ? _instance : null;
+            return ins;
         }
 
 

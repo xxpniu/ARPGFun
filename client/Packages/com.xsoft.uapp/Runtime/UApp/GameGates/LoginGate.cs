@@ -84,18 +84,17 @@ namespace UApp.GameGates
                 r = await client.LoginAsync(req,
                     deadline: DateTime.UtcNow.AddSeconds(10));
                 await channel.ShutdownAsync();
-                await UniTask.Yield();
-                callback?.Invoke(r);
             }
             catch (Exception ex)
             {
                 r = new L2C_Login
                 {
-                    Code = ErrorCode.Error
+                    Code = ErrorCode.Exception
                 };
                 Debug.LogException(ex);
             }
 
+            await UniTask.SwitchToMainThread();
             callback?.Invoke(r);
             UUIManager.Try()?.ShowMask(false);
             return r;
