@@ -208,7 +208,7 @@ namespace GServer.RPCResponsor
         {
             var account = context.GetAccountId();
 #if USEGM
-            if (!Application.S.Config.EnableGM) return new G2C_GMTool() { Code = ErrorCode.Error };
+            if (!Application.S.Config.EnableGM) return new G2C_GMTool { Code = ErrorCode.Error };
             var args = request.GMCommand.Split(' ');
             if (args.Length == 0) return new G2C_GMTool { Code = ErrorCode.Error };
             var player = await UserDataManager.S.FindPlayerByAccountId(account);
@@ -313,7 +313,7 @@ namespace GServer.RPCResponsor
             if (player != null)
             {
                 var hero = await UserDataManager.S.FindHeroByPlayerId(player.Uuid);
-                var package = await UserDataManager.S.FindPackageByPlayerID(player.Uuid);
+                var package = await UserDataManager.S.FindPackageByPlayerId(player.Uuid);
                 dHero = hero.ToDHero(package);
                 playerPackage = package.ToPackage();
             }
@@ -417,6 +417,16 @@ namespace GServer.RPCResponsor
         {
             var players = await UserDataManager.S.QueryPlayers(context.GetAccountId());
 
+            var res = new G2C_SearchPlayer
+            {
+                Code = ErrorCode.Ok
+            };
+            foreach (var i in players)
+            {
+                res.Players.Add(await GetPlayer(i));
+            }
+            return res;
+
             static async Task<G2C_SearchPlayer.Types.Player> GetPlayer(GamePlayerEntity entity)
             {
                 var hero = (await UserDataManager.S.FindHeroByPlayerId(entity.Uuid));
@@ -427,16 +437,6 @@ namespace GServer.RPCResponsor
                     Level = hero.Level
                 };
             }
-
-            var res = new G2C_SearchPlayer
-            {
-                Code = ErrorCode.Ok
-            };
-            foreach (var i in players)
-            {
-                res.Players.Add(await GetPlayer(i));
-            }
-            return res;
         }
 
         public override async Task<G2C_ReloadMatchState> ReloadMatchState(C2G_ReloadMatchState request,

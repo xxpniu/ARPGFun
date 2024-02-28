@@ -18,13 +18,13 @@ namespace XNet.Libs.Utility
 
         public static string GetAccountId(this ServerCallContext context,string key = null)
         {
-            context.GetHeader(key ?? "user-key", out string account);
+            context.GetHeader(key ?? "user-key", out var account);
             return account;
         }
 
         public static async Task< bool> WriteSession(this ServerCallContext context, string account, LogServer server)
         {
-            if (!server.TryCreateSession(account, out string session))  return false;
+            if (!server.TryCreateSession(account, out var session))  return false;
             await context.WriteResponseHeadersAsync(new Metadata { { "session-key", session } });
             return true;
         }

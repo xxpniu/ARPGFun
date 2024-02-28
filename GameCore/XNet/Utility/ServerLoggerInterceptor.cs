@@ -33,9 +33,8 @@ namespace XNet.Libs.Utility
 
         private bool CheckAuthDefault(ServerCallContext context)
         {
-            if (!context. GetHeader("call-key", out string key1)) return false;
-            if (!context. GetHeader("call-token", out string token)) return false;
-            return Md5Tool.CheckToken(key1, token);
+            if (!context. GetHeader("call-key", out var key1)) return false;
+            return context. GetHeader("call-token", out var token) && Md5Tool.CheckToken(key1, token);
         }
 
         

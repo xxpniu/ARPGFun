@@ -76,7 +76,7 @@ namespace GServer.Managers
                  player = await FindPlayerById(playerUuid);
             }
 
-            var p = await FindPackageByPlayerID(playerUuid);
+            var p = await FindPackageByPlayerId(playerUuid);
             if (syncPackage)
             {
                 //var p = await FindPackageByPlayerID(playerUuid);
@@ -104,7 +104,7 @@ namespace GServer.Managers
         internal async Task<G2C_BuyPackageSize> BuyPackageSize( string accountUuid, int size)
         {
             var player = await FindPlayerByAccountId(accountUuid);
-            var package = await FindPackageByPlayerID(player.Uuid);
+            var package = await FindPackageByPlayerId(player.Uuid);
             if (package.PackageSize != size) return new G2C_BuyPackageSize { Code = ErrorCode.Error };
             if (player.Coin < Application.Constant.PACKAGE_BUY_COST) return new G2C_BuyPackageSize { Code = ErrorCode.NoEnoughtCoin };
             if (package.PackageSize + Application.Constant.PACKAGE_BUY_SIZE >
@@ -150,7 +150,7 @@ namespace GServer.Managers
             return query.SingleOrDefault();
         }
 
-        public async Task<GamePackageEntity> FindPackageByPlayerID(string playerUuid)
+        public async Task<GamePackageEntity> FindPackageByPlayerId(string playerUuid)
         {
             var filter = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, playerUuid);
             var query = await DataBase.S.Packages.FindAsync(filter);
@@ -235,7 +235,7 @@ namespace GServer.Managers
             var player = await FindPlayerByAccountId(accountUuid);
             var playerUuid = player.Uuid;
             //var pFilter = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, playerUuid);
-            var package = await FindPackageByPlayerID(playerUuid);
+            var package = await FindPackageByPlayerId(playerUuid);
             if (package == null) return new G2C_EquipmentLevelUp { Code = ErrorCode.Error };
 
             if (!package.TryGetItem(itemUuid, out var item))
@@ -468,52 +468,45 @@ namespace GServer.Managers
 
         internal async Task<int> HeroGetExperiences(string uuid, int exp)
         {
-
             var hero = await FindHeroByPlayerId(uuid);
-
-            var res = await AddExp(exp + hero.Exp, hero.Level);
-
-            if (res.succes)
-            {
-                var filter = Builders<GameHeroEntity>.Filter.Eq(t => t.Uuid, hero.Uuid);
-                var update = Builders<GameHeroEntity>.Update.Set(t => t.Level, res.level).Set(t => t.Exp, res.exp);
-
-                await DataBase.S.Heros.UpdateOneAsync(filter,update);
-            }
-
-            return  res.level;
-
+            var (success, lExp, tLevel) = await AddExp(exp + hero.Exp, hero.Level);
+            if (!success) return tLevel;
+            var filter = Builders<GameHeroEntity>.Filter.Eq(t => t.Uuid, hero.Uuid);
+            var update = Builders<GameHeroEntity>.Update
+                .Set(t => t.Level,tLevel)
+                .Set(t => t.Exp, lExp);
+            await DataBase.S.Heros.UpdateOneAsync(filter, update);
+            return tLevel;
         }
 
         //leveup, ex, exlevel
-        private async Task<(bool succes, int exp, int level)> AddExp(int totalExp, int level)
+        private static async Task<(bool succes, int exp, int level)> AddExp(int totalExp, int level)
         {
-            int exLevel = level;
-            int exExp = totalExp;
-            var herolevel =  ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == level + 1);
-            if (herolevel == null) return (true, exExp, exLevel);
-
-            if (exExp >= herolevel.NeedExp)
+            //var exLevel = level;
+            //var exExp = totalExp;
+            var heroLevel =  ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == level + 1);
+            if (heroLevel == null) return (true, totalExp, level);
+            if (totalExp < heroLevel.NeedExp) return (true, totalExp, level);
+            
+            level += 1;
+            totalExp -= heroLevel.NeedExp;
+            if (totalExp > 0)
             {
-                exLevel += 1;
-                exExp -= herolevel.NeedExp;
-                if (exExp > 0)
-                {
-                    await AddExp(exExp, exLevel);
-                }
+                return await AddExp(totalExp, level);
             }
-            return (true, exExp, exLevel);
+            
+            return (true, totalExp, level);
         }
 
         public async Task<G2C_SaleItem> SaleItem( string account, IList<C2G_SaleItem.Types.SaleItem> items)
         {
             var pl = await FindPlayerByAccountId(account);
 
-            var fiterHero = Builders<GameHeroEntity>.Filter.Eq(t => t.PlayerUuid, pl.Uuid);
-            var fiterPackage = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, pl.Uuid);
+            var filterHero = Builders<GameHeroEntity>.Filter.Eq(t => t.PlayerUuid, pl.Uuid);
+            var filterPackage = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, pl.Uuid);
 
-            var h = (await DataBase.S.Heros.FindAsync(fiterHero)).Single();
-            var p = (await DataBase.S.Packages.FindAsync(fiterPackage)).Single();
+            var h = (await DataBase.S.Heros.FindAsync(filterHero)).Single();
+            var p = (await DataBase.S.Packages.FindAsync(filterPackage)).Single();
 
 
             foreach (var i in items)
@@ -663,7 +656,7 @@ namespace GServer.Managers
         public async Task<Tuple<List<PackageItem>,List< PackageItem>>> AddItems(string uuid, PlayerItem i)
         {
             if (i.Num <= 0) return null;
-            var package = await FindPackageByPlayerID(uuid);
+            var package = await FindPackageByPlayerId(uuid);
             var it =  ExcelToJSONConfigManager.GetId<ItemData>(i.ItemID);
             if (it == null) return null;
             var num = i.Num;
@@ -746,7 +739,7 @@ namespace GServer.Managers
         internal async Task<G2C_RefreshEquip> RefreshEquip( string accountId, string equipUuid, IList<string> customItem)
         {
             var player = await FindPlayerByAccountId(accountId);
-            var package = await FindPackageByPlayerID(player.Uuid);
+            var package = await FindPackageByPlayerId(player.Uuid);
 
             if (!package.TryGetItem(equipUuid, out var equip)) return new G2C_RefreshEquip { Code = ErrorCode.NofoundItem };
 

@@ -46,7 +46,7 @@ namespace GServer.RPCResponser
                 };
             }
 
-            var package = await UserDataManager.S.FindPackageByPlayerID(player.Uuid);
+            var package = await UserDataManager.S.FindPackageByPlayerId(player.Uuid);
             var hero = await UserDataManager.S.FindHeroByPlayerId(player.Uuid);
             return new G2B_GetPlayerInfo
             {
