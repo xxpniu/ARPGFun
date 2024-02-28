@@ -444,11 +444,11 @@ namespace GServer.RPCResponsor
         {
             var matchSever = Application.S.MatchServers.FirstOrDefault();
             if (matchSever == null) return new G2C_ReloadMatchState { Code = ErrorCode.Error };
-            
             var rejoin = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                 matchSever.ServicsHost,
                 async (c) => 
-                    await c.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = context.GetAccountId() })
+                    await c.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = context.GetAccountId() },
+                        headers: context.GetTraceMeta())
             );
 
             return new G2C_ReloadMatchState { Code = rejoin.Code };

@@ -81,7 +81,6 @@ namespace Utility
             where TResponse : class
         {
             Debuger.Log($"Starting Type: [{method.Type}] Req: {typeof(TRequest)}{request}. Res: {typeof(TResponse)}{response}");
-            
         }
 
         private void AddCallerMetadata<TRequest, TResponse>(ref ClientInterceptorContext<TRequest, TResponse> context)
@@ -98,14 +97,21 @@ namespace Utility
                 var options = context.Options.WithHeaders(headers);
                 context = new ClientInterceptorContext<TRequest, TResponse>(context.Method, context.Host, options);
             }
-            var time = $"{DateTime.Now.Ticks}{Channel.Token}";
-            //headers.Add("caller-user", Environment.UserName);
-            //headers.Add("caller-machine", Environment.MachineName);
+
+            var ticks = DateTime.Now.Ticks;
+            var time = $"{ticks}{Channel.Token}";
             headers.Add("caller-os", Environment.OSVersion.ToString());
             headers.Add("call-key", Md5Tool.GetTokenKey(time));
             headers.Add("call-token", time);
-            headers.Add("session-key", Channel.SessionKey??string.Empty);
-            
+            headers.Add("session-key", Channel.SessionKey ?? string.Empty);
+            if (headers.Get("trace-id") == null)
+                headers.Add("trace-id", NewTraceId());
+            headers.Add("ticks", ticks.ToString());
+        }
+
+        public string NewTraceId()
+        {
+            return Guid.NewGuid().ToString();
         }
     }
 
@@ -146,7 +152,7 @@ namespace Utility
 
 
     public class C<TClient> : LogChannel
-    where TClient:ClientBase
+        where TClient : ClientBase
     {
         private C(ServiceAddress address) : base(address)
         {
@@ -155,12 +161,14 @@ namespace Utility
         public static async Task<TRes> RequestOnceAsync<TRes>(
             ServiceAddress ip,
             Func<TClient, Task<TRes>> expression,
-            DateTime? deadTime = default)
+            DateTime? deadTime = default, ServerCallContext refContext = default)
         {
             var server = new C<TClient>(ip);
+
             var client = await server.CreateClientAsync<TClient>(deadTime);
             try
             {
+                // var id = refContext?.GetTraceId();
                 var res = await expression.Invoke(client);
                 return res;
             }
@@ -175,7 +183,7 @@ namespace Utility
                     // ignore
                 }
             }
-            
+
         }
     }
 }

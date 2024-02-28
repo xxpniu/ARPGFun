@@ -17,17 +17,17 @@ namespace XNet.Libs.Utility
 
         public void SetAuthCheck(AuthCheck check)
         {
-            authCheck = check;
+            _authCheck = check;
         }
 
-        private AuthCheck authCheck;
+        private AuthCheck _authCheck;
 
         public LogServer Server { get; }
 
         private bool HaveAuth(System.Reflection.MethodInfo info, ServerCallContext context)
         {
             if (info.GetCustomAttributes(typeof(AuthAttribute), false) is AuthAttribute[] auths && auths.Length > 0) return true;
-            var auth = authCheck?.Invoke(context)?? CheckAuthDefault(context);
+            var auth = _authCheck?.Invoke(context)?? CheckAuthDefault(context);
             return auth;
         }
 
@@ -105,7 +105,7 @@ namespace XNet.Libs.Utility
                 return context.RequestHeaders.Get(key)?.Value;
             }
 
-            var headers = new[] { "caller-user" , "caller-machine" , "caller-os" , "call-key" , "call-token", "session-key" };
+            var headers = new[] {"trace-id" ,"ticks", "caller-user" , "caller-machine" , "caller-os" , "call-key" , "call-token", "session-key"};
             var sb = new StringBuilder();
             foreach (var i in headers)
             {

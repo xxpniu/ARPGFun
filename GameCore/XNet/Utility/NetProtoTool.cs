@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Core;
+using org.apache.zookeeper.data;
 using Utility;
 
 namespace XNet.Libs.Utility
@@ -14,6 +15,15 @@ namespace XNet.Libs.Utility
         {
             value = context.RequestHeaders.Get(key)?.Value;
             return !string.IsNullOrEmpty(value);
+        }
+        public static Metadata GetTraceMeta(this ServerCallContext context,string key = null)
+        {
+             context.GetHeader(key ?? "trace-id", out var traceId);
+
+             return new Metadata()
+             {
+                 {"trace-id", traceId}
+             };
         }
 
         public static string GetAccountId(this ServerCallContext context,string key = null)
