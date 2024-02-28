@@ -22,7 +22,7 @@ namespace XNet.Libs.Utility
 
              return new Metadata()
              {
-                 {"trace-id", traceId}
+                 { "trace-id", traceId ?? string.Empty }
              };
         }
 

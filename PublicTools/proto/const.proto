@@ -34,6 +34,7 @@ enum ErrorCode
     NoFoundMatch =15;//不存在小组
     InMatch = 16;
     ServerHostOffLine =17;//服务器连接失败
+    ServerIsFull =18 ;//服务器人数满了
     
 
     NOFoundItem =100; //没有道具
