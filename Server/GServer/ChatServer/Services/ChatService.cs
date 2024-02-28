@@ -41,7 +41,9 @@ namespace ChatServer.Services
             var r = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>.RequestOnceAsync(
                 loginServer.ServicsHost,
                 async ( c) => 
-                    await c.CheckSessionAsync(new S2L_CheckSession { UserID = request.AccountID, Session = request.Token }));
+                    await c.CheckSessionAsync(
+                        new S2L_CheckSession { UserID = request.AccountID, Session = request.Token },
+                        headers: context.GetTraceMeta()));
             //check login session token
             if (r.Code != ErrorCode.Ok) return;
             //if (!Server.TryCreateSession(request.AccountID, out string session)) return;

@@ -48,8 +48,10 @@ namespace GServer.RPCResponsor
                     {
                         await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                             matchSever.ServicsHost,
-                            async (client)=>await client.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = id })
-                            );
+                            async (client) => await client.TryToReJoinMatchAsync(
+                                new S2M_TryToReJoinMatch { Account = id },
+                                headers: context.GetTraceMeta())
+                        );
                     }
                 }
                 catch

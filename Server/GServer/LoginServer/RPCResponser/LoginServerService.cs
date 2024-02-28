@@ -34,8 +34,9 @@ namespace LoginServer.RPCResponser
                 {
                     var s = Application.S.FindGateServer(info.GateServerId);
                     await C<GateServerInnerService.GateServerInnerServiceClient>.RequestOnceAsync(
-                       ip: s.ServicsHost,
-                       expression:async (c) => await c.KillUserAsync(new L2G_KillUser { Uuid = user.Uuid })
+                        ip: s.ServicsHost,
+                        expression: async (c) => await c.KillUserAsync(new L2G_KillUser { Uuid = user.Uuid },
+                            headers: context.GetTraceMeta())
                     );
                     Debuger.Log($"Send kill user");
                 }

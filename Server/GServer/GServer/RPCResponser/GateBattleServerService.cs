@@ -5,6 +5,7 @@ using GServer.Managers;
 using GServer.Utility;
 using Proto;
 using Utility;
+using XNet.Libs.Utility;
 
 namespace GServer.RPCResponser
 {
@@ -66,7 +67,7 @@ namespace GServer.RPCResponser
 
             await C<MatchServices.MatchServicesClient>.RequestOnceAsync(match.ServicsHost,
                 async (c) =>
-                    await c.KllUserAsync(new S2M_KillUser { UserID = request.Uuid }));
+                    await c.KllUserAsync(new S2M_KillUser { UserID = request.Uuid }, headers: context.GetTraceMeta()));
             
             return new Void();
         }

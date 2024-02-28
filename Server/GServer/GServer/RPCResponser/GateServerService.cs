@@ -84,7 +84,7 @@ namespace GServer.RPCResponsor
                 Debuger.LogError($"No found match server");
                 return new G2C_JoinMatch();
             }
- 
+
             var hero = await UserDataManager.S.FindHeroByAccountId(context.GetAccountId());
             var player = new MatchPlayer
             {
@@ -96,12 +96,14 @@ namespace GServer.RPCResponsor
                 },
                 Name = hero.HeroName
             };
-            
-           var match = await  C<MatchServices.MatchServicesClient>.RequestOnceAsync(
-                   matchServer.ServicsHost,
-               async ( c)=> await c.JoinMatchGroupAsync(
-                   new S2M_JoinMatchGroup { GroupID = request.GroupID, Player = player }));
-        
+
+            var match = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                matchServer.ServicsHost,
+                async (c) =>
+                    await c.JoinMatchGroupAsync(
+                        new S2M_JoinMatchGroup { GroupID = request.GroupID, Player = player },
+                        headers: context.GetTraceMeta()));
+
             return new G2C_JoinMatch { Code = match.Code };
         }
 
@@ -133,7 +135,7 @@ namespace GServer.RPCResponsor
                     {
                         Level = request.LevelID,
                         Player = player
-                    })
+                    }, headers: context.GetTraceMeta())
 
             );
 
@@ -152,7 +154,10 @@ namespace GServer.RPCResponsor
 
             var quit = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                 matchServer.ServicsHost,
-                async (c) => await c.LeaveMatchGroupAsync(new S2M_LeaveMatchGroup { AccountID = context.GetAccountId() })
+                async (c) => 
+                    await c.LeaveMatchGroupAsync(
+                        new S2M_LeaveMatchGroup { AccountID = context.GetAccountId() },
+                        headers: context.GetTraceMeta())
             );
             return new G2C_LeaveMatchGroup { Code = quit.Code };
         }
@@ -172,7 +177,9 @@ namespace GServer.RPCResponsor
                 var match = await C<MatchServices.MatchServicesClient>
                     .RequestOnceAsync(
                     matchServer.ServicsHost,
-                    async (c)=>  await c.StartMatchAsync(new S2M_StartMatch { GroupID = request.GroupID, Leader = userId })
+                    async (c)=>  
+                        await c.StartMatchAsync(new S2M_StartMatch { GroupID = request.GroupID, Leader = userId },
+                            headers: context.GetTraceMeta())
                     );
                 return match.Code == ErrorCode.Ok ? new G2C_BeginGame { Code = ErrorCode.Ok } : new G2C_BeginGame { Code = match.Code };
             }
@@ -279,7 +286,7 @@ namespace GServer.RPCResponsor
         public override async Task<G2C_Login> Login(C2G_Login request, ServerCallContext context)
         {
             if (string.IsNullOrWhiteSpace(request.Session)) return new G2C_Login { Code = ErrorCode.Error };
-            
+
             var check = new S2L_CheckSession
             {
                 Session = request.Session,
@@ -296,13 +303,13 @@ namespace GServer.RPCResponsor
 
             var req = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>
                 .RequestOnceAsync(loginServer.ServicsHost,
-                    async (c)=> 
-                        await c.CheckSessionAsync(check, cancellationToken:context.CancellationToken));
-     
-    
+                    async (c) =>
+                        await c.CheckSessionAsync(check, cancellationToken: context.CancellationToken,
+                            headers: context.GetTraceMeta()));
+
             if (req.Code != ErrorCode.Ok)
             {
-                return new G2C_Login { Code =req.Code };
+                return new G2C_Login { Code = req.Code };
             }
 
             var player = await UserDataManager.S.FindAndUpdateLastLogin(request.UserID, context.Peer);
@@ -324,8 +331,8 @@ namespace GServer.RPCResponsor
                 HavePlayer = player != null,
                 Hero = dHero,
                 Package = playerPackage,
-                Coin = player?.Coin??0,
-                Gold = player?.Gold??0
+                Coin = player?.Coin ?? 0,
+                Gold = player?.Gold ?? 0
             };
         }
 
@@ -447,7 +454,8 @@ namespace GServer.RPCResponsor
             var rejoin = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                 matchSever.ServicsHost,
                 async (c) => 
-                    await c.TryToReJoinMatchAsync(new S2M_TryToReJoinMatch { Account = context.GetAccountId() },
+                    await c.TryToReJoinMatchAsync(
+                        new S2M_TryToReJoinMatch { Account = context.GetAccountId() },
                         headers: context.GetTraceMeta())
             );
 

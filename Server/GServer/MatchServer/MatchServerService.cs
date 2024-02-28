@@ -51,7 +51,7 @@ namespace MatchServer
             return false;
         }
 
-        private async Task<(ErrorCode code ,string id, BattleServerConfig config)> StartBattleServer(IList<string> player, int levelId)
+        private async Task<(ErrorCode code ,string id, BattleServerConfig config)> StartBattleServer(IList<string> player, int levelId, ServerCallContext context)
         {
             //only one in time
             await _semaphoreSlim.WaitAsync();
@@ -87,7 +87,7 @@ namespace MatchServer
                 var rs = await C<BattleInnerServices.BattleInnerServicesClient>
                     .RequestOnceAsync(
                         config.ServicsHost,
-                        async (c) => await c.StartBatleAsync(re),
+                        async (c) => await c.StartBatleAsync(re, headers: context.GetTraceMeta() ),
                         deadTime: DateTime.UtcNow.AddSeconds(3));
 
 
@@ -165,7 +165,7 @@ namespace MatchServer
         {
             var group = await DataBaseTool.S.QueryMatchGroup(request.GroupID);
             if (group == null) return new M2S_StartMatch { Code = ErrorCode.NoFoundMatch };
-            var (errorCode, _, config) = await StartBattleServer(group.Players.Select(t=>t.AccountID).ToList(), group.LevelID);
+            var (errorCode, _, config) = await StartBattleServer(group.Players.Select(t=>t.AccountID).ToList(), group.LevelID,context);
             return new M2S_StartMatch { Code = config == null ?  errorCode: ErrorCode.Ok };
         }
 
@@ -250,7 +250,7 @@ namespace MatchServer
 
             var rs = await C<BattleInnerServices.BattleInnerServicesClient>
                 .RequestOnceAsync(config.ServicsHost,
-                expression: async ( c) => await c.KillUserAsync(new M2B_KillUser { UserID = request.UserID }));
+                expression: async ( c) => await c.KillUserAsync(new M2B_KillUser { UserID = request.UserID }, headers: context.GetTraceMeta()));
             Debuger.Log($"M2B_KillUser Result:{rs.Code}");
             return new M2S_KillUser {Code = ErrorCode.Ok};
         }
