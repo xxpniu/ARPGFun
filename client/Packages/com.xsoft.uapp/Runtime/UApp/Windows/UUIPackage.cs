@@ -5,6 +5,7 @@ using ExcelConfig;
 using EConfig;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -56,19 +57,22 @@ namespace Windows
                 UUIPopup.ShowConfirm(LanguageManager.S["UI_PACKAGE_BUY_SIZE_TITLE"],
                     LanguageManager.S.Format("UI_PACKAGE_BUY_SIZE", UApplication.S.Constant.PACKAGE_BUY_COST,
                         UApplication.S.Constant.PACKAGE_BUY_SIZE),
-                    async () =>
+                    OkCallBack);
+                return;
+
+                async void OkCallBack()
+                {
+                    var gate = UApplication.G<GMainGate>();
+                    var res = await GateManager.S.GateFunction.BuyPackageSizeAsync(new C2G_BuyPackageSize { SizeCurrent = gate.Package.MaxSize });
+                    await UniTask.SwitchToMainThread();
+                    if (res.Code.IsOk())
                     {
-                        var gate = UApplication.G<GMainGate>();
-                        var res = await GateManager.S.GateFunction
-                            .BuyPackageSizeAsync(new C2G_BuyPackageSize { SizeCurrent = gate.Package.MaxSize });
-                        if (res.Code.IsOk())
-                        {
-                            gate.Package.MaxSize = res.PackageCount;
-                            OnUpdateUIData();
-                        }
-                        else  UApplication.S.ShowError(res.Code);
-                        
-                    });
+                        gate.Package.MaxSize = res.PackageCount;
+                        OnUpdateUIData();
+                    }
+                    else
+                        UApplication.S.ShowError(res.Code);
+                }
             });
         }
 

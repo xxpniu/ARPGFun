@@ -5,6 +5,7 @@ using EConfig;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 using UnityEngine;
@@ -82,10 +83,10 @@ namespace Windows
         }
 
         private async void GoToServer(int leveID)
-        {
-            var gate = UApplication.G<GMainGate>();
+        { 
             var re = await GateManager.S.GateFunction.CreateMatchAsync(new C2G_CreateMatch { LevelID = leveID });
-            if (!re.Code.IsOk()) Invoke(() => UApplication.S.ShowError(re.Code));
+            await UniTask.SwitchToMainThread();
+            if (!re.Code.IsOk()) UApplication.S.ShowError(re.Code);
         }
 
         protected override void OnHide()

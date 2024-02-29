@@ -8,6 +8,7 @@ using Proto;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -78,11 +79,12 @@ namespace Windows
                 GroupID = group.Id,
                 LevelID = group.LevelID
             });
+            await UniTask.SwitchToMainThread();
             if (!res.Code.IsOk())
             {
                 UApplication.S.ShowError(res.Code);
             }
         }
-        
+
     }
 }

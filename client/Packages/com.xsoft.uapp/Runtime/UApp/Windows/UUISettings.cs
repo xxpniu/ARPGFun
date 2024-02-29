@@ -17,7 +17,7 @@ namespace Windows
         {
             base.InitModel();
 
-            ButtonClose.onClick.AddListener(() => { HideWindow(); });
+            ButtonClose.onClick.AddListener(HideWindow);
             ButtonExit.OnMouseClick((o) => { UApplication.S.GotoLoginGate(); HideWindow(); });
 
             Slider_bgm.onValueChanged.AddListener((v) => {SettingManager.S.BgmValue = v;});

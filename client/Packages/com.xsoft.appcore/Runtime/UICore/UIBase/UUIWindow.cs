@@ -123,11 +123,8 @@ public abstract class UUIWindow:UUIElement
 	private WindowState _state =  WindowState.NONE;
 	
 	
-    protected void Invoke(Action call)
-    {
-        runner.Invoke(call);
-    }
-
+    protected CancellationToken DestroyCancellationToken() =>runner.destroyCancellationToken;
+    
     public static void TryToInitWindow(UUIWindow window, GameObject root, Transform parent)
     {
 	    window.uiRoot = root;

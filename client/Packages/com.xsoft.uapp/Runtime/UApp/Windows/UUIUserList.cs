@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UGameTools;
 using System.Threading.Tasks;
 using App.Core.Core;
+using Cysharp.Threading.Tasks;
 using Proto;
 using UApp;
 using UApp.GameGates;
@@ -86,14 +87,10 @@ namespace Windows
 
             var r = await ChatManager.S.ChatClient.LinkFriendAsync(new C2CH_LinkFriend
                 { FriendId = obj.Player.AccountUuid });
-            Invoke(() =>
-            {
-                if (!r.Code.IsOk())
-                    UApplication.S.ShowError(r.Code);
-                Debuger.Log($"{r.Code} {obj.Player.HeroName}");
-            });
-
-
+            await UniTask.SwitchToMainThread();
+            if (!r.Code.IsOk()) UApplication.S.ShowError(r.Code);
+            Debuger.Log($"{r.Code} {obj.Player.HeroName}");
+            
         }
 
         protected override void OnHide()

@@ -59,7 +59,7 @@ namespace Windows
 
                 var request = new Proto.C2G_CreateHero { HeroID = _selectedID, HeroName = InputField.text };
                 var r = await GateManager.S.GateFunction.CreateHeroAsync(request);
-                UniTask.SwitchToMainThread();
+                await UniTask.SwitchToMainThread();
                 if (r.Code.IsOk())
                 {
                     UApplication.G<GMainGate>().ShowMain();

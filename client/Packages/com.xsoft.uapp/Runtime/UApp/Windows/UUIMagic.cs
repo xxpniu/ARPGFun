@@ -7,6 +7,7 @@ using ExcelConfig;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -51,24 +52,25 @@ namespace Windows
             base.InitModel();
 
             ButtonClose.onClick.AddListener(this.HideWindow);
-            bt_level_up.onClick.AddListener(async () =>
+
+            bt_level_up.onClick.AddListener(LevelUpCall);
+            return;
+
+            async void LevelUpCall()
+            {
+                //var gate = UApplication.G<GMainGate>();
+                var request = new C2G_MagicLevelUp { Level = selectMagic?.Level ?? 1, MagicId = selectConfig.ID };
+                var res = await GateManager.S.GateFunction.MagicLevelUpAsync(request);
+                await UniTask.SwitchToMainThread();
+                if (res.Code.IsOk())
                 {
-                    var gate = UApplication.G<GMainGate>();
-                    var request = new C2G_MagicLevelUp { Level = selectMagic?.Level ?? 1, MagicId = selectConfig.ID };
-                    var res = await GateManager.S.GateFunction.MagicLevelUpAsync(request);
-                    Invoke(() =>
-                    {
-                        if (res.Code.IsOk())
-                        {
-                            OnUpdateUIData();
-                        }
-                        else
-                        {
-                            UApplication.S.ShowError(res.Code);
-                        }
-                    });
+                    OnUpdateUIData();
                 }
-            );
+                else
+                {
+                    UApplication.S.ShowError(res.Code);
+                }
+            }
         }
 
 

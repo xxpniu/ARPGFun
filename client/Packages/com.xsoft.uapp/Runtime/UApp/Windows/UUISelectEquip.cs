@@ -8,6 +8,7 @@ using ExcelConfig;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -112,6 +113,7 @@ namespace Windows
                 Part = (EquipmentType)obj.Equip.PartType
             };
             var r = await GateManager.S.GateFunction.OperatorEquipAsync(req);
+            await UniTask.SwitchToMainThread();
             if (!r.Code.IsOk())
             {
                 UApplication.S.ShowError(r.Code);

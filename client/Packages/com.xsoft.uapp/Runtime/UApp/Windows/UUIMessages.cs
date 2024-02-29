@@ -22,7 +22,7 @@ namespace Windows
         {
             base.InitModel();
 
-            ButtonClose.onClick.AddListener(() => HideWindow());
+            ButtonClose.onClick.AddListener(HideWindow);
             //Write Code here
         }
         protected override void OnShow()
