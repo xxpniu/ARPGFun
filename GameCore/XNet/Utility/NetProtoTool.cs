@@ -16,17 +16,17 @@ namespace XNet.Libs.Utility
             value = context.RequestHeaders.Get(key)?.Value;
             return !string.IsNullOrEmpty(value);
         }
-        public static Metadata GetTraceMeta(this ServerCallContext context,string key = null)
+        public static Metadata GetTraceMeta(this ServerCallContext context)
         {
-            if (!context.GetHeader(key ?? "trace-id", out var traceId))
-            {
-                return null;
-            }
+            return !context.GetHeader("trace-id", out var traceId) ? null : traceId.GetTraceMeta();
+        }
 
+        public static Metadata GetTraceMeta(this string traceId)
+        {
             return new Metadata()
-             {
-                 { "trace-id", traceId ?? string.Empty }
-             };
+            {
+                { "trace-id", traceId ?? string.Empty }
+            };
         }
 
         public static string GetAccountId(this ServerCallContext context,string key = null)

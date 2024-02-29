@@ -35,20 +35,23 @@ namespace UApp.GameGates
 
         private async Task<L2C_Reg> DoReg(string username, string password, Action<L2C_Reg> callback)
         {
+            UUIManager.Try()?.ShowMask(true);
             L2C_Reg r ;
             try
             {
-                var channel = new LogChannel(UApplication.S.LoginServer);
+                r = await C<LoginServerService.LoginServerServiceClient>.RequestOnceAsync(
+                    ip: UApplication.S.LoginServer,
+                    expression: async serviceClient =>
+                        await serviceClient.RegAsync(new C2L_Reg
+                            {
+                                Password = password,
+                                UserName = username,
+                                Version = 0
+                            }
+                        ),
+                      deadTime: DateTime.UtcNow.AddSeconds(10)
+                    );
 
-                var req = new C2L_Reg
-                {
-                    Password = password,
-                    UserName = username,
-                    Version = 0
-                };
-                var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
-                r = await client.RegAsync(req);
-                await channel.ShutdownAsync();
             }
             catch (Exception ex)
             {
@@ -60,6 +63,7 @@ namespace UApp.GameGates
             }
 
             await UniTask.SwitchToMainThread();
+            UUIManager.Try()?.ShowMask(false);
             callback?.Invoke(r);
             return r;
         }
@@ -70,20 +74,14 @@ namespace UApp.GameGates
             L2C_Login r = null;
             try
             {
-                var channel = new LogChannel(UApplication.S.LoginServer);
-
-                var req = new C2L_Login
-                {
-                    Password = pwd,
-                    UserName = userName,
-                    Version = 0
-                };
-
-                Debug.Log($"Request:{req}");
-                var client = channel.CreateClient<LoginServerService.LoginServerServiceClient>();
-                r = await client.LoginAsync(req,
-                    deadline: DateTime.UtcNow.AddSeconds(10));
-                await channel.ShutdownAsync();
+                r = await C<LoginServerService.LoginServerServiceClient>
+                    .RequestOnceAsync(UApplication.S.LoginServer,
+                        expression: async (c) => await c.LoginAsync(new C2L_Login
+                        {
+                            Password = pwd,
+                            UserName = userName,
+                            Version = 0
+                        }), DateTime.UtcNow.AddSeconds(10));
             }
             catch (Exception ex)
             {
