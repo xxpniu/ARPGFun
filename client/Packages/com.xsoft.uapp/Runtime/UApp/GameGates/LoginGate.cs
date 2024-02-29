@@ -22,10 +22,8 @@ namespace UApp.GameGates
             await UUIManager.S.CreateWindowAsync<UUILogin>((ui) => { ui.ShowWindow(); });
         }
         
-
-        public async Task<L2C_Reg> DoReg(string username, string password, Action<L2C_Reg> callback = default)
+        public static async Task<L2C_Reg> DoReg(string username, string password, Action<L2C_Reg> callback = default)
         {
-            //UUIManager.Try()?.ShowMask(true);
             L2C_Reg r ;
             try
             {
@@ -58,7 +56,7 @@ namespace UApp.GameGates
             return r;
         }
 
-        public async Task<L2C_Login> DoLogin(string userName, string pwd, Action<L2C_Login> callback = default)
+        public static async Task<L2C_Login> DoLogin(string userName, string pwd, Action<L2C_Login> callback = default)
         {
             //UUIManager.Try()?.ShowMask(true);
             L2C_Login r = null;

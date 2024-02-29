@@ -34,7 +34,7 @@ namespace Windows
 
                 UUIManager.S.MaskEvent();
                 var gate = UApplication.G<LoginGate>();
-                var r = await gate.DoReg(userName, pwd);
+                var r = await LoginGate.DoReg(userName, pwd);
                 await UniTask.SwitchToMainThread();
                 UUIManager.S.UnMaskEvent();
                 if (r.Code.IsOk())

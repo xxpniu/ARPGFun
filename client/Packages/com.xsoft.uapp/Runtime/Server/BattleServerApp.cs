@@ -186,11 +186,11 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 
     public async void StartTest()
     {
-        Debuger.Log($"Start:1");
 #if UNITY_EDITOR
         await BeginSimulator(new List<string>(), 1);
         Debuger.Log($"Start:1");
 #endif
+        await Task.CompletedTask;
     }
 
     private LogServer ListenServer { get; set; }
@@ -244,25 +244,21 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 
         _serverRoot = $"{Config.BattleServerRoot}/{ServerID}";
         await RegBattleServer();
-
     }
 
     private string _serverRoot;
 
-    private async Task<bool> UnRegBattleServer()
+    private async Task UnRegBattleServer()
     {
         await Zk.deleteAsync(_serverRoot);
         Debuger.Log($"un reg server to zk:{_serverRoot}");
-        return true;
     }
 
-    private async Task<bool> RegBattleServer()
+    private async Task RegBattleServer()
     {
-
-        await Zk.createAsync(_serverRoot, Encoding.UTF8.GetBytes(Extends.ToJson(Config)), Ids.OPEN_ACL_UNSAFE,
+        var res = await Zk.createAsync(_serverRoot, Encoding.UTF8.GetBytes(Extends.ToJson(Config)), Ids.OPEN_ACL_UNSAFE,
             CreateMode.EPHEMERAL);
-        Debuger.Log($"reg server to zk:{_serverRoot}");
-        return true;
+        Debuger.Log($"reg server to zk:{_serverRoot} {res}");
     }
 
     protected override async void OnDestroy()

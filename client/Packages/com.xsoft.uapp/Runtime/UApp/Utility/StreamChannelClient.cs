@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Core;
 using UnityEngine;
-using Utility;
 using XNet.Libs.Utility;
 
 namespace UApp.Utility
@@ -35,10 +34,10 @@ namespace UApp.Utility
 
             private Stream Com { get; }
 
-            public StreamChannel(bool dontUpload = false, string Tag = null)
+            public StreamChannel(bool dontUpload = false, string tag = null)
             {
                 CancellationToken = new CancellationTokenSource();
-                var go = new GameObject(Tag ?? $"Channel_{typeof(TData).Name}");
+                var go = new GameObject(tag ?? $"Channel_{typeof(TData).Name}");
                 Com = go.AddComponent<Stream>();
                 if (dontUpload) DontDestroyOnLoad(go);
                 Com.UpdateCall = this.OnUpdate;
@@ -60,9 +59,10 @@ namespace UApp.Utility
                 IsWorking = false;
                 if (!TryCancel()) return;
                 await ShutDownProcessAsync();
+                await UniTask.SwitchToMainThread(); 
                 if (haveCallBack) OnDisconnect?.Invoke();
                 OnDisconnect = null;
-                InvokeCall(() => { Destroy(Com.gameObject); });
+                Destroy(Com.gameObject); 
             }
 
             private bool TryCancel()
@@ -85,12 +85,7 @@ namespace UApp.Utility
             protected abstract Task Process();
 
             public Action OnDisconnect;
-
-            private void InvokeCall(Action action)
-            {
-                if (Com) Com.Invoke(action);
-            }
-
+            
             public bool IsWorking { get; private set; }
         }
 

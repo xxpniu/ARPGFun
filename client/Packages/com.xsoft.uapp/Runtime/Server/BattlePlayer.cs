@@ -180,7 +180,10 @@ namespace Server
             }
             foreach (var i in needRemoves)
             {
-                Package.RemoveItem(i);
+                if (!Package.RemoveItem(i))
+                {
+                    Debuger.LogWaring($"Not found {i}");
+                }
             }
             Dirty = true;
             return true;

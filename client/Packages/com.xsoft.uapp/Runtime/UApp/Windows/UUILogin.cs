@@ -50,7 +50,7 @@ namespace Windows
 
                 UUIManager.S.MaskEvent();
                 var md5 = Md5Tool.GetMd5Hash(pwd);
-                var r = await gate.DoLogin(userName, md5);
+                var r = await LoginGate.DoLogin(userName, md5);
                 UUIManager.S.UnMaskEvent();
                 if (r.Code.IsOk())
                 {

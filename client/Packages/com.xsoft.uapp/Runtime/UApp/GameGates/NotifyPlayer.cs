@@ -24,20 +24,23 @@ namespace UApp.GameGates
         {
             public NeedNotifyAttribute Attr { set; get; }
             public MethodInfo Method { set; get; }
-            public System. Type Type { set; get; }
+            public System.Type Type { set; get; }
         }
+
         private readonly Dictionary<string, NotifyMapping> _perceptionInvokes = new();
         private readonly Dictionary<string, NotifyMapping> _elementInvokes = new();
 
-        public IBattlePerception PerView { set; get; }
- 
+        private IBattlePerception PerView { set; get; }
+
         #region Events
+
         public Action<Notify_CharacterExp> OnAddExp;
         public Action<IBattleCharacter> OnCreateUser;
         public Action<Notify_PlayerJoinState> OnJoined;
         public Action<Notify_DropGold> OnDropGold;
         public Action<Notify_SyncServerTime> OnSyncServerTime;
         public Action<Notify_BattleEnd> OnBattleEnd;
+
         #endregion
 
         public NotifyPlayer(IBattlePerception view)
@@ -62,6 +65,7 @@ namespace UApp.GameGates
             AddType<IMagicReleaser>();
             AddType<IBattleItem>();
         }
+
         private void AddType<T>()
         {
             var invokes = typeof(T).GetMethods();
@@ -74,20 +78,21 @@ namespace UApp.GameGates
                     Debug.LogError($"{att.NotifyType} had add");
                     continue;
                 }
-                _elementInvokes.Add(att.NotifyType.FullName, new NotifyMapping { Method = i, Attr = att, Type = att.NotifyType });
-                Debug.Log($"{ typeof(T)} handle notify {att.NotifyType}");
+
+                _elementInvokes.Add(att.NotifyType.FullName,
+                    new NotifyMapping { Method = i, Attr = att, Type = att.NotifyType });
+                Debug.Log($"{typeof(T)} handle notify {att.NotifyType}");
             }
         }
 
         private const string Index = "Index";
-    
+
         /// <summary>
         /// 处理网络包的解析
         /// </summary>
         /// <param name="any">Notify.</param>
         public void Process(Any any)
         {
-
             var type = any.TypeUrl.Split('/')[1];
             //Debug.Log($"{notify.GetType().Name}->{notify}");
             //优先处理 perception 创建元素
@@ -100,6 +105,7 @@ namespace UApp.GameGates
                 {
                     ps.Add(m.Type.GetProperty(i)!.GetValue(notify));
                 }
+
                 var go = m.Method.Invoke(PerView, ps.ToArray());
 
                 if (go is UElementView el)
@@ -110,7 +116,7 @@ namespace UApp.GameGates
                     {
                         var elIndex = notify!.GetType().GetProperty(Index);
                         var indexValue = (int)elIndex!.GetValue(notify);
-                        b.JoinState( indexValue);
+                        b.JoinState(indexValue);
                     }
                 }
 
@@ -129,7 +135,7 @@ namespace UApp.GameGates
                 return;
             }
 
-            if (_elementInvokes.TryGetValue(type, out var em)) 
+            if (_elementInvokes.TryGetValue(type, out var em))
             {
                 var notify = Activator.CreateInstance(em.Type) as IMessage;
                 notify.MergeFrom(any.Value.ToByteArray());
@@ -142,13 +148,15 @@ namespace UApp.GameGates
                     Debug.LogError($"No found index {index} by {notify.GetType()} -> {notify}");
                     return;
                 }
+
                 var ps = new List<object>();
                 foreach (var f in em.Attr.FieldNames)
                 {
                     ps.Add(notify.GetType().GetProperty(f)!.GetValue(notify));
                 }
+
                 em.Method.Invoke(v, ps.ToArray());
-#if DEVELOPMENT_BUILD                
+#if DEVELOPMENT_BUILD
                 Debuger.Log($"{notify.GetType()} - {notify}");
 #endif
                 return;
@@ -181,7 +189,6 @@ namespace UApp.GameGates
                 Debug.LogError($"NO Handle:{any}");
             }
         }
-
     }
 }
 

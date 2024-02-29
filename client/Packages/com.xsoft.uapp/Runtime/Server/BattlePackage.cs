@@ -45,8 +45,7 @@ namespace Server
 
         internal bool RemoveItem(string key)
         {
-            if (!Items.TryGetValue(key, out var item)) return false;
-            Items.Remove(key);
+            if (!Items.Remove(key, out var item)) return false;
             Removes.Add(item);
             return true;
         }

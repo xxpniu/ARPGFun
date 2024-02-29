@@ -12,15 +12,10 @@ using EConfig;
 using ExcelConfig;
 using GameLogic;
 using GameLogic.Game.Perceptions;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
 using Proto;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
-using Utility;
 using XNet.Libs.Utility;
-using static UApp.Utility.Stream;
 using Vector3 = UnityEngine.Vector3;
 
 namespace UApp.GameGates
@@ -130,10 +125,10 @@ namespace UApp.GameGates
             _gm.ShowGM = true;
         }
 
-        private void OnCoinAndGold(Task_CoinAndGold coin)
+        private void OnCoinAndGold(Task_CoinAndGold coinAndGold)
         {
-            this.coin = coin.Coin;
-            this.gold = coin.Gold;
+            this.coin = coinAndGold.Coin;
+            this.gold = coinAndGold.Gold;
         }
 
         private void OnPackageSize(Task_PackageSize size)
@@ -174,13 +169,17 @@ namespace UApp.GameGates
             var userName = obj.Inviter.Name;
 
             UUIPopup.ShowConfirm("Invite_Title".GetLanguageWord(),
-                "Invite_Content".GetAsKeyFormat(userName, levelName), async () =>
-                {
-                    var (s, g) = GateManager.TryGet();
-                    if (!s) return;
-                    var rs = await g.GateFunction.JoinMatchAsync(new C2G_JoinMatch { GroupID = obj.GroupId });
-                    if (!rs.Code.IsOk()) UApplication.S.ShowError(rs.Code);
-                });
+                "Invite_Content".GetAsKeyFormat(userName, levelName), OkCallBack);
+            return;
+
+            async void OkCallBack()
+            {
+                var (s, g) = GateManager.TryGet();
+                if (!s) return;
+                var rs = await g.GateFunction.JoinMatchAsync(new C2G_JoinMatch { GroupID = obj.GroupId });
+                await UniTask.SwitchToMainThread();
+                if (!rs.Code.IsOk()) UApplication.S.ShowError(rs.Code);
+            }
         }
 
         private async void ShowPlayer(G2C_Login result)
