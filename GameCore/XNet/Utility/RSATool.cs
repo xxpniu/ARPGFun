@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Utility
+namespace XNet.Libs.Utility
 {
     public static class RSATool
     {

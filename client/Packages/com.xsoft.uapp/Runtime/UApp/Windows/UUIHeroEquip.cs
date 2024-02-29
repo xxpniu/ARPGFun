@@ -12,6 +12,7 @@ using Layout.LayoutEffects;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -19,6 +20,7 @@ namespace Windows
 {
     partial class UUIHeroEquip
     {
+        [System.Serializable]
         public class HeroPartData
         {
             public Image icon;
@@ -59,7 +61,7 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            bt_Exit.onClick.AddListener(() => { HideWindow(); });
+            bt_Exit.onClick.AddListener(HideWindow);
 
             Equips = new Dictionary<EquipmentType, HeroPartData>
             {
@@ -87,61 +89,56 @@ namespace Windows
                 i.Value.bt.onClick.AddListener(() => { Click(i.Key); });
             }
 
-            bt_level_up.onClick.AddListener(async () =>
+            bt_level_up.onClick.AddListener(LevelUpCall);
+
+
+            take_off.onClick.AddListener(TakeOffCall);
+            return;
+
+            async void TakeOffCall()
             {
                 if (_selected == null) return;
-
-                var g = UApplication.G<GMainGate>();
-                if (!g.Package.Items.TryGetValue(_selected.GUID, out PlayerItem item)) return;
-                var req = new C2G_EquipmentLevelUp { Guid = _selected.GUID, Level = item.Level };
-
-                var r = await GateManager.S.GateFunction.EquipmentLevelUpAsync(req);
-                Invoke(() =>
-                {
-                    if (r.Code.IsOk())
-                    {
-                        UApplication.S.ShowNotify(r.Level > item.Level
-                            ? "UUIHeroEquip_Level_Success".GetAsKeyFormat($" +{r.Level}")
-                            : LanguageManager.S["UUIHeroEquip_Level_Failure"]);
-                    }
-                    else
-                    {
-                        UApplication.S.ShowError(r.Code);
-                    }
-                });
-            });
-
-
-            take_off.onClick.AddListener(async () =>
-            {
-                if (_selected == null) return;
-
                 var g = UApplication.G<GMainGate>();
                 if (!g.Package.Items.TryGetValue(_selected.GUID, out PlayerItem item)) return;
                 var config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
                 var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(config.ID);
 
                 var r = await GateManager.S.GateFunction.OperatorEquipAsync(new C2G_OperatorEquip
+                    { Guid = _selected.GUID, IsWear = false, Part = (EquipmentType)equip.PartType });
+                await UniTask.SwitchToMainThread();
+                if (r.Code.IsOk())
                 {
-                    Guid = _selected.GUID,
-                    IsWear = false,
-                    Part = (EquipmentType)equip.PartType
-                });
-                Invoke(() =>
+                    UApplication.S.ShowNotify("UUIHeroEquip_TakeOff_Result".GetAsFormatKeys(config.Name));
+                    Right.ActiveSelfObject(false);
+                    _selected = null;
+                }
+                else
                 {
-                    if (r.Code.IsOk())
-                    {
-                        UApplication.S
-                            .ShowNotify("UUIHeroEquip_TakeOff_Result".GetAsFormatKeys(config.Name));
-                        Right.ActiveSelfObject(false);
-                        _selected = null;
-                    }
-                    else
-                    {
-                        UApplication.S.ShowError(r.Code);
-                    }
-                });
-            });
+                    UApplication.S.ShowError(r.Code);
+                }
+
+            }
+
+            async void LevelUpCall()
+            {
+                if (_selected == null) return;
+                var g = UApplication.G<GMainGate>();
+                if (!g.Package.Items.TryGetValue(_selected.GUID, out PlayerItem item)) return;
+                var req = new C2G_EquipmentLevelUp { Guid = _selected.GUID, Level = item.Level };
+                var r = await GateManager.S.GateFunction.EquipmentLevelUpAsync(req);
+                await UniTask.SwitchToMainThread();
+                if (r.Code.IsOk())
+                {
+                    UApplication.S.ShowNotify(r.Level > item.Level
+                        ? "UUIHeroEquip_Level_Success".GetAsKeyFormat($" +{r.Level}")
+                        : LanguageManager.S["UUIHeroEquip_Level_Failure"]);
+                }
+                else
+                {
+                    UApplication.S.ShowError(r.Code);
+                }
+
+            }
         }
 
         private async void Click(EquipmentType key)
@@ -225,8 +222,7 @@ namespace Windows
             base.OnUpdateUIData();
             var g = UApplication.G<GMainGate>();
             ShowHero(g.Hero, g.Package);
-            if (_selected == null)
-                Right.ActiveSelfObject(false);
+            if (_selected == null) Right.ActiveSelfObject(false);
             else DisplayEquip(_selected);
         }
 
@@ -252,27 +248,23 @@ namespace Windows
 
             foreach (var i in dHero.Equips)
             {
-                if (package.Items.TryGetValue(i.GUID, out PlayerItem pItem))
+                if (!package.Items.TryGetValue(i.GUID, out PlayerItem pItem)) continue;
+                var item = ExcelToJSONConfigManager.GetId<ItemData>(i.ItemID);
+                var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(item.ID);
+                if (equip == null) continue;
+                var ps = pItem.GetProperties();
+                foreach (var kv in ps)
                 {
-                    var item = ExcelToJSONConfigManager.GetId<ItemData>(i.ItemID);
-                    var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(item.ID);
-                    if (equip == null) continue;
-                    var ps = pItem.GetProperties();
-                    foreach (var kv in ps)
+                    if (properties.TryGetValue(kv.Key, out var v))
                     {
-                        if (properties.TryGetValue(kv.Key, out ComplexValue v))
-                        {
-                            v.ModifyValueAdd(AddType.Append, kv.Value);
-                        }
-                    }
-                    if (Equips.TryGetValue((EquipmentType)equip.PartType, out HeroPartData partIcon))
-                    {
-                        partIcon.icon.ActiveSelfObject(true);
-                        await ResourcesManager.S.LoadIcon(item, s => partIcon.icon.sprite = s);
-                        if (pItem.Level > 0) partIcon.level.text = $"+{pItem.Level}";
-                        partIcon.rootLvl.ActiveSelfObject(pItem.Level > 0);
+                        v.ModifyValueAdd(AddType.Append, kv.Value);
                     }
                 }
+                if (!Equips.TryGetValue((EquipmentType)equip.PartType, out var partIcon)) continue;
+                partIcon.icon.ActiveSelfObject(true);
+                await ResourcesManager.S.LoadIcon(item, s => partIcon.icon.sprite = s);
+                if (pItem.Level > 0) partIcon.level.text = $"+{pItem.Level}";
+                partIcon.rootLvl.ActiveSelfObject(pItem.Level > 0);
             }
             var keys = properties.Where(t => t.Value > 0).ToArray();
             PropertyListTableManager.Count = keys.Length;

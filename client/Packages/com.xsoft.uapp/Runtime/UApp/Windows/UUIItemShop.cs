@@ -5,6 +5,7 @@ using Proto;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -76,10 +77,7 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            ButtonClose.onClick.AddListener(() =>
-            {
-                HideWindow();
-            });
+            ButtonClose.onClick.AddListener(HideWindow);
         }
 
         protected override void OnShow()
@@ -92,15 +90,14 @@ namespace Windows
         private async void ShowData()
         {
             var r = await GateManager.S.GateFunction.QueryShopAsync(new C2G_Shop());
+            await UniTask.SwitchToMainThread();
             if (!r.Code.IsOk())
             {
                 HideWindow();
                 UApplication.S.ShowError(r.Code);
                 return;
-            }
-
+            } 
             this.Shops = r.Shops;
-
             this.ShopTabTableManager.Count = Shops.Count;
             var index = 0;
             foreach (var i in ShopTabTableManager)
@@ -109,7 +106,6 @@ namespace Windows
                 i.Model.OnSelected = Selected;
                 index++;
             }
-
             if (Shops.Count > 0) ShopTabTableManager[0].Template.ToggleSelected.isOn = true;
         }
 
@@ -134,32 +130,27 @@ namespace Windows
 
         private void Buy(ContentTableModel obj)
         {
-
             UUIPopup.ShowConfirm(LanguageManager.S["UUIItemShop_Confirm_Title"],
                 LanguageManager.S.Format("UUIItemShop_Confirm_Content", LanguageManager.S[obj.Config.Name]),
-                async () =>
-                {
-                    var request = new C2G_BuyItem
-                    {
-                        ItemId = obj.ShopItem.ItemId,
-                        ShopId = obj.Shop.ShopId
-                    };
-                    var gate = UApplication.G<GMainGate>();
-                    var r = await GateManager.S.GateFunction.BuyItemAsync(request);
-                    if (r.Code.IsOk())
-                    {
-                        UApplication.S.ShowNotify(
-                            LanguageManager.S.Format(
-                                "UUIItemShop_BUY",
-                                LanguageManager.S[$"{obj.Config.Name}"],
-                                $"{obj.ShopItem.PackageNum}"));
-                    }
-                    else
-                    {
-                        UApplication.S.ShowError(r.Code);
-                    }
-                }
+                OkCall
             );
+            return;
+
+            async void OkCall()
+            {
+                var request = new C2G_BuyItem { ItemId = obj.ShopItem.ItemId, ShopId = obj.Shop.ShopId };
+                var gate = UApplication.G<GMainGate>();
+                var r = await GateManager.S.GateFunction.BuyItemAsync(request);
+                await UniTask.SwitchToMainThread();
+                if (r.Code.IsOk())
+                {
+                    UApplication.S.ShowNotify(LanguageManager.S.Format("UUIItemShop_BUY", LanguageManager.S[$"{obj.Config.Name}"], $"{obj.ShopItem.PackageNum}"));
+                }
+                else
+                {
+                    UApplication.S.ShowError(r.Code);
+                }
+            }
         }
 
         protected override void OnHide()

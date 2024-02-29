@@ -5,9 +5,8 @@ using ExcelConfig;
 using GameLogic.Game.Elements;
 using Google.Protobuf.WellKnownTypes;
 using Proto;
-using Server;
 using UnityEngine;
-using Utility;
+using XNet.Libs.Utility;
 
 namespace Server
 {

@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Core;
-using Utility;
 using System.Threading;
+using XNet.Libs.Utility;
 
 namespace Server.ServiceHandlers
 {

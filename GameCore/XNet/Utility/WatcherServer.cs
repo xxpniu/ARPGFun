@@ -1,15 +1,15 @@
 ﻿using System;
-using Google.Protobuf;
-using System.Collections.Concurrent;
-using org.apache.zookeeper;
-using System.Threading.Tasks;
-using System.Text;
-using XNet.Libs.Utility;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Google.Protobuf;
+using org.apache.zookeeper;
+using Utility;
 
-namespace Utility
+namespace XNet.Libs.Utility
 {
     public class DefaultWatcher : Watcher
     {

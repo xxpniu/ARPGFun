@@ -35,7 +35,7 @@ namespace GServer.RPCResponser
             return await GetPlayer(request.AccountUuid);
         }
 
-        private  async Task<G2B_GetPlayerInfo> GetPlayer(string accountId)
+        private static async Task<G2B_GetPlayerInfo> GetPlayer(string accountId)
         {
             var player = await UserDataManager.S.FindPlayerByAccountId(accountId);
 

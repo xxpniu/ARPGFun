@@ -7,6 +7,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
 using UApp.Utility;
+using UnityEngine;
 using Utility;
 using XNet.Libs.Utility;
 
@@ -140,6 +141,19 @@ namespace UApp
             base.OnDestroy();
 
             await Release();
+        }
+
+        public async void SendCommand(string command)
+        {
+            if (string.IsNullOrEmpty(command)) return;
+            var r = await GateManager.S.GateFunction.GMToolAsync(new C2G_GMTool
+            {
+                GMCommand = command
+            });
+            Debug.Log("GMResult:" + r.Code);
+
+            await UniTask.SwitchToMainThread();
+            UApplication.S.ShowNotify(r.Code.IsOk() ? $"GM send success!!" : $"GM Executed error with {r.Code}");
         }
     }
 }

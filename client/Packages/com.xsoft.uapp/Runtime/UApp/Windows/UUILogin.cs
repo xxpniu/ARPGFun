@@ -2,7 +2,6 @@ using App.Core.Core;
 using App.Core.UICore.Utility;
 using UApp;
 using UApp.GameGates;
-using UGameTools;
 using UnityEngine;
 using XNet.Libs.Utility;
 
@@ -17,6 +16,20 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
+
+            this.ButtonBlue.onClick.AddListener(LoginCall);
+            TextSignup.onClick.AddListener(SignupCall);
+            
+            ButtonClose.onClick.AddListener(() =>
+            {
+                //do nothing
+            });
+            return;
+
+            async  void SignupCall()
+            {
+                await UUIManager.S.CreateWindowAsync<UUISignup>(ui => ui.ShowWindow());
+            }
 
             async void LoginCall()
             {
@@ -36,7 +49,6 @@ namespace Windows
                 }
 
                 UUIManager.S.MaskEvent();
-
                 var md5 = Md5Tool.GetMd5Hash(pwd);
                 var r = await gate.DoLogin(userName, md5);
                 UUIManager.S.UnMaskEvent();
@@ -49,20 +61,6 @@ namespace Windows
                     UApplication.S.ShowError(r.Code);
                 }
             }
-
-            this.ButtonBlue.onClick.AddListener(LoginCall);
-
-            async  void SignupCall()
-            {
-                await UUIManager.S.CreateWindowAsync<UUISignup>(ui => ui.ShowWindow());
-            }
-
-            TextSignup.onClick.AddListener(SignupCall);
-            ButtonClose.onClick.AddListener(() =>
-            {
-                //do nothing
-            });
-
         }
 
         protected override void OnShow()
@@ -81,7 +79,6 @@ namespace Windows
         protected override void OnHide()
         {
             base.OnHide();
-
         }
     }
 }

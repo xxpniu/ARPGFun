@@ -1,3 +1,5 @@
+using App.Core.Core;
+using Cysharp.Threading.Tasks;
 using Proto;
 using UApp;
 using UApp.GameGates;
@@ -12,15 +14,19 @@ namespace Windows
         {
             base.InitModel();
 
-            TextSignin.onClick.AddListener(() => { HideWindow(); });
+            TextSignin.onClick.AddListener(HideWindow);
+            ButtonClose.onClick.AddListener(HideWindow);
 
-            ButtonClose.onClick.AddListener(() => { HideWindow(); });
-            ButtonBlue.onClick.AddListener(() =>
+            ButtonBlue.onClick.AddListener(RegCall);
+
+            return;
+
+            async void RegCall()
             {
                 var userName = TextInputBoxEmail.text;
                 var pwd = TextInputBoxPassword.text;
-                var rpwd = TextInputBoxPasswordRepeat.text;
-                if (pwd != rpwd)
+                var rPwd = TextInputBoxPasswordRepeat.text;
+                if (pwd != rPwd)
                 {
                     UApplication.S.ShowNotify("Password not same!");
                     return;
@@ -28,22 +34,22 @@ namespace Windows
 
                 UUIManager.S.MaskEvent();
                 var gate = UApplication.G<LoginGate>();
-                gate.GoReg(userName, pwd, (r) =>
+                var r = await gate.DoReg(userName, pwd);
+                await UniTask.SwitchToMainThread();
+                UUIManager.S.UnMaskEvent();
+                if (r.Code.IsOk())
                 {
-                    UUIManager.S.UnMaskEvent();
-                    if (r.Code == ErrorCode.Ok)
-                    {
-                        UApplication.Singleton.GoServerMainGate(r.ChatServer, r.GateServer, r.UserID, r.Session);
-                        HideWindow();
-                        PlayerPrefs.SetString(UUILogin. UserNameKey, userName);
-                        PlayerPrefs.SetString(UUILogin.PasswordKey, pwd);
-                    }
-                    else
-                    {
-                        UUITipDrawer.Singleton.ShowNotify("Server Response:" + r.Code);
-                    }
-                });
-            });
+                    UApplication.Singleton.GoServerMainGate(r.ChatServer, r.GateServer, r.UserID, r.Session);
+                    HideWindow();
+                    PlayerPrefs.SetString(UUILogin.UserNameKey, userName);
+                    PlayerPrefs.SetString(UUILogin.PasswordKey, pwd);
+                }
+                else
+                {
+                    UUITipDrawer.Singleton.ShowNotify("Server Response:" + r.Code);
+                }
+                
+            }
         }
 
         protected override void OnShow()

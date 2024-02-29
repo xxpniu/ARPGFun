@@ -1,17 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 using Google.Protobuf;
-using Grpc.Core;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading;
 
-namespace Utility
+namespace XNet.Libs.Utility
 {
 
     public class StreamBuffer<TData> where TData : IMessage, new()
     {
-        readonly ConcurrentQueue<TData> requests = new ConcurrentQueue<TData>();
+        readonly ConcurrentQueue<TData> _requests = new ConcurrentQueue<TData>();
 
         public int Max { get; }
 
@@ -22,13 +17,13 @@ namespace Utility
 
         public bool TryPull(out TData data)
         {
-            return requests.TryDequeue(out data);
+            return _requests.TryDequeue(out data);
         }
 
         public virtual bool Push(TData request)
         {
-            if (requests.Count > Max) requests.TryDequeue(out _);
-            requests.Enqueue(request);
+            if (_requests.Count > Max) _requests.TryDequeue(out _);
+            _requests.Enqueue(request);
             return true;
         }
 

@@ -10,6 +10,7 @@ using GameLogic;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -80,7 +81,6 @@ namespace Windows
             base.InitModel();
             CloseButton.onClick.AddListener(HideWindow);
             equipRefresh.onClick.AddListener(SelectedItem);
-
             bt_level_up.onClick.AddListener(BeginRefresh);
         }
 
@@ -99,7 +99,7 @@ namespace Windows
                 UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_custom_empty"]);
                 return;
             }
-            
+
 
             var gate = UApplication.G<GMainGate>();
             var request = new C2G_RefreshEquip { EquipUuid = refreshItem.GUID };
@@ -110,17 +110,13 @@ namespace Windows
             }
 
             var res = await GateManager.S.GateFunction.RefreshEquipAsync(request);
-            Invoke(() =>
+            await UniTask.SwitchToMainThread();
+            if (res.Code.IsOk())
             {
-                if (res.Code.IsOk())
-                {
-                    UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_Sucess"]);
-                    return;
-                }
-
-                UApplication.S.ShowError(res.Code);
-            });
-
+                UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_Sucess"]);
+                return;
+            }
+            UApplication.S.ShowError(res.Code);
         }
 
 

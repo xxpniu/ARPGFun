@@ -3,13 +3,16 @@ using UGameTools;
 using Proto;
 using UnityEngine;
 using System.Threading.Tasks;
+using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
 namespace Windows
 {
-    [AttributeUsage(AttributeTargets.Class,AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    // ReSharper disable once InconsistentNaming
     public class GMCommandAttribute : Attribute
     {
         public string GMkey;
@@ -35,7 +38,10 @@ namespace Windows
     {
         public class ContentTableModel : TableItemModel<ContentTableTemplate>
         {
-            public ContentTableModel() { }
+            public ContentTableModel()
+            {
+            }
+
             public override void InitModel()
             {
                 Template.Button.onClick.AddListener(() => { OnClick?.Invoke(this); });
@@ -55,13 +61,18 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            this.bt_close.onClick.AddListener(() => { this.HideWindow(); });
-            this.Bt_SendGM.onClick.AddListener(() => {
-                if (string.IsNullOrEmpty(IF_GmText.text)) return;
-                SendCommand(IF_GmText.text);
-            });
             //Write Code here
+            this.bt_close.onClick.AddListener(HideWindow);
+            this.Bt_SendGM.onClick.AddListener(SendGmCommand);
+            return;
+
+
+            void SendGmCommand()
+            {
+                GateManager.S.SendCommand(IF_GmText.text); 
+            }
         }
+
         protected override void OnShow()
         {
             base.OnShow();
@@ -79,7 +90,7 @@ namespace Windows
 
         private async void ClickItem(ContentTableModel m)
         {
-          await  UUIManager.S.CreateWindowAsync<UUIGMDetail>(ui => { ui.ShowWindow( m.Command); });
+            await UUIManager.S.CreateWindowAsync<UUIGMDetail>(ui => { ui.ShowWindow(m.Command); });
         }
 
         protected override void OnHide()
@@ -87,21 +98,15 @@ namespace Windows
             base.OnHide();
         }
 
-        private GMCommandAttribute[] AllCommand { get
-            {
-                var att = typeof(UUIGMPanel).GetCustomAttributes(typeof(GMCommandAttribute), false) as GMCommandAttribute[];
-                return att;
-            } }
-
-
-        public static async void SendCommand(string command)
+        private GMCommandAttribute[] AllCommand
         {
-            var r = await GateManager.S.GateFunction.GMToolAsync(new C2G_GMTool
+            get
             {
-                GMCommand = command
-            });
-            Debug.Log("GMResult:" + r.Code);
-
+                var att =
+                    typeof(UUIGMPanel).GetCustomAttributes(typeof(GMCommandAttribute), false) as GMCommandAttribute[];
+                return att;
+            }
         }
+        
     }
 }

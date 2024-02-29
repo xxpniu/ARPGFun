@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UApp;
 using UnityEngine.UI;
 using UGameTools;
 
@@ -28,7 +29,7 @@ namespace Windows
         {
             base.InitModel();
 
-            bt_close.onClick.AddListener(() => { HideWindow(); });
+            bt_close.onClick.AddListener(HideWindow);
             bt_send.onClick.AddListener(() =>
             {
                 var sb = new StringBuilder();
@@ -38,12 +39,12 @@ namespace Windows
                     sb.Append($" {i.Template.InputField.text}");
                 }
 
-                UUIGMPanel.SendCommand(sb.ToString());
+                GateManager.S.SendCommand(sb.ToString());
                 this.HideWindow();
-
             });
             //Write Code here
         }
+
         protected override void OnShow()
         {
             base.OnShow();

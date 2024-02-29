@@ -143,9 +143,9 @@ public class UUIManager:XSingleton<UUIManager>
             UUIElement.Destroy(tip);
         }
 
-        if (maskTime > 0 && maskTime < Time.time)
+        if (_maskTime > 0 && _maskTime < Time.time)
         {
-            maskTime = -1;
+            _maskTime = -1;
             eventMask.SetActive(false);
         }
     }
@@ -164,12 +164,13 @@ public class UUIManager:XSingleton<UUIManager>
 
   
     public async Task<T> CreateWindowAsync<T>(Action<T> callBack = default, 
-        WRenderType wRender = WRenderType.Base) where T : UUIWindow, new()
+        WRenderType wRender = WRenderType.Base, CancellationToken token = default) where T : UUIWindow, new()
     {
-        return await CreateWindow(callBack,wRender);
+        return await CreateWindow(callBack,wRender, token);
     }
 
-    private async Task<T> CreateWindow<T>(Action<T> callback, WRenderType wRender) where T : UUIWindow, new()
+    private async Task<T> CreateWindow<T>(Action<T> callback, WRenderType wRender, CancellationToken token = default)
+        where T : UUIWindow, new()
     {
         var ui = GetUIWindow<T>();
         if (ui != null) return ui;
@@ -188,11 +189,9 @@ public class UUIManager:XSingleton<UUIManager>
                 break;
         }
 
-        ui = await UIResourcesLoader<T>.OpenUIAsync(root.transform, callback);
+        ui = await UIResourcesLoader<T>.OpenUIAsync(root.transform, callback, token: token);
         _addTemp.Enqueue(ui);
-
         await UniTask.Yield();
-
         return ui;
     }
 
@@ -262,7 +261,7 @@ public class UUIManager:XSingleton<UUIManager>
 
     public Vector2 OffsetInUI(Vector3 position)
     {
-        var pos = Camera.main.WorldToScreenPoint(position) ;
+        var pos = Camera.main!.WorldToScreenPoint(position) ;
         return new Vector2(pos.x, pos.y);
     }
 
@@ -280,17 +279,17 @@ public class UUIManager:XSingleton<UUIManager>
     /// <summary>
     /// 当前mask
     /// </summary>
-    private float maskTime = 0;
+    private float _maskTime = 0;
 
     public void MaskEvent()
     {
-        maskTime = Time.time+ 2f;
+        _maskTime = Time.time+ 2f;
         eventMask.SetActive(true);
     }
 
     public void UnMaskEvent()
     {
-        maskTime = -1;
+        _maskTime = -1;
         eventMask.SetActive(false);
     }
 

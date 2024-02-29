@@ -6,6 +6,7 @@ using GameLogic;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 
@@ -31,47 +32,37 @@ namespace Windows
         {
             base.InitModel();
             bt_cancel.onClick.AddListener(HideWindow);
-            bt_sale.onClick.AddListener(async () =>
+            bt_sale.onClick.AddListener(SaleCall);
+            bt_equip.onClick.AddListener(EquipCall);
+            uiRoot.transform.OnMouseClick(_ => { HideWindow(); });
+            
+            return;
+            
+            async void SaleCall()
             {
                 this.HideWindow();
-                await UUIManager.S.CreateWindowAsync<UUISaleItem>((ui) => { ui.Show(this.item); });
-            });
-            bt_equip.onClick.AddListener(async () =>
+                await UUIManager.S.CreateWindowAsync<UUISaleItem>(ui => { ui.Show(this.item); });
+            }
+
+            async void EquipCall()
             {
-
-
                 var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(config.ID);
                 if (equip == null) return;
-
-                var requ = new C2G_OperatorEquip
+                var rEqu = new C2G_OperatorEquip
+                    { IsWear = true, Guid = item.GUID, Part = (EquipmentType)equip.PartType };
+                var r = await GateManager.S.GateFunction.OperatorEquipAsync(rEqu);
+                await UniTask.SwitchToMainThread();
+                if (r.Code.IsOk())
                 {
-                    IsWear = true,
-                    Guid = item.GUID,
-                    Part = (EquipmentType)equip.PartType
-                };
-
-
-                var r = await GateManager.S.GateFunction.OperatorEquipAsync(requ);
-                this.Invoke(() =>
+                    UApplication.S.ShowNotify(LanguageManager.S.Format("UUIDETAIL_WEAR_SUCESS",
+                        LanguageManager.S[config.Name]));
+                    HideWindow();
+                }
+                else
                 {
-                    if (r.Code.IsOk())
-                    {
-                        UApplication.S.ShowNotify(
-                            LanguageManager.S.Format("UUIDETAIL_WEAR_SUCESS",
-                                LanguageManager.S[config.Name]));
-                        HideWindow();
-                    }
-                    else
-                    {
-                        UApplication.S.ShowError(r.Code);
-                    }
-                });
-            });
-
-
-
-            this.uiRoot.transform.OnMouseClick((obj) => { HideWindow(); });
-            //Write Code here
+                    UApplication.S.ShowError(r.Code);
+                }
+            }
         }
 
         protected override void OnShow()
@@ -111,11 +102,12 @@ namespace Windows
                 var g = UApplication.G<GMainGate>();
                 var wear = false;
                 foreach (var i in g.Hero.Equips)
-                    if (i.GUID == item.GUID)
-                    {
-                        wear = true;
-                        break;
-                    }
+                {
+                    if (i.GUID != item.GUID) continue;
+                    wear = true;
+                    break;
+                }
+
                 WearOn.ActiveSelfObject(wear);
                 bt_equip.ActiveSelfObject(!wear && (ItemType)config.ItemType == ItemType.ItEquip);
                 bt_sale.ActiveSelfObject(!wear);
@@ -157,10 +149,10 @@ namespace Windows
 
         private PlayerItem item;
 
-        public void Show(PlayerItem item,bool nobt =false)
+        public void Show(PlayerItem playerItem, bool nobt = false)
         {
             this.nobt = nobt;
-            this.item = item;
+            this.item = playerItem;
             this.ShowWindow();
         }
     }

@@ -5,7 +5,6 @@ using Cysharp.Threading.Tasks;
 using Proto;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utility;
 using XNet.Libs.Utility;
 
 namespace UApp.GameGates
@@ -22,20 +21,11 @@ namespace UApp.GameGates
 
             await UUIManager.S.CreateWindowAsync<UUILogin>((ui) => { ui.ShowWindow(); });
         }
+        
 
-        public async void GoLogin(string username, string password, Action<L2C_Login> callback)
+        public async Task<L2C_Reg> DoReg(string username, string password, Action<L2C_Reg> callback = default)
         {
-            await DoLogin(username, password, callback);
-        }
-
-        public async void GoReg(string username, string password, Action<L2C_Reg> callback)
-        { 
-            await DoReg(username, password, callback);
-        }
-
-        private async Task<L2C_Reg> DoReg(string username, string password, Action<L2C_Reg> callback)
-        {
-            UUIManager.Try()?.ShowMask(true);
+            //UUIManager.Try()?.ShowMask(true);
             L2C_Reg r ;
             try
             {
@@ -63,14 +53,14 @@ namespace UApp.GameGates
             }
 
             await UniTask.SwitchToMainThread();
-            UUIManager.Try()?.ShowMask(false);
+            //UUIManager.Try()?.ShowMask(false);
             callback?.Invoke(r);
             return r;
         }
 
         public async Task<L2C_Login> DoLogin(string userName, string pwd, Action<L2C_Login> callback = default)
         {
-            UUIManager.Try()?.ShowMask(true);
+            //UUIManager.Try()?.ShowMask(true);
             L2C_Login r = null;
             try
             {
@@ -94,7 +84,7 @@ namespace UApp.GameGates
 
             await UniTask.SwitchToMainThread();
             callback?.Invoke(r);
-            UUIManager.Try()?.ShowMask(false);
+            //UUIManager.Try()?.ShowMask(false);
             return r;
         }
     }

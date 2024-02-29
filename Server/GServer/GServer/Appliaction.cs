@@ -102,7 +102,7 @@ namespace GServer
 
         protected override async Task Stop(CancellationToken token = default)
         {
-            await _loader?.Close(); 
+            await _loader?.Close()!; 
             await Zk.closeAsync();
             await ListenServer.ShutdownAsync();
             await _serviceServer.ShutdownAsync();

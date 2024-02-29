@@ -45,27 +45,29 @@ namespace Windows
         protected override void InitModel()
         {
             base.InitModel();
-            Bt_create.onClick.AddListener(async () =>
+
+            Bt_create.onClick.AddListener(CreateHeroCall);
+            return;
+
+            async void CreateHeroCall()
             {
                 if (string.IsNullOrEmpty(InputField.text) || InputField.text.Length < 2)
                 {
                     UApplication.S.ShowNotify("UI_HERONAME_NEED".GetLanguageWord());
                     return;
                 }
+
                 var request = new Proto.C2G_CreateHero { HeroID = _selectedID, HeroName = InputField.text };
                 var r = await GateManager.S.GateFunction.CreateHeroAsync(request);
-                Invoke(() =>
+                UniTask.SwitchToMainThread();
+                if (r.Code.IsOk())
                 {
-                    if (r.Code.IsOk())
-                    {
-                        UApplication.G<GMainGate>().ShowMain();
-                        HideWindow();
-                    }
-                    else
-                        UApplication.S.ShowError(r.Code);
-                });
-            });
-
+                    UApplication.G<GMainGate>().ShowMain();
+                    HideWindow();
+                }
+                else
+                    UApplication.S.ShowError(r.Code);
+            }
         }
 
         protected override void OnShow()

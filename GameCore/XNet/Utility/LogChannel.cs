@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
-using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Proto;
-using XNet.Libs.Utility;
 
-namespace Utility
+namespace XNet.Libs.Utility
 {
 
     public class ClientLoggerInterceptor : Interceptor
@@ -88,7 +84,6 @@ namespace Utility
             where TResponse : class
         {
             var headers = context.Options.Headers;
-
             // Call doesn't have a headers collection to add to.
             // Need to create a new context with headers for the call.
             if (headers == null)
@@ -106,7 +101,6 @@ namespace Utility
             headers.Add("session-key", Channel.SessionKey ?? string.Empty);
             if (headers.Get("trace-id") == null)
                 headers.Add("trace-id", NewTraceId());
-            //todo: 怎么解决trace-id 传递问题
             headers.Add("ticks", ticks.ToString());
         }
 
