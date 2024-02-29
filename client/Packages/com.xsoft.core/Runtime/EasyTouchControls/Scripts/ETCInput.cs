@@ -22,7 +22,7 @@ public class ETCInput : MonoBehaviour{
 			if( !_instance ){
 				
 				// check if an ObjectPoolManager is already available in the scene graph
-				_instance = FindObjectOfType( typeof( ETCInput ) ) as ETCInput;
+				_instance = FindFirstObjectByType( typeof( ETCInput ) ) as ETCInput;
 				
 				// nope, create a new one
 				if( !_instance ){

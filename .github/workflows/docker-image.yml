@@ -6,6 +6,7 @@ on:
     paths:
       - 'PublicTools/**'
       - '!PublicTools/output/**'
+      - 'GameCore/XNet/**'
  #pull_request:
  #   branches: [ "master" ]
 

@@ -106,10 +106,11 @@ namespace Utility
             headers.Add("session-key", Channel.SessionKey ?? string.Empty);
             if (headers.Get("trace-id") == null)
                 headers.Add("trace-id", NewTraceId());
+            //todo: 怎么解决trace-id 传递问题
             headers.Add("ticks", ticks.ToString());
         }
 
-        public string NewTraceId()
+        private static string NewTraceId()
         {
             return Guid.NewGuid().ToString();
         }

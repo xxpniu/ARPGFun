@@ -18,9 +18,12 @@ namespace XNet.Libs.Utility
         }
         public static Metadata GetTraceMeta(this ServerCallContext context,string key = null)
         {
-             context.GetHeader(key ?? "trace-id", out var traceId);
+            if (!context.GetHeader(key ?? "trace-id", out var traceId))
+            {
+                return null;
+            }
 
-             return new Metadata()
+            return new Metadata()
              {
                  { "trace-id", traceId ?? string.Empty }
              };
