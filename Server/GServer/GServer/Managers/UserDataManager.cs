@@ -42,13 +42,13 @@ namespace GServer.Managers
             return await FindHeroByPlayerId(player.Uuid);
         }
 
-        public async Task<string> ProcessBattleReward(string accountUuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> RemoveItems, int exp, int level, int gold,int hp, int mp)
+        public async Task<string> ProcessBattleReward(string accountUuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> removeItems, int exp, int level, int gold,int hp, int mp)
         {
             var player = await FindPlayerByAccountId(accountUuid);
             if (player == null) return null;
-            var pupdate = Builders<GamePlayerEntity>.Update.Inc(t =>t.Gold, gold);
-            await DataBase.S.Playes.UpdateOneAsync(t => t.Uuid== player.Uuid, pupdate);
-            var (ms,rs) = await ProcessRewardItem(player.Uuid, modifyItems,  RemoveItems);
+            var pUpdate = Builders<GamePlayerEntity>.Update.Inc(t =>t.Gold, gold);
+            await DataBase.S.Playes.UpdateOneAsync(t => t.Uuid== player.Uuid, pUpdate);
+            var (ms,rs) = await ProcessRewardItem(player.Uuid, modifyItems,  removeItems);
             var hero = await FindHeroByPlayerId(player.Uuid);
             var update = Builders<GameHeroEntity>.Update
                 .Set(t => t.Exp, exp)
@@ -429,8 +429,12 @@ namespace GServer.Managers
         internal async Task<ErrorCode> BuyItem( string accountId, ShopItem item)
         {
             var player = await FindPlayerByAccountId(accountId);
-            var id = Builders<GamePlayerEntity>.Filter.Eq(t => t.Uuid, player.Uuid);
-
+            //var id = Builders<GamePlayerEntity>.Filter.Eq(t => t.Uuid, player.Uuid);
+            var package = await FindPackageByPlayerId(player.Uuid);
+            //check package size or full?
+            if (package.PackageSize <= package.Items.Count)
+                return ErrorCode.PackageSizeLimit;
+            
             switch (item.CType)
             {
                 case CoinType.Coin when item.Prices > player.Coin:
@@ -570,17 +574,17 @@ namespace GServer.Managers
 
         }
 
-        internal async Task<bool> OperatorEquip(string player_uuid, string equip_uuid, EquipmentType part, bool isWear)
+        internal async Task<bool> OperatorEquip(string playerUuid, string equipUuid, EquipmentType part, bool isWear)
         {
-            var h_filter = Builders<GameHeroEntity>.Filter.Eq(t => t.PlayerUuid, player_uuid);
+            var hFilter = Builders<GameHeroEntity>.Filter.Eq(t => t.PlayerUuid, playerUuid);
 
-            var hero = (await DataBase.S.Heros.FindAsync(h_filter)).SingleOrDefault();
+            var hero = (await DataBase.S.Heros.FindAsync(hFilter)).SingleOrDefault();
             if (hero == null) return false;
 
-            var pa_filter = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, player_uuid);
-            var package = (await DataBase.S.Packages.FindAsync(pa_filter)).Single();
+            var paFilter = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, playerUuid);
+            var package = (await DataBase.S.Packages.FindAsync(paFilter)).Single();
 
-            if (!package.TryGetItem(equip_uuid, out var item)) return false;
+            if (!package.TryGetItem(equipUuid, out var item)) return false;
 
             var config =  ExcelToJSONConfigManager.GetId<ItemData>(item.Id);
             if (config == null) return false;
@@ -596,26 +600,26 @@ namespace GServer.Managers
             }
 
             var update = Builders<GameHeroEntity>.Update.Set(t => t.Equips, hero.Equips);
-            await DataBase.S.Heros.UpdateOneAsync(h_filter, update);
+            await DataBase.S.Heros.UpdateOneAsync(hFilter, update);
 
             return true;
         }
 
-        private async Task<Tuple<IList<PlayerItem>, IList<PlayerItem>>> ProcessRewardItem(string player_uuid, IList<PlayerItem> modify, IList<PlayerItem> removes)
+        private async Task<Tuple<IList<PlayerItem>, IList<PlayerItem>>> ProcessRewardItem(string playerUuid, IList<PlayerItem> modify, IList<PlayerItem> removes)
         {
-            var pa_filter = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, player_uuid);
-            var package = (await DataBase.S.Packages.FindAsync(pa_filter)).Single();
+            var paFilter = Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, playerUuid);
+            var package = (await DataBase.S.Packages.FindAsync(paFilter)).Single();
 
             var models = new List<WriteModel<GamePackageEntity>>();
             foreach (var i in modify)
             {
-                if (package.TryGetItem(i.GUID, out PackageItem item))
+                if (package.TryGetItem(i.GUID, out var item))
                 {
                     var m = i.ToPackageItem();
                     models.Add(new UpdateOneModel<GamePackageEntity>(
                         Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid, package.Uuid)
                         & Builders<GamePackageEntity>.Filter.ElemMatch(t => t.Items, x => x.Uuid == item.Uuid),
-                        Builders<GamePackageEntity>.Update.Set(t => t.Items[-1], m)
+                        Builders<GamePackageEntity>.Update.Set("Items.$", m)
                         ));
                 }
                 else 
@@ -638,12 +642,12 @@ namespace GServer.Managers
             return Tuple.Create(modify,removes);
         }
 
-        private async Task<PackageItem> GetCanStackItem(int itemID, GamePackageEntity package)
+        private async Task<PackageItem> GetCanStackItem(int itemId, GamePackageEntity package)
         {
-            var it = ExcelToJSONConfigManager.GetId<ItemData>(itemID);
+            var it = ExcelToJSONConfigManager.GetId<ItemData>(itemId);
             foreach (var i in package.Items)
             {
-                if (i.Id == itemID)
+                if (i.Id == itemId)
                 {
                     if (i.Num < it.MaxStackNum)
 
@@ -715,9 +719,9 @@ namespace GServer.Managers
             return  Tuple.Create(modifies, adds);
         }
 
-        public async Task<bool> AddGoldAndCoin(string player_uuid, int coin, int gold)
+        public async Task<bool> AddGoldAndCoin(string playerUuid, int coin, int gold)
         {
-            var filter = Builders<GamePlayerEntity>.Filter.Eq(t => t.Uuid, player_uuid);
+            var filter = Builders<GamePlayerEntity>.Filter.Eq(t => t.Uuid, playerUuid);
             var player = (await DataBase.S.Playes.FindAsync(filter)).Single();
             var up = Builders<GamePlayerEntity>.Update;
             UpdateDefinition<GamePlayerEntity> update = null;
@@ -746,10 +750,10 @@ namespace GServer.Managers
             var config =  ExcelToJSONConfigManager.GetId<ItemData>(equip.Id);
             if (config == null) return new G2C_RefreshEquip { Code = ErrorCode.Error };
             var refreshData =  ExcelToJSONConfigManager.GetId<EquipRefreshData>(config.Quality);
-            int refreshCount = equip.EquipData?.RefreshCount ?? 0;
+            var refreshCount = equip.EquipData?.RefreshCount ?? 0;
             if (refreshData.MaxRefreshTimes <= refreshCount) return new G2C_RefreshEquip { Code = ErrorCode.RefreshTimeLimit };
             if (refreshData.NeedItemCount > customItem.Count) return new G2C_RefreshEquip { Code = ErrorCode.NoenoughItem };
-            Dictionary<HeroPropertyType, int> values = new Dictionary<HeroPropertyType, int>();
+            var values = new Dictionary<HeroPropertyType, int>();
             var removes = new List<PackageItem>();
             foreach (var i in customItem)
             {
@@ -792,13 +796,13 @@ namespace GServer.Managers
                 var val =  ExcelToJSONConfigManager.GetId<RefreshPropertyValueData>((int)selected);
                 var appendValue = val.Value * property;
                 //Debug.Assert(equip.EquipData != null, "equip.EquipData != null");
-                if (!equip.EquipData.Properties.TryAdd(selected, appendValue))
+                if (!equip.EquipData!.Properties.TryAdd(selected, appendValue))
                 {
                     equip.EquipData.Properties[selected] += appendValue;
                 }
             }
 
-            equip.EquipData.RefreshCount++;
+            equip.EquipData!.RefreshCount++;
 
             var models = new List<WriteModel<GamePackageEntity>>();
 

@@ -221,17 +221,12 @@ namespace Server
             if (exExp < heroLevel.NeedExp) return true;
             exLevel += 1;
             exExp -= heroLevel.NeedExp;
-            if (exExp > 0)
-            {
-                AddExp(exExp, exLevel, out exLevel, out exExp);
-            }
-            return true;
+            return exExp <= 0 || AddExp(exExp, exLevel, out exLevel, out exExp);
         }
 
 
         public int AddExp(int exp, out int oldLevel, out int newLevel)
         {
-
             oldLevel = newLevel = _hero.Level;
             if (exp <= 0) return _hero.Exprices;
             if (AddExp(exp + _hero.Exprices, _hero.Level, out var level, out var exLimit))

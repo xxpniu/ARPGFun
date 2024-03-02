@@ -155,12 +155,9 @@ namespace ServerUtility
             var path = @event.getPath();
             Debuger.Log($"Process:{@event.getPath()}-> {@event}");
             if (string.IsNullOrEmpty(path)) return;
-            if (@event.getPath().StartsWith(_prefixPath))
-            {
-                Debuger.Log($"StartLoad Config changes:{@event.getPath()}");
-                await Reload();
-            }
-            return ;
+            if (!@event.getPath().StartsWith(_prefixPath)) return;
+            Debuger.Log($"StartLoad Config changes:{@event.getPath()}");
+            await Reload();
         }
 
         public async Task Close()

@@ -1,5 +1,4 @@
-using System;
-using System.Runtime.CompilerServices;
+using System; 
 using System.Threading.Tasks;
 using App.Core.Core;
 using Cysharp.Threading.Tasks;
@@ -8,11 +7,11 @@ using Grpc.Core;
 using Proto;
 using UApp.Utility;
 using UnityEngine;
-using Utility;
 using XNet.Libs.Utility;
 
 namespace UApp
 {
+    [Name("GateManager")]
     public class GateManager : XSingleton<GateManager>
     {
 

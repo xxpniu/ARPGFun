@@ -33,6 +33,7 @@ namespace Server
             await UniTask.SwitchToMainThread();
             var accountUuid = context.GetAccountId();
             var matchServer = BattleServerApp.S.MatchServer.FirstOrDefault();
+            
             if (matchServer == null) return new B2C_ExitBattle { Code = ErrorCode.Ok };
             try
             {
@@ -40,13 +41,18 @@ namespace Server
                 {
                     await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                         matchServer.ServicsHost, 
-                        async (c) => await c.LeaveMatchGroupAsync(new S2M_LeaveMatchGroup { AccountID = accountUuid }));
+                        async (c) => await c.LeaveMatchGroupAsync(
+                            new S2M_LeaveMatchGroup { AccountID = accountUuid },
+                            headers: context.GetTraceMeta()
+                            ));
                 }
                 else
                 {
                     await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                         matchServer.ServicsHost,
-                        async (c) => await c.ExitBattleAsync(new S2M_ExitBattle { UserID = accountUuid }));
+                        async (c) => await c.ExitBattleAsync(
+                            new S2M_ExitBattle { UserID = accountUuid },
+                            headers: context.GetTraceMeta()));
                 }
             }
             catch (Exception ex)
@@ -61,15 +67,8 @@ namespace Server
         {
             await UniTask.SwitchToMainThread();
             var simulator = BattleServerApp.S.BattleSimulator;
-            
-            if (!simulator) return new B2C_JoinBattle();
-            if (!simulator.HavePlayer(request.AccountUuid)) return new B2C_JoinBattle();
-
-            var re = new S2L_CheckSession
-            {
-                UserID = request.AccountUuid,
-                Session = request.Session,
-            };
+            if (!simulator) return new B2C_JoinBattle{ Code = ErrorCode.ServerHostOffLine };
+            if (!simulator.HavePlayer(request.AccountUuid)) return new B2C_JoinBattle{ Code = ErrorCode.LoginFailure};
             var loginServer = BattleServerApp.S.LoginServer.FirstOrDefault();
             if (loginServer == null)
             {
@@ -77,26 +76,40 @@ namespace Server
                 return new B2C_JoinBattle { Code = ErrorCode.NofoundServerId };
             }
 
+            await UniTask.SwitchToTaskPool();
             try
             {
                 var seResult = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>
                     .RequestOnceAsync(loginServer.ServicsHost,
-                        async (c) => await c.CheckSessionAsync(re));
+                        expression: async c =>
+                            await c.CheckSessionAsync(
+                                request: new S2L_CheckSession
+                                {
+                                    UserID = request.AccountUuid,
+                                    Session = request.Session,
+                                },
+                                headers: context.GetTraceMeta()
+                            ));
 
                 if (!seResult.Code.IsOk()) return new B2C_JoinBattle();
-
                 {
                     var pack = await C<GateServerInnerService.GateServerInnerServiceClient>
                         .RequestOnceAsync(seResult.GateServerInnerHost,
-                            async (c) => await c.GetPlayerInfoAsync(new B2G_GetPlayerInfo
-                                { AccountUuid = request.AccountUuid }));
+                            expression: async c =>
+                                await c.GetPlayerInfoAsync(
+                                    request: new B2G_GetPlayerInfo { AccountUuid = request.AccountUuid },
+                                    headers: context.GetTraceMeta())
+                                );
 
-                    if (!pack.Code.IsOk()) return new B2C_JoinBattle();
-                    if (!Server.TryCreateSession(request.AccountUuid, out var key)) return new B2C_JoinBattle();
+                    if (!pack.Code.IsOk()) return new B2C_JoinBattle{ Code = pack.Code};
+                    
+                    if (!Server.TryCreateSession(request.AccountUuid, out var key)) 
+                        return new B2C_JoinBattle{ Code = ErrorCode.Exception };
                     //session-key
                     await context.WriteResponseHeadersAsync(new Metadata { { "session-key", key } });
                     Debuger.Log($"Add:{request.AccountUuid} -> {key}");
-                    var battlePlayer = new BattlePlayer(request.AccountUuid, pack.Package, pack.Hero, pack.Gold, seResult);
+                    var battlePlayer =
+                        new BattlePlayer(request.AccountUuid, pack.Package, pack.Hero, pack.Gold, seResult);
                     simulator.AddPlayer(request.AccountUuid, battlePlayer);
                 }
                 return new B2C_JoinBattle { Code = ErrorCode.Ok };
@@ -106,8 +119,6 @@ namespace Server
                 Debuger.LogError(ex);
                 return new B2C_JoinBattle { Code = ErrorCode.Error };
             }
-
-
         }
 
         internal void CloseAllChannel()
@@ -161,7 +172,8 @@ namespace Server
             var channel = new StreamBuffer<Any>(100);
             _requestChannels.TryAdd(account, channel);
             simulator.BindUserChannel(account, pushChannel: pushChannel, requestChannel: channel);
-
+            await UniTask.SwitchToTaskPool();
+            
             var push = Task.Factory.StartNew(async () =>
             {
                 await pushChannel.ProcessAsync(responseStream).ConfigureAwait(false);
@@ -193,8 +205,8 @@ namespace Server
 
         public void CloseChannel(string userID)
         {
-            if (_pushChannels.TryRemove(userID, out StreamBuffer<Any> push)) push.Close();
-            if (_requestChannels.TryRemove(userID, out StreamBuffer<Any> req)) req.Close();
+            if (_pushChannels.TryRemove(userID, out var push)) push.Close();
+            if (_requestChannels.TryRemove(userID, out var req)) req.Close();
         }
 
         public void PushToAll(IMessage msg)

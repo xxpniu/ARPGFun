@@ -55,7 +55,7 @@ namespace SRDebugger.Internal
                 return false;
             }
 
-            var e = Object.FindObjectOfType<EventSystem>();
+            var e = Object.FindFirstObjectByType<EventSystem>();
 
             // Check if EventSystem is in the scene but not registered yet
             if (e != null && e.gameObject.activeSelf && e.enabled)

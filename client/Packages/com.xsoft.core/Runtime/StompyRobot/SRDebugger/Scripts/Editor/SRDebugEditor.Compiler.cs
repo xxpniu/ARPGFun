@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 
 namespace SRDebugger.Editor
@@ -17,7 +18,7 @@ namespace SRDebugger.Editor
             foreach (BuildTargetGroup targetGroup in GetAllBuildTargetGroups())
             {
                 // Use hash set to remove duplicates.
-                List<string> defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup).Split(';').ToList();
+                List<string> defines = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup) ).Split(';').ToList();
 
                 bool alreadyExists = false;
 
@@ -38,7 +39,7 @@ namespace SRDebugger.Editor
                     defines.Add(define);
                 }
 
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, string.Join(";", defines.ToArray()));
+                PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup( targetGroup), string.Join(";", defines.ToArray()));
             }
         }
         static void ForceRecompile()

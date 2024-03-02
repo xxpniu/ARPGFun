@@ -26,7 +26,7 @@ namespace GServer
         //游戏战斗服务器访问端口
         private LogServer _serviceServer;
         //zk
-        private ZooKeeper Zk;
+        private ZooKeeper _zk;
         private ResourcesLoader _loader;
         public StreamServices StreamService { private set; get; }
 
@@ -65,8 +65,7 @@ namespace GServer
             ListenServer.Start();
 
             Debuger.Log($"Start Services: {Config.ServicsHost}");
-
-     
+            
             _serviceServer = new LogServer
             {
                 Ports = {  new ServerPort("0.0.0.0", Config.ServicsHost.Port, ServerCredentials.Insecure) },
@@ -75,35 +74,35 @@ namespace GServer
 
             _serviceServer.Start();
 
-            Zk = new ZooKeeper(Config.ZkServer[0], 3000, new DefaultWatcher());
+            _zk = new ZooKeeper(Config.ZkServer[0], 3000, new DefaultWatcher());
 
-            if ((await Zk.existsAsync(Config.GateServersRoot)) == null)
+            if ((await _zk.existsAsync(Config.GateServersRoot)) == null)
             {
-                var res = await Zk.createAsync(Config.GateServersRoot, new byte[] { 0 },
+                var res = await _zk.createAsync(Config.GateServersRoot, new byte[] { 0 },
                     Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                 Debuger.Log($"Create:{ res}");
             }
             var serverKey = $"{Config.GateServersRoot}/{Config.ServerID}";
             Debuger.Log($"ServerKey:{serverKey}");
             {
-                var res = await Zk.createAsync(serverKey,
+                var res = await _zk.createAsync(serverKey,
                    Encoding.UTF8.GetBytes(Config.ToJson()), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
                 Debuger.Log($"Add server:{res}");
             }
             DataBase.S.Init(this.Config.DBHost, this.Config.DBName);
 
-            MatchServers = await new WatcherServer<string, MatchServerConfig>(Zk,
+            MatchServers = await new WatcherServer<string, MatchServerConfig>(_zk,
                 Config.MatchServerRoot, (c) => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}").RefreshData();
-            LoginServers = await new WatcherServer<string, LoginServerConfig>(Zk, Config.LoginServerRoot, c => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
+            LoginServers = await new WatcherServer<string, LoginServerConfig>(_zk, Config.LoginServerRoot, c => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
                 .RefreshData();
-            NotifyServers = await new WatcherServer<string, NotifyServerConfig>(Zk, Config.NotifyServerRoot, c => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
+            NotifyServers = await new WatcherServer<string, NotifyServerConfig>(_zk, Config.NotifyServerRoot, c => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
                 .RefreshData();
         }
 
         protected override async Task Stop(CancellationToken token = default)
         {
             await _loader?.Close()!; 
-            await Zk.closeAsync();
+            await _zk.closeAsync();
             await ListenServer.ShutdownAsync();
             await _serviceServer.ShutdownAsync();
             Debuger.Log("Server had stop");

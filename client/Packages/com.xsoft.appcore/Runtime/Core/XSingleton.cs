@@ -8,6 +8,14 @@ namespace App.Core.Core
     public class DestroyOnLoadAttribute : Attribute
     {
     }
+    [AttributeUsage( AttributeTargets.Class)]
+    public class NameAttribute : Attribute
+    {
+        public string Name { set; get; }
+        public NameAttribute(string name) => Name = name;
+    }
+    
+    
 	
     public class XSingleton<T> : MonoBehaviour where T : MonoBehaviour, new()
     {
@@ -18,8 +26,17 @@ namespace App.Core.Core
             get
             {
                 if (_instance != null) return _instance;
-                if (!_instance) _instance = FindFirstObjectByType(typeof(T)) as T;
-                if (!_instance) _instance = new GameObject(typeof(T).ToString()).AddComponent<T>();
+                var type = typeof(T);
+                var name = type.GetCustomAttribute<NameAttribute>()?.Name ?? typeof(T).FullName;
+                
+                {
+                    _instance = FindFirstObjectByType(typeof(T)) as T;
+                    Debug.Log($"Instance from FindFirstObjectByType<{typeof(T).FullName}>()");
+                    if(_instance)  _instance.name = name!;
+                }
+                if (_instance) return _instance;
+                Debug.Log($"Instance create from AddComponent<{typeof(T).FullName}>()");
+                _instance = new GameObject(name).AddComponent<T>();
                 return _instance;
             }
         }

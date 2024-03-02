@@ -21,9 +21,7 @@ namespace Server
     public class BossLevelSimulator:BattleLevelSimulator
     {
         private  MapElementSpawn _spawn;
-
-
-
+        
         protected override void OnLoadCompleted()
         {
             base.OnLoadCompleted();

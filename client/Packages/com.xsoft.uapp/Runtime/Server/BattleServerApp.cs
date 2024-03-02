@@ -61,7 +61,6 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         if (BattleSimulator)
         {
             Debuger.LogError($"Not found BattleSimulator");
-
             return false;
         }
 
@@ -75,7 +74,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     {
         var level = CM.GetId<BattleLevelData>(levelID);
         await ResourcesManager.S.LoadLevelAsync(level).Task;
-
+        
         var go = new GameObject($"Simulator_{levelID}", typeof(BattleSimulator));
         var si = go.GetComponent<BattleSimulator>();
         si.OnExited = () =>
@@ -83,10 +82,8 @@ public class BattleServerApp : XSingleton<BattleServerApp>
             BattleSimulator = null;
             Services?.CloseAllChannel();
         };
-
-        await si.Begin(level, players);
-        BattleSimulator = si;
         si.OnEnd = SiOnEnd;
+        BattleSimulator = await si.Begin(level, players);
     }
 
     private async void SiOnEnd(bool force)
@@ -99,18 +96,17 @@ public class BattleServerApp : XSingleton<BattleServerApp>
             {
                 const int delay = 30;
                 var end = new Notify_BattleEnd() { EndTime = delay };
-                //send to client
                 Services?.PushToAll(end);
                 await UniTask.Delay(delay * 1000);
             }
 
             var matchServer = MatchServer.FirstOrDefault();
             if (matchServer == null) return;
-
-            var chn = new LogChannel(matchServer.ServicsHost);
-            var query = chn.CreateClient<MatchServices.MatchServicesClient>();
-            await query.FinishBattleAsync(new S2M_FinishBattle { BattleServerID = Config.ServerID });
-            await chn.ShutdownAsync();
+            await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                ip:matchServer.ServicsHost,
+                expression: async client =>
+                    await client.FinishBattleAsync(new S2M_FinishBattle { BattleServerID = Config.ServerID })
+                ); 
             Services?.CloseAllChannel();
         }
         catch (Exception ex)
@@ -118,16 +114,16 @@ public class BattleServerApp : XSingleton<BattleServerApp>
             Debuger.LogError(ex);
         }
 
+        await UniTask.SwitchToMainThread();
+        
         if (BattleSimulator)
         {
             Destroy(BattleSimulator);
             BattleSimulator = null;
         }
-
         SceneManager.LoadScene("null");
         await UniTask.Delay(1000);
         await RegBattleServer();
-        //on end by time default
     }
 
     public BattleSimulator BattleSimulator { private set; get; }
@@ -147,7 +143,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 
         var json = ResourcesManager.S.ReadStreamingFile("server.json");
         Config = BattleServerConfig.Parser.ParseJson(json);
-
+        
 #if UNITY_SERVER || UNITY_EDITOR
         Parser.Default.ParseArguments<CommandOption>(commandLineArgs)
             .WithParsed(o =>
@@ -167,6 +163,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
                 o.ZkRoot?.Set(s => Config.BattleServerRoot = s);
             });
 #endif
+        
         ServerID = Config.ServerID;
         Debuger.Log($"{ServerID}->{Config}");
         _ = new CM(ResourcesManager.S);

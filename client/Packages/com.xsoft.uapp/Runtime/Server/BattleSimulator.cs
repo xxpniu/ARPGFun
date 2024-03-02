@@ -26,21 +26,20 @@ namespace Server
         private readonly Dictionary<string, BattlePlayer> _battlePlayers = new Dictionary<string, BattlePlayer>();
         private readonly ConcurrentDictionary<string, BattlePlayer> _tempPlayers = new ConcurrentDictionary<string, BattlePlayer>();
 
-        public BattleLevelSimulator simulator;
+        private BattleLevelSimulator _levelSimulator;
         public RunState stateOfRun = RunState.NoStart;
 
         private HashSet<string> Players { get; } = new();
 
-        public async Task<BattleLevelSimulator> Begin(BattleLevelData level, IList<string> players)
+        public async Task<BattleSimulator> Begin(BattleLevelData level, IList<string> players)
         {
             var per = UPerceptionView.Create(BattleServerApp.S.Constant);
-            var levelSimulator = BattleLevelSimulator.Create(level);
+            _levelSimulator = BattleLevelSimulator.Create(level);
             foreach (var i in players) Players.Add(i);
-            await levelSimulator.Init(this, level, per);
-            simulator = levelSimulator;
+            await _levelSimulator.Init(this, level, per);
             stateOfRun = RunState.Waiting;
             _waitingTime = BattleServerApp.S.Constant.WAITING_TIME;
-            return levelSimulator;
+            return this;
         }
 
         private float _waitingTime = 60;
@@ -51,8 +50,8 @@ namespace Server
         {
             if (_exited) return;
             _exited = true;
-            simulator?.Stop();
-            simulator = null;
+            _levelSimulator?.Stop();
+            _levelSimulator = null;
         }
 
         internal bool HavePlayer(string accountUuid)
@@ -73,11 +72,17 @@ namespace Server
                     if (_waitingTime <= 0) EndCall(true);
                     break;
                 }
+                case RunState.Running:
+                    break;
+                case RunState.Ending:
+                default:
+                    break;
             }
 
             ProcessJoinClient();
             ProcessAction();
-            var (isEnd, msg) = simulator.Tick();
+            
+            var (isEnd, msg) = _levelSimulator.Tick();
 
             if (stateOfRun == RunState.Running)
             {
@@ -105,22 +110,19 @@ namespace Server
         private void ProcessJoinClient()
         {
             if (_addTemp.Count == 0 && _kickUsers.Count ==0) return;
-
             while (_addTemp.TryDequeue(out var client))
             {
-                if (this.stateOfRun == RunState.Waiting)
-                    this.stateOfRun = RunState.Running;
-
+                if (this.stateOfRun == RunState.Waiting) this.stateOfRun = RunState.Running;
                 Debuger.Log($"Add Client:{client.Account}");
                 _battlePlayers.Remove(client.Account);
-                var createNotify = simulator.GetInitNotify();
-                var c = simulator.CreateUser(client.Player);
+                var createNotify = _levelSimulator.GetInitNotify();
+                var c = _levelSimulator.CreateUser(client.Player);
                 if (c != null)
                 {
                     client.Player.HeroCharacter = c;
                     _battlePlayers.Add(client.Account, client.Player);
                     var package = client.Player.GetNotifyPackage();
-                    package.TimeNow = simulator.TimeNow.Time;
+                    package.TimeNow = _levelSimulator.TimeNow.Time;
                     client.Player.PushChannel?.Push(Any.Pack(package));
                     foreach (var i in createNotify)
                     {
@@ -159,7 +161,7 @@ namespace Server
                 var req = new B2G_BattleReward
                 {
                     AccountUuid = p.AccountId,
-                    MapID = simulator.LevelData.ID,
+                    MapID = _levelSimulator.LevelData.ID,
                     DiffGold = p.DiffGold,
                     Exp = p.GetHero().Exprices,
                     Level = p.GetHero().Level,
@@ -206,7 +208,7 @@ namespace Server
             if (notify == null || notify.Length == 0) return;
 
             var buffer = new List<Any>();
-            var time = Any.Pack(new Notify_SyncServerTime { ServerNow = simulator.TimeNow.Time });
+            var time = Any.Pack(new Notify_SyncServerTime { ServerNow = _levelSimulator.TimeNow.Time });
             buffer.Add(time);
             foreach (var i in notify)
             {
@@ -250,7 +252,7 @@ namespace Server
                     }
                     if (action.TryUnpack(out Action_CollectItem collect))
                     {
-                        if (!simulator.TryGetElementByIndex(collect.Index, out BattleItem item)) continue;
+                        if (!_levelSimulator.TryGetElementByIndex(collect.Index, out BattleItem item)) continue;
                         if (item.IsAliveAble != true || !item.CanBecollect(i.Value.HeroCharacter)) continue;
                         if (!i.Value.AddDrop(item.DropItem)) continue;
                         needNotifyPackage = true;
@@ -268,7 +270,7 @@ namespace Server
                             case ItemType.ItMpitem:
                             {
                                 var rTarget = new ReleaseAtTarget(i.Value.HeroCharacter, i.Value.HeroCharacter);
-                                if (simulator.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
+                                if (_levelSimulator.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
                                 {
                                     i.Value.ConsumeItem(useItem.ItemId);
                                     needNotifyPackage = true;
@@ -314,7 +316,7 @@ namespace Server
                 }
                 if (!needNotifyPackage) continue;
                 var init = i.Value.GetNotifyPackage();
-                init.TimeNow = simulator.TimeNow.Time;
+                init.TimeNow = _levelSimulator.TimeNow.Time;
                 i.Value.PushChannel?.Push(Any.Pack(init));
             }    
         }

@@ -35,6 +35,7 @@ namespace BattleViews.Components
 
 
 	[DestroyOnLoad]
+	[Name("GPUBillboardBuffer")]
 	public class GPUBillboardBuffer:XSingleton<GPUBillboardBuffer>
 	{
 		const int BC_VERTEX_EACH_BOARD = 4;

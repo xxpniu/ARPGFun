@@ -79,10 +79,7 @@ namespace GServer
             Debuger.Loger = log;
             GrpcEnvironment.SetLogger(log);
             Debuger.Log(config);
-
             await Application.S.Create(config).Run();
-
-
             Debuger.Log("Application had exited!");
         }
 

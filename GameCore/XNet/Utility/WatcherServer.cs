@@ -46,7 +46,7 @@ namespace XNet.Libs.Utility
                         await _watcherServer.RefreshData();
                         break;
                     case Event.EventType.None:
-
+                    default:
                         break;
                 }
             }

@@ -35,7 +35,8 @@ enum ErrorCode
     InMatch = 16;
     ServerHostOffLine =17;//服务器连接失败
     ServerIsFull =18 ;//服务器人数满了
-    
+    NoSimulaterOnBattleServer = 19;//仿真失败
+    ServerUserStateError = 20;//用户状态错误
 
     NOFoundItem =100; //没有道具
     NOEnoughItem =101;//道具数量不足

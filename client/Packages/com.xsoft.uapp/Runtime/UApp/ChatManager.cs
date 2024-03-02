@@ -12,6 +12,7 @@ using static UApp.Utility.Stream;
 
 namespace UApp
 {
+    [Name("ChatManager")]
     public class ChatManager : XSingleton<ChatManager>
     {
 

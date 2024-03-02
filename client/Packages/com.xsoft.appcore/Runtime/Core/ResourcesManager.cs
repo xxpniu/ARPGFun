@@ -13,6 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace App.Core.Core
 {
+	[Name("ResourcesManager")]
 	public class ResourcesManager : XSingleton<ResourcesManager>, IConfigLoader
 	{
 		OnDebug IConfigLoader.Printer => Debuger.LogWaring;

@@ -27,10 +27,14 @@ using XNet.Libs.Utility;
 
 namespace Server
 {
-    [Serializable]
-    public class BattleLevelSimulator :  IStateLoader, IAIRunner
+    public class LevelSimulatorAttribute : Attribute
     {
-
+        public MapType MType { set; get; }
+    }
+    
+    [Serializable]
+    public abstract class BattleLevelSimulator :  IStateLoader, IAIRunner
+    {
         public BattleSimulator Simulator { private set; get; }
 
         #region AI RUN
@@ -86,7 +90,7 @@ namespace Server
         public float totalTime = 0f;
 
 
-        public async  Task Init(BattleSimulator simulator, BattleLevelData data, UPerceptionView view)
+        public async Task<BattleLevelSimulator> Init(BattleSimulator simulator, BattleLevelData data, UPerceptionView view)
         {
             this.Simulator = simulator;
             LevelData = data;
@@ -101,6 +105,7 @@ namespace Server
             State = new BattleState(perView, this, perView);
             State.Start(this.GetTime());
             OnLoadCompleted();
+            return this;
         }
 
         protected virtual void OnLoadCompleted()
@@ -123,7 +128,7 @@ namespace Server
 
         protected virtual int PlayerTeamIndex  { get; } = 1;
 
-        [Obsolete]
+        //[Obsolete]
         public BattleCharacter CreateUser(BattlePlayer user)
         {
             BattleCharacter character = null;

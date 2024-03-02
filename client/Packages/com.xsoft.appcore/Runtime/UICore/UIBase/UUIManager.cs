@@ -9,6 +9,8 @@ using App.Core.Core;
 using App.Core.UICore.Utility;
 using Cysharp.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
+// ReSharper disable once InconsistentNaming
 public abstract class UUIElement
 {
     private CancellationTokenSource _tokenSource = new CancellationTokenSource();
@@ -55,7 +57,9 @@ public enum WRenderType
     WithCanvas
 }
 
-
+[Name("UIManager")]
+// ReSharper disable once CheckNamespace
+// ReSharper disable once InconsistentNaming
 public class UUIManager:XSingleton<UUIManager>
 {
     protected override void Awake()
@@ -72,9 +76,6 @@ public class UUIManager:XSingleton<UUIManager>
         var nc = this.NotifyCanvas.GetComponent<CanvasScaler>();
         bc.matchWidthOrHeight = w;
         nc.matchWidthOrHeight = w;
-
-
-
     }
 
     public float Ratio = 1;

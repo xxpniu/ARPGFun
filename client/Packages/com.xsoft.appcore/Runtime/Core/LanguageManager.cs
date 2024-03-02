@@ -6,6 +6,7 @@ using XNet.Libs.Utility;
 
 namespace App.Core.Core
 {
+    [Name("LanguageManager")]
     public class LanguageManager : XSingleton<LanguageManager>
     {
         public enum LanguageType

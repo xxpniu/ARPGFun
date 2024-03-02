@@ -6,7 +6,7 @@ namespace XNet.Libs.Utility
 
     public class StreamBuffer<TData> where TData : IMessage, new()
     {
-        readonly ConcurrentQueue<TData> _requests = new ConcurrentQueue<TData>();
+        private readonly ConcurrentQueue<TData> _requests = new ConcurrentQueue<TData>();
 
         public int Max { get; }
 
@@ -15,7 +15,7 @@ namespace XNet.Libs.Utility
             this.Max = max;
         }
 
-        public bool TryPull(out TData data)
+        protected bool TryPull(out TData data)
         {
             return _requests.TryDequeue(out data);
         }
