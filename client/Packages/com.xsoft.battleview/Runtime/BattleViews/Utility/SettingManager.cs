@@ -3,10 +3,11 @@ using UnityEngine;
 
 namespace BattleViews.Utility
 {
+    [Name("SettingManager")]
     public class SettingManager : XSingleton<SettingManager>
     {
 
-        private bool save_power = false;
+        private bool _savePower = false;
         public bool SavePower
         {
             set
@@ -16,20 +17,20 @@ namespace BattleViews.Utility
                     Application.targetFrameRate = 30;
                     Screen.sleepTimeout = SleepTimeout.SystemSetting;
                 }
-                save_power = value;
+                _savePower = value;
                 PlayerPrefs.SetInt("__SETTING_Save_Power", 1);
             }
-            get => save_power;
+            get => _savePower;
         }
-        private float _BgmValue = 1f;
+        private float _bgmValue = 1f;
         public float BgmValue
         {
             set
             {
-                _BgmValue = value;
+                _bgmValue = value;
                 PlayerPrefs.SetFloat("__SETTING_Bgm_Value", value);
             }
-            get => _BgmValue;
+            get => _bgmValue;
         }
 
         private bool _notice;
@@ -46,15 +47,15 @@ namespace BattleViews.Utility
         public string Language { set; get; }
 
 
-        private float music = 1;
+        private float _music = 1;
         public float MusicValue
         {
             set
             {
-                music = value;
+                _music = value;
                 PlayerPrefs.SetFloat("__SETTING_music_Value", value);
             }
-            get => music;
+            get => _music;
         }
 
         protected override void Awake()

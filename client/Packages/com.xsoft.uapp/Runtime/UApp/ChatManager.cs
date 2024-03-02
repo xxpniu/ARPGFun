@@ -35,10 +35,16 @@ namespace UApp
         private  async void ShowConnect()
         {
             await UniTask.SwitchToMainThread();
+
             Windows.UUIPopup.ShowConfirm("Chat_Disconnect".GetLanguageWord(),
                 "Chat_Disconnect_content".GetLanguageWord(),
-                 async () => { await TryConnectChatServer(UApplication.S.ChatServer, HeroName); });
+                 ReConnected);
+            return;
 
+            async void ReConnected()
+            {
+                await TryConnectChatServer(UApplication.S.ChatServer, HeroName);
+            }
         }
 
         public ChatService.ChatServiceClient ChatClient { private set; get; }
@@ -143,11 +149,13 @@ namespace UApp
                     Windows.UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(),
                         "BattleJoinContent".GetLanguageWord(),
                         () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID),
-                        async () =>
-                        {
-                            var (b, g) = GateManager.TryGet();
-                            if (b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
-                        });
+                        LevelMatch);
+
+                    async void LevelMatch()
+                    {
+                        var (b, g) = GateManager.TryGet();
+                        if (b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
+                    }
                 }
 
                 Debuger.Log(battleServer);

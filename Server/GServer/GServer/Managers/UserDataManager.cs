@@ -520,7 +520,7 @@ namespace GServer.Managers
                     if (i.Guid == e.Value) return new G2C_SaleItem { Code = ErrorCode.IsWearOnHero };
                 }
 
-                if (!p.TryGetItem(i.Guid, out PackageItem item))
+                if (!p.TryGetItem(i.Guid, out var item))
                     return new G2C_SaleItem { Code = ErrorCode.NofoundItem };
                 if (item.Num < i.Num)
                     return new G2C_SaleItem { Code = ErrorCode.NoenoughItem };
@@ -555,7 +555,7 @@ namespace GServer.Managers
                         models.Add(new UpdateOneModel<GamePackageEntity>(
                         Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid, p.Uuid) &
                         Builders<GamePackageEntity>.Filter.ElemMatch(t => t.Items, x => x.Uuid == item.Uuid),
-                        Builders<GamePackageEntity>.Update.Set(t => t.Items[-1].Num, item.Num))
+                        Builders<GamePackageEntity>.Update.Set( "Items.$.Num", item.Num))
                         );
                     }
                 }
@@ -564,8 +564,8 @@ namespace GServer.Managers
             pl.Gold += total;
 
 
-            var u_player = Builders<GamePlayerEntity>.Update.Inc(t => t.Gold, total);
-            await DataBase.S.Playes.FindOneAndUpdateAsync(t => t.Uuid == pl.Uuid, u_player);
+            var uPlayer = Builders<GamePlayerEntity>.Update.Inc(t => t.Gold, total);
+            await DataBase.S.Playes.FindOneAndUpdateAsync(t => t.Uuid == pl.Uuid, uPlayer);
             await DataBase.S.Packages.BulkWriteAsync(models);
 
             await SyncModifyItems(account, modify.Select(t => t.ToPlayerItem()).ToArray(), removes.Select(t => t.ToPlayerItem()).ToArray());
@@ -710,7 +710,7 @@ namespace GServer.Managers
                 var b = Builders<GamePackageEntity>.Filter;
                 models.Add(new UpdateOneModel<GamePackageEntity>(
                     b.Eq(t => t.PlayerUuid, uuid) & b.ElemMatch(t => t.Items, x => x.Uuid == m.Uuid),
-                    Builders<GamePackageEntity>.Update.Set(t => t.Items[-1], m))
+                    Builders<GamePackageEntity>.Update.Set("Items.$", m))
                     );
             }
 
@@ -809,8 +809,7 @@ namespace GServer.Managers
             var modify = new UpdateOneModel<GamePackageEntity>(
                      Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid, package.Uuid)
                      & Builders<GamePackageEntity>.Filter.ElemMatch(t => t.Items, c=>c.Uuid == equip.Uuid),
-                     Builders<GamePackageEntity>.Update.Set("Items.$", equip)
-            // Builders<GamePackageEntity>.Update.Set(t => t.Items[-1], equip)         
+                     Builders<GamePackageEntity>.Update.Set("Items.$", equip)     
                 );
             
             models.Add(modify);
