@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Core;
@@ -40,6 +41,25 @@ namespace XNet.Libs.Utility
             if (!server.TryCreateSession(account, out var session))  return false;
             await context.WriteResponseHeadersAsync(new Metadata { { "session-key", session } });
             return true;
+        }
+
+        public static string ToLog(this ServerCallContext context)
+        {
+            var headers = new[] {"trace-id" ,"ticks", "caller-user" , "caller-machine" , "caller-os" , "call-key" , "call-token", "session-key"};
+            var sb = new StringBuilder();
+            foreach (var i in headers)
+            {
+                var str = GetHeaderValue(i);
+                if (string.IsNullOrEmpty(str)) continue;
+                sb.Append($" {i}={str}");
+            }
+
+            return sb.ToString();
+
+            string GetHeaderValue(string key)
+            {
+                return context.RequestHeaders.Get(key)?.Value;
+            }
         }
     }
 }

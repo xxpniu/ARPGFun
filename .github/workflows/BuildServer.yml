@@ -18,6 +18,10 @@ jobs:
     - uses: actions/checkout@v3
     - name: build Server
       run: mkdir serverout && sh buildforci.sh version-${{github.run_number}} `pwd`/serverout
-
+    - uses: Satak/webrequest-action@v1.2.3
+    - name: jenkins Request Rebuild Server
+      with: 
+       url: http://andew25a.synology.me:2080/generic-webhook-trigger/invoke?token=andrew_auto_build
+       method: GET
 
     

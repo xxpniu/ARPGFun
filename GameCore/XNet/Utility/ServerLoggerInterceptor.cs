@@ -100,21 +100,9 @@ namespace XNet.Libs.Utility
             where TResponse : class
         {
 
-            string GetHeader(string key)
-            {
-                return context.RequestHeaders.Get(key)?.Value;
-            }
+            var headers = context.ToLog();
 
-            var headers = new[] {"trace-id" ,"ticks", "caller-user" , "caller-machine" , "caller-os" , "call-key" , "call-token", "session-key"};
-            var sb = new StringBuilder();
-            foreach (var i in headers)
-            {
-                var str = GetHeader(i);
-                if (string.IsNullOrEmpty(str)) continue;
-                sb.Append($" {i}={str}");
-            }
-
-            Debuger.Log($"Call:{methodType} {sb}[{typeof(TRequest)}]->{request} Response: {typeof(TResponse)}{response}");
+            Debuger.Log($"Call:{methodType} {headers}[{typeof(TRequest)}]->{request} Response: {typeof(TResponse)}{response}");
 
         }
     }

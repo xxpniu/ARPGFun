@@ -156,13 +156,17 @@ namespace XNet.Libs.Utility
         public static async Task<TRes> RequestOnceAsync<TRes>(
             ServiceAddress ip,
             Func<TClient, Task<TRes>> expression,
-            DateTime? deadTime = default, ServerCallContext refContext = default)
+            DateTime? deadTime = default, 
+            ServerCallContext refContext = default)
         {
             var server = new C<TClient>(ip);
-
             var client = await server.CreateClientAsync<TClient>(deadTime);
             try
             {
+                if (refContext != null)
+                {
+                    Debuger.Log($"Ref headers: ${refContext.ToLog()}");
+                }
                 // var id = refContext?.GetTraceId();
                 var res = await expression.Invoke(client);
                 return res;
