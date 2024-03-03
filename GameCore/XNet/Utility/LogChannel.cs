@@ -166,8 +166,8 @@ namespace XNet.Libs.Utility
                 if (refContext != null)
                 {
                     Debuger.Log($"Ref headers: ${refContext.ToLog()}");
-                }
-                // var id = refContext?.GetTraceId();
+                    //ref
+                } 
                 var res = await expression.Invoke(client);
                 return res;
             }
