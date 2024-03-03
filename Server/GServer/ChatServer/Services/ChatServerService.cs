@@ -22,6 +22,7 @@ namespace ChatServer.Services
                 User= new ChatUser { ChatServerId = Application.S.Config.ChatServerID, Uuid = request.Receiver.Uuid }
             };
            
+            //send player state
         }
 
         public override async Task<Proto.Void> CreateNotify(NotifyMsg request, ServerCallContext context)
