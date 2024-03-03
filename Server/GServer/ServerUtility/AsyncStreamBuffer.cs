@@ -30,7 +30,7 @@ namespace ServerUtility
             Resume();
         }
 
-        private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(0, 1);
+        private readonly SemaphoreSlim _semaphoreSlim = new(0, 1);
 
         private void Resume()
         {

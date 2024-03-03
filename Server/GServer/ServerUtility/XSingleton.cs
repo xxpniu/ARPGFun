@@ -1,4 +1,5 @@
-﻿using System;
+﻿ 
+
 namespace ServerUtility
 {
     public class XSingleton<T> where T : class, new()
@@ -7,28 +8,22 @@ namespace ServerUtility
 
         private class InnerClass
         {
-            public static T inst = new T();
+            public static T Inst = new T();
             internal static void Reset()
             {
-                inst = new T();
+                Inst = new T();
             }
         }
 
-        public static T Singleton
-        {
-            get
-            {
-                return InnerClass.inst;
-            }
-        }
+        public static T Singleton => InnerClass.Inst;
 
-        public static T S { get { return Singleton; } }
+        public static T S => Singleton;
 
         public static void ResetSingle()
         {
             InnerClass.Reset();
         }
-
+        
     }
 }
 

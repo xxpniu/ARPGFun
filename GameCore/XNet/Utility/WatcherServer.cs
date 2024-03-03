@@ -22,7 +22,7 @@ namespace XNet.Libs.Utility
     public class WatcherServer<TKey, TServer> : IEnumerable<TServer>
         where TServer : IMessage, new()
     {
-        
+        private int _nextIndex = 0;
         public delegate void WatchChanged(TServer[] old, TServer[] newList);
         private class ZkWatcher : Watcher
         {
@@ -138,6 +138,32 @@ namespace XNet.Libs.Utility
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public TServer NextServer()
+        {
+            if (_nextIndex < 0) _nextIndex = 0;
+            if (_nextIndex >= _serverConfigs.Count)
+            {
+                _nextIndex = 0;
+            }
+
+            TServer server = default;
+            var start = 0;
+            foreach (var kv in _serverConfigs)
+            {
+                if (start == _nextIndex)
+                {
+                    server = kv.Value;
+                    break;
+                }
+
+                start++;
+            }
+
+            _nextIndex++;
+
+            return server;
         }
 
         public Action OnRefreshed;

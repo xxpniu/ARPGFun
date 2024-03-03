@@ -4,9 +4,9 @@ namespace GameLogic.Game.LayoutLogics
 {
 	public interface IParticlePlayer
 	{
-		void DestoryParticle();
-		void AutoDestory(float time);
-		bool CanDestory{ get;}
+		void DestroyParticle();
+		void AutoDestroy(float time);
+		bool CanDestroy{ get;}
 	}
 }
 

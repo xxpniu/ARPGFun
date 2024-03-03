@@ -23,13 +23,13 @@ namespace NotifyServer
 
     public class NotifyServerService:Proto.NotifyServices.NotifyServicesBase
     {
-        private readonly WatcherServer<int, ChatServerConfig> chat;
-        private readonly ConcurrentDictionary<int, ChatChannel> ChatServers = new ConcurrentDictionary<int, ChatChannel>();
+        private readonly WatcherServer<int, ChatServerConfig> _chat;
+        private readonly ConcurrentDictionary<int, ChatChannel> _chatServers = new ConcurrentDictionary<int, ChatChannel>();
 
 
         public NotifyServerService(WatcherServer<int, ChatServerConfig> chat)
         {
-            this.chat = chat;
+            this._chat = chat;
             chat.OnRefreshed = () =>
             {
                _= chat.ForEach(async( c) => await TryConnect(c));
@@ -38,48 +38,44 @@ namespace NotifyServer
 
         private async Task< bool> TryConnect(ChatServerConfig c)
         {
-            if (ChatServers.TryGetValue(c.ChatServerID, out ChatChannel channel))
+            if (_chatServers.TryGetValue(c.ChatServerID, out ChatChannel channel))
             {
                 if (channel.Config.Equals(c)) return false;
                 await channel.Channel.ShutdownAsync();
-                ChatServers.TryRemove(c.ChatServerID, out _);
+                _chatServers.TryRemove(c.ChatServerID, out _);
             }
             
             var ch = new LogChannel(c.ServicsHost);
             var client = await ch.CreateClientAsync<Proto.ChatServerService.ChatServerServiceClient>();
             channel = new ChatChannel { Channel = ch, Client = client, Config = c };
-            return ChatServers.TryAdd(c.ChatServerID, channel);
+            return _chatServers.TryAdd(c.ChatServerID, channel);
         }
 
-        public override async Task<N2S_RouteSendNotify> RouteSendNotify(S2N_RouteSendNotify request, ServerCallContext context)
+        public override async Task<N2S_RouteSendNotify> RouteSendNotify(S2N_RouteSendNotify request,
+            ServerCallContext context)
         {
             var user = request.Msg.Select(t => t.AccountID).Distinct().ToList();
-            
+
             var players = await DataBase.S.FindPlayersByUuid(user);
             var dic = new Dictionary<string, PlayerState>();
             foreach (var i in players)
-            { dic.Add(i.User.Uuid, i);}
+            {
+                dic.Add(i.User.Uuid, i);
+            }
+
             foreach (var i in request.Msg)
             {
-                if (dic.TryGetValue(i.AccountID, out PlayerState ps))
+                if (!dic.TryGetValue(i.AccountID, out var ps)) continue;
+                if (_chatServers.TryGetValue(ps.ServerID, out var channel))
                 {
-                    if (ChatServers.TryGetValue(ps.ServerID, out ChatChannel channel))
-                    {
-                        await channel.Client.CreateNotifyAsync(i);
-                    }
-                    else
-                    {
-                        Debuger.LogWaring($"{ps} not connected chat server");
-                        //no found chat server
-                    }
+                    await channel.Client.CreateNotifyAsync(i);
                 }
                 else
                 {
-                    //use not online
-                    Debuger.LogWaring($"{ps}  offline");
-                    continue;
+                    Debuger.LogWaring($"{ps} not connected chat server");
                 }
             }
+
             //ok
             return new N2S_RouteSendNotify { Code = ErrorCode.Ok };
         }

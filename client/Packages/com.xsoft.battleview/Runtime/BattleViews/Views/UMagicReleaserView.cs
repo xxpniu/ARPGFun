@@ -159,7 +159,7 @@ namespace BattleViews.Views
 
         private void OnDestroy()
         {
-            foreach (var i in pPlayers) i.DestoryParticle();
+            foreach (var i in pPlayers) i.DestroyParticle();
             pPlayers.Clear();
             foreach (var i in _players) i.Destory();
             _players.Clear();

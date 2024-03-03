@@ -84,7 +84,7 @@ namespace BattleViews.Views
             public override bool Tick(GTime gTime)
             {
                 if (Forward == null) return true;
-                View._agent.Move(Forward.Value * gTime.DeltaTime * View.Speed);
+                View._agent.Move(Forward.Value * (gTime.DeltaTime * View.Speed));
                 return false;
             }
 

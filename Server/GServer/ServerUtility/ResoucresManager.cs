@@ -18,7 +18,7 @@ namespace ServerUtility
     {
 
         private ZooKeeper _zoo = null!;
-        private readonly ConcurrentDictionary<string, string> _configs = new ConcurrentDictionary<string, string>();
+        private readonly ConcurrentDictionary<string, string> _configs = new();
         private string _prefixPath = null!;
         private ExcelToJSONConfigManager _manager = null!;
         public OnDebug Printer => Debuger.LogWaring;

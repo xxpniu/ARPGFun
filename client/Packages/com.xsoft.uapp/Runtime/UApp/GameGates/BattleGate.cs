@@ -272,7 +272,7 @@ namespace UApp.GameGates
             }
             else
             {
-                UApplication.S.ShowNotify($"{item.config.Name.GetLanguageWord()} Can't collect!");
+                UApplication.S.ShowNotify($"{item.Config.Name.GetLanguageWord()} Can't collect!");
             }
         }
 

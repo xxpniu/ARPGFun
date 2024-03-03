@@ -31,8 +31,12 @@ namespace App.Core.Core
                 
                 {
                     _instance = FindFirstObjectByType(typeof(T)) as T;
-                    Debug.Log($"Instance from FindFirstObjectByType<{typeof(T).FullName}>()");
-                    if(_instance)  _instance.name = name!;
+                    if (_instance)
+                    {
+                        _instance.name = name!;
+                        Debug.Log($"Instance from FindFirstObjectByType<{typeof(T).FullName}>()");
+                    }
+                    
                 }
                 if (_instance) return _instance;
                 Debug.Log($"Instance create from AddComponent<{typeof(T).FullName}>()");

@@ -46,7 +46,7 @@ namespace UApp.GameGates
             if (_characterView)
             {
                 if (_characterView.ConfigID == heroID) return _characterView;
-                _characterView.DestorySelf(0);
+                _characterView.DestroySelf(0);
             }
             _characterView = CreateHero(heroID, heroName);
 
@@ -214,7 +214,7 @@ namespace UApp.GameGates
             this.Group = group;
             foreach (var i in _views)
             {
-                i.DestorySelf(0);
+                i.DestroySelf(0);
             }
             _views = new List<UCharacterView>();
 

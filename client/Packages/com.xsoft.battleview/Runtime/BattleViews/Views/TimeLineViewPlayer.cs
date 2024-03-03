@@ -61,7 +61,7 @@ namespace BattleViews.Views
                     player.AttachParticle(particle);
                     break;
                 case ParticleDestoryType.Time:
-                    particle.AutoDestory(layout.destoryTime);
+                    particle.AutoDestroy(layout.destoryTime);
                     break;
                 case ParticleDestoryType.Normal:
                     player.RView.AttachParticle(particle);
@@ -186,7 +186,7 @@ namespace BattleViews.Views
             }
             foreach (var i in _players)
             {
-                i.DestoryParticle();
+                i.DestroyParticle();
             }
         }
         private void AttachParticle(IParticlePlayer particle)

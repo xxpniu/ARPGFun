@@ -22,7 +22,7 @@ public class HpItemNameShower : MonoBehaviour
     {
         if (!(Vector3.Distance(this.transform.position, ThirdPersonCameraContollor.Current.LookPos) < 10)) return;
         var owner = Item.IsOwner(Item.PerView.OwnerIndex);
-        id = UUITipDrawer.S.DrawItemName(id, Item.config.Name, owner,
+        id = UUITipDrawer.S.DrawItemName(id, Item.Config.Name, owner,
             this.transform.position + Vector3.up * .8f, ThirdPersonCameraContollor.Current.currentCamera);
     }
 }

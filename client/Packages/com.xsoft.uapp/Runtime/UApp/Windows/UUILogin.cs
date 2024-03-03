@@ -1,5 +1,6 @@
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using Cysharp.Threading.Tasks;
 using UApp;
 using UApp.GameGates;
 using UnityEngine;
@@ -49,6 +50,7 @@ namespace Windows
                 }
 
                 UUIManager.S.MaskEvent();
+                await UniTask.Yield();
                 var md5 = Md5Tool.GetMd5Hash(pwd);
                 var r = await LoginGate.DoLogin(userName, md5);
                 UUIManager.S.UnMaskEvent();

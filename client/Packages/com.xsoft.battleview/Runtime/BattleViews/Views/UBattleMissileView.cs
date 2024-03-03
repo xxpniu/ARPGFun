@@ -23,7 +23,7 @@ namespace BattleViews.Views
             var viewRelease = PerView.GetViewByIndex<UMagicReleaserView>(releaserIndex);
             var viewTarget = viewRelease.CharacterTarget as UCharacterView;
             var characterView = viewRelease.CharacterReleaser as UCharacterView;
-            var rotation = (characterView as IBattleCharacter).Rotation;
+            var rotation = ((IBattleCharacter)characterView).Rotation;
             var target = PerView.GetViewByIndex<UCharacterView>(TargetIndex);
 
             transform.position = characterView.GetBoneByName(fromBone).position + rotation * offset;

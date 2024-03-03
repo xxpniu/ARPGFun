@@ -16,16 +16,16 @@ namespace BattleViews.Views
         public int TeamIndex { private set; get; }
         public int GroupIndex { private set; get; }
 
-        int IBattleItem.TeamIndex { get { return TeamIndex; } }
+        int IBattleItem.TeamIndex => TeamIndex;
 
-        int IBattleItem.GroupIndex { get { return GroupIndex; } }
+        int IBattleItem.GroupIndex => GroupIndex;
 
-        public ItemData config;
+        public ItemData Config;
 
         private async void Start()
         {
 #if !UNITY_SERVER
-            var go = await  ResourcesManager.S.LoadModel(config);
+            var go = await  ResourcesManager.S.LoadModel(Config);
             Instantiate(go, transform).transform.RestRTS();
 #endif
         }
@@ -62,7 +62,7 @@ namespace BattleViews.Views
             this.GroupIndex = groupId;
             this.TeamIndex = teamIndex;
             this.Item = item;
-            config = ExcelConfig.ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
+            Config = ExcelConfig.ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
         }
 
         void IBattleItem.ChangeGroupIndex(int groupIndex)

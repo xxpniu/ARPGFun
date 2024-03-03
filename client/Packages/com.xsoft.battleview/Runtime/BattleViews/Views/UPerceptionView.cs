@@ -380,7 +380,7 @@ namespace BattleViews.Views
         {
             var viewRoot = new GameObject(layout.path);
             var view = viewRoot.AddComponent<UParticlePlayer>();
-            view.Path = layout.path;
+            view.path = layout.path;
             var viewRelease = releaser as UMagicReleaserView;
             var viewTarget = viewRelease!.CharacterTarget;
             var characterView = viewRelease.CharacterReleaser;

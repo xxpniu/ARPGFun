@@ -261,7 +261,7 @@ namespace MatchServer
             {
                 return new M2S_ExitBattle { Code = ErrorCode.Ok };
             }
-            return new M2S_ExitBattle { };
+            return new M2S_ExitBattle { Code = ErrorCode.NoGamePlayerData};
         }
     }
 }

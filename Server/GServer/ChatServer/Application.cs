@@ -125,12 +125,12 @@ namespace ChatServer
                 }
                 else if (ChatServers.TryGetValue(i.User.ChatServerId, out ChatServer ser))
                 {
-                    var nmsg = new NotifyMsg
+                    var msg = new NotifyMsg
                     {
                         AccountID = i.User.Uuid,
                         AnyNotify = {Any.Pack(state)}
                     };
-                    await ser.Call.CreateNotifyAsync(nmsg);
+                    await ser.Call.CreateNotifyAsync(msg);
                 }
             }
 

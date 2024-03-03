@@ -100,8 +100,10 @@ namespace ChatTool
         {
             var filter = Builders<FriendEntity>.Filter;
 
-            var query = (filter.Eq(t => t.User1.AccountId, owner) & filter.Eq(t => t.User2.AccountId, friend)) |
-                (filter.Eq(t => t.User2.AccountId, owner) & filter.Eq(t => t.User1.AccountId, friend));
+            var query = (filter.Eq(t => t.User1.AccountId, owner) 
+                         & filter.Eq(t => t.User2.AccountId, friend)) 
+                        | (filter.Eq(t => t.User2.AccountId, owner) 
+                           & filter.Eq(t => t.User1.AccountId, friend));
 
             var u = await Friends.FindAsync(query);
             var en = await u.FirstOrDefaultAsync();
@@ -119,16 +121,14 @@ namespace ChatTool
                 }
                 return true;
             }
-            else
+
+            var entity = new FriendEntity
             {
-                var entity = new FriendEntity
-                {
-                    User1 = new UserEntity { AccountId = owner, Active = true },
-                    User2 = new UserEntity { AccountId = friend, Active = false }
-                };
-                await Friends.InsertOneAsync(entity);
-                return true;
-            }
+                User1 = new UserEntity { AccountId = owner, Active = true },
+                User2 = new UserEntity { AccountId = friend, Active = false }
+            };
+            await Friends.InsertOneAsync(entity);
+            return true;
         }
 
         /// <summary>
@@ -139,16 +139,15 @@ namespace ChatTool
         /// <returns></returns>
         public async Task<bool> UnLinkFriend(string owner, string friend)
         {
-            var fitler = Builders<FriendEntity>.Filter;
+            var filter = Builders<FriendEntity>.Filter;
 
-            var query = (fitler.Eq(t => t.User1.AccountId, owner) & fitler.Eq(t => t.User2.AccountId, friend)) |
-                (fitler.Eq(t => t.User2.AccountId, owner) & fitler.Eq(t => t.User1.AccountId, friend));
+            var query = (filter.Eq(t => t.User1.AccountId, owner) & filter.Eq(t => t.User2.AccountId, friend)) |
+                (filter.Eq(t => t.User2.AccountId, owner) & filter.Eq(t => t.User1.AccountId, friend));
 
             var u = await Friends.FindAsync(query);
             var en = await u.FirstOrDefaultAsync();
             if (en != null)
             {
-
                 //todo:当双方解绑可以删除记录
                 if (en.User1.AccountId == owner)
                 {
@@ -163,10 +162,8 @@ namespace ChatTool
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
@@ -183,17 +180,8 @@ namespace ChatTool
             var u = await Friends.FindAsync(query);
             var list = new List<string>();
 
-            await u.ForEachAsync(t =>
-            {
-                if (t.User1.AccountId == owner)
-                {
-                    list.Add(t.User2.AccountId);
-                }
-                else
-                {
-                    list.Add(t.User1.AccountId);
-                }
-            });
+            await u.ForEachAsync(t => 
+                { list.Add(t.User1.AccountId == owner ? t.User2.AccountId : t.User1.AccountId); });
             return  await FindPlayersByUuid(list);
         }
 
@@ -214,12 +202,10 @@ namespace ChatTool
         }
 
 
-        public async Task<IList<PlayerState>> QueryFriendOnServer(string owner, int serverID)
+        public async Task<IList<PlayerState>> QueryFriendOnServer(string owner, int serverId)
         {
-
             var friends = await QueryFriend(owner);
-            return friends.Where(t => t.ServerID == serverID).ToList();
-
+            return friends.Where(t => t.ServerID == serverId).ToList();
         }
 
         public async Task<PlayerState> FindPlayerByUuid(string uuid)

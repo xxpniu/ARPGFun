@@ -10,6 +10,8 @@ using ServerUtility;
 using Utility;
 using XNet.Libs.Utility;
 
+// ReSharper disable once CheckNamespace
+// ReSharper disable once IdentifierTypo
 namespace GServer.RPCResponsor
 {
     public class StreamServices:Proto.ServerStreamService.ServerStreamServiceBase
@@ -43,7 +45,7 @@ namespace GServer.RPCResponsor
 
                 try
                 {
-                    var matchSever = Application.S.MatchServers.FirstOrDefault();
+                    var matchSever = Application.S.MatchServers.NextServer();
                     if (matchSever != null)
                     {
                         await C<MatchServices.MatchServicesClient>.RequestOnceAsync(

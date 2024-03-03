@@ -37,7 +37,7 @@ namespace BattleViews.Views
 #if UNITY_SERVER||UNITY_EDITOR
             CreateNotify(new Notify_ElementExitState { Index = Index });
 #endif
-            DestorySelf();
+            DestroySelf();
         }
 
         void IBattleElement.AttachElement(GObject el)
@@ -48,7 +48,7 @@ namespace BattleViews.Views
         #endregion
 
 
-        public void DestorySelf(float time = 0.3f)
+        public void DestroySelf(float time = 0.3f)
         {
             if (!this) return;
             Destroy(this.gameObject, time);

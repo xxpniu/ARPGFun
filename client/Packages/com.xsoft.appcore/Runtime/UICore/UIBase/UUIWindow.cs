@@ -5,6 +5,8 @@ using System.Collections.Concurrent;
 using System.Threading;
 using App.Core.Core.Components;
 using org.apache.zookeeper.data;
+// ReSharper disable CheckNamespace
+// ReSharper disable InconsistentNaming
 
 
 public class UIResourcesAttribute:Attribute

@@ -33,6 +33,7 @@ namespace Windows
                 }
 
                 UUIManager.S.MaskEvent();
+                await UniTask.Yield();
                 var gate = UApplication.G<LoginGate>();
                 var r = await LoginGate.DoReg(userName, pwd);
                 await UniTask.SwitchToMainThread();

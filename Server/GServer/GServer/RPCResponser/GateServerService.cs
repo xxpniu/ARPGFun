@@ -20,6 +20,8 @@ using XNet.Libs.Utility;
 using static GServer.MongoTool.DataBase;
 using static Proto.ItemsShop.Types;
 
+// ReSharper disable once CheckNamespace
+// ReSharper disable once IdentifierTypo
 namespace GServer.RPCResponsor
 {
     public class GateServerService : Proto.GateServerService.GateServerServiceBase
@@ -27,7 +29,7 @@ namespace GServer.RPCResponsor
 
         private static async Task<bool> SendNotify(IMessage notify, params string[] player)
         {
-            var notifyServer = Application.S.NotifyServers.FirstOrDefault();
+            var notifyServer = Application.S.NotifyServers.NextServer();
             if (notifyServer == null)
             {
                 Debuger.LogError($"not found notify server");
@@ -109,7 +111,7 @@ namespace GServer.RPCResponsor
 
         public override async Task<G2C_CreateMatch> CreateMatch(C2G_CreateMatch request, ServerCallContext context)
         {
-            var matchServer = Application.S.MatchServers.FirstOrDefault();
+            var matchServer = Application.S.MatchServers.NextServer();
             if (matchServer == null)
             {
                 Debuger.LogError($"No found match server");
@@ -145,7 +147,7 @@ namespace GServer.RPCResponsor
 
         public override async Task<G2C_LeaveMatchGroup> LeaveMatchGroup(C2G_LeaveMatchGroup request, ServerCallContext context)
         {
-            var matchServer = Application.S.MatchServers.FirstOrDefault();
+            var matchServer = Application.S.MatchServers.NextServer();
             if (matchServer == null)
             {
                 Debuger.LogError($"No found match server");
@@ -165,7 +167,7 @@ namespace GServer.RPCResponsor
         public override async Task<G2C_BeginGame> BeginGame(C2G_BeginGame request, ServerCallContext context)
         {
             var userId = context.GetAccountId();
-            var matchServer = Application.S.MatchServers.FirstOrDefault();
+            var matchServer = Application.S.MatchServers.NextServer();
             if (matchServer == null)
             {
                 Debuger.LogError($"No found match server");
@@ -294,7 +296,7 @@ namespace GServer.RPCResponsor
             };
 
             //random 修改策略
-            var loginServer = Application.S.LoginServers.FirstOrDefault();
+            var loginServer = Application.S.LoginServers.NextServer();
             if (loginServer == null)
             {
                 Debuger.LogError($"no found login server");
@@ -449,7 +451,7 @@ namespace GServer.RPCResponsor
         public override async Task<G2C_ReloadMatchState> ReloadMatchState(C2G_ReloadMatchState request,
             ServerCallContext context)
         {
-            var matchSever = Application.S.MatchServers.FirstOrDefault();
+            var matchSever = Application.S.MatchServers.NextServer();
             if (matchSever == null) return new G2C_ReloadMatchState { Code = ErrorCode.Error };
             var rejoin = await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                 matchSever.ServicsHost,

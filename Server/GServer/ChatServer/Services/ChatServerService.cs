@@ -13,12 +13,12 @@ namespace ChatServer.Services
         public override async Task<PlayerState> ChatRoute(Chat request, ServerCallContext context)
         {
 
-            var succes = await Application.S.ChatService
+            var success = await Application.S.ChatService
                   .NotifyFriendStateChange(request.Receiver.Uuid, Any.Pack(request));
 
             return new PlayerState
             {
-                State = succes? PlayerState.Types.StateType.Online: PlayerState.Types.StateType.Offline,
+                State = success? PlayerState.Types.StateType.Online: PlayerState.Types.StateType.Offline,
                 User= new ChatUser { ChatServerId = Application.S.Config.ChatServerID, Uuid = request.Receiver.Uuid }
             };
            
