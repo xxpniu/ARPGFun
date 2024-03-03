@@ -15,15 +15,14 @@ jobs:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
       contents: write
     steps:
-
-    - name: build Server
+    - name: CheckOut
       uses: actions/checkout@v3
+    - name: build Server  
       run: mkdir serverout && sh buildforci.sh version-${{github.run_number}} `pwd`/serverout
-
     - name: jenkins Request Rebuild Server  
       uses: Satak/webrequest-action@v1.2.3
       with: 
-       url: http://andew25a.synology.me:2080/generic-webhook-trigger/invoke?token=andrew_auto_build
-       method: GET
+        url: http://andew25a.synology.me:2080/generic-webhook-trigger/invoke?token=andrew_auto_build
+        method: GET
 
     
