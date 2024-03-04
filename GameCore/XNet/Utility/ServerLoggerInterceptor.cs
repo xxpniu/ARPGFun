@@ -1,8 +1,10 @@
 using System;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
+
 
 namespace XNet.Libs.Utility
 {
@@ -24,21 +26,14 @@ namespace XNet.Libs.Utility
 
         public LogServer Server { get; }
 
-        private bool HaveAuth(System.Reflection.MethodInfo info, ServerCallContext context)
+        private bool HaveAuth(MethodInfo info, ServerCallContext context)
         {
-            if (info.GetCustomAttributes(typeof(AuthAttribute), false) is AuthAttribute[] auths && auths.Length > 0) return true;
-            var auth = _authCheck?.Invoke(context)?? CheckAuthDefault(context);
+            var att = info.GetCustomAttribute(typeof(AuthAttribute), false);
+            if (att != null) return true; 
+            var auth = _authCheck?.Invoke(context)?? context.CheckAuthDefault();
             return auth;
         }
-
-        private bool CheckAuthDefault(ServerCallContext context)
-        {
-            if (!context. GetHeader("call-key", out var key1)) return false;
-            return context. GetHeader("call-token", out var token) && Md5Tool.CheckToken(key1, token);
-        }
-
         
-
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
             TRequest request,
             ServerCallContext context,
@@ -46,7 +41,6 @@ namespace XNet.Libs.Utility
         {
             try
             {
-
                 if (!HaveAuth(continuation.Method, context))
                 {
                     LogCall<TRequest,TResponse>(MethodType.Unary, context,request);
@@ -99,11 +93,8 @@ namespace XNet.Libs.Utility
             where TRequest : class
             where TResponse : class
         {
-
             var headers = context.ToLog();
-
             Debuger.Log($"Call:{methodType} {headers}[{typeof(TRequest)}]->{request} Response: {typeof(TResponse)}{response}");
-
         }
     }
 }

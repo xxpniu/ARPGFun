@@ -22,11 +22,11 @@ namespace ServerUtility
                 .ConfigureLogging(l => l.AddConsole()).Build();
             
             host.Start();
-            
             await Start(link.Token);
             try
             {
-                await host.WaitForShutdownAsync(token: token);
+                await host.RunAsync(link.Token);
+                //await host.WaitForShutdownAsync(token: token);
                 Debuger.Log("Shutting down gracefully.");
             }
             catch (Exception e)
@@ -35,7 +35,7 @@ namespace ServerUtility
             }
 
             // ReSharper disable once MethodSupportsCancellation
-            await Stop();
+            await Stop(link.Token);
             Debuger.Log("Exited");
 
         }

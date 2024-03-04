@@ -32,7 +32,7 @@ namespace NotifyServer
                 {
                     if (!string.IsNullOrEmpty(o.Config))
                     {
-                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, o.Config);
+                        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, o.Config);
                         var json = File.ReadAllText(file, new UTF8Encoding(false));
                         config = json.TryParseMessage<NotifyServerConfig>();
                     }
@@ -75,7 +75,7 @@ namespace NotifyServer
                 Encoding.UTF8.GetBytes(config.ToJson()), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 
 
-            await App.S.Create(setup: async (a) =>
+            await App.S.Create(setup: async (a, token) =>
             {
                 ChatTool.DataBase.S.Init(config.DBHost, config.DBName);
                 await Task.CompletedTask;

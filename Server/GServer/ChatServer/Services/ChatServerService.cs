@@ -25,10 +25,10 @@ namespace ChatServer.Services
             //send player state
         }
 
-        public override async Task<Proto.Void> CreateNotify(NotifyMsg request, ServerCallContext context)
+        public override async Task<Void> CreateNotify(NotifyMsg request, ServerCallContext context)
         {
             await Application.S.ChatService.NotifyFriendStateChange(request.AccountID, request.AnyNotify.ToArray());
-            return new Proto.Void();
+            return new Void();
         }
     }
 }

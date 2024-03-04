@@ -42,6 +42,12 @@ namespace XNet.Libs.Utility
             await context.WriteResponseHeadersAsync(new Metadata { { "session-key", session } });
             return true;
         }
+        
+        public static bool CheckAuthDefault(this ServerCallContext context)
+        {
+            if (!context. GetHeader("call-key", out var key1)) return false;
+            return context. GetHeader("call-token", out var token) && Md5Tool.CheckToken(key1, token);
+        }
 
         public static string ToLog(this ServerCallContext context)
         {
