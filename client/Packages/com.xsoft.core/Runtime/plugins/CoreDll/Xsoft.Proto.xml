@@ -1519,6 +1519,16 @@
             服务器人数满了
              </summary>
         </member>
+        <member name="F:Proto.ErrorCode.NoSimulaterOnBattleServer">
+             <summary>
+            仿真失败
+             </summary>
+        </member>
+        <member name="F:Proto.ErrorCode.ServerUserStateError">
+             <summary>
+            用户状态错误
+             </summary>
+        </member>
         <member name="F:Proto.ErrorCode.NofoundItem">
              <summary>
             没有道具
