@@ -9,9 +9,10 @@ public class SaleArea : MonoBehaviour
     {
         if (!(UUIManager.S.Ratio > 2)) return;
         var rect = GetComponent<RectTransform>();
+        var offset = Screen.width * 0.1f;
         /*offsetMin 是vector2(left,bottom);
              *offsetMax 是vector2(right,top);*/
-        rect.offsetMin = new Vector2(100, 0);
-        rect.offsetMax = new Vector2(-100, 0);
+        rect.offsetMin = new Vector2(offset, 0);
+        rect.offsetMax = new Vector2(-offset, 0);
     }
 }
