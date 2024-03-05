@@ -27,7 +27,11 @@ def upload(host, root, dir):
     dir_root = os.path.join(os.getcwd(),dir)
     files = os.listdir(dir_root)
     for n in files:
-        f = open("%s/%s" % (dir_root, n), "rb")
+        fPath ="%s/%s" % (dir_root, n) 
+        if os.path.splitext(fPath)[-1][1:] == 'meta':
+            continue
+    
+        f = open( fPath, "rb")
         path = "%s/%s" % (root, n)
         exs = zk.exists(path)
         if exs:
