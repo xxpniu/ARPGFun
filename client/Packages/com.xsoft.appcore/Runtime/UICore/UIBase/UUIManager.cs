@@ -69,6 +69,7 @@ public class UUIManager:XSingleton<UUIManager>
             eventMask.SetActive(false);
 
         Ratio = Screen.width / (float)Screen.height;
+        Debug.Log($"W:{Screen.width} H:{Screen.height}");
 
         var w = Mathf.Lerp(0, 1, Mathf.Max(0, (Ratio - 1.5f)/.5f));
 
