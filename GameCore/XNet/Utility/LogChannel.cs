@@ -95,13 +95,13 @@ namespace XNet.Libs.Utility
 
             var ticks = DateTime.Now.Ticks;
             var time = $"{ticks}{Channel.Token}";
-            headers.Add("caller-os", Environment.OSVersion.ToString());
-            headers.Add("call-key", Md5Tool.GetTokenKey(time));
-            headers.Add("call-token", time);
-            headers.Add("session-key", Channel.SessionKey ?? string.Empty);
-            if (headers.Get("trace-id") == null)
-                headers.Add("trace-id", NewTraceId());
-            headers.Add("ticks", ticks.ToString());
+            headers.Add(HeadKeys.CallOs, Environment.OSVersion.ToString());
+            headers.Add(HeadKeys.CallKey, Md5Tool.GetTokenKey(time));
+            headers.Add(HeadKeys.CallToken, time);
+            headers.Add(HeadKeys.SessionKey, Channel.SessionKey ?? string.Empty);
+            if (headers.Get(HeadKeys.TraceId) == null)
+                headers.Add(HeadKeys.TraceId, NewTraceId());
+            headers.Add(HeadKeys.Ticks, ticks.ToString());
         }
 
         private static string NewTraceId()

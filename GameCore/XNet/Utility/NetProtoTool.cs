@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Google.Protobuf;
@@ -8,6 +9,24 @@ using Utility;
 
 namespace XNet.Libs.Utility
 {
+    public static class HeadKeys
+    {
+        //var headers = new[] {"trace-id" ,"ticks", "caller-user" , "caller-machine" , "caller-os" , "call-key" , "call-token", "session-key"};
+        public const string TraceId = "trace-id";
+        public const string Ticks = "ticks";
+        public const string CallUser = "caller-user";
+        public const string CallMachine = "caller-machine";
+        public const string CallOs = "caller-os";
+        public const string CallKey = "call-key";
+        public const string CallToken = "call-token";
+        public const string SessionKey = "session-key";
+        public const string UserKey = "user-key";
+
+        public static string[] AllKey()
+        {
+            return new[] { TraceId, Ticks, CallKey, CallOs, CallMachine, CallUser, CallToken, SessionKey , UserKey};
+        }
+    }
     public static class NetProtoTool
     {
         public static bool EnableLog { get; set; } = false;
@@ -19,39 +38,39 @@ namespace XNet.Libs.Utility
         }
         public static Metadata GetTraceMeta(this ServerCallContext context)
         {
-            return !context.GetHeader("trace-id", out var traceId) ? null : traceId.GetTraceMeta();
+            return !context.GetHeader(HeadKeys.TraceId, out var traceId) ? null : traceId.GetTraceMeta();
         }
 
         public static Metadata GetTraceMeta(this string traceId)
         {
             return new Metadata()
             {
-                { "trace-id", traceId ?? string.Empty }
+                { HeadKeys.TraceId, traceId ?? string.Empty }
             };
         }
 
         public static string GetAccountId(this ServerCallContext context,string key = null)
         {
-            context.GetHeader(key ?? "user-key", out var account);
+            context.GetHeader(key ?? HeadKeys.UserKey, out var account);
             return account;
         }
 
         public static async Task< bool> WriteSession(this ServerCallContext context, string account, LogServer server)
         {
             if (!server.TryCreateSession(account, out var session))  return false;
-            await context.WriteResponseHeadersAsync(new Metadata { { "session-key", session } });
+            await context.WriteResponseHeadersAsync(new Metadata { { HeadKeys.SessionKey, session } });
             return true;
         }
         
         public static bool CheckAuthDefault(this ServerCallContext context)
         {
-            if (!context. GetHeader("call-key", out var key1)) return false;
-            return context. GetHeader("call-token", out var token) && Md5Tool.CheckToken(key1, token);
+            if (!context. GetHeader(HeadKeys.CallKey, out var key1)) return false;
+            return context. GetHeader(HeadKeys.CallToken, out var token) && Md5Tool.CheckToken(key1, token);
         }
 
         public static string ToLog(this ServerCallContext context)
         {
-            var headers = new[] {"trace-id" ,"ticks", "caller-user" , "caller-machine" , "caller-os" , "call-key" , "call-token", "session-key"};
+            var headers = HeadKeys.AllKey();
             var sb = new StringBuilder();
             foreach (var i in headers)
             {

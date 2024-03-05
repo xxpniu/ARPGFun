@@ -124,7 +124,7 @@ namespace LoginServer.RPCResponser
             if (await (await users.FindAsync(filter)).AnyAsync()) return new L2C_Reg{Code = ErrorCode.RegExistUserName };
             var data = Application.S.FindFreeGateServer();
             if (data == null) return new L2C_Reg() { Code = ErrorCode.NoFreeGateServer };
-            var serverID = data.ServerID;
+            var serverId = data.ServerID;
             var pwd = Md5Tool.GetMd5Hash(request.Password);
             var acc = new AccountEntity
             {
@@ -133,7 +133,7 @@ namespace LoginServer.RPCResponser
                 CreateTime = DateTime.Now,
                 LoginCount = 0,
                 LastLoginTime =DateTime.Now,
-                ServerID = serverID
+                ServerID = serverId
             };
 
             await users.InsertOneAsync(acc);

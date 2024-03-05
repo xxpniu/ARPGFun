@@ -56,9 +56,9 @@ namespace GServer
 
             ListenServer.Interceptor.SetAuthCheck((c) =>
             {
-                if (!c.GetHeader("session-key", out var value)) return false;
+                if (!c.GetHeader(HeadKeys.SessionKey, out var value)) return false;
                 if (!ListenServer.CheckSession(value, out var userid)) return false;
-                c.RequestHeaders.Add("user-key", userid);
+                c.RequestHeaders.Add(HeadKeys.UserKey, userid);
                 return true;
             });
 
@@ -91,8 +91,8 @@ namespace GServer
             }
             DataBase.S.Init(this.Config.DBHost, this.Config.DBName);
 
-            MatchServers = await new WatcherServer<string, MatchServerConfig>(_zk,
-                Config.MatchServerRoot, (c) => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}").RefreshData();
+            MatchServers = await new WatcherServer<string, MatchServerConfig>(_zk, Config.MatchServerRoot, (c) => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
+                .RefreshData();
             LoginServers = await new WatcherServer<string, LoginServerConfig>(_zk, Config.LoginServerRoot, c => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
                 .RefreshData();
             NotifyServers = await new WatcherServer<string, NotifyServerConfig>(_zk, Config.NotifyServerRoot, c => $"{c.ServicsHost.IpAddress}:{c.ServicsHost.Port}")
