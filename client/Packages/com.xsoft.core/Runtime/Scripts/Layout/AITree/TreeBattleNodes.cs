@@ -32,7 +32,9 @@ namespace Layout.AITree
         Death =8, // 死亡
 		Skill =16, //释放技能
 		Move =32, //移动
-		NomarlAttack = 64,//普通攻击
+		NormalAttack = 64,//普通攻击
+		TeamChanged = 128 //队伍变化
+		
     }
 
 	[EditorAITreeNode("战斗事件", "Event", "战斗节点", AllowChildType.One)]
@@ -45,7 +47,11 @@ namespace Layout.AITree
 		[Label("监听事件")]
 		[EnumMasker]
 		[XmlIgnore]
-		public BattleEventType DType { set { DiType = (int)value; } get { return (BattleEventType)DiType; } }
+		public BattleEventType DType 
+		{ 
+			set => DiType = (int)value;
+			get => (BattleEventType)DiType;
+		}
 
 		[HideInEditor]
 		public int DiType = 0;

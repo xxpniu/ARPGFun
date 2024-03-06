@@ -124,7 +124,7 @@ namespace GameLogic.Game.Perceptions
                     owner.FireEvent(BattleEventType.Skill, mReleaser);
                     break;
                 case ReleaserModeType.RmtNormalAttack:
-                    owner.FireEvent(BattleEventType.NomarlAttack, mReleaser);
+                    owner.FireEvent(BattleEventType.NormalAttack, mReleaser);
                     break;
             }
 

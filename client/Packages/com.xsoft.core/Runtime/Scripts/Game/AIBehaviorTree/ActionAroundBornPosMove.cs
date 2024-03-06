@@ -16,7 +16,7 @@ namespace GameLogic.Game.AIBehaviorTree
         {
             var root = context as AITreeRoot;
 
-            var pos = root.Character.BronPosition;
+            var pos = root!.Character.BronPosition;
 
             var angle = Randomer.RandomMinAndMax(0, 360);
             root.GetDistanceByValueType(Node.Value, Node.distance / 100f, out float dis);
@@ -47,7 +47,7 @@ namespace GameLogic.Game.AIBehaviorTree
         {
             var root = context as AITreeRoot;
             if (LastStatus == RunStatus.Running)
-                if (root.Character.IsMoving) root.Character.StopMove();
+                if (root!.Character.IsMoving) root.Character.StopMove();
             base.Stop(context);
         }
     }

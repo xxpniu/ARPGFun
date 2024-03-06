@@ -8,9 +8,11 @@ using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;
 using GameLogic;
+using GameLogic.Game.AIBehaviorTree;
 using GameLogic.Game.Elements;
 using GameLogic.Game.Perceptions;
 using GameLogic.Game.States;
+using Layout.AITree;
 using Proto;
 using UnityEngine;
 using XNet.Libs.Utility;
@@ -35,8 +37,31 @@ namespace Server.Map
         public BattleCharacter Owner { get; internal set; }
     }
 
+
     public class MapElementSpawn
     {
+        private class TeamChangedWatcher: ICharacterWatcher
+        {
+            private BattleCharacter Monster { get; }
+            private MapElementSpawn Spawn { get; }
+
+            public TeamChangedWatcher(BattleCharacter monster, MapElementSpawn spawn)
+            {
+                Monster = monster;
+                Spawn = spawn;
+            }
+
+            public void OnFireEvent(BattleEventType eventType, object args)
+            {
+                if (eventType != BattleEventType.TeamChanged) return;
+                
+                Monster.OnDead = null;
+                Spawn.AliveCount--;
+                //只触发一次
+                Monster.RemoveEventWatcher(this);
+            }
+        }
+        
         public BattlePerception Per { get; }
         public MapConfig Config { get; }
 
@@ -122,6 +147,27 @@ namespace Server.Map
         }
 
         public Action<DropItem> OnDrop;
+
+        private void TryDropReward(DropGroupData drGroupData ,MonsterData monsterData , BattleCharacter el)
+        {
+            var os = el.Watch.Values.OrderBy(t => t.FirstTime).ToList();
+            foreach (var e in os)
+            {
+                var owner = Per.FindTarget(e.Index);
+                if (!owner) continue;
+                if (owner.OwnerIndex > 0) owner = Per.FindTarget(owner.OwnerIndex);
+                OnDrop?.Invoke(new DropItem
+                {
+                    Pos = el.Position,
+                    MDate = monsterData,
+                    DataConfig = drGroupData,
+                    OwnerIndex = owner?.Index ?? -1,
+                    TeamIndex = owner?.TeamIndex ?? -1,
+                    Owner = owner
+                });
+                break;
+            }
+        }
 
         private async Task SpawnMonster(Vector3 pos, Vector3 forward, MonsterGroupData monsterGroup)
         {
@@ -245,33 +291,16 @@ namespace Server.Map
             monster.OnDead = (el) =>
             {
                 AliveCount--;
-                
                 Debuger.Log($"{LanguageManager.S[el.Name]} death!!");
-                GObject.Destroy(el, 3f);
+                GObject.Destroy(el, 10f);
                 if (el["__Drop"] is DropGroupData d
                 && el["__Monster"] is MonsterData mData)
                 {
-                    var os = el.Watch.Values.OrderBy(t => t.FirstTime).ToList();
-                    foreach (var e in os)
-                    {
-                        var owner = Per.FindTarget(e.Index);
-                        if (!owner) continue;
-                        //召唤物掉落归属问题
-                        if (owner.OwnerIndex > 0) owner = Per.FindTarget(owner.OwnerIndex);
-                        OnDrop?.Invoke(new DropItem
-                        {
-                            Pos = el.Position,
-                            MDate = mData,
-                            DataConfig = d,
-                            OwnerIndex = owner?.Index ?? -1,
-                            TeamIndex = owner?.TeamIndex ?? -1,
-                            Owner = owner
-                        });
-                        break;
-                    }
-
+                   TryDropReward(d, mData, el);
                 };
             };
+            // 召唤物 不会触发掉落
+            monster.AddEventWatcher(  new TeamChangedWatcher(monster,this) );
 
             await Task.CompletedTask;
         }

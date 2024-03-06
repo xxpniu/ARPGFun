@@ -312,7 +312,7 @@ namespace Windows
             
             var view = BattleGate?.Owner;
             if (!view) return;
-            HPSilder.value = view.HP / (float)view.HpMax;
+            HPSilder.value = view!.HP / (float)view.HpMax;
             lb_hp.text = $"{view.HP}/{view.HpMax}";
             MpSilder.value = view.MP / (float)view.MpMax;
             lb_mp.text = $"{view.MP}/{view.MpMax}";

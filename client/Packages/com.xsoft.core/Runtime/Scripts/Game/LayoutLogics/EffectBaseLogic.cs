@@ -165,6 +165,7 @@ namespace GameLogic.Game.LayoutLogics
             effectTarget.Clear();
             var re = releaser.Releaser;
             effectTarget.SetTeamIndex(re.TeamIndex, re.Index);
+            
             releaser.AttachElement(effectTarget, false, effect.Time.ProcessValue(releaser) / 1000f);
             var per = re.Controller.Perception as BattlePerception;
             var ai = effect.AIPath;
@@ -172,7 +173,7 @@ namespace GameLogic.Game.LayoutLogics
             {
                 per!.ChangeCharacterAI(ai, effectTarget);
             }
-
+            
             effectTarget.AiRoot?.ClearBlackBroad();
             effectTarget.AiRoot?.BreakTree();
         }

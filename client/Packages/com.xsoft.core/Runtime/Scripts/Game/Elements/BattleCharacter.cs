@@ -235,6 +235,7 @@ namespace GameLogic.Game.Elements
             this.TeamIndex = tIndex;
             this.OwnerIndex = ownerIndex;
             this.View.SetTeamIndex(tIndex, ownerIndex);
+            FireEvent(BattleEventType.TeamChanged, this);
         }
 
         public Action PushEnd;

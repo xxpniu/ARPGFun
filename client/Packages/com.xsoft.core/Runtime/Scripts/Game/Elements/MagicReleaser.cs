@@ -402,7 +402,7 @@ namespace GameLogic.Game.Elements
                             this.ToCompleted();
                         }
                         break;
-                    case BattleEventType.NomarlAttack:
+                    case BattleEventType.NormalAttack:
                         if ((DisposeValue & (int)DisposeType.NormarlAttack) > 0)
                         {
                             this.ToCompleted();

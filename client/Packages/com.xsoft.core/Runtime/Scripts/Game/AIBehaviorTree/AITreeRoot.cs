@@ -20,8 +20,8 @@ namespace GameLogic.Game.AIBehaviorTree
         public const string TARGET_POS = "__Target_Pos__";
        
         public bool IsDebug { set; get; }
-        public object UserState { get { return Character; } }
-        private Composite Current;
+        public object UserState => Character;
+        private Composite _current;
 
         private readonly Dictionary<string, object> _blackbroad = new Dictionary<string, object>();
 
@@ -95,32 +95,32 @@ namespace GameLogic.Game.AIBehaviorTree
 
         public void Tick()
         {
-            if (Current == null)
+            if (_current == null)
             {
-                Current = Root;
+                _current = Root;
             }
 
             if (next != null)
             {
-                if (Current?.LastStatus == RunStatus.Running)
-                    Current.Stop(this);
-                Current = next;
+                if (_current?.LastStatus == RunStatus.Running)
+                    _current.Stop(this);
+                _current = next;
                 next = null;
             }
 
             if (NeedBreak)
             {
                 NeedBreak = false;
-                if (Current?.LastStatus == RunStatus.Running) Current.Stop(this);
+                if (_current?.LastStatus == RunStatus.Running) _current.Stop(this);
             }
 
-            if (Current!.LastStatus != RunStatus.Running)
+            if (_current!.LastStatus != RunStatus.Running)
             {
-                Current.Start(this);
+                _current.Start(this);
             }
-            if (Current.Tick(this)!= RunStatus.Running)
+            if (_current.Tick(this)!= RunStatus.Running)
             {
-                Current = Root;
+                _current = Root;
             }
         }
 
@@ -155,7 +155,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
                 _blackbroad[key] = value;
             }
-			get => _blackbroad.TryGetValue(key, out var v) ? v : null;
+			get => _blackbroad.GetValueOrDefault(key);
         }
 
         public bool TryGet<T>(string key, out T v)
@@ -197,7 +197,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
         internal void Stop()
         {
-            if (Current?.LastStatus == RunStatus.Running) Current?.Stop(this);
+            if (_current?.LastStatus == RunStatus.Running) _current?.Stop(this);
         }
 
         public override string ToString()

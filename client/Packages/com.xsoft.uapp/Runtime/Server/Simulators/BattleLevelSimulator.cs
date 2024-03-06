@@ -9,7 +9,6 @@ using Layout;
 using Layout.AITree;
 using Proto;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +20,6 @@ using UnityEngine;
 using CM = ExcelConfig.ExcelToJSONConfigManager;
 using Google.Protobuf;
 using GameLogic.Game.LayoutLogics;
-using UnityEngine.Serialization;
 using XNet.Libs.Utility;
 
 
