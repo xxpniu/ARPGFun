@@ -65,6 +65,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         }
 
         await UnRegBattleServer();
+        await UniTask.SwitchToMainThread();
         await BeginSimulatorWorker(players, levelID);
         Debuger.Log($"start simulator of Level:{levelID}");
         return BattleSimulator;
