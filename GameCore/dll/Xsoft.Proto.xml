@@ -2921,6 +2921,9 @@
         <member name="F:Proto.B2G_UseItem.NumFieldNumber">
             <summary>Field number for the "num" field.</summary>
         </member>
+        <member name="F:Proto.B2G_UseItem.PuuidFieldNumber">
+            <summary>Field number for the "puuid" field.</summary>
+        </member>
         <member name="F:Proto.G2B_UseItem.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
         </member>
@@ -2929,6 +2932,9 @@
         </member>
         <member name="F:Proto.B2G_RewordItem.NumFieldNumber">
             <summary>Field number for the "num" field.</summary>
+        </member>
+        <member name="F:Proto.B2G_RewordItem.PuuidFieldNumber">
+            <summary>Field number for the "puuid" field.</summary>
         </member>
         <member name="F:Proto.G2B_RewordItem.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
