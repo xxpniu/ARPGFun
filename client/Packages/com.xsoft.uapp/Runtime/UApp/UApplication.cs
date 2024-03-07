@@ -99,23 +99,27 @@ namespace UApp
         protected override void Awake()
         {
             base.Awake();
-            _ = new ExcelToJSONConfigManager(ResourcesManager.S);
-            var config = ResourcesManager.S.ReadStreamingFile("client.json");
-            var clientConfig = ClientConfig.Parser.ParseJson(config);
-            LoginServer = new ServiceAddress
-                { IpAddress = clientConfig.LoginServerHost, Port = clientConfig.LoginServerPort };
-            Debug.Log($"Login:{LoginServer}");
-            RunReader();
-            Constant = ExcelToJSONConfigManager.GetId<ConstantValue>(1);
-            var la = ExcelToJSONConfigManager.Find<LanguageData>();
-            LanguageManager.S.AddLanguage(la);
-            GrpcEnvironment.SetLogger(new GrpcLoger());
+           
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            StopChannel();
+
+            DestroyChannel();
+            return;
+
+            async void DestroyChannel()
+            {
+
+                //var temp = _gate;
+                _gate = null;
+                //await UGate.DoExitGate(temp);
+
+                await GrpcEnvironment.ShutdownChannelsAsync();
+                Debuger.Log("Application Quit: stop all channel!!");
+            }
+
         }
 
         protected void Update()
@@ -128,6 +132,19 @@ namespace UApp
 
         private async void Start()
         {
+            _ = new ExcelToJSONConfigManager(ResourcesManager.S);
+            var json = await ResourcesManager.S.ReadStreamingFile("client.json");
+           // await UniTask.SwitchToMainThread();
+            var clientConfig = ClientConfig.Parser.ParseJson(json);
+            LoginServer = new ServiceAddress
+                { IpAddress = clientConfig.LoginServerHost, Port = clientConfig.LoginServerPort };
+            Debug.Log($"Login:{LoginServer}");
+            RunReader();
+            Constant = ExcelToJSONConfigManager.GetId<ConstantValue>(1);
+            var la = ExcelToJSONConfigManager.Find<LanguageData>();
+            LanguageManager.S.AddLanguage(la);
+            GrpcEnvironment.SetLogger(new GrpcLoger());
+            
             if (!localGame) GotoLoginGate();
             else
             {
@@ -185,7 +202,7 @@ namespace UApp
         {
             try
             {
-                var token = this.GetCancellationTokenOnDestroy();
+                var token = this.destroyCancellationToken;
                 while (!token.IsCancellationRequested)
                 {
                     await UniTask.Yield(token);
@@ -214,20 +231,7 @@ namespace UApp
 
         #endregion
 
-        private async void StopChannel()
-        {
-            if (_gate != null)
-            {
-                var temp = _gate;
-                _gate = null;
-                //await UGate.DoExitGate(temp);
-            }
-
-            await GrpcEnvironment.ShutdownChannelsAsync();
-            Debuger.Log("Application Quit: stop all channel!!");
-
-        }
-
+    
         public static T G<T>() where T : UGate
         {
             return S._gate as T;

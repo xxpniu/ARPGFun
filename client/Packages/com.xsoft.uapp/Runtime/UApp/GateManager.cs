@@ -51,7 +51,7 @@ namespace UApp
             });
             var r = await login;
             var header = await login.ResponseHeadersAsync;
-            _client.SessionKey = header.Get("session-key")?.Value ?? string.Empty;
+            _client.SessionKey = header.Get(HeadKeys.SessionKey)?.Value ?? string.Empty;
             Debuger.Log(_client.SessionKey);
 
             if (!r.Code.IsOk())

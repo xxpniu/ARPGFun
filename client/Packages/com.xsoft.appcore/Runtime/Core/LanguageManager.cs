@@ -22,14 +22,18 @@ namespace App.Core.Core
         protected override void Awake()
         {
             base.Awake();
-            var xml = ResourcesManager.S.ReadStreamingFile("Language.xml");
+            
+        }
+
+        private async void Start()
+        {
+            var xml = await ResourcesManager.S.ReadStreamingFile("Language.xml");
 
             var ls = XmlParser.DeSerialize<LanguageSetting>(xml);
             foreach (var i in ls.Keys)
             {
                 AddKey(i.Key, i.Value);
             }
-
         }
 
         private void AddKey(string key, string word)
@@ -50,15 +54,7 @@ namespace App.Core.Core
 
         }
 
-        public string this[string key]
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(key)) return string.Empty;
-                if (Keys.TryGetValue(key, out string v)) return v;
-                return key;
-            }
-        }
+        public string this[string key] => string.IsNullOrEmpty(key) ? string.Empty : Keys.GetValueOrDefault(key, key);
 
         public string Format(string key, params object[] pars)
         {

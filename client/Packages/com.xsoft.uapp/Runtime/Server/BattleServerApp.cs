@@ -132,6 +132,10 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     {
         base.Awake();
         Application.targetFrameRate = 30;
+    }
+
+    private async void Start()
+    {
         var commandLineArgs = Environment.GetCommandLineArgs();
 
         foreach (var arg in commandLineArgs)
@@ -141,7 +145,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 
         Config = new BattleServerConfig();
 
-        var json = ResourcesManager.S.ReadStreamingFile("server.json");
+        var json = await ResourcesManager.S.ReadStreamingFile("server.json");
         Config = BattleServerConfig.Parser.ParseJson(json);
         
 #if UNITY_SERVER || UNITY_EDITOR
@@ -169,10 +173,6 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         _ = new CM(ResourcesManager.S);
         LanguageManager.S.AddLanguage(CM.Find<LanguageData>());
         Constant = CM.GetId<ConstantValue>(1);
-    }
-
-    private async void Start()
-    {
         var cts = new CancellationTokenSource();
         cts.CancelAfter(10000);
         Debuger.Log("Starting");

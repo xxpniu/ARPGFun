@@ -34,7 +34,7 @@ namespace Windows
             bt_cancel.onClick.AddListener(HideWindow);
             bt_sale.onClick.AddListener(SaleCall);
             bt_equip.onClick.AddListener(EquipCall);
-            uiRoot.transform.OnMouseClick(_ => { HideWindow(); });
+            uiRoot.transform.OnMouseClick(_ => { HideWindow(); }).CheckMove= false;
             
             return;
             

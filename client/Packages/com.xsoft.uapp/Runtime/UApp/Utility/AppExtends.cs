@@ -19,7 +19,7 @@ namespace UGameTools
         {
            // var parent = win;
             var ui = await UUIManager.S.CreateWindowAsync<T>( wRender : renderType);
-            //ui.Parent = ui;
+            //ui = ui;
             return ui;
         }
 

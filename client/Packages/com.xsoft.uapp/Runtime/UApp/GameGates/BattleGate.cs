@@ -43,7 +43,7 @@ namespace UApp.GameGates
             var r = await _battleService.ExitBattleAsync(new C2B_ExitBattle
             {
                 AccountUuid = UApplication.S.accountUuid
-            });
+            },cancellationToken: this.destroyCancellationToken);
             try
             {
                 await Client.ShutdownAsync();

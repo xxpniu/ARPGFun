@@ -4,10 +4,12 @@ using Google.Protobuf;
 namespace XNet.Libs.Utility
 {
 
+
     public class StreamBuffer<TData> where TData : IMessage, new()
     {
         private readonly ConcurrentQueue<TData> _requests = new ConcurrentQueue<TData>();
 
+       
         public int Max { get; }
 
         public StreamBuffer(int max = 100)
@@ -15,7 +17,7 @@ namespace XNet.Libs.Utility
             this.Max = max;
         }
 
-        protected bool TryPull(out TData data)
+        public bool TryPull(out TData data)
         {
             return _requests.TryDequeue(out data);
         }

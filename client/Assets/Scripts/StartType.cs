@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using BattleViews.Utility;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -16,17 +17,18 @@ public class StartType : MonoBehaviour
         LocalGame
     }
 
-    private IEnumerator Start()
+    private async void Start()
     {
+        Debuger.Loger = new UnityLogger();
 #if DEVELOPMENT_BUILD        
         SRDebug.Init();
 #endif  
-        yield return Addressables.InitializeAsync();
-        Debuger.Loger = new UnityLogger();
+        await Addressables.InitializeAsync();
+       
 
-        yield return SceneManager.LoadSceneAsync("Welcome", LoadSceneMode.Additive);
+        await SceneManager.LoadSceneAsync("Welcome", LoadSceneMode.Additive);
 
-        yield return new WaitForEndOfFrame();
+        await UniTask.Yield();
 
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -38,7 +40,7 @@ public class StartType : MonoBehaviour
        scene =  SceneType.Application;
 #endif
 #endif
-        yield return SceneManager.LoadSceneAsync(scene.ToString(), LoadSceneMode.Single);
+        await SceneManager.LoadSceneAsync(scene.ToString(), LoadSceneMode.Single);
         Destroy(this);
     }
 

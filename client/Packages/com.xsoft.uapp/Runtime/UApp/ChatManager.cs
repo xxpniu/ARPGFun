@@ -78,7 +78,7 @@ namespace UApp
                 Token = UApplication.S.sessionKey
             }, cancellationToken: ChatChannel.ShutdownToken);
             var header = await LoginCall.ResponseHeadersAsync;
-            ChatChannel.SessionKey = header.Get("session-key")?.Value ?? string.Empty;
+            ChatChannel.SessionKey = header.Get(HeadKeys.SessionKey)?.Value ?? string.Empty;
             Debuger.Log($"ChatChannel.SessionKey:{ChatChannel.SessionKey }");
 
             if (string.IsNullOrEmpty(ChatChannel.SessionKey))

@@ -184,14 +184,14 @@ namespace GameLogic
         public static bool TryAddBase(this Dictionary<P, ComplexValue> dic, string properties, string propertyValues)
         {
             var types = properties.SplitToInt();
-            var propertyeValues = propertyValues.SplitToInt();
+            var pList = propertyValues.SplitToInt();
 
-            if (types.Count != propertyeValues.Count) return false;
+            if (types.Count != pList.Count) return false;
 
             for (var i = 0; i < types.Count; i++)
             {
                 var p = (P)types[i];
-                var v = propertyeValues[i];
+                var v = pList[i];
                 dic.TryToAddBase(p, v);
             }
 

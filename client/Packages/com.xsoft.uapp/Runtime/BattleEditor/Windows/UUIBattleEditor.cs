@@ -30,23 +30,19 @@ namespace Windows
             base.InitModel();
             bt_add.onClick.AddListener(() =>
             {
-
-                if (int.TryParse(input_skill.text, out int skillId))
-                {
-                    var magic = ExcelToJSONConfigManager.GetId<CharacterMagicData>(skillId);
-                    if (magic == null) return;
-                    EditorStarter.S.releaser.AddMagic(magic);
-                }
+                if (!int.TryParse(input_skill.text, out var skillId)) return;
+                
+                var magic = ExcelToJSONConfigManager.GetId<CharacterMagicData>(skillId);
+                if (magic == null) return;
+                EditorStarter.S.releaser.AddMagic(magic);
             });
 
             bt_remove.onClick.AddListener(() =>
             {
-                if (int.TryParse(input_skill.text, out int skillId))
-                {
-                    var magic = ExcelToJSONConfigManager.GetId<CharacterMagicData>(skillId);
-                    if (magic == null) return;
-                    EditorStarter.S.releaser.RemoveMaic(magic.ID);
-                }
+                if (!int.TryParse(input_skill.text, out var skillId)) return;
+                var magic = ExcelToJSONConfigManager.GetId<CharacterMagicData>(skillId);
+                if (magic == null) return;
+                EditorStarter.S.releaser.RemoveMaic(magic.ID);
             });
 
             bt_releaser.onClick.AddListener(() =>

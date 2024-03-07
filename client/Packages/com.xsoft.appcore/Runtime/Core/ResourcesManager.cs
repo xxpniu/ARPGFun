@@ -6,10 +6,12 @@ using EConfig;
 using ExcelConfig;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using XNet.Libs.Utility;
 using Object = UnityEngine.Object;
+using UniTask = Cysharp.Threading.Tasks.UniTask;
 
 namespace App.Core.Core
 {
@@ -46,15 +48,28 @@ namespace App.Core.Core
 			token?.ThrowIfCancellationRequested();
 			call?.Invoke(asset.Result);
 			return asset.Result;
+			
 		}
 
 
 
-		public string ReadStreamingFile(string fileName)
+		public async Task<string> ReadStreamingFile(string fileName)
 		{
-			var path = Path.Combine(Application.streamingAssetsPath, fileName);
-			//Debuger.Log($"Streaming->{path}");
-			return File.ReadAllText(path);
+			if (Application.platform == RuntimePlatform.Android)
+			{
+				var webRequest = UnityWebRequest.Get($"jar:file://{Application.dataPath}/assets/{fileName}");
+				await webRequest.SendWebRequest();
+				var res = webRequest.downloadHandler.text;
+				await UniTask.SwitchToMainThread();
+				return res;
+			}
+			else
+			{
+				var path = Path.Combine(Application.streamingAssetsPath, fileName);
+				var res = await File.ReadAllTextAsync(path);
+				await UniTask.SwitchToMainThread();
+				return res;
+			}
 		}
 
 		public async Task<Sprite> LoadIcon(GoldShopData item, CallBackDele<Sprite> callBack = null,

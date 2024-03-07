@@ -52,8 +52,8 @@ namespace GameLogic.Game.Elements
         {
             set
             {
-                _baseSpeed = value;
-                View.SetSpeed(Speed);
+                _baseSpeed =  Math.Min(BattleAlgorithm.MaxSpeed, value);
+                View.SetSpeed(value);
             }
             get
             {
@@ -457,9 +457,10 @@ namespace GameLogic.Game.Elements
 
         public void FireEvent(BattleEventType ev, object args)
         {
-            foreach (var i in _eventWatchers)
+            var arr = _eventWatchers.ToArray();
+            for (var i = 0; i < arr.Length; i++)
             {
-                i.OnFireEvent(ev, args);
+                arr[i].OnFireEvent(ev,args);
             }
         }
 

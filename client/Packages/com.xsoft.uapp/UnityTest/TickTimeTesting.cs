@@ -17,10 +17,12 @@ namespace Tests
            
             for (var d = 0; d < 100; d++)
             {
-                tick(d);
+                Tick(d);
             }
 
-             void tick(int day)
+            return;
+
+            void Tick(int day)
             {
                 var time = new GTime(24 * 60 * 60 * day, .3f);
                 var start = time;
