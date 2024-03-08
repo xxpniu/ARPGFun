@@ -27,9 +27,7 @@ namespace UApp.GameGates
     public class LevelSimulatorGate : UGate, IStateLoader,IBattleGate
     {
         private int LevelId;
-        private DHero Hero;
-        //private PlayerPackage Package;
-
+        private DHero Hero; 
         public RenderTexture LookAtView { get; private set; }
         public BattleLevelData LevelData { get; private set; }
         public UPerceptionView PerView { get; private set; }
@@ -39,6 +37,8 @@ namespace UApp.GameGates
         public BattleState State { private set; get; }
 
         public BattlePerception Per => State.Perception as BattlePerception;
+
+        private bool _isFinished = false;
 
         protected override async Task JoinGate(params object[] args)
         {
@@ -122,8 +122,11 @@ namespace UApp.GameGates
             };   
             
             TryToSpawnMonster();
+            _startTime = ((IBattleGate)this).TimeServerNow;
+            _isFinished = false;
         }
-    
+
+        private float _startTime = 0;
 
         private Server.Map.MapElementSpawn _mCreator;
 
@@ -148,18 +151,36 @@ namespace UApp.GameGates
             if(_mCreator ==null) return;
             if(!_mCreator.IsAllMonsterDeath()) return;
             await _mCreator.Spawn();
+            
+            
         }
 
-        private async void ShowBattleResult()
+        private async void ShowBattleResult(bool win = false)
         {
-            
+             
         }
 
         protected override void Tick()
         {
             if (State == null) return;
+            if(_isFinished) return;
             GState.Tick(State, _timeSimulator.Now);
             PerView.GetAndClearNotify();
+            
+            
+            
+            if (((IBattleGate)this).LeftTime <= 0)
+            {
+                //time Over
+                _isFinished = true;
+                ShowBattleResult(false);
+            }
+
+            if (_mCreator.IsAllMonsterDeath())
+            {
+                _isFinished = true;
+                ShowBattleResult(true);
+            }
         }
 
         float IBattleGate.TimeServerNow => _timeSimulator.Now.Time;
@@ -178,7 +199,7 @@ namespace UApp.GameGates
 
         StateType IBattleGate.State => StateType.Running;
 
-        float IBattleGate.LeftTime => 1f;
+        float IBattleGate.LeftTime => LevelData.LimitTime - (((IBattleGate)this).TimeServerNow - _startTime);
 
         bool IBattleGate.ReleaseSkill(HeroMagicData data, Vector3? forward)
         {
