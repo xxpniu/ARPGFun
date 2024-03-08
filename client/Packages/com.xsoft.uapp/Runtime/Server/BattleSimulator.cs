@@ -191,7 +191,10 @@ namespace Server
             var config = ExcelToJSONConfigManager.GetId<ItemData>(item);
             if (config == null)
             {
-                //player.PushChannel.Push( )
+                player.PushChannel.Push(Any.Pack(new Notify_ErrorCode
+                {
+                    Code = ErrorCode.Error
+                }));
                 return;
             }
             if (player.GetItemCount(item) == 0) return;
@@ -205,8 +208,14 @@ namespace Server
                      Puuid = player.PlayerUuid,
                  })
                 );
-            if(!res.Code.IsOk())
+            if (!res.Code.IsOk())
+            {
+                player.PushChannel.Push(Any.Pack(new Notify_ErrorCode
+                {
+                    Code = res.Code
+                }));
                 return;
+            }
 
             
 
@@ -216,8 +225,34 @@ namespace Server
             var rTarget = new ReleaseAtTarget(player.HeroCharacter, player.HeroCharacter);
             if (_levelSimulator.CreateReleaser(config.Params1, player.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
             {
-                 //todo::
+                player.PushChannel.Push(
+                    Any.Pack(new Notify_ErrorCode { Code = ErrorCode.Ok, Msg = "ITEM_USE_SUCCESS"}));
             }
+        }
+
+        private async void RewardItem(BattlePlayer player, PlayerItem item)
+        {
+            var res = await C<GateServerInnerService.GateServerInnerServiceClient>.RequestOnceAsync( 
+                player.GateServer.GateServerInnerHost, 
+                async client=> await client.RewardItemAsync(new B2G_RewordItem
+                {
+                    Puuid = player.PlayerUuid,
+                    ItemId = item.ItemID,
+                    Num = item.Num
+                }));
+            if (!res.Code.IsOk())
+            {
+                player.PushChannel.Push(
+                    Any.Pack(new Notify_ErrorCode { Code = res.Code, Msg = "Error"}));
+                return;
+            }
+            
+            
+            player.PushChannel.Push(
+                Any.Pack(new Notify_ErrorCode { Code = res.Code, Msg = "REWARD_ITEM"}));
+            
+            player.ModifyItem(modify: res);
+            
         }
 
         private void ProcessAction()
@@ -246,8 +281,7 @@ namespace Server
                     {
                         if (!_levelSimulator.TryGetElementByIndex(collect.Index, out BattleItem item)) continue;
                         if (item.IsAliveAble != true || !item.CanBecollect(i.Value.HeroCharacter)) continue;
-                        if (!i.Value.AddDrop(item.DropItem)) continue;
-                        needNotifyPackage = true;
+                        RewardItem(i.Value,item:item.DropItem);
                         GObject.Destroy(item);
                     }
                     else if (action.TryUnpack(out Action_UseItem useItem))
@@ -261,13 +295,7 @@ namespace Server
                             case ItemType.ItHpitem:
                             case ItemType.ItMpitem:
                             {
-                                
-                                var rTarget = new ReleaseAtTarget(i.Value.HeroCharacter, i.Value.HeroCharacter);
-                                if (_levelSimulator.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
-                                {
-                                    i.Value.ConsumeItem(useItem.ItemId);
-                                    needNotifyPackage = true;
-                                }
+                                this.ConsumeItem(i.Value,useItem.ItemId,1);
                                 break;
                             }
                             case ItemType.ItNone:
@@ -276,9 +304,7 @@ namespace Server
                             default:
                             {
                                 Debuger.LogError($"type of {(ItemType)config.ItemType} can't be used!");
-                            }
-                                break;
-                            
+                            } break;
                         };
                     }
                     else if (action.TryUnpack(out Action_LookRotation look))

@@ -386,13 +386,13 @@ message G2B_UseItem
 	repeated PlayerItem RemoveItems = 3;
 }
 
-message B2G_RewordItem{
+message B2G_RewardItem{
 	int32 itemId =1;
 	int32 num =2;
 	string puuid = 3;
 }
 
-message G2B_RewordItem
+message G2B_RewardItem
 {
 	ErrorCode Code =1;
 	repeated PlayerItem ModifyItems = 2;
@@ -431,5 +431,5 @@ service GateServerInnerService
 	//rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
 	rpc KillUser (L2G_KillUser) returns (Void);
 	rpc UseItem(B2G_UseItem) returns(G2B_UseItem);
-	rpc RewardItem(B2G_RewordItem) returns(G2B_BattleReward);
+	rpc RewardItem(B2G_RewardItem) returns(G2B_RewardItem);
 }
