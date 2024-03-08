@@ -58,7 +58,8 @@ namespace GServer.RPCResponser
 
         public override async Task<G2B_RewardItem> RewardItem(B2G_RewardItem request, ServerCallContext context)
         {
-            var (modifies, adds) = await UserDataManager.S.AddItems(request.Puuid,
+            var player =await UserDataManager.S.FindPlayerByAccountId(request.AccountId);
+            var (modifies, adds) = await UserDataManager.S.AddItems(player.Uuid,
                 new PlayerItem { ItemID = request.ItemId, Num = request.Num });
             if (modifies == null || adds == null)
             {
@@ -78,7 +79,8 @@ namespace GServer.RPCResponser
 
         public override async Task<G2B_UseItem> UseItem(B2G_UseItem request, ServerCallContext context)
         {
-            var (error, mod, remove) = await  UserDataManager.S.UseItem(request.Puuid, request.ItemId, request.Num);
+            var player =await UserDataManager.S.FindPlayerByAccountId(request.AccountId);
+            var (error, mod, remove) = await  UserDataManager.S.UseItem(player.Uuid, request.ItemId, request.Num);
 
             return new G2B_UseItem
             {

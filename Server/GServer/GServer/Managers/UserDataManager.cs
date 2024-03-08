@@ -865,7 +865,6 @@ namespace GServer.Managers
             foreach (var item in package.Items)
             {
                 if (item.Id != itemId) continue;
-                //var config = ExcelToJSONConfigManager.GetId<ItemData>(item.Id);
                 if (item.Num < num) return (ErrorCode.NoenoughItem, null, null);
                 item.Num -= num;
                 if (item.Num == 0)
@@ -888,7 +887,8 @@ namespace GServer.Managers
             }
 
             if (models.Count == 0) return (ErrorCode.NofoundItem, null, null);
-            await DataBase.S.Packages.BulkWriteAsync(models);
+            var writer= await DataBase.S.Packages.BulkWriteAsync(models);
+           
 
             await SyncModifyItems(acc.AccountUuid, modify.Select(t => t.ToPlayerItem()).ToArray(), removes.Select(t => t.ToPlayerItem()).ToArray());
             //await SyncCoinAndGold(account, pl.Coin, pl.Gold);
