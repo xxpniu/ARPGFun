@@ -11,23 +11,7 @@ namespace GServer.RPCResponser
 
     public class GateBattleServerService : GateServerInnerService.GateServerInnerServiceBase
     {
-
-        public override async Task<G2B_BattleReward> BattleReward(B2G_BattleReward request, ServerCallContext context)
-        {
-            var uuid = await UserDataManager.S.ProcessBattleReward(
-                request.AccountUuid,
-                request.ModifyItems,
-                request.RemoveItems,
-                request.Exp,
-                request.Level,
-                request.DiffGold,
-                request.HP,
-                request.MP);
-
-            if (string.IsNullOrEmpty(uuid)) return new G2B_BattleReward { Code = ErrorCode.Error };
-            await UserDataManager.S.SyncToClient(request.AccountUuid, uuid, true, true);
-            return new G2B_BattleReward { Code = ErrorCode.Ok };
-        }
+        
      
         public override async Task<G2B_GetPlayerInfo> GetPlayerInfo(B2G_GetPlayerInfo request, ServerCallContext context)
         {

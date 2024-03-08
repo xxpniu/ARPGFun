@@ -41,12 +41,7 @@ namespace GServer.Managers
             var player = await FindPlayerByAccountId(accountId);
             return await FindHeroByPlayerId(player.Uuid);
         }
-
-        public async Task<string> ProcessBattleReward(string accountUuid,IList<PlayerItem> modifyItems,  IList<PlayerItem> removeItems, int exp, int level, int gold,int hp, int mp)
-        {
-            return await Task.FromResult(string.Empty);
-        }
-
+        
         internal async Task<bool> SyncToClient(string accountId, string playerUuid = null, bool syncPlayer = false, bool syncPackage = false)
         {
             if (!Application.S.StreamService.Exist(accountId)) return false;
