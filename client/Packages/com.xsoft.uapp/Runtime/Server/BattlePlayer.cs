@@ -24,6 +24,8 @@ namespace Server
         private readonly DHero _hero;
         public BattlePackage Package { private set; get; }
         public BattleCharacter HeroCharacter { set; get; }
+        
+        public string PlayerUuid { get; }
 
         public int Gold
         {
@@ -46,7 +48,7 @@ namespace Server
         
         private readonly int _baseGold = 0;
 
-        public BattlePlayer(string account, PlayerPackage package, DHero hero, int gold, L2S_CheckSession info,
+        public BattlePlayer(string account, string uuid, PlayerPackage package, DHero hero, int gold, L2S_CheckSession info,
             StreamBuffer<Any> requestChannel = null, StreamBuffer<Any> pushChannel = null)
         {
             Package = new BattlePackage(package);
@@ -56,6 +58,7 @@ namespace Server
             PushChannel = pushChannel;
             RequestChannel = requestChannel;
             GateServer = info;
+            PlayerUuid = uuid;
         }
 
 

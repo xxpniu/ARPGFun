@@ -184,6 +184,25 @@ namespace Server
 
         }
 
+        private async void ConsumeItem(BattlePlayer player, int item, int num)
+        {
+            var request = await C<GateServerInnerService.GateServerInnerServiceClient>.RequestOnceAsync( 
+                 player.GateServer.GateServerInnerHost, 
+                 async client=> await client.UseItemAsync(new B2G_UseItem
+                 {
+                     ItemId = item, Num = num,
+                     Puuid = player.AccountId
+                 })
+                );
+            
+            var rTarget = new ReleaseAtTarget(i.Value.HeroCharacter, i.Value.HeroCharacter);
+            if (_levelSimulator.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
+            {
+                i.Value.ConsumeItem(useItem.ItemId);
+                needNotifyPackage = true;
+            }
+        }
+
         private void ProcessAction()
         {
             foreach (var i in _battlePlayers)
@@ -225,6 +244,7 @@ namespace Server
                             case ItemType.ItHpitem:
                             case ItemType.ItMpitem:
                             {
+                                
                                 var rTarget = new ReleaseAtTarget(i.Value.HeroCharacter, i.Value.HeroCharacter);
                                 if (_levelSimulator.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
                                 {

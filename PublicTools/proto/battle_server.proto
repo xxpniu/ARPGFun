@@ -12,6 +12,7 @@ message C2B_JoinBattle
 	 string Session=2;
 	 string AccountUuid=3;
 	 int32 Version=4;
+	 string  PlayerUuid =5;
 }
 
 message B2C_JoinBattle
