@@ -157,7 +157,22 @@ namespace UApp.GameGates
 
         private async void ShowBattleResult(bool win = false)
         {
-             
+            if (!win)
+            {
+                //go back
+                //todo:failure result no reward
+                UApplication.S.GoBackToMainGate();
+                return;
+            }
+
+            var request = new C2G_LocalBattleFinished();
+            var reward = await GateManager.S.GateFunction.LocalBattleFinishedAsync(request,
+                cancellationToken: this.destroyCancellationToken);
+            await UniTask.SwitchToMainThread();
+            if(!reward.Code.IsOk())
+                UApplication.S.ShowError(reward.Code);
+            //todo:: show reward result
+            UApplication.S.GoBackToMainGate();
         }
 
         protected override void Tick()

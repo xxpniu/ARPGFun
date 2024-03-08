@@ -469,5 +469,13 @@ namespace GServer.RPCResponsor
             var (res, _, _) = await UserDataManager.S.UseItem(playerUuid.Uuid, request.ItemId, request.Num);
             return new G2C_UseItem { Code = res };
         }
+
+        public override async Task<G2C_LocalBattleFinished> LocalBattleFinished(C2G_LocalBattleFinished request, ServerCallContext context)
+        {
+            return new G2C_LocalBattleFinished
+            {
+                Code = ErrorCode.Exception
+            };
+        }
     }
 }
