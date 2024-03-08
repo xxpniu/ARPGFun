@@ -58,7 +58,6 @@ namespace GServer.RPCResponser
 
         public override async Task<G2B_BattleReward> RewardItem(B2G_RewordItem request, ServerCallContext context)
         {
-            
             var (modifies, adds) = await UserDataManager.S.AddItems(request.Puuid,
                 new PlayerItem { ItemID = request.ItemId, Num = request.Num });
             if (modifies == null || adds == null)
@@ -79,7 +78,9 @@ namespace GServer.RPCResponser
 
             return new G2B_UseItem
             {
-                Code = error
+                Code = error,
+                ModifyItems =  {mod.Select(t=>t.ToPlayerItem()).ToArray()},
+                RemoveItems = { remove.Select(t=>t.ToPlayerItem()).ToArray() }
             };
         }
     }

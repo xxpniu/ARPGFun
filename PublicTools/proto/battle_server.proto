@@ -95,6 +95,11 @@ message Action_Relive
 }
 //notify action
 
+message Notify_ErrorCode{
+	ErrorCode Code = 1;
+	string msg =2;
+}
+
 //元素退出场景
 message Notify_ElementExitState
 {

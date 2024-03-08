@@ -395,6 +395,8 @@ message B2G_RewordItem{
 message G2B_RewordItem
 {
 	ErrorCode Code =1;
+	repeated PlayerItem ModifyItems = 2;
+	repeated PlayerItem AddItems = 3;
 }
 
 service GateServerService

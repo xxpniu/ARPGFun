@@ -78,7 +78,7 @@ namespace Server
             Dirty = true;
             return true;
         }
-
+        
         public Notify_PlayerJoinState GetNotifyPackage()
         {
             var notify = new Notify_PlayerJoinState()
@@ -240,6 +240,36 @@ namespace Server
             }
             Dirty = true;
             return _hero.Exprices;
+        }
+
+        public void ModifyItem(IList<PlayerItem> modify =null,IList<PlayerItem> removes = null, IList<PlayerItem> adds = null)
+        {
+            if (modify!=null)
+            {
+                foreach (var item in modify)
+                {
+                    if (this.Package.Items.TryGetValue(item.GUID, out var v))
+                    {
+                        v.Item.Num = item.Num;
+                    }
+                }
+            }
+
+            if (removes !=null)
+            {
+                foreach (var item in removes)
+                {
+                    this.Package.RemoveItem(item.GUID);
+                }
+            }
+
+            if (adds!=null)
+            {
+                foreach (var item in adds)
+                {
+                    this.Package.Items.Add(item.GUID, new BattlePlayerItem(item));
+                }
+            }
         }
     }
 }

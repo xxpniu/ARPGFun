@@ -3,8 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Core.Core;
 using App.Core.Core.Components;
 using BattleViews.Views;
+using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;
 using ExcelConfig;
@@ -186,20 +188,35 @@ namespace Server
 
         private async void ConsumeItem(BattlePlayer player, int item, int num)
         {
-            var request = await C<GateServerInnerService.GateServerInnerServiceClient>.RequestOnceAsync( 
+            var config = ExcelToJSONConfigManager.GetId<ItemData>(item);
+            if (config == null)
+            {
+                //player.PushChannel.Push( )
+                return;
+            }
+            if (player.GetItemCount(item) == 0) return;
+            
+            var res = await C<GateServerInnerService.GateServerInnerServiceClient>.RequestOnceAsync( 
                  player.GateServer.GateServerInnerHost, 
                  async client=> await client.UseItemAsync(new B2G_UseItem
                  {
-                     ItemId = item, Num = num,
-                     Puuid = player.AccountId
+                     ItemId = item, 
+                     Num = num,
+                     Puuid = player.PlayerUuid,
                  })
                 );
+            if(!res.Code.IsOk())
+                return;
+
             
-            var rTarget = new ReleaseAtTarget(i.Value.HeroCharacter, i.Value.HeroCharacter);
-            if (_levelSimulator.CreateReleaser(config.Params1, i.Value.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
+
+            await UniTask.SwitchToMainThread();
+            player.ModifyItem(modify: res.ModifyItems, removes:res.RemoveItems);
+            
+            var rTarget = new ReleaseAtTarget(player.HeroCharacter, player.HeroCharacter);
+            if (_levelSimulator.CreateReleaser(config.Params1, player.HeroCharacter, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1))
             {
-                i.Value.ConsumeItem(useItem.ItemId);
-                needNotifyPackage = true;
+                 //todo::
             }
         }
 
