@@ -2960,6 +2960,73 @@
         <member name="F:Proto.G2B_RewardItem.AddItemsFieldNumber">
             <summary>Field number for the "AddItems" field.</summary>
         </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.LevelIdFieldNumber">
+            <summary>Field number for the "levelId" field.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.CostTimeFieldNumber">
+            <summary>Field number for the "costTime" field.</summary>
+        </member>
+        <member name="P:Proto.C2G_LocalBattleFinished.CostTime">
+             <summary>
+            总共的时间 秒数
+             </summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.ItemsFieldNumber">
+            <summary>Field number for the "Items" field.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.DamagesFieldNumber">
+            <summary>Field number for the "Damages" field.</summary>
+        </member>
+        <member name="P:Proto.C2G_LocalBattleFinished.Damages">
+             <summary>
+            伤害计算
+             </summary>
+        </member>
+        <member name="T:Proto.C2G_LocalBattleFinished.Types">
+            <summary>Container for nested types declared in the C2G_LocalBattleFinished message type.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.Types.ConsumeItem.ItemIdFieldNumber">
+            <summary>Field number for the "itemId" field.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.Types.ConsumeItem.NumFieldNumber">
+            <summary>Field number for the "num" field.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.Types.BattleDamage.MonsterIdFieldNumber">
+            <summary>Field number for the "monsterId" field.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.Types.BattleDamage.MonsterConfigIdFieldNumber">
+            <summary>Field number for the "monsterConfigId" field.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.Types.BattleDamage.TotalDamageFieldNumber">
+            <summary>Field number for the "totalDamage" field.</summary>
+        </member>
+        <member name="F:Proto.C2G_LocalBattleFinished.Types.BattleDamage.DeadTimeFieldNumber">
+            <summary>Field number for the "deadTime" field.</summary>
+        </member>
+        <member name="P:Proto.C2G_LocalBattleFinished.Types.BattleDamage.DeadTime">
+             <summary>
+            from battle started
+             </summary>
+        </member>
+        <member name="F:Proto.G2C_LocalBattleFinished.CodeFieldNumber">
+            <summary>Field number for the "Code" field.</summary>
+        </member>
+        <member name="F:Proto.G2C_LocalBattleFinished.AddItemsFieldNumber">
+            <summary>Field number for the "AddItems" field.</summary>
+        </member>
+        <member name="P:Proto.G2C_LocalBattleFinished.AddItems">
+             <summary>
+            获得道具/装备
+             </summary>
+        </member>
+        <member name="F:Proto.G2C_LocalBattleFinished.GoldFieldNumber">
+            <summary>Field number for the "gold" field.</summary>
+        </member>
+        <member name="P:Proto.G2C_LocalBattleFinished.Gold">
+             <summary>
+            获得金币数
+             </summary>
+        </member>
         <member name="P:Proto.GateServerService.Descriptor">
             <summary>Service descriptor</summary>
         </member>
