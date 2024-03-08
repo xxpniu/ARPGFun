@@ -871,7 +871,7 @@ namespace GServer.Managers
                 {
                     removes.Add(item);
                     models.Add(new UpdateOneModel<GamePackageEntity>(
-                        Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid,pUuid),
+                        Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid,package.Uuid),
                         Builders<GamePackageEntity>.Update.PullFilter(t => t.Items, x => x.Uuid == item.Uuid))
                     );
                 }
@@ -879,7 +879,7 @@ namespace GServer.Managers
                 {
                     modify.Add(item);
                     models.Add(new UpdateOneModel<GamePackageEntity>(
-                        Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid, pUuid) &
+                        Builders<GamePackageEntity>.Filter.Eq(t => t.Uuid, package.Uuid) &
                         Builders<GamePackageEntity>.Filter.ElemMatch(t => t.Items, x => x.Uuid == item.Uuid),
                         Builders<GamePackageEntity>.Update.Set( "Items.$.Num", item.Num))
                     );
@@ -890,8 +890,10 @@ namespace GServer.Managers
             var writer= await DataBase.S.Packages.BulkWriteAsync(models);
            
 
-            await SyncModifyItems(acc.AccountUuid, modify.Select(t => t.ToPlayerItem()).ToArray(), removes.Select(t => t.ToPlayerItem()).ToArray());
-            //await SyncCoinAndGold(account, pl.Coin, pl.Gold);
+            await SyncModifyItems(acc.AccountUuid, 
+                modify.Select(t => t.ToPlayerItem()).ToArray(),
+                removes.Select(t => t.ToPlayerItem()).ToArray());
+            
             return (ErrorCode.Ok, modify, removes);
 
         }

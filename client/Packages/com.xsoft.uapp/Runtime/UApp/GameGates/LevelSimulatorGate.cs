@@ -47,7 +47,6 @@ namespace UApp.GameGates
             UUIManager.S.ShowMask(true);
             UUIManager.S.HideAll();
             Hero = args[0] as DHero;
-            //Package = args[1] as PlayerPackage;
             LevelId = (int)args[2];
             await InitLevel(LevelId);
         }
@@ -121,7 +120,7 @@ namespace UApp.GameGates
                 //UUIManager.S.CreateWindowAsync<Windows.>
             };   
             
-            TryToSpawnMonster();
+            await _mCreator.Spawn();
             _startTime = ((IBattleGate)this).TimeServerNow;
             _isFinished = false;
         }
@@ -145,15 +144,7 @@ namespace UApp.GameGates
         {
             
         }
-
-        private async void TryToSpawnMonster()
-        {
-            if(_mCreator ==null) return;
-            if(!_mCreator.IsAllMonsterDeath()) return;
-            await _mCreator.Spawn();
-            
-            
-        }
+        
 
         private async void ShowBattleResult(bool win = false)
         {
@@ -169,8 +160,7 @@ namespace UApp.GameGates
             var reward = await GateManager.S.GateFunction.LocalBattleFinishedAsync(request,
                 cancellationToken: this.destroyCancellationToken);
             await UniTask.SwitchToMainThread();
-            if(!reward.Code.IsOk())
-                UApplication.S.ShowError(reward.Code);
+            if(!reward.Code.IsOk()) UApplication.S.ShowError(reward.Code);
             //todo:: show reward result
             UApplication.S.GoBackToMainGate();
         }
@@ -191,7 +181,7 @@ namespace UApp.GameGates
                 ShowBattleResult(false);
             }
 
-            if (_mCreator.IsAllMonsterDeath())
+            if (_mCreator?.IsAllMonsterDeath() == true)
             {
                 _isFinished = true;
                 ShowBattleResult(true);

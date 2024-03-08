@@ -61,7 +61,8 @@ namespace Server.Map
                 Monster.RemoveEventWatcher(this);
             }
         }
-        
+
+        private bool _finished = false;
         public BattlePerception Per { get; }
         public MapConfig Config { get; }
 
@@ -111,6 +112,8 @@ namespace Server.Map
                         break;
                 }
             }
+
+            _finished = true;
         }
 
         //传送点的config param0 是作用技能 释放方式为目标 作用就是自己身边3米的然后到目标点
@@ -254,6 +257,7 @@ namespace Server.Map
 
         public bool IsAllMonsterDeath()
         {
+            if (!_finished) return false;
             return AliveCount == 0;
         }
 
