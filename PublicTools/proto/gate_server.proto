@@ -376,7 +376,7 @@ message B2G_UseItem
 {
 	int32 itemId = 1;
 	int32 num =2;
-	string puuid = 3;
+	string accountId = 3;
 }
 
 message G2B_UseItem
@@ -389,7 +389,7 @@ message G2B_UseItem
 message B2G_RewardItem{
 	int32 itemId =1;
 	int32 num =2;
-	string puuid = 3;
+	string accountId = 3;
 }
 
 message G2B_RewardItem

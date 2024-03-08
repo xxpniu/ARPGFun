@@ -98,7 +98,7 @@ namespace Windows
             async void TakeOffCall()
             {
                 if (_selected == null) return;
-                var g = UApplication.G<GMainGate>();
+                var g =GateManager.S;
                 if (!g.Package.Items.TryGetValue(_selected.GUID, out PlayerItem item)) return;
                 var config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
                 var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(config.ID);
@@ -122,7 +122,7 @@ namespace Windows
             async void LevelUpCall()
             {
                 if (_selected == null) return;
-                var g = UApplication.G<GMainGate>();
+                var g =  GateManager.S;
                 if (!g.Package.Items.TryGetValue(_selected.GUID, out PlayerItem item)) return;
                 var req = new C2G_EquipmentLevelUp { Guid = _selected.GUID, Level = item.Level };
                 var r = await GateManager.S.GateFunction.EquipmentLevelUpAsync(req);
@@ -143,7 +143,7 @@ namespace Windows
 
         private async void Click(EquipmentType key)
         {
-            var g = UApplication.G<GMainGate>();
+            var g = GateManager.S;
             foreach (var i in g.Hero.Equips)
             {
                 if (i.Part != key) continue;
@@ -161,7 +161,7 @@ namespace Windows
         {
             this._selected = eq;
             Right.ActiveSelfObject(true);
-            var g = UApplication.G<GMainGate>();
+            var g = GateManager.S;
             g.Package.Items.TryGetValue(eq.GUID, out PlayerItem it);
 
             var item = ExcelToJSONConfigManager.GetId<ItemData>(eq.ItemID);
@@ -204,7 +204,7 @@ namespace Windows
             base.OnShow();
             Right.ActiveSelfObject(false);
             
-            var g = UApplication.G<GMainGate>();
+            var g = GateManager.S;
             ShowHero(g.Hero, g.Package);
 
             take_off.SetKey("UUIHeroEquip_Take_off");
@@ -220,7 +220,7 @@ namespace Windows
         protected override void OnUpdateUIData()
         {
             base.OnUpdateUIData();
-            var g = UApplication.G<GMainGate>();
+            var g = GateManager.S;
             ShowHero(g.Hero, g.Package);
             if (_selected == null) Right.ActiveSelfObject(false);
             else DisplayEquip(_selected);

@@ -84,7 +84,7 @@ namespace Windows
         {
 
             bt_level_up.SetKey("UUIMagic_LevelUp");
-            var gata = UApplication.G<GMainGate>();
+            var gata = GateManager.Try();
             int index = 0;
             var configs = ExcelToJSONConfigManager.Find<CharacterMagicData>(t => t.CharacterID == gata.Hero.HeroID
                 && ExcelToJSONConfigManager.Find<MagicLevelUpData>(l=>l.MagicID == t.ID)?.Count()>0);

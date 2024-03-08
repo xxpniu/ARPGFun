@@ -62,7 +62,7 @@ namespace Windows
 
                 async void OkCallBack()
                 {
-                    var gate = UApplication.G<GMainGate>();
+                    var gate =  GateManager.Try();
                     var res = await GateManager.S.GateFunction.BuyPackageSizeAsync(new C2G_BuyPackageSize { SizeCurrent = gate.Package.MaxSize });
                     await UniTask.SwitchToMainThread();
                     if (res.Code.IsOk())
@@ -88,7 +88,7 @@ namespace Windows
         protected override void OnUpdateUIData()
         {
             base.OnUpdateUIData();
-            var gate = UApplication.G<GMainGate>();
+            var gate =  GateManager.Try();
 
             lb_TextCountCur.text = $"{ gate.Package.Items.Count}";
             lb_TextCountSize.text = $"/{gate.Package.MaxSize}";

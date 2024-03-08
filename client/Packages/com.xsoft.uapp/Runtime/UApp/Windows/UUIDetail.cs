@@ -99,7 +99,7 @@ namespace Windows
             }
             else
             {
-                var g = UApplication.G<GMainGate>();
+                var g = GateManager.Try();
                 var wear = false;
                 foreach (var i in g.Hero.Equips)
                 {

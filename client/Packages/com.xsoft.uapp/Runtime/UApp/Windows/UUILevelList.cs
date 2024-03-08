@@ -63,7 +63,7 @@ namespace Windows
 
         private void OnItemClick(ContentTableModel item)
         {
-            var gate = UApplication.G<GMainGate>();
+            var gate =GateManager.Try();
             var runType = (Proto.LevelRunType)item.Data.RunType;
             switch (runType)
             {

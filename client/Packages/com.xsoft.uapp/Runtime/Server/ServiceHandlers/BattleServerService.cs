@@ -109,7 +109,7 @@ namespace Server
                     await context.WriteResponseHeadersAsync(new Metadata { { "session-key", key } });
                     Debuger.Log($"Add:{request.AccountUuid} -> {key}");
                     var battlePlayer =
-                        new BattlePlayer(request.AccountUuid, request.PlayerUuid,pack.Package, pack.Hero, pack.Gold, seResult);
+                        new BattlePlayer(request.AccountUuid,pack.Package, pack.Hero, pack.Gold, seResult);
                     simulator.AddPlayer(request.AccountUuid, battlePlayer);
                 }
                 return new B2C_JoinBattle { Code = ErrorCode.Ok };

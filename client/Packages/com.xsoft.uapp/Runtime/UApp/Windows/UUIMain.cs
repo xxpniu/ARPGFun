@@ -133,18 +133,19 @@ namespace Windows
         {
             base.OnUpdateUIData();
             var gate = UApplication.G<GMainGate>();
+            var m = GateManager.Try();
             if (gate == null) return;
-            if (gate.Hero == null) return;
+            if (m.Hero == null) return;
             user_defalut.texture = gate.LookAtView;
-            lb_gold.text = gate.gold.ToString("N0");
-            lb_gem.text = gate.coin.ToString("N0");
-            if (gate.Hero == null) return;
-            this.Level_Number.text = $"{gate.Hero.Level}";
-            this.Username.text = $"{gate.Hero.Name}";
-            var leveUp = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == gate.Hero.Level + 1);
-            lb_exp.text = $"{gate.Hero.Exprices}/{leveUp?.NeedExp ?? '-'}";
+            lb_gold.text = m.gold.ToString("N0");
+            lb_gem.text = m.coin.ToString("N0");
+            if (m.Hero == null) return;
+            this.Level_Number.text = $"{m.Hero.Level}";
+            this.Username.text = $"{m.Hero.Name}";
+            var leveUp = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == m.Hero.Level + 1);
+            lb_exp.text = $"{m.Hero.Exprices}/{leveUp?.NeedExp ?? '-'}";
             float v = 0;
-            if (leveUp != null) v = (float)gate.Hero.Exprices / leveUp.NeedExp;
+            if (leveUp != null) v = (float)m.Hero.Exprices / leveUp.NeedExp;
             ExpSilder.value = v;
 
             Root.ActiveSelfObject(gate.Group == null);

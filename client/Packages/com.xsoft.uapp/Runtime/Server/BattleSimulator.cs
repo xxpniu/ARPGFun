@@ -205,7 +205,7 @@ namespace Server
                  {
                      ItemId = item, 
                      Num = num,
-                     Puuid = player.PlayerUuid,
+                     AccountId = player.AccountId,
                  })
                 );
             if (!res.Code.IsOk())
@@ -234,9 +234,9 @@ namespace Server
         {
             var res = await C<GateServerInnerService.GateServerInnerServiceClient>.RequestOnceAsync( 
                 player.GateServer.GateServerInnerHost, 
-                async client=> await client.RewardItemAsync(new B2G_RewordItem
+                async client=> await client.RewardItemAsync(new B2G_RewardItem
                 {
-                    Puuid = player.PlayerUuid,
+                    AccountId = player.AccountId,
                     ItemId = item.ItemID,
                     Num = item.Num
                 }));
@@ -251,7 +251,7 @@ namespace Server
             player.PushChannel.Push(
                 Any.Pack(new Notify_ErrorCode { Code = res.Code, Msg = "REWARD_ITEM"}));
             
-            player.ModifyItem(modify: res);
+            player.ModifyItem(modify: res.ModifyItems, adds: res.AddItems);
             
         }
 

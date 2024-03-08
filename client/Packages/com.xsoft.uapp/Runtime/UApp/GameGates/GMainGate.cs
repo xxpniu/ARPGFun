@@ -34,10 +34,7 @@ namespace UApp.GameGates
         }
         public UPerceptionView view;
         public MainData data;
-        public int gold;
-        public int coin;
-        public PlayerPackage Package;
-        public DHero Hero;
+        
         private UCharacterView _characterView;
         private ServiceAddress _serverInfo;
     
@@ -101,11 +98,7 @@ namespace UApp.GameGates
             Debuger.Log($"Gat:{serverIP}");
 
 
-            GateManager.S.OnSyncHero = OnSyncHero;
-            GateManager.S.OnSyncPackage = OnSyncPackage;
-            GateManager.S.OnModifyItem = OnModifyItem;
-            GateManager.S.OnPackageSize = OnPackageSize;
-            GateManager.S.OnCoinAndGold = OnCoinAndGold;
+            GateManager.S.OnSyncHero = OnSyncHero; 
             ChatManager.S.OnMatchGroup = RefreshMatchGroup;
             ChatManager.S.OnInviteJoinMatchGroup = InviteJoinGroup;
             var r = await GateManager.S.TryToConnectedGateServer(_serverInfo);
@@ -125,40 +118,12 @@ namespace UApp.GameGates
             _gm.ShowGM = true;
         }
 
-        private void OnCoinAndGold(Task_CoinAndGold coinAndGold)
-        {
-            this.coin = coinAndGold.Coin;
-            this.gold = coinAndGold.Gold;
-        }
-
-        private void OnPackageSize(Task_PackageSize size)
-        {
-            Package.MaxSize = size.Size;
-        }
-
-        private void OnModifyItem(Task_ModifyItem item)
-        {
-            foreach (var i in item.ModifyItems)
-            {
-                Package.Items.Remove(i.GUID);
-                Package.Items.Add(i.GUID, i);
-            }
-
-            foreach (var i in item.RemoveItems) Package.Items.Remove(i.GUID);
-
-        }
-
-        private void OnSyncPackage(Task_G2C_SyncPackage p)
-        {
-            this.Package = p.Package;
-            this.gold = p.Gold;
-            this.coin = p.Coin;
-        }
+       
 
         private void OnSyncHero(Task_G2C_SyncHero syncHero)
         {
-            Hero = syncHero.Hero;
-            CreateOwner(Hero.HeroID, Hero.Name);
+            var hero = syncHero.Hero;
+            CreateOwner(hero.HeroID, hero.Name); 
         }
         
 
@@ -187,12 +152,13 @@ namespace UApp.GameGates
             if (result.HavePlayer)
             {
             
-                Hero = result.Hero;
-                CreateOwner(Hero.HeroID, Hero.Name);
+                var hero= GateManager.S.Hero = result.Hero; 
+                CreateOwner(hero.HeroID, hero.Name);
 
-                this.Package = result.Package;
-                this.gold = result.Gold;
-                this.coin = result.Coin;
+                var m = GateManager.Try();
+                m.Package = result.Package;
+                m.gold = result.Gold;
+                m.coin = result.Coin;
                 ShowMain();
             }
             else
@@ -250,11 +216,7 @@ namespace UApp.GameGates
 
         protected override async Task ExitGate()
         {
-            GateManager.S.OnSyncHero -= OnSyncHero; 
-            GateManager.S.OnSyncPackage -= OnSyncPackage;
-            GateManager.S.OnModifyItem -= OnModifyItem;
-            GateManager.S.OnPackageSize -= OnPackageSize;
-            GateManager.S.OnCoinAndGold -= OnCoinAndGold;
+            GateManager.S.OnSyncHero -= OnSyncHero;  
             ChatManager.S.OnMatchGroup -= RefreshMatchGroup;
             ChatManager.S.OnInviteJoinMatchGroup -= InviteJoinGroup;
             Destroy(_gm);
@@ -266,7 +228,8 @@ namespace UApp.GameGates
             if (!(_timeTo > 0) || !(_timeTo < Time.time)) return;
             _timeTo = -1;
             if (!_characterView) return;
-            var character = ExcelToJSONConfigManager.First<CharacterPlayerData>(t => t.CharacterID == Hero.HeroID);
+            var character = ExcelToJSONConfigManager
+                .First<CharacterPlayerData>(t => t.CharacterID == GateManager.S.Hero.HeroID);
             if (!string.IsNullOrEmpty(character?.Motion))
             {
                 _characterView.PlayMotion(character?.Motion);

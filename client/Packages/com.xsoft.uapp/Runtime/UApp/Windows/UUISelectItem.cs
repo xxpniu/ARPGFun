@@ -73,7 +73,7 @@ namespace Windows
         protected override void OnShow()
         {
             base.OnShow();
-            var hero = UApplication.G<GMainGate>().Hero;
+            var hero =   GateManager.Try().Hero;
             ContentTableManager.Count = ListItems.Count;
             var  index = 0;
             foreach (var i in ContentTableManager)
@@ -127,8 +127,8 @@ namespace Windows
         public void ShowSelect(int count, bool nowear, string exceptId = null, int quality=-1)
         {
             needcount = count;
-            var gata = UApplication.G<GMainGate>();
-            ListItems = gata.Package.Items.Where(t => t.Key != exceptId)
+            var gate =  GateManager.Try();
+            ListItems = gate.Package.Items.Where(t => t.Key != exceptId)
                 .Select(t => new DisplayItemData
                 {
                     Item = t.Value,
@@ -139,7 +139,7 @@ namespace Windows
             if (nowear)
             {
                 HashSet<string> wears = new HashSet<string>();
-                foreach (var i in gata.Hero.Equips)
+                foreach (var i in gate.Hero.Equips)
                 {
                     wears.Add(i.GUID);
                 }

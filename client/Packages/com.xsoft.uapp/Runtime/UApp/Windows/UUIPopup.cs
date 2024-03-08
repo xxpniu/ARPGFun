@@ -34,7 +34,7 @@ namespace Windows
 
         public static async void ShowConfirm(string title, string content, Action ok, Action cancel = null)
         {
-            await UUIManager.S.CreateWindowAsync<UUIPopup>(ui =>
+            var ui = await UUIManager.S.CreateWindowAsync<UUIPopup>(ui =>
             {
                 ui._ok = ok;
                 ui._cancel = cancel;
@@ -42,6 +42,8 @@ namespace Windows
                 ui.lb_title.text = title;
                 ui.ShowWindow();
             }, WRenderType.Notify);
+            
+            ui.ButtonBrown.ActiveSelfObject(cancel!=null);
         }
     }
 }

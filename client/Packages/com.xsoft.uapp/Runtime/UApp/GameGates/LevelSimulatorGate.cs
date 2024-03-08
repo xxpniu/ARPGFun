@@ -28,7 +28,7 @@ namespace UApp.GameGates
     {
         private int LevelId;
         private DHero Hero;
-        private PlayerPackage Package;
+        //private PlayerPackage Package;
 
         public RenderTexture LookAtView { get; private set; }
         public BattleLevelData LevelData { get; private set; }
@@ -47,7 +47,7 @@ namespace UApp.GameGates
             UUIManager.S.ShowMask(true);
             UUIManager.S.HideAll();
             Hero = args[0] as DHero;
-            Package = args[1] as PlayerPackage;
+            //Package = args[1] as PlayerPackage;
             LevelId = (int)args[2];
             await InitLevel(LevelId);
         }
@@ -81,7 +81,7 @@ namespace UApp.GameGates
 
             var data = CM.GetId<CharacterData>(Hero.HeroID);
             var magic = Hero.CreateHeroMagic();
-            var properties = BattleUtility.CreateHeroProperties(Hero, Package);
+            var properties = BattleUtility.CreateHeroProperties(Hero, ((IBattleGate)this).Package);
     
             var playerBornPositions = Config.Elements.Where(t => t.Type == MapElementType.MetPlayerInit)
                 .Select(t => t).ToArray();
@@ -116,23 +116,18 @@ namespace UApp.GameGates
 
             _characterOwner.OnDead = (obj) =>
             {
-                Windows.UUIPopup.ShowConfirm(LanguageManager.S["Level_Relive_Title"], LanguageManager.S["Level_Relive_Content"], () =>
-                {
-                    obj.Relive(obj.MaxHP);
-                }, () => { UApplication.S.GoBackToMainGate(); });
+                Windows.UUIPopup.ShowConfirm(LanguageManager.S["Level_Relive_Title"], 
+                    LanguageManager.S["Level_Relive_Content"],   () => { UApplication.S.GoBackToMainGate(); });
                 //UUIManager.S.CreateWindowAsync<Windows.>
             };   
-            //await _mCreator.Spawn();
+            
+            TryToSpawnMonster();
         }
     
 
         private Server.Map.MapElementSpawn _mCreator;
 
-        private PlayerItem GetEquipByGuid(string uuid)
-        {
-            return Package.Items.GetValueOrDefault(uuid);
-        }
-
+    
         private BattleCharacter _characterOwner;
         private float _lastSyncTime;
 
@@ -145,7 +140,7 @@ namespace UApp.GameGates
 
         void IStateLoader.Load(GState state)
         {
-            //throw new System.NotImplementedException();
+            
         }
 
         private async void TryToSpawnMonster()
@@ -160,7 +155,6 @@ namespace UApp.GameGates
             if (State == null) return;
             GState.Tick(State, _timeSimulator.Now);
             PerView.GetAndClearNotify();
-            TryToSpawnMonster();
         }
 
         float IBattleGate.TimeServerNow => _timeSimulator.Now.Time;
@@ -171,7 +165,7 @@ namespace UApp.GameGates
 
         UCharacterView IBattleGate.Owner => Owner;
 
-        PlayerPackage IBattleGate.Package => Package;
+        PlayerPackage IBattleGate.Package =>  GateManager.S.Package;
 
         DHero IBattleGate.Hero => Hero;
 
@@ -259,15 +253,38 @@ namespace UApp.GameGates
 
         bool IBattleGate.SendUseItem(ItemType type)
         {
-            foreach (var i in Package.Items)
+
+            var package = GateManager.S.Package;
+            foreach (var i in package.Items)
             {
                 var config = CM.GetId<ItemData>(i.Value.ItemID);
                 if ((ItemType)config.ItemType != type) continue;
-                var rTarget = new ReleaseAtTarget(_characterOwner, _characterOwner);
-                Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone, -1);
+                if (i.Value.Num < 1) return false;
+                UseItem(i.Value, config);
                 return true;
             }
+
             return false;
+
+
+            async void UseItem(PlayerItem item,ItemData config)
+            {
+                var res = await GateManager.S.GateFunction.UseItemAsync(new C2G_UseItem
+                {
+                    ItemId = config.ID,
+                    Num = 1
+                });
+                if (!res.Code.IsOk())
+                {
+                    UApplication.S.ShowError(res.Code);
+                }
+
+                await UniTask.SwitchToMainThread();
+                var rTarget = new ReleaseAtTarget(_characterOwner, _characterOwner);
+                Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone,
+                    -1);
+            }
+
         }
 
         bool IBattleGate.IsHpFull()

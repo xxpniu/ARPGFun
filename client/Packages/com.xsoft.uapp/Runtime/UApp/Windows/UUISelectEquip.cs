@@ -71,7 +71,7 @@ namespace Windows
         private void ShowEquipList()
         {
             var equip = new List<PlayerEquipItem>();
-            var g = UApplication.G<GMainGate>();
+            var g =    GateManager.Try();
             foreach (var i in g.Package.Items)
             {
                 var item = ExcelToJSONConfigManager.GetId<ItemData>(i.Value.ItemID);

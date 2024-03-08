@@ -16,11 +16,43 @@ namespace UApp
     {
 
         public Action<Task_G2C_SyncHero> OnSyncHero;
-        public Action<Task_G2C_SyncPackage> OnSyncPackage;
-        public Action<Task_ModifyItem> OnModifyItem;
-        public Action<Task_PackageSize> OnPackageSize;
-        public Action<Task_CoinAndGold> OnCoinAndGold;
 
+        public int coin;
+        public int gold;
+    
+        public PlayerPackage Package;
+        
+        public DHero Hero;
+        
+        private void OnCoinAndGold(Task_CoinAndGold coinAndGold)
+        {
+            this.coin = coinAndGold.Coin;
+            this.gold = coinAndGold.Gold;
+        }
+
+        private void OnPackageSize(Task_PackageSize size)
+        {
+            Package.MaxSize = size.Size;
+        }
+
+        private void OnModifyItem(Task_ModifyItem item)
+        {
+            foreach (var i in item.ModifyItems)
+            {
+                Package.Items.Remove(i.GUID);
+                Package.Items.Add(i.GUID, i);
+            }
+
+            foreach (var i in item.RemoveItems) Package.Items.Remove(i.GUID);
+
+        }
+
+        private void OnSyncPackage(Task_G2C_SyncPackage p)
+        {
+            this.Package = p.Package;
+            this.gold = p.Gold;
+            this.coin = p.Coin;
+        }
 
         public string host;
         public int port;
@@ -90,23 +122,25 @@ namespace UApp
             Debuger.Log(res);
             if (res.TryUnpack(out Task_G2C_SyncHero syncHero))
             {
-                OnSyncHero?.Invoke(syncHero);
+              
+                Hero = syncHero.Hero;
+                OnSyncHero.Invoke(syncHero);
             }
             else if (res.TryUnpack(out Task_G2C_SyncPackage p))
             {
-                OnSyncPackage?.Invoke(p);
+                OnSyncPackage(p);
             }
             else if (res.TryUnpack(out Task_ModifyItem item))
             {
-                OnModifyItem?.Invoke(item);
+                OnModifyItem(item);
             }
             else if (res.TryUnpack(out Task_PackageSize size))
             {
-                OnPackageSize?.Invoke(size);
+                OnPackageSize(size);
             }
             else if (res.TryUnpack(out Task_CoinAndGold coin))
             {
-                OnCoinAndGold?.Invoke(coin);
+                OnCoinAndGold(coin);
             }
             else
             {

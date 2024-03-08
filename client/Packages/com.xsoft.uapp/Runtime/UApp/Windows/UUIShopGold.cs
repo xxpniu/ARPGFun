@@ -68,7 +68,7 @@ namespace Windows
 
             async void OkCallBack()
             {
-                var gate = UApplication.G<GMainGate>();
+                var gate = GateManager.Try();
                 var request = new C2G_BuyGold { ShopId = obj.Config.ID };
                 var res = await GateManager.S.GateFunction.BuyGoldAsync(request);
                 await UniTask.SwitchToMainThread();

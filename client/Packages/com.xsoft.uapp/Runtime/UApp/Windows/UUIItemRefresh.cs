@@ -270,7 +270,7 @@ namespace Windows
             base.OnUpdateUIData();
             if (refreshItem != null)
             {
-                var gata = UApplication.G<GMainGate>();
+                var gata = GateManager.Try();
                 if (gata.Package.Items.TryGetValue(refreshItem.GUID, out refreshItem))
                 {
                     OnSelectRefresh(new List<PlayerItem> { refreshItem });
