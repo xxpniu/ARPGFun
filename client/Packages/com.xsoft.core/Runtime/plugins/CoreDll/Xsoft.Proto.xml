@@ -2942,22 +2942,22 @@
         <member name="F:Proto.G2B_UseItem.RemoveItemsFieldNumber">
             <summary>Field number for the "RemoveItems" field.</summary>
         </member>
-        <member name="F:Proto.B2G_RewordItem.ItemIdFieldNumber">
+        <member name="F:Proto.B2G_RewardItem.ItemIdFieldNumber">
             <summary>Field number for the "itemId" field.</summary>
         </member>
-        <member name="F:Proto.B2G_RewordItem.NumFieldNumber">
+        <member name="F:Proto.B2G_RewardItem.NumFieldNumber">
             <summary>Field number for the "num" field.</summary>
         </member>
-        <member name="F:Proto.B2G_RewordItem.PuuidFieldNumber">
+        <member name="F:Proto.B2G_RewardItem.PuuidFieldNumber">
             <summary>Field number for the "puuid" field.</summary>
         </member>
-        <member name="F:Proto.G2B_RewordItem.CodeFieldNumber">
+        <member name="F:Proto.G2B_RewardItem.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
         </member>
-        <member name="F:Proto.G2B_RewordItem.ModifyItemsFieldNumber">
+        <member name="F:Proto.G2B_RewardItem.ModifyItemsFieldNumber">
             <summary>Field number for the "ModifyItems" field.</summary>
         </member>
-        <member name="F:Proto.G2B_RewordItem.AddItemsFieldNumber">
+        <member name="F:Proto.G2B_RewardItem.AddItemsFieldNumber">
             <summary>Field number for the "AddItems" field.</summary>
         </member>
         <member name="P:Proto.GateServerService.Descriptor">
