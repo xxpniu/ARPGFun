@@ -22,6 +22,9 @@
         <member name="F:Proto.C2B_JoinBattle.VersionFieldNumber">
             <summary>Field number for the "Version" field.</summary>
         </member>
+        <member name="F:Proto.C2B_JoinBattle.PlayerUuidFieldNumber">
+            <summary>Field number for the "PlayerUuid" field.</summary>
+        </member>
         <member name="F:Proto.B2C_JoinBattle.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
         </member>
