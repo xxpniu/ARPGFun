@@ -2927,6 +2927,12 @@
         <member name="F:Proto.G2B_UseItem.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
         </member>
+        <member name="F:Proto.G2B_UseItem.ModifyItemsFieldNumber">
+            <summary>Field number for the "ModifyItems" field.</summary>
+        </member>
+        <member name="F:Proto.G2B_UseItem.RemoveItemsFieldNumber">
+            <summary>Field number for the "RemoveItems" field.</summary>
+        </member>
         <member name="F:Proto.B2G_RewordItem.ItemIdFieldNumber">
             <summary>Field number for the "itemId" field.</summary>
         </member>
