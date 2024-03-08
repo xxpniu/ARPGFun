@@ -119,6 +119,12 @@
             <summary>
             </summary>
         </member>
+        <member name="F:Proto.Notify_ErrorCode.CodeFieldNumber">
+            <summary>Field number for the "Code" field.</summary>
+        </member>
+        <member name="F:Proto.Notify_ErrorCode.MsgFieldNumber">
+            <summary>Field number for the "msg" field.</summary>
+        </member>
         <member name="T:Proto.Notify_ElementExitState">
              <summary>
             元素退出场景
@@ -2947,6 +2953,12 @@
         </member>
         <member name="F:Proto.G2B_RewordItem.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
+        </member>
+        <member name="F:Proto.G2B_RewordItem.ModifyItemsFieldNumber">
+            <summary>Field number for the "ModifyItems" field.</summary>
+        </member>
+        <member name="F:Proto.G2B_RewordItem.AddItemsFieldNumber">
+            <summary>Field number for the "AddItems" field.</summary>
         </member>
         <member name="P:Proto.GateServerService.Descriptor">
             <summary>Service descriptor</summary>
