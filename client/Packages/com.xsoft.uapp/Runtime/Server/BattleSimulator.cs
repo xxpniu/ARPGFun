@@ -149,58 +149,14 @@ namespace Server
         {
             if (p.HeroCharacter) GObject.Destroy(p.HeroCharacter);
             _battlePlayers.Remove(p.AccountId);
-            if (!p.Dirty) return;
-            _ = SendReword(uid, p);
+            if (!p.Dirty) return; 
         }
-
-        private async Task<bool> SendReword(string uid, BattlePlayer p)
-        {
-            try
-            {
-                BattleServerApp.S.Services.CloseChannel(uid);
-                var req = new B2G_BattleReward
-                {
-                    AccountUuid = p.AccountId,
-                    MapID = _levelSimulator.LevelData.ID,
-                    DiffGold = p.DiffGold,
-                    Exp = p.GetHero().Exprices,
-                    Level = p.GetHero().Level,
-                    HP = p.HeroCharacter?.HP ?? 0,
-                    MP = p.HeroCharacter?.MP ?? 0
-                };
-
-                var removeItem = p.Package.Removes.Select(t => t.Item).ToList();
-                var modify = p.Package.Items.Where(t => t.Value.Dirty).Select(t => t.Value.Item).ToList();
-                foreach (var i in removeItem)
-                {
-                    req.RemoveItems.Add(i);
-                }
-
-                foreach (var i in modify)
-                {
-                    req.ModifyItems.Add(i);
-                }
-
-                var channel = new LogChannel(p.GateServer.GateServerInnerHost);
-                var client = channel.CreateClient<GateServerInnerService.GateServerInnerServiceClient>();
-                await client.BattleRewardAsync(req);
-                await channel.ShutdownAsync();
-                return true;
-            }
-            catch(Exception ex)
-            {
-                Debuger.LogError(ex);
-                return false;
-            }
-        }
+        
 
         public async Task<bool> ExitAllPlayer()
         {
-            foreach (var i in _battlePlayers)
-            {
-                await SendReword(i.Key, i.Value);
-            }
-            return true;
+            
+            return  await Task.FromResult(true);
         }
 
         private void SendNotify(IMessage[] notify)

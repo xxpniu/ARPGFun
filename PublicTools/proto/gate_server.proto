@@ -382,6 +382,8 @@ message B2G_UseItem
 message G2B_UseItem
 {
 	ErrorCode Code =1;
+	repeated PlayerItem ModifyItems = 2;
+	repeated PlayerItem RemoveItems = 3;
 }
 
 message B2G_RewordItem{
