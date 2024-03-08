@@ -2930,8 +2930,8 @@
         <member name="F:Proto.B2G_UseItem.NumFieldNumber">
             <summary>Field number for the "num" field.</summary>
         </member>
-        <member name="F:Proto.B2G_UseItem.PuuidFieldNumber">
-            <summary>Field number for the "puuid" field.</summary>
+        <member name="F:Proto.B2G_UseItem.AccountIdFieldNumber">
+            <summary>Field number for the "accountId" field.</summary>
         </member>
         <member name="F:Proto.G2B_UseItem.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
@@ -2948,8 +2948,8 @@
         <member name="F:Proto.B2G_RewardItem.NumFieldNumber">
             <summary>Field number for the "num" field.</summary>
         </member>
-        <member name="F:Proto.B2G_RewardItem.PuuidFieldNumber">
-            <summary>Field number for the "puuid" field.</summary>
+        <member name="F:Proto.B2G_RewardItem.AccountIdFieldNumber">
+            <summary>Field number for the "accountId" field.</summary>
         </member>
         <member name="F:Proto.G2B_RewardItem.CodeFieldNumber">
             <summary>Field number for the "Code" field.</summary>
