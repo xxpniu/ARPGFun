@@ -71,6 +71,32 @@ namespace GServer.RPCResponser
             return new Void();
         }
 
-       
+
+        public override async Task<G2B_BattleReward> RewardItem(B2G_RewordItem request, ServerCallContext context)
+        {
+            
+            var (modifies, adds) = await UserDataManager.S.AddItems(request.Puuid,
+                new PlayerItem { ItemID = request.ItemId, Num = request.Num });
+            if (modifies == null || adds == null)
+            {
+                return new G2B_BattleReward
+                {
+                    Code = ErrorCode.Error
+                };
+            }
+
+            return new G2B_BattleReward { Code = ErrorCode.Ok };
+
+        }
+
+        public override async Task<G2B_UseItem> UseItem(B2G_UseItem request, ServerCallContext context)
+        {
+            var (error, mod, remove) = await  UserDataManager.S.UseItem(request.Puuid, request.ItemId, request.Num);
+
+            return new G2B_UseItem
+            {
+                Code = error
+            };
+        }
     }
 }

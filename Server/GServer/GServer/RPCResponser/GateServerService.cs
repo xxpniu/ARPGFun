@@ -462,5 +462,12 @@ namespace GServer.RPCResponsor
 
             return new G2C_ReloadMatchState { Code = rejoin.Code };
         }
+
+        public override async Task<G2C_UseItem> UseItem(C2G_UseItem request, ServerCallContext context)
+        {
+            var playerUuid = await UserDataManager.S.FindPlayerByAccountId(context.GetAccountId());
+            var (res, _, _) = await UserDataManager.S.UseItem(playerUuid.Uuid, request.ItemId, request.Num);
+            return new G2C_UseItem { Code = res };
+        }
     }
 }
