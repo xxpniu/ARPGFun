@@ -150,6 +150,11 @@ namespace UApp.GameGates
             await _mCreator.Spawn();
         }
 
+        private async void ShowBattleResult()
+        {
+            
+        }
+
         protected override void Tick()
         {
             if (State == null) return;

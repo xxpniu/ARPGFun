@@ -399,6 +399,32 @@ message G2B_RewardItem
 	repeated PlayerItem AddItems = 3;
 }
 
+message C2G_LocalBattleFinished
+{
+	message ConsumeItem{
+		int32 itemId = 1;
+		int32 num =2;
+	}
+
+	message BattleDamage{
+		int32 monsterId = 1;
+		int32 monsterConfigId =2;
+		int32 totalDamage = 3;
+		int32 deadTime = 4; //from battle started
+	}
+
+	int32 levelId = 1;
+	int32 costTime = 2; //总共的时间 秒数
+	repeated ConsumeItem  Items = 4;
+	repeated BattleDamage Damages = 5;//伤害计算
+}
+
+message G2C_LocalBattleFinished{
+	ErrorCode Code =1;
+	repeated PlayerItem AddItems = 2; //获得道具/装备
+	int32 gold = 3;//获得金币数
+}
+
 service GateServerService
 {
 	rpc Login (C2G_Login) returns(G2C_Login){};//1
@@ -423,6 +449,7 @@ service GateServerService
 	rpc ReloadMatchState (C2G_ReloadMatchState) returns (G2C_ReloadMatchState);
 	rpc TalentActive (C2G_TalentActive) returns (G2C_TalentActive);
 	rpc UseItem(C2G_UseItem) returns(G2C_UseItem);
+	rpc LocalBattleFinished(C2G_LocalBattleFinished) returns(G2C_LocalBattleFinished);
 }
 
 service GateServerInnerService
