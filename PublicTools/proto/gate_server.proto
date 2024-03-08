@@ -204,25 +204,6 @@ message G2B_GetPlayerInfo
 
 }
 
-//返回战斗数据
-message B2G_BattleReward
-{
-	string AccountUuid=1;			     //用户ID
-	int32 DiffGold=2;  			         //用户金币
-	int32 MapID=3; 			             //当前战斗地图
-	repeated PlayerItem ModifyItems=4;   //掉落物品
-	repeated PlayerItem RemoveItems =5;  //消耗完的物品
-	int32 Exp = 6;//经验
-	int32 Level = 7;//等级
-	int32 HP = 8;
-	int32 MP =9;
-}
-
-//返回战斗数据
-message G2B_BattleReward
-{
-	 ErrorCode Code=1;
-}
 
 message C2G_BuyGold
 {
@@ -455,7 +436,6 @@ service GateServerService
 service GateServerInnerService
 {
 	rpc GetPlayerInfo(B2G_GetPlayerInfo) returns (G2B_GetPlayerInfo){};//1
-	//rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
 	rpc KillUser (L2G_KillUser) returns (Void);
 	rpc UseItem(B2G_UseItem) returns(G2B_UseItem);
 	rpc RewardItem(B2G_RewardItem) returns(G2B_RewardItem);
