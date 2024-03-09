@@ -134,10 +134,9 @@ namespace Windows
                     UUIPopup.ShowConfirm(
                         LanguageManager.S["UUIBattle_Quit_Title"],
                         LanguageManager.S["UUIBattle_Quit_Content"],
-                        () =>
-                    {
-                        BattleGate.Exit();
-                    });
+                        () => {BattleGate.Exit();},
+                        () => { }
+                    );
                 });
 
             var bt = this.Joystick_Left.GetComponent<ETCJoystick>();

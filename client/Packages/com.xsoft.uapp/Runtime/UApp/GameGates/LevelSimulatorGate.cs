@@ -116,7 +116,9 @@ namespace UApp.GameGates
             _characterOwner.OnDead = (obj) =>
             {
                 Windows.UUIPopup.ShowConfirm(LanguageManager.S["Level_Relive_Title"], 
-                    LanguageManager.S["Level_Relive_Content"],   () => { UApplication.S.GoBackToMainGate(); });
+                    LanguageManager.S["Level_Relive_Content"],   
+                    () => { UApplication.S.GoBackToMainGate(); },
+                    onlyOk: true);
                 //UUIManager.S.CreateWindowAsync<Windows.>
             };   
             
@@ -211,6 +213,8 @@ namespace UApp.GameGates
             if (data.MPCost > Owner.MP) return false;
             var character = Owner as IBattleCharacter;
             var rotation = character.Rotation.eulerAngles.ToPV3();
+            var config = CM.GetId<CharacterMagicData>(data.MagicID);
+            if (config != null) Owner.ShowRange(config.RangeMax);
             if (forward.HasValue)
             {
                 rotation = Quaternion.LookRotation(forward.Value).eulerAngles.ToPV3();

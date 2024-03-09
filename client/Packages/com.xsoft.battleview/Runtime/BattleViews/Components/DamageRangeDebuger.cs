@@ -16,7 +16,7 @@ namespace BattleViews.Components
         public void AddDebug(DamageLayout layout, Vector3 pos, Quaternion rotation)
         {
 
-            _Rangges.Add(new DebugOfRange
+            _ranges.Add(new DebugOfRange
             {
                 Angle = layout.RangeType.angle,
                 forward = rotation,
@@ -37,11 +37,11 @@ namespace BattleViews.Components
             public float time;
         }
 
-        private readonly List<DebugOfRange> _Rangges = new List<DebugOfRange>();
+        private readonly List<DebugOfRange> _ranges = new List<DebugOfRange>();
 
         public void OnDrawGizmos()
         {
-            foreach (var i in _Rangges)
+            foreach (var i in _ranges)
             {
                 if (i.time < Time.time) continue;
                 DrawClire(i.Pos, i.forward, i.Radius, i.Angle);

@@ -708,8 +708,8 @@ namespace BattleViews.Views
                 });
             }
             _range.SetActive(true);
-            _hideTime = Time.time + .2f;
-            _range.transform.localScale = Vector3.one * r;
+            _hideTime = Time.time + 0.2f;
+            _range.transform.localScale = Vector3.one * r/100f;
         }
 
         private void MoveByDir(Vector3 forward)
