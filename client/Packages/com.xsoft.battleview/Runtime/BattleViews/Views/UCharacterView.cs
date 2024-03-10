@@ -780,15 +780,12 @@ namespace BattleViews.Views
 
         private Vector3? MoveToPos(Vector3 target, float stopDis =0)
         {
-            if (State is DestinationMove m)
+            return State switch
             {
-                return m.ChangeTarget(target, stopDis);
-            }
-            else if (State is Empty)
-            {
-                return ChangeState(new DestinationMove(this)).ChangeTarget(target, stopDis);//.Target;
-            }
-            return this.transform.position;
+                DestinationMove m => m.ChangeTarget(target, stopDis),
+                Empty => ChangeState(new DestinationMove(this)).ChangeTarget(target, stopDis),
+                _ => this.transform.position
+            };
         }
 
         void IBattleCharacter.Relive()
