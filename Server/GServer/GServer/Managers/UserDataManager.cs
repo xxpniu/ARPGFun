@@ -118,9 +118,9 @@ namespace GServer.Managers
             };
         }
 
-        private async Task<GamePlayerEntity> FindPlayerById(string player_uuid)
+        private async Task<GamePlayerEntity> FindPlayerById(string playerUuid)
         {
-            var filter = Builders<GamePlayerEntity>.Filter.Eq(t => t.Uuid, player_uuid);
+            var filter = Builders<GamePlayerEntity>.Filter.Eq(t => t.Uuid, playerUuid);
             var query = await DataBase.S.Playes.FindAsync(filter);
             return query.SingleOrDefault();
         }
@@ -483,8 +483,7 @@ namespace GServer.Managers
             return (true, totalExp, level);
         }
 
-
-    
+        
         public async Task<G2C_SaleItem> SaleItem( string account, IList<C2G_SaleItem.Types.SaleItem> items)
         {
             var pl = await FindPlayerByAccountId(account);

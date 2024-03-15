@@ -51,8 +51,11 @@ namespace GServer
             {
                 Ports = { new ServerPort("0.0.0.0", Config.ListenHost.Port, ServerCredentials.Insecure) }
              
-            }.BindServices(Proto.GateServerService.BindService(new GateServerService()),
-                    Proto.ServerStreamService.BindService(StreamService));
+            }.BindServices(
+                Proto.GateServerService.BindService(new GateServerService()),
+                Proto.GateServerMatchService.BindService(new GateServerMatchService()),//match
+                Proto.GateServerLevelService.BindService(new GateServerLevelService()),
+                Proto.ServerStreamService.BindService(StreamService));
 
             ListenServer.Interceptor.SetAuthCheck((c) =>
             {

@@ -84,7 +84,7 @@ namespace Windows
 
         private async void GoToServer(int leveID)
         { 
-            var re = await GateManager.S.GateFunction.CreateMatchAsync(new C2G_CreateMatch { LevelID = leveID });
+            var re = await GateManager.S.MatchServiceClient.CreateMatchAsync(new C2G_CreateMatch { LevelID = leveID });
             await UniTask.SwitchToMainThread();
             if (!re.Code.IsOk()) UApplication.S.ShowError(re.Code);
         }

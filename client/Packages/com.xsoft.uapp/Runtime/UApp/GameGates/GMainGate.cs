@@ -113,7 +113,7 @@ namespace UApp.GameGates
                 UApplication.S.ShowError(ErrorCode.Error);
             }
             ShowPlayer(r);
-            await GateManager.S.GateFunction.ReloadMatchStateAsync(new C2G_ReloadMatchState());
+            await GateManager.S.MatchServiceClient.ReloadMatchStateAsync(new C2G_ReloadMatchState());
             _gm = gameObject.AddComponent<GameGMTools>();
             _gm.ShowGM = true;
         }
@@ -141,7 +141,7 @@ namespace UApp.GameGates
             {
                 var (s, g) = GateManager.TryGet();
                 if (!s) return;
-                var rs = await g.GateFunction.JoinMatchAsync(new C2G_JoinMatch { GroupID = obj.GroupId });
+                var rs = await g.MatchServiceClient.JoinMatchAsync(new C2G_JoinMatch { GroupID = obj.GroupId });
                 await UniTask.SwitchToMainThread();
                 if (!rs.Code.IsOk()) UApplication.S.ShowError(rs.Code);
             }

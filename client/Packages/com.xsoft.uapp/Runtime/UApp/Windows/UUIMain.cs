@@ -76,7 +76,7 @@ namespace Windows
             {
                 var gate = UApplication.G<GMainGate>();
                 if(gate ==null) return;
-                var rs = await GateManager.S.GateFunction
+                var rs = await GateManager.S.MatchServiceClient
                     .BeginGameAsync(new Proto.C2G_BeginGame
                 {
                     GroupID = gate.Group.Id
@@ -94,10 +94,13 @@ namespace Windows
             bt_Exit.onClick.AddListener(() =>
             {
                 UUIPopup.ShowConfirm("Leave_Title".GetLanguageWord(), 
-                    "Leave_Content".GetLanguageWord(), async () =>
-                { 
-                    await GateManager.S.GateFunction.LeaveMatchGroupAsync(new Proto.C2G_LeaveMatchGroup { });
-                });
+                    "Leave_Content".GetLanguageWord(), LevelMatchCall);
+                return;
+
+                async void LevelMatchCall()
+                {
+                    await GateManager.S.MatchServiceClient.LeaveMatchGroupAsync(new Proto.C2G_LeaveMatchGroup { });
+                }
             });
 
             Button_AddFriend.onClick.AddListener(async () =>

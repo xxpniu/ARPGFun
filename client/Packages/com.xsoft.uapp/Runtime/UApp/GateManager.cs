@@ -58,6 +58,10 @@ namespace UApp
         public int port;
         private LogChannel _client;
         public GateServerService.GateServerServiceClient GateFunction { get; private set; }
+        
+        public GateServerLevelService.GateServerLevelServiceClient LevelServiceClient {private set; get; }
+        
+        public GateServerMatchService.GateServerMatchServiceClient MatchServiceClient { private set; get; }
 
         private G2C_Login _login  = null;
         public async Task<G2C_Login> TryToConnectedGateServer(ServiceAddress serverInfo)
@@ -91,6 +95,9 @@ namespace UApp
                 UUITipDrawer.S.ShowNotify("GateServer Response:" + r.Code);
                 return r;
             }
+
+            LevelServiceClient = _client.CreateClient<GateServerLevelService.GateServerLevelServiceClient>();
+            MatchServiceClient = _client.CreateClient<GateServerMatchService.GateServerMatchServiceClient>();
 
             _login = r;
             

@@ -154,7 +154,7 @@ namespace UApp
                     async void LevelMatch()
                     {
                         var (b, g) = GateManager.TryGet();
-                        if (b) await g.GateFunction.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
+                        if (b) await g.MatchServiceClient.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
                     }
                 }
 

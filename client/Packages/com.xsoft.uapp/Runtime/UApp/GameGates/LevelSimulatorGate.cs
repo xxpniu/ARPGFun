@@ -159,7 +159,7 @@ namespace UApp.GameGates
             }
 
             var request = new C2G_LocalBattleFinished();
-            var reward = await GateManager.S.GateFunction.LocalBattleFinishedAsync(request,
+            var reward = await GateManager.S.LevelServiceClient.LocalBattleFinishedAsync(request,
                 cancellationToken: this.destroyCancellationToken);
             await UniTask.SwitchToMainThread();
             if(!reward.Code.IsOk()) UApplication.S.ShowError(reward.Code);
@@ -304,7 +304,7 @@ namespace UApp.GameGates
 
             async void UseItem(PlayerItem item,ItemData config)
             {
-                var res = await GateManager.S.GateFunction.UseItemAsync(new C2G_UseItem
+                var res = await GateManager.S.LevelServiceClient.UseItemAsync(new C2G_UseItem
                 {
                     ItemId = config.ID,
                     Num = 1

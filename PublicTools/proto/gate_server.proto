@@ -410,7 +410,6 @@ service GateServerService
 {
 	rpc Login (C2G_Login) returns(G2C_Login){};//1
 	rpc CreateHero (C2G_CreateHero) returns (G2C_CreateHero){};//2
-	rpc BeginGame(C2G_BeginGame) returns (G2C_BeginGame){};//3
 	rpc OperatorEquip(C2G_OperatorEquip) returns(G2C_OperatorEquip){};//5
 	rpc SaleItem(C2G_SaleItem)returns(G2C_SaleItem){};//6
 	rpc EquipmentLevelUp(C2G_EquipmentLevelUp)returns(G2C_EquipmentLevelUp){};//7
@@ -422,15 +421,25 @@ service GateServerService
 	rpc BuyGold(C2G_BuyGold) returns (G2C_BuyGold){};//13
 	rpc RefreshEquip (C2G_RefreshEquip) returns (G2C_RefreshEquip){};//14
 	rpc ActiveMagic(C2G_ActiveMagic) returns(G2C_ActiveMagic){};//15
+	rpc TalentActive (C2G_TalentActive) returns (G2C_TalentActive);
+	
+}
+
+service GateServerMatchService
+{
 	rpc SearchPlayer (C2G_SearchPlayer) returns (G2C_SearchPlayer);
 	rpc CreateMatch(C2G_CreateMatch) returns(G2C_CreateMatch);//create
 	rpc JoinMatch(C2G_JoinMatch) returns(G2C_JoinMatch); //join match
 	rpc InviteJoinMatch(C2G_InviteJoinMatch	) returns (G2C_InviteJoinMatch);
 	rpc LeaveMatchGroup (C2G_LeaveMatchGroup) returns (G2C_LeaveMatchGroup);
 	rpc ReloadMatchState (C2G_ReloadMatchState) returns (G2C_ReloadMatchState);
-	rpc TalentActive (C2G_TalentActive) returns (G2C_TalentActive);
-	rpc UseItem(C2G_UseItem) returns(G2C_UseItem);
+	rpc BeginGame(C2G_BeginGame) returns (G2C_BeginGame){};//3
+}
+
+service GateServerLevelService
+{
 	rpc LocalBattleFinished(C2G_LocalBattleFinished) returns(G2C_LocalBattleFinished);
+	rpc UseItem(C2G_UseItem) returns(G2C_UseItem);
 }
 
 service GateServerInnerService

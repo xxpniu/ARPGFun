@@ -63,7 +63,7 @@ namespace Windows
                 return;
             } 
 
-            var res = await GateManager.S.GateFunction.SearchPlayerAsync(new Proto.C2G_SearchPlayer());
+            var res = await GateManager.S.MatchServiceClient.SearchPlayerAsync(new C2G_SearchPlayer());
             if (!res.Code.IsOk()) return;
 
             //var friends = ChatManager.S.Friends.

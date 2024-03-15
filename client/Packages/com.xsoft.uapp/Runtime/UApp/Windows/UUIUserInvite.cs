@@ -73,7 +73,7 @@ namespace Windows
             var group = gate.Group;
             if (group == null) return;
             obj.Invited();
-            var res = await GateManager.S.GateFunction.InviteJoinMatchAsync(new C2G_InviteJoinMatch
+            var res = await GateManager.S.MatchServiceClient.InviteJoinMatchAsync(new C2G_InviteJoinMatch
             {
                 AccountUuid = obj.Player.User.Uuid,
                 GroupID = group.Id,

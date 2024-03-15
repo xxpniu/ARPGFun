@@ -2735,81 +2735,6 @@
             道具列表
              </summary>
         </member>
-        <member name="T:Proto.B2G_BattleReward">
-             <summary>
-            返回战斗数据
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.AccountUuidFieldNumber">
-            <summary>Field number for the "AccountUuid" field.</summary>
-        </member>
-        <member name="P:Proto.B2G_BattleReward.AccountUuid">
-             <summary>
-            用户ID
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.DiffGoldFieldNumber">
-            <summary>Field number for the "DiffGold" field.</summary>
-        </member>
-        <member name="P:Proto.B2G_BattleReward.DiffGold">
-             <summary>
-            用户金币
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.MapIDFieldNumber">
-            <summary>Field number for the "MapID" field.</summary>
-        </member>
-        <member name="P:Proto.B2G_BattleReward.MapID">
-             <summary>
-            当前战斗地图
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.ModifyItemsFieldNumber">
-            <summary>Field number for the "ModifyItems" field.</summary>
-        </member>
-        <member name="P:Proto.B2G_BattleReward.ModifyItems">
-             <summary>
-            掉落物品
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.RemoveItemsFieldNumber">
-            <summary>Field number for the "RemoveItems" field.</summary>
-        </member>
-        <member name="P:Proto.B2G_BattleReward.RemoveItems">
-             <summary>
-            消耗完的物品
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.ExpFieldNumber">
-            <summary>Field number for the "Exp" field.</summary>
-        </member>
-        <member name="P:Proto.B2G_BattleReward.Exp">
-             <summary>
-            经验
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.LevelFieldNumber">
-            <summary>Field number for the "Level" field.</summary>
-        </member>
-        <member name="P:Proto.B2G_BattleReward.Level">
-             <summary>
-            等级
-             </summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.HPFieldNumber">
-            <summary>Field number for the "HP" field.</summary>
-        </member>
-        <member name="F:Proto.B2G_BattleReward.MPFieldNumber">
-            <summary>Field number for the "MP" field.</summary>
-        </member>
-        <member name="T:Proto.G2B_BattleReward">
-             <summary>
-            返回战斗数据
-             </summary>
-        </member>
-        <member name="F:Proto.G2B_BattleReward.CodeFieldNumber">
-            <summary>Field number for the "Code" field.</summary>
-        </member>
         <member name="F:Proto.C2G_BuyGold.ShopIdFieldNumber">
             <summary>Field number for the "ShopId" field.</summary>
         </member>
@@ -3033,22 +2958,6 @@
         <member name="T:Proto.GateServerService.GateServerServiceBase">
             <summary>Base class for server-side implementations of GateServerService</summary>
         </member>
-        <member name="M:Proto.GateServerService.GateServerServiceBase.CreateMatch(Proto.C2G_CreateMatch,Grpc.Core.ServerCallContext)">
-             <summary>
-            create
-             </summary>
-             <param name="request">The request received from the client.</param>
-             <param name="context">The context of the server-side call handler being invoked.</param>
-             <returns>The response to send back to the client (wrapped by a task).</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceBase.JoinMatch(Proto.C2G_JoinMatch,Grpc.Core.ServerCallContext)">
-             <summary>
-            join match
-             </summary>
-             <param name="request">The request received from the client.</param>
-             <param name="context">The context of the server-side call handler being invoked.</param>
-             <returns>The response to send back to the client (wrapped by a task).</returns>
-        </member>
         <member name="T:Proto.GateServerService.GateServerServiceClient">
             <summary>Client for GateServerService</summary>
         </member>
@@ -3067,78 +2976,6 @@
             <summary>Protected constructor to allow creation of configured clients.</summary>
             <param name="configuration">The client configuration.</param>
         </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.CreateMatch(Proto.C2G_CreateMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
-             <summary>
-            create
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-             <param name="cancellationToken">An optional token for canceling the call.</param>
-             <returns>The response received from the server.</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.CreateMatch(Proto.C2G_CreateMatch,Grpc.Core.CallOptions)">
-             <summary>
-            create
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="options">The options for the call.</param>
-             <returns>The response received from the server.</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.CreateMatchAsync(Proto.C2G_CreateMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
-             <summary>
-            create
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-             <param name="cancellationToken">An optional token for canceling the call.</param>
-             <returns>The call object.</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.CreateMatchAsync(Proto.C2G_CreateMatch,Grpc.Core.CallOptions)">
-             <summary>
-            create
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="options">The options for the call.</param>
-             <returns>The call object.</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.JoinMatch(Proto.C2G_JoinMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
-             <summary>
-            join match
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-             <param name="cancellationToken">An optional token for canceling the call.</param>
-             <returns>The response received from the server.</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.JoinMatch(Proto.C2G_JoinMatch,Grpc.Core.CallOptions)">
-             <summary>
-            join match
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="options">The options for the call.</param>
-             <returns>The response received from the server.</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.JoinMatchAsync(Proto.C2G_JoinMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
-             <summary>
-            join match
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-             <param name="cancellationToken">An optional token for canceling the call.</param>
-             <returns>The call object.</returns>
-        </member>
-        <member name="M:Proto.GateServerService.GateServerServiceClient.JoinMatchAsync(Proto.C2G_JoinMatch,Grpc.Core.CallOptions)">
-             <summary>
-            join match
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="options">The options for the call.</param>
-             <returns>The call object.</returns>
-        </member>
         <member name="M:Proto.GateServerService.GateServerServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
             <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
         </member>
@@ -3152,19 +2989,173 @@
             <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
             <param name="serviceImpl">An object implementing the server-side handling logic.</param>
         </member>
+        <member name="P:Proto.GateServerMatchService.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:Proto.GateServerMatchService.GateServerMatchServiceBase">
+            <summary>Base class for server-side implementations of GateServerMatchService</summary>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceBase.CreateMatch(Proto.C2G_CreateMatch,Grpc.Core.ServerCallContext)">
+             <summary>
+            create
+             </summary>
+             <param name="request">The request received from the client.</param>
+             <param name="context">The context of the server-side call handler being invoked.</param>
+             <returns>The response to send back to the client (wrapped by a task).</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceBase.JoinMatch(Proto.C2G_JoinMatch,Grpc.Core.ServerCallContext)">
+             <summary>
+            join match
+             </summary>
+             <param name="request">The request received from the client.</param>
+             <param name="context">The context of the server-side call handler being invoked.</param>
+             <returns>The response to send back to the client (wrapped by a task).</returns>
+        </member>
+        <member name="T:Proto.GateServerMatchService.GateServerMatchServiceClient">
+            <summary>Client for GateServerMatchService</summary>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for GateServerMatchService</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for GateServerMatchService that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.CreateMatch(Proto.C2G_CreateMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+             <summary>
+            create
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+             <param name="cancellationToken">An optional token for canceling the call.</param>
+             <returns>The response received from the server.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.CreateMatch(Proto.C2G_CreateMatch,Grpc.Core.CallOptions)">
+             <summary>
+            create
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="options">The options for the call.</param>
+             <returns>The response received from the server.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.CreateMatchAsync(Proto.C2G_CreateMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+             <summary>
+            create
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+             <param name="cancellationToken">An optional token for canceling the call.</param>
+             <returns>The call object.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.CreateMatchAsync(Proto.C2G_CreateMatch,Grpc.Core.CallOptions)">
+             <summary>
+            create
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="options">The options for the call.</param>
+             <returns>The call object.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.JoinMatch(Proto.C2G_JoinMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+             <summary>
+            join match
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+             <param name="cancellationToken">An optional token for canceling the call.</param>
+             <returns>The response received from the server.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.JoinMatch(Proto.C2G_JoinMatch,Grpc.Core.CallOptions)">
+             <summary>
+            join match
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="options">The options for the call.</param>
+             <returns>The response received from the server.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.JoinMatchAsync(Proto.C2G_JoinMatch,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+             <summary>
+            join match
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+             <param name="cancellationToken">An optional token for canceling the call.</param>
+             <returns>The call object.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.JoinMatchAsync(Proto.C2G_JoinMatch,Grpc.Core.CallOptions)">
+             <summary>
+            join match
+             </summary>
+             <param name="request">The request to send to the server.</param>
+             <param name="options">The options for the call.</param>
+             <returns>The call object.</returns>
+        </member>
+        <member name="M:Proto.GateServerMatchService.GateServerMatchServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="M:Proto.GateServerMatchService.BindService(Proto.GateServerMatchService.GateServerMatchServiceBase)">
+            <summary>Creates service definition that can be registered with a server</summary>
+            <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+        </member>
+        <member name="M:Proto.GateServerMatchService.BindService(Grpc.Core.ServiceBinderBase,Proto.GateServerMatchService.GateServerMatchServiceBase)">
+            <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
+            Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+            <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+            <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+        </member>
+        <member name="P:Proto.GateServerLevelService.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:Proto.GateServerLevelService.GateServerLevelServiceBase">
+            <summary>Base class for server-side implementations of GateServerLevelService</summary>
+        </member>
+        <member name="T:Proto.GateServerLevelService.GateServerLevelServiceClient">
+            <summary>Client for GateServerLevelService</summary>
+        </member>
+        <member name="M:Proto.GateServerLevelService.GateServerLevelServiceClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for GateServerLevelService</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:Proto.GateServerLevelService.GateServerLevelServiceClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for GateServerLevelService that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:Proto.GateServerLevelService.GateServerLevelServiceClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:Proto.GateServerLevelService.GateServerLevelServiceClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:Proto.GateServerLevelService.GateServerLevelServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="M:Proto.GateServerLevelService.BindService(Proto.GateServerLevelService.GateServerLevelServiceBase)">
+            <summary>Creates service definition that can be registered with a server</summary>
+            <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+        </member>
+        <member name="M:Proto.GateServerLevelService.BindService(Grpc.Core.ServiceBinderBase,Proto.GateServerLevelService.GateServerLevelServiceBase)">
+            <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
+            Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+            <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+            <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+        </member>
         <member name="P:Proto.GateServerInnerService.Descriptor">
             <summary>Service descriptor</summary>
         </member>
         <member name="T:Proto.GateServerInnerService.GateServerInnerServiceBase">
             <summary>Base class for server-side implementations of GateServerInnerService</summary>
-        </member>
-        <member name="M:Proto.GateServerInnerService.GateServerInnerServiceBase.KillUser(Proto.L2G_KillUser,Grpc.Core.ServerCallContext)">
-             <summary>
-            rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
-             </summary>
-             <param name="request">The request received from the client.</param>
-             <param name="context">The context of the server-side call handler being invoked.</param>
-             <returns>The response to send back to the client (wrapped by a task).</returns>
         </member>
         <member name="T:Proto.GateServerInnerService.GateServerInnerServiceClient">
             <summary>Client for GateServerInnerService</summary>
@@ -3183,42 +3174,6 @@
         <member name="M:Proto.GateServerInnerService.GateServerInnerServiceClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
             <summary>Protected constructor to allow creation of configured clients.</summary>
             <param name="configuration">The client configuration.</param>
-        </member>
-        <member name="M:Proto.GateServerInnerService.GateServerInnerServiceClient.KillUser(Proto.L2G_KillUser,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
-             <summary>
-            rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-             <param name="cancellationToken">An optional token for canceling the call.</param>
-             <returns>The response received from the server.</returns>
-        </member>
-        <member name="M:Proto.GateServerInnerService.GateServerInnerServiceClient.KillUser(Proto.L2G_KillUser,Grpc.Core.CallOptions)">
-             <summary>
-            rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="options">The options for the call.</param>
-             <returns>The response received from the server.</returns>
-        </member>
-        <member name="M:Proto.GateServerInnerService.GateServerInnerServiceClient.KillUserAsync(Proto.L2G_KillUser,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
-             <summary>
-            rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-             <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-             <param name="cancellationToken">An optional token for canceling the call.</param>
-             <returns>The call object.</returns>
-        </member>
-        <member name="M:Proto.GateServerInnerService.GateServerInnerServiceClient.KillUserAsync(Proto.L2G_KillUser,Grpc.Core.CallOptions)">
-             <summary>
-            rpc BattleReward(B2G_BattleReward)returns(G2B_BattleReward){};//2
-             </summary>
-             <param name="request">The request to send to the server.</param>
-             <param name="options">The options for the call.</param>
-             <returns>The call object.</returns>
         </member>
         <member name="M:Proto.GateServerInnerService.GateServerInnerServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
             <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
@@ -4811,34 +4766,169 @@
             <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
             <param name="serviceImpl">An object implementing the server-side handling logic.</param>
         </member>
-        <member name="T:EConfig.MapElementGroup">
+        <member name="T:EConfig.CharacterData">
             <summary>
-            英雄数据表
+            角色表
             </summary>    
         </member>
-        <member name="P:EConfig.MapElementGroup.ElementID">
+        <member name="P:EConfig.CharacterData.Name">
             <summary>
-            元素ID
+            名称
             </summary>
         </member>
-        <member name="P:EConfig.MapElementGroup.Nums">
+        <member name="P:EConfig.CharacterData.NormalAttack">
             <summary>
-            数量
+            普通攻击技能
             </summary>
         </member>
-        <member name="P:EConfig.MapElementGroup.Weight">
+        <member name="P:EConfig.CharacterData.ResourcesPath">
             <summary>
-            权重
+            资源目录
             </summary>
         </member>
-        <member name="P:EConfig.MapElementGroup.Count">
+        <member name="P:EConfig.CharacterData.AIResourcePath">
             <summary>
-            组数
+            AI路径
             </summary>
         </member>
-        <member name="P:EConfig.MapElementGroup.Repeat">
+        <member name="P:EConfig.CharacterData.ViewSize">
+            <summary>
+            大小
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterData.PriorityMove">
+            <summary>
+            避让优先级
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterData.Category">
+            <summary>
+            种类
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterData.InitEquip">
+            <summary>
+            默认装备
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterData.Properties">
+            <summary>
+            属性
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterData.PropertyValues">
+            <summary>
+            属性值
+            </summary>
+        </member>
+        <member name="T:EConfig.DropGroupData">
+            <summary>
+            掉落组
+            </summary>    
+        </member>
+        <member name="P:EConfig.DropGroupData.DropPro">
+            <summary>
+            万分比掉落
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.GoldMin">
+            <summary>
+            掉落金币
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.GoldMax">
+            <summary>
+            掉落金币大
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropMinNum">
+            <summary>
+            掉落数min
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropMaxNum">
+            <summary>
+            掉落数max
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.Repeat">
             <summary>
             是否可重复
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropItem">
+            <summary>
+            道具
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.DropNum">
+            <summary>
+            掉落数
+            </summary>
+        </member>
+        <member name="P:EConfig.DropGroupData.Pro">
+            <summary>
+            掉落概率
+            </summary>
+        </member>
+        <member name="T:EConfig.ItemData">
+            <summary>
+            道具表
+            </summary>    
+        </member>
+        <member name="P:EConfig.ItemData.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.SalePrice">
+            <summary>
+            售卖价格
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.ItemType">
+            <summary>
+            类别
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.Quality">
+            <summary>
+            品质
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.ResModel">
+            <summary>
+            模型
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.Icon">
+            <summary>
+            图标
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.Params1">
+            <summary>
+            参数1
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.Params2">
+            <summary>
+            参数2
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.Unique">
+            <summary>
+            是否可堆叠
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.MaxStackNum">
+            <summary>
+            最大堆叠数
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemData.Description">
+            <summary>
+            描述
             </summary>
         </member>
         <member name="T:EConfig.CharacterMagicData">
@@ -4906,94 +4996,229 @@
             是否必须目标
             </summary>
         </member>
-        <member name="T:EConfig.EquipmentLevelUpData">
+        <member name="T:EConfig.EquipRefreshData">
             <summary>
-            装备升级表
+            装备刷新
             </summary>    
         </member>
-        <member name="P:EConfig.EquipmentLevelUpData.Quality">
+        <member name="P:EConfig.EquipRefreshData.Quality">
             <summary>
             品质
             </summary>
         </member>
-        <member name="P:EConfig.EquipmentLevelUpData.Level">
+        <member name="P:EConfig.EquipRefreshData.CostGold">
             <summary>
-            装备级别
+            金币消耗
             </summary>
         </member>
-        <member name="P:EConfig.EquipmentLevelUpData.AppendRate">
+        <member name="P:EConfig.EquipRefreshData.Pro">
             <summary>
-            附加比例万分比
+            成功概率万分比
             </summary>
         </member>
-        <member name="P:EConfig.EquipmentLevelUpData.Pro">
+        <member name="P:EConfig.EquipRefreshData.NeedQuality">
             <summary>
-            成功概率
+            需求装备品质
             </summary>
         </member>
-        <member name="P:EConfig.EquipmentLevelUpData.CostGold">
+        <member name="P:EConfig.EquipRefreshData.MaxRefreshTimes">
             <summary>
-            消耗金币
+            最大可刷新次数
             </summary>
         </member>
-        <member name="P:EConfig.EquipmentLevelUpData.CostCoin">
+        <member name="P:EConfig.EquipRefreshData.NeedItemCount">
             <summary>
-            消耗钻石
+            需要消耗道具
             </summary>
         </member>
-        <member name="T:EConfig.ItemShopData">
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendMin">
             <summary>
-            商店表
+            属性添加值
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendMax">
+            <summary>
+            属性添加上限
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMin">
+            <summary>
+            属性添加数量
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMax">
+            <summary>
+            属性添加数量
+            </summary>
+        </member>
+        <member name="T:EConfig.RefreshPropertyValueData">
+            <summary>
+            属性参数对照
             </summary>    
         </member>
-        <member name="P:EConfig.ItemShopData.ShopId">
+        <member name="P:EConfig.RefreshPropertyValueData.Value">
             <summary>
-            商店ID
+            属性单位值
             </summary>
         </member>
-        <member name="P:EConfig.ItemShopData.Name">
+        <member name="T:EConfig.StatData">
+            <summary>
+            属性表
+            </summary>    
+        </member>
+        <member name="P:EConfig.StatData.WordKey">
             <summary>
             名称
             </summary>
         </member>
-        <member name="P:EConfig.ItemShopData.ItemIds">
+        <member name="P:EConfig.StatData.InitValue">
             <summary>
-            商店道具
+            初始值
             </summary>
         </member>
-        <member name="P:EConfig.ItemShopData.ItemNums">
+        <member name="P:EConfig.StatData.MaxValue">
             <summary>
-            道具数量
+            上限
             </summary>
         </member>
-        <member name="P:EConfig.ItemShopData.ItemPrices">
+        <member name="T:EConfig.BattleLevelData">
             <summary>
-            价格
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemShopData.CoinTypes">
-            <summary>
-            货币类型
-            </summary>
-        </member>
-        <member name="T:EConfig.LanguageData">
-            <summary>
-            怪物刷新组
+            战斗关卡地图表
             </summary>    
         </member>
-        <member name="P:EConfig.LanguageData.Key">
+        <member name="P:EConfig.BattleLevelData.Name">
             <summary>
-            key
+            名称
             </summary>
         </member>
-        <member name="P:EConfig.LanguageData.ZH">
+        <member name="P:EConfig.BattleLevelData.RunType">
             <summary>
-            中文
+            是否在服务器
             </summary>
         </member>
-        <member name="P:EConfig.LanguageData.EN">
+        <member name="P:EConfig.BattleLevelData.DropIndex">
             <summary>
-            english
+            关卡宝箱
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.LimitLevel">
+            <summary>
+            最大进入等级
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.Icon">
+            <summary>
+            图标
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.LevelName">
+            <summary>
+            资源名称
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.MapType">
+            <summary>
+            地图类型
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.Chapter">
+            <summary>
+            章节
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.LimitTime">
+            <summary>
+            最大挑战时间秒
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.ElementConfigPath">
+            <summary>
+            地图元素配置文件
+            </summary>
+        </member>
+        <member name="P:EConfig.BattleLevelData.Description">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="T:EConfig.CharacterPlayerData">
+            <summary>
+            角色表
+            </summary>    
+        </member>
+        <member name="P:EConfig.CharacterPlayerData.CharacterID">
+            <summary>
+            角色ID
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterPlayerData.Unlock">
+            <summary>
+            解锁条件
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterPlayerData.Motion">
+            <summary>
+            创建角色动作
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterPlayerData.Description">
+            <summary>
+            角色说明
+            </summary>
+        </member>
+        <member name="T:EConfig.ConstantValue">
+            <summary>
+            游戏常量表
+            </summary>    
+        </member>
+        <member name="P:EConfig.ConstantValue.PLAYER_COIN">
+            <summary>
+            用户初始化钻石
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.PLAYER_GOLD">
+            <summary>
+            初始化金币
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE">
+            <summary>
+            初始化数据 
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_COST">
+            <summary>
+            购买消耗
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_SIZE">
+            <summary>
+            购买消耗增容量
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE_LIMIT">
+            <summary>
+            购买消耗增容量上限
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.BATTLE_NOTIFY_DISTANCE">
+            <summary>
+            战斗中被攻击广播半径cm
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.WAITING_TIME">
+            <summary>
+            战斗服务器等待时间秒
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.ELITE_PRO">
+            <summary>
+            精英怪概率参数 万分比
+            </summary>
+        </member>
+        <member name="P:EConfig.ConstantValue.RUSH_BUFF">
+            <summary>
+            Buff技能
             </summary>
         </member>
         <member name="T:EConfig.MapElementData">
@@ -5034,96 +5259,6 @@
         <member name="P:EConfig.MapElementData.Params03">
             <summary>
             参数3
-            </summary>
-        </member>
-        <member name="T:EConfig.MagicLevelUpData">
-            <summary>
-            英雄数据表
-            </summary>    
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.MagicID">
-            <summary>
-            ID
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.NeedLevel">
-            <summary>
-            需要等级
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.NeedGold">
-            <summary>
-            需求金币
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Level">
-            <summary>
-            等级
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.MPCost">
-            <summary>
-            Mp cost
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param1">
-            <summary>
-            参数1
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param2">
-            <summary>
-            参数2
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param3">
-            <summary>
-            参数3
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param4">
-            <summary>
-            参数4
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Param5">
-            <summary>
-            参数5
-            </summary>
-        </member>
-        <member name="P:EConfig.MagicLevelUpData.Description">
-            <summary>
-            描述
-            </summary>
-        </member>
-        <member name="T:EConfig.CharacterLevelUpData">
-            <summary>
-            英雄升级经验表
-            </summary>    
-        </member>
-        <member name="P:EConfig.CharacterLevelUpData.CharacterID">
-            <summary>
-            角色ID
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterLevelUpData.Level">
-            <summary>
-            等级
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterLevelUpData.NeedExp">
-            <summary>
-            需要经验
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterLevelUpData.Properties">
-            <summary>
-            属性
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterLevelUpData.PropertyValues">
-            <summary>
-            属性值
             </summary>
         </member>
         <member name="T:EConfig.MonsterData">
@@ -5216,324 +5351,39 @@
             掉金币
             </summary>
         </member>
-        <member name="T:EConfig.GemShopData">
+        <member name="T:EConfig.EquipmentLevelUpData">
             <summary>
-            钻石商店
+            装备升级表
             </summary>    
         </member>
-        <member name="P:EConfig.GemShopData.Name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.Icon">
-            <summary>
-            图片
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.BundleId">
-            <summary>
-            商店Key
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.Prices">
-            <summary>
-            价格
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.ReceiveCoin">
-            <summary>
-            获得钻石
-            </summary>
-        </member>
-        <member name="P:EConfig.GemShopData.OneOfValue">
-            <summary>
-            价值兑换
-            </summary>
-        </member>
-        <member name="T:EConfig.ItemData">
-            <summary>
-            道具表
-            </summary>    
-        </member>
-        <member name="P:EConfig.ItemData.Name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemData.SalePrice">
-            <summary>
-            售卖价格
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemData.ItemType">
-            <summary>
-            类别
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemData.Quality">
+        <member name="P:EConfig.EquipmentLevelUpData.Quality">
             <summary>
             品质
             </summary>
         </member>
-        <member name="P:EConfig.ItemData.ResModel">
+        <member name="P:EConfig.EquipmentLevelUpData.Level">
             <summary>
-            模型
+            装备级别
             </summary>
         </member>
-        <member name="P:EConfig.ItemData.Icon">
+        <member name="P:EConfig.EquipmentLevelUpData.AppendRate">
             <summary>
-            图标
+            附加比例万分比
             </summary>
         </member>
-        <member name="P:EConfig.ItemData.Params1">
+        <member name="P:EConfig.EquipmentLevelUpData.Pro">
             <summary>
-            参数1
+            成功概率
             </summary>
         </member>
-        <member name="P:EConfig.ItemData.Params2">
+        <member name="P:EConfig.EquipmentLevelUpData.CostGold">
             <summary>
-            参数2
+            消耗金币
             </summary>
         </member>
-        <member name="P:EConfig.ItemData.Unique">
+        <member name="P:EConfig.EquipmentLevelUpData.CostCoin">
             <summary>
-            是否可堆叠
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemData.MaxStackNum">
-            <summary>
-            最大堆叠数
-            </summary>
-        </member>
-        <member name="P:EConfig.ItemData.Description">
-            <summary>
-            描述
-            </summary>
-        </member>
-        <member name="T:EConfig.EquipRefreshData">
-            <summary>
-            装备刷新
-            </summary>    
-        </member>
-        <member name="P:EConfig.EquipRefreshData.Quality">
-            <summary>
-            品质
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.CostGold">
-            <summary>
-            金币消耗
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.Pro">
-            <summary>
-            成功概率万分比
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.NeedQuality">
-            <summary>
-            需求装备品质
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.MaxRefreshTimes">
-            <summary>
-            最大可刷新次数
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.NeedItemCount">
-            <summary>
-            需要消耗道具
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendMin">
-            <summary>
-            属性添加值
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendMax">
-            <summary>
-            属性添加上限
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMin">
-            <summary>
-            属性添加数量
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipRefreshData.PropertyAppendCountMax">
-            <summary>
-            属性添加数量
-            </summary>
-        </member>
-        <member name="T:EConfig.RefreshPropertyValueData">
-            <summary>
-            属性参数对照
-            </summary>    
-        </member>
-        <member name="P:EConfig.RefreshPropertyValueData.Value">
-            <summary>
-            属性单位值
-            </summary>
-        </member>
-        <member name="T:EConfig.GoldShopData">
-            <summary>
-            金币商店
-            </summary>    
-        </member>
-        <member name="P:EConfig.GoldShopData.Name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.GoldShopData.Icon">
-            <summary>
-            图片
-            </summary>
-        </member>
-        <member name="P:EConfig.GoldShopData.Prices">
-            <summary>
-            价格
-            </summary>
-        </member>
-        <member name="P:EConfig.GoldShopData.ReceiveGold">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:EConfig.GoldShopData.CoinOfGold">
-            <summary>
-            每个钻石多少金币
-            </summary>
-        </member>
-        <member name="T:EConfig.ConstantValue">
-            <summary>
-            游戏常量表
-            </summary>    
-        </member>
-        <member name="P:EConfig.ConstantValue.PLAYER_COIN">
-            <summary>
-            用户初始化钻石
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PLAYER_GOLD">
-            <summary>
-            初始化金币
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE">
-            <summary>
-            初始化数据 
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_COST">
-            <summary>
-            购买消耗
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_BUY_SIZE">
-            <summary>
-            购买消耗增容量
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.PACKAGE_SIZE_LIMIT">
-            <summary>
-            购买消耗增容量上限
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.BATTLE_NOTIFY_DISTANCE">
-            <summary>
-            战斗中被攻击广播半径cm
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.WAITING_TIME">
-            <summary>
-            战斗服务器等待时间秒
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.ELITE_PRO">
-            <summary>
-            精英怪概率参数 万分比
-            </summary>
-        </member>
-        <member name="P:EConfig.ConstantValue.RUSH_BUFF">
-            <summary>
-            Buff技能
-            </summary>
-        </member>
-        <member name="T:EConfig.StatData">
-            <summary>
-            属性表
-            </summary>    
-        </member>
-        <member name="P:EConfig.StatData.WordKey">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.StatData.InitValue">
-            <summary>
-            初始值
-            </summary>
-        </member>
-        <member name="P:EConfig.StatData.MaxValue">
-            <summary>
-            上限
-            </summary>
-        </member>
-        <member name="T:EConfig.CharacterData">
-            <summary>
-            角色表
-            </summary>    
-        </member>
-        <member name="P:EConfig.CharacterData.Name">
-            <summary>
-            名称
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.NormalAttack">
-            <summary>
-            普通攻击技能
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.ResourcesPath">
-            <summary>
-            资源目录
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.AIResourcePath">
-            <summary>
-            AI路径
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.ViewSize">
-            <summary>
-            大小
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.PriorityMove">
-            <summary>
-            避让优先级
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.Category">
-            <summary>
-            种类
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.InitEquip">
-            <summary>
-            默认装备
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.Properties">
-            <summary>
-            属性
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterData.PropertyValues">
-            <summary>
-            属性值
+            消耗钻石
             </summary>
         </member>
         <member name="T:EConfig.BuffData">
@@ -5599,156 +5449,6 @@
         <member name="P:EConfig.BuffData.BuffParam5">
             <summary>
             参数5
-            </summary>
-        </member>
-        <member name="T:EConfig.MonsterGroupData">
-            <summary>
-            怪物刷新组
-            </summary>    
-        </member>
-        <member name="P:EConfig.MonsterGroupData.MonsterID">
-            <summary>
-            怪物ID
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Nums">
-            <summary>
-            数量
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Weight">
-            <summary>
-            权重
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Count">
-            <summary>
-            组数
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.Repeat">
-            <summary>
-            是否可重复
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.StandType">
-            <summary>
-            站位
-            </summary>
-        </member>
-        <member name="P:EConfig.MonsterGroupData.StandParams01">
-            <summary>
-            参数
-            </summary>
-        </member>
-        <member name="T:EConfig.CharacterPlayerData">
-            <summary>
-            角色表
-            </summary>    
-        </member>
-        <member name="P:EConfig.CharacterPlayerData.CharacterID">
-            <summary>
-            角色ID
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterPlayerData.Unlock">
-            <summary>
-            解锁条件
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterPlayerData.Motion">
-            <summary>
-            创建角色动作
-            </summary>
-        </member>
-        <member name="P:EConfig.CharacterPlayerData.Description">
-            <summary>
-            角色说明
-            </summary>
-        </member>
-        <member name="T:EConfig.DropGroupData">
-            <summary>
-            掉落组
-            </summary>    
-        </member>
-        <member name="P:EConfig.DropGroupData.DropPro">
-            <summary>
-            万分比掉落
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.GoldMin">
-            <summary>
-            掉落金币
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.GoldMax">
-            <summary>
-            掉落金币大
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.DropMinNum">
-            <summary>
-            掉落数min
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.DropMaxNum">
-            <summary>
-            掉落数max
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.Repeat">
-            <summary>
-            是否可重复
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.DropItem">
-            <summary>
-            道具
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.DropNum">
-            <summary>
-            掉落数
-            </summary>
-        </member>
-        <member name="P:EConfig.DropGroupData.Pro">
-            <summary>
-            掉落概率
-            </summary>
-        </member>
-        <member name="T:EConfig.EquipmentData">
-            <summary>
-            装备数据表
-            </summary>    
-        </member>
-        <member name="P:EConfig.EquipmentData.Level">
-            <summary>
-            级别
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentData.Quality">
-            <summary>
-            品质
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentData.PartType">
-            <summary>
-            部位
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentData.Category">
-            <summary>
-            装备类别
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentData.Properties">
-            <summary>
-            属性
-            </summary>
-        </member>
-        <member name="P:EConfig.EquipmentData.PropertyValues">
-            <summary>
-            属性值
             </summary>
         </member>
         <member name="T:EConfig.TalentData">
@@ -5826,64 +5526,319 @@
             参数5
             </summary>
         </member>
-        <member name="T:EConfig.BattleLevelData">
+        <member name="T:EConfig.GoldShopData">
             <summary>
-            战斗关卡地图表
+            金币商店
             </summary>    
         </member>
-        <member name="P:EConfig.BattleLevelData.Name">
+        <member name="P:EConfig.GoldShopData.Name">
             <summary>
             名称
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.RunType">
+        <member name="P:EConfig.GoldShopData.Icon">
             <summary>
-            是否在服务器
+            图片
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.DropIndex">
+        <member name="P:EConfig.GoldShopData.Prices">
             <summary>
-            关卡宝箱
+            价格
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.LimitLevel">
+        <member name="P:EConfig.GoldShopData.ReceiveGold">
             <summary>
-            最大进入等级
+            
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.Icon">
+        <member name="P:EConfig.GoldShopData.CoinOfGold">
             <summary>
-            图标
+            每个钻石多少金币
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.LevelName">
+        <member name="T:EConfig.LanguageData">
             <summary>
-            资源名称
+            怪物刷新组
+            </summary>    
+        </member>
+        <member name="P:EConfig.LanguageData.Key">
+            <summary>
+            key
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.MapType">
+        <member name="P:EConfig.LanguageData.ZH">
             <summary>
-            地图类型
+            中文
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.Chapter">
+        <member name="P:EConfig.LanguageData.EN">
             <summary>
-            章节
+            english
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.LimitTime">
+        <member name="T:EConfig.CharacterLevelUpData">
             <summary>
-            最大挑战时间秒
+            英雄升级经验表
+            </summary>    
+        </member>
+        <member name="P:EConfig.CharacterLevelUpData.CharacterID">
+            <summary>
+            角色ID
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.ElementConfigPath">
+        <member name="P:EConfig.CharacterLevelUpData.Level">
             <summary>
-            地图元素配置文件
+            等级
             </summary>
         </member>
-        <member name="P:EConfig.BattleLevelData.Description">
+        <member name="P:EConfig.CharacterLevelUpData.NeedExp">
+            <summary>
+            需要经验
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterLevelUpData.Properties">
+            <summary>
+            属性
+            </summary>
+        </member>
+        <member name="P:EConfig.CharacterLevelUpData.PropertyValues">
+            <summary>
+            属性值
+            </summary>
+        </member>
+        <member name="T:EConfig.MonsterGroupData">
+            <summary>
+            怪物刷新组
+            </summary>    
+        </member>
+        <member name="P:EConfig.MonsterGroupData.MonsterID">
+            <summary>
+            怪物ID
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.Nums">
+            <summary>
+            数量
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.Weight">
+            <summary>
+            权重
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.Count">
+            <summary>
+            组数
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.Repeat">
+            <summary>
+            是否可重复
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.StandType">
+            <summary>
+            站位
+            </summary>
+        </member>
+        <member name="P:EConfig.MonsterGroupData.StandParams01">
+            <summary>
+            参数
+            </summary>
+        </member>
+        <member name="T:EConfig.MagicLevelUpData">
+            <summary>
+            英雄数据表
+            </summary>    
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.MagicID">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.NeedLevel">
+            <summary>
+            需要等级
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.NeedGold">
+            <summary>
+            需求金币
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Level">
+            <summary>
+            等级
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.MPCost">
+            <summary>
+            Mp cost
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param1">
+            <summary>
+            参数1
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param2">
+            <summary>
+            参数2
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param3">
+            <summary>
+            参数3
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param4">
+            <summary>
+            参数4
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Param5">
+            <summary>
+            参数5
+            </summary>
+        </member>
+        <member name="P:EConfig.MagicLevelUpData.Description">
             <summary>
             描述
+            </summary>
+        </member>
+        <member name="T:EConfig.MapElementGroup">
+            <summary>
+            英雄数据表
+            </summary>    
+        </member>
+        <member name="P:EConfig.MapElementGroup.ElementID">
+            <summary>
+            元素ID
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementGroup.Nums">
+            <summary>
+            数量
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementGroup.Weight">
+            <summary>
+            权重
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementGroup.Count">
+            <summary>
+            组数
+            </summary>
+        </member>
+        <member name="P:EConfig.MapElementGroup.Repeat">
+            <summary>
+            是否可重复
+            </summary>
+        </member>
+        <member name="T:EConfig.ItemShopData">
+            <summary>
+            商店表
+            </summary>    
+        </member>
+        <member name="P:EConfig.ItemShopData.ShopId">
+            <summary>
+            商店ID
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.ItemIds">
+            <summary>
+            商店道具
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.ItemNums">
+            <summary>
+            道具数量
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.ItemPrices">
+            <summary>
+            价格
+            </summary>
+        </member>
+        <member name="P:EConfig.ItemShopData.CoinTypes">
+            <summary>
+            货币类型
+            </summary>
+        </member>
+        <member name="T:EConfig.EquipmentData">
+            <summary>
+            装备数据表
+            </summary>    
+        </member>
+        <member name="P:EConfig.EquipmentData.Level">
+            <summary>
+            级别
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipmentData.Quality">
+            <summary>
+            品质
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipmentData.PartType">
+            <summary>
+            部位
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipmentData.Category">
+            <summary>
+            装备类别
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipmentData.Properties">
+            <summary>
+            属性
+            </summary>
+        </member>
+        <member name="P:EConfig.EquipmentData.PropertyValues">
+            <summary>
+            属性值
+            </summary>
+        </member>
+        <member name="T:EConfig.GemShopData">
+            <summary>
+            钻石商店
+            </summary>    
+        </member>
+        <member name="P:EConfig.GemShopData.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.Icon">
+            <summary>
+            图片
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.BundleId">
+            <summary>
+            商店Key
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.Prices">
+            <summary>
+            价格
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.ReceiveCoin">
+            <summary>
+            获得钻石
+            </summary>
+        </member>
+        <member name="P:EConfig.GemShopData.OneOfValue">
+            <summary>
+            价值兑换
             </summary>
         </member>
     </members>
