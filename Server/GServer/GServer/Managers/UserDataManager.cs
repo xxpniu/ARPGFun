@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using EConfig;
 using ExcelConfig;
 using Google.Protobuf.WellKnownTypes;
@@ -16,6 +17,7 @@ using ServerUtility;
 using XNet.Libs.Utility;
 using static GServer.MongoTool.DataBase;
 using static Proto.ItemsShop.Types;
+using ErrorCode = Proto.ErrorCode;
 
 namespace GServer.Managers
 {
@@ -586,19 +588,16 @@ namespace GServer.Managers
 
             return true;
         }
-        
-        private async Task<PackageItem> GetCanStackItem(int itemId, GamePackageEntity package)
+
+        private static PackageItem GetCanStackItem(int itemId, GamePackageEntity package)
         {
             var it = ExcelToJSONConfigManager.GetId<ItemData>(itemId);
             foreach (var i in package.Items)
             {
-                if (i.Id == itemId)
-                {
-                    if (i.Num < it.MaxStackNum)
-
-                        return await Task.FromResult(i);
-                }
+                if (i.Id != itemId) continue;
+                if (i.Num < it.MaxStackNum) return  i;
             }
+
             return null;
         }
 
@@ -615,19 +614,19 @@ namespace GServer.Managers
             var it =  ExcelToJSONConfigManager.GetId<ItemData>(i.ItemID);
             if (it == null) return (null,null);
             var num = i.Num;
-            var modifies = new List<PackageItem>();
-            var adds = new List<PackageItem>();
+            var modifies = new Dictionary<string,PackageItem>();
+            var adds = new Dictionary<string,PackageItem>();
            
             while (num > 0)
             {
-                var cItem = await GetCanStackItem(i.ItemID, package);
+                var cItem =  GetCanStackItem(i.ItemID, package);
                 if (cItem != null)
                 {
                     var remainNum = it.MaxStackNum - cItem.Num;
                     var add = Math.Min(remainNum, num);
                     cItem.Num += add;
                     num -= add;
-                    modifies.Add(cItem);
+                    if (!adds.ContainsKey(cItem.Uuid)) modifies.Add(cItem.Uuid, cItem);
                 }
                 else
                 {
@@ -642,13 +641,13 @@ namespace GServer.Managers
                         Num = add,
                         CreateTime = DateTime.UtcNow
                     };
-                    adds.Add(itemNum);
+                    adds.Add(itemNum.Uuid,itemNum);
                 }
             }
 
 
             var models = new List<WriteModel<GamePackageEntity>>();
-            foreach (var a in adds) 
+            foreach (var a in adds.Values) 
             {
                 var push = new UpdateOneModel<GamePackageEntity>(
                     Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, uuid),
@@ -656,7 +655,7 @@ namespace GServer.Managers
                 models.Add(push);
             }
 
-            foreach (var m in modifies)
+            foreach (var m in modifies.Values)
             {
                 var b = Builders<GamePackageEntity>.Filter;
                 models.Add(new UpdateOneModel<GamePackageEntity>(
@@ -666,8 +665,10 @@ namespace GServer.Managers
             }
 
             await DataBase.S.Packages.BulkWriteAsync(models);
+  
 
-            return  (modifies, adds);
+
+            return  (modifies.Values.ToList(), adds.Values.ToList());
         }
 
         public async Task<bool> AddGoldAndCoin(string playerUuid, int coin, int gold)
@@ -895,6 +896,82 @@ namespace GServer.Managers
             
             return (ErrorCode.Ok, modify, removes);
 
+        }
+
+        public async Task<(ErrorCode code, int gold  ,int coin  , List<PackageItem> adds ,  List<PackageItem> modifies)>  
+            ProcessDrop(string accountId, int gold, int coin, List<PlayerItem> items)
+        {
+
+            //check error input
+            if (gold <= 0 || coin <= 0) return (ErrorCode.Error, 0, 0, null, null);
+            var player = await FindPlayerByAccountId(accountId);
+            var pUuid = player.Uuid;
+            var package = await FindPackageByPlayerId(pUuid);
+            var modifies = new Dictionary<string,PackageItem>();
+            var adds = new Dictionary<string,PackageItem>();
+            foreach (var i in items)
+            {
+                var it =  ExcelToJSONConfigManager.GetId<ItemData>(i.ItemID);
+                if (it == null) return (ErrorCode.NofoundItem, 0, 0, null, null);
+                var num = i.Num;
+                while (num > 0)
+                {
+                    var cItem = GetCanStackItem(i.ItemID, package);
+                    if (cItem != null)
+                    {
+                        var remainNum = it.MaxStackNum - cItem.Num;
+                        var add = Math.Min(remainNum, num);
+                        cItem.Num += add;
+                        num -= add;
+                        if (!adds.ContainsKey(cItem.Uuid)) modifies.Add(cItem.Uuid, cItem);
+                    }
+                    else
+                    {
+                        var add = Math.Min(num, it.MaxStackNum);
+                        num -= add;
+                        var itemNum = new PackageItem
+                        {
+                            Uuid = Guid.NewGuid().ToString(),
+                            Id = i.ItemID,
+                            IsLock = i.Locked,
+                            Level = i.Level,
+                            Num = add,
+                            CreateTime = DateTime.UtcNow
+                        };
+                        package.Items.Add(itemNum);
+                        adds.Add(itemNum.Uuid,itemNum);
+                    }
+                }
+            }
+            
+            
+            var models = new List<WriteModel<GamePackageEntity>>();
+            foreach (var a in adds.Values) 
+            {
+                var push = new UpdateOneModel<GamePackageEntity>(
+                    Builders<GamePackageEntity>.Filter.Eq(t => t.PlayerUuid, pUuid),
+                    Builders<GamePackageEntity>.Update.Push(t => t.Items, a));
+                models.Add(push);
+            }
+
+            foreach (var m in modifies.Values)
+            {
+                var b = Builders<GamePackageEntity>.Filter;
+                models.Add(new UpdateOneModel<GamePackageEntity>(
+                    b.Eq(t => t.PlayerUuid, pUuid) & b.ElemMatch(t => t.Items, x => x.Uuid == m.Uuid),
+                    Builders<GamePackageEntity>.Update.Set("Items.$", m))
+                );
+            }
+
+            await DataBase.S.Packages.BulkWriteAsync(models);
+            var update = Builders<GamePlayerEntity>.Update
+                .Inc(t => t.Coin, coin)
+                .Inc(t => t.Gold, gold);
+            await DataBase.S.Playes.FindOneAndUpdateAsync(t => t.Uuid == pUuid, update);
+
+            await SyncToClient(player.AccountUuid, player.Uuid, syncPackage: true);
+            
+            return (ErrorCode.Ok, gold, coin, adds.Values.ToList(), modifies.Values.ToList());
         }
     }
 }

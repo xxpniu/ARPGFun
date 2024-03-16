@@ -24,6 +24,8 @@ namespace GameLogic.Game.Perceptions
     /// </summary>
 	public class BattlePerception : GPerception
     {
+        public delegate void OnDamageCall(BattleCharacter source, BattleCharacter target, DamageResult result , bool dead);
+        
         public class EmptyController : GControllor
         {
             public EmptyController(BattlePerception p) : base(p) { }
@@ -53,6 +55,7 @@ namespace GameLogic.Game.Perceptions
 
         public BattlePerception(GState state, IBattlePerception view) : base(state)
         {
+            OnDamage = null;
             View = view;
             Empty = new EmptyController(this);
             ReleaserControllor = new MagicReleaserControllor(this);
@@ -60,6 +63,7 @@ namespace GameLogic.Game.Perceptions
             AIControllor = new AIControllor(this);
             BattleItemControllor = new BattleItemControllor(this);
             StateControllor = new ControllorState(this);
+          
         }
 
         public IBattlePerception View { private set; get; }
@@ -205,14 +209,18 @@ namespace GameLogic.Game.Perceptions
             return battleCharacter;
         }
 
+        public OnDamageCall OnDamage;
+
         internal void ProcessDamage(BattleCharacter sources, BattleCharacter effectTarget, DamageResult result)
         {
             View.ProcessDamage(sources.Index, effectTarget.Index, result.Damage, result.IsMissed, result.CrtMult);
             NotifyHurt(effectTarget);
+
             if (result.IsMissed) return;
             effectTarget.AttachDamage(sources.Index, result.Damage, View.GetTimeSimulator().Now.Time);
-            if (!effectTarget.SubHP(result.Damage, out var dead)) return;
+            effectTarget.SubHP(result.Damage, out var dead);
             if (dead) sources.FireEvent(BattleEventType.Killed, effectTarget);
+            OnDamage?.Invoke(sources, effectTarget, result, dead);
         }
 
 
@@ -241,7 +249,8 @@ namespace GameLogic.Game.Perceptions
         }
 
         #endregion
-
+        
+        #region  FindTarget
         public BattleCharacter FindTarget(int target)
         {
             return this.State[target] as BattleCharacter;
@@ -474,6 +483,10 @@ namespace GameLogic.Game.Perceptions
 
             }
         }
+        
+        #endregion
+
+        #region  Releaser
 
         public void StopAllReleaserByCharacter(BattleCharacter character)
         {
@@ -529,8 +542,8 @@ namespace GameLogic.Game.Perceptions
                 return false;
             });
         }
-
-        public void NotifyHurt(BattleCharacter sources)
+        #endregion
+        private void NotifyHurt(BattleCharacter sources)
         {
             var constant = (State as BattleState)?.ViewBase.GetConstant;
             State.Each<BattleCharacter>((c) => 

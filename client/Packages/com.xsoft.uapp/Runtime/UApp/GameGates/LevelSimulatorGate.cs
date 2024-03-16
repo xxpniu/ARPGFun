@@ -10,6 +10,7 @@ using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;
 using GameLogic;
+using GameLogic.Game;
 using GameLogic.Game.Elements;
 using GameLogic.Game.LayoutLogics;
 using GameLogic.Game.Perceptions;
@@ -125,6 +126,30 @@ namespace UApp.GameGates
             await _mCreator.Spawn();
             _startTime = ((IBattleGate)this).TimeServerNow;
             _isFinished = false;
+
+            (State.Perception as BattlePerception)!.OnDamage = OnDamage;
+
+        }
+
+        //private List<Proto.C2G_LocalBattleFinished.Types.BattleDamage> _damages = new();
+        private readonly Dictionary<int, Proto.C2G_LocalBattleFinished.Types.BattleDamage> _damages = new();
+        private readonly Dictionary<int, Proto.C2G_LocalBattleFinished.Types.ConsumeItem> _items = new();
+
+        private void OnDamage(BattleCharacter source, BattleCharacter target, DamageResult result, bool dead)
+        {
+            //2 is monster
+            if (target.TeamIndex != 2) return;
+            if (target["__Monster"] is not MonsterData mData) return;
+            if (!_damages.TryGetValue(target.Index, out var damage))
+            {
+                damage = new C2G_LocalBattleFinished.Types.BattleDamage();
+                _damages.Add(target.Index, damage);
+            }
+
+            damage.MonsterId = target.Index;
+            damage.TotalDamage += result.Damage;
+            damage.MonsterConfigId = mData.ID;
+            if (dead) damage.DeadTime = (int)(GetTime().Time * 1000);
         }
 
         private float _startTime = 0;
@@ -158,7 +183,13 @@ namespace UApp.GameGates
                 return;
             }
 
-            var request = new C2G_LocalBattleFinished();
+            var request = new C2G_LocalBattleFinished
+            {
+                Damages = { _damages.Values },
+                LevelId = LevelId,
+                CostTime = (int)(this.GetTime().Time- this._startTime),
+                Items = { _items.Values }
+            };
             var reward = await GateManager.S.LevelServiceClient.LocalBattleFinishedAsync(request,
                 cancellationToken: this.destroyCancellationToken);
             await UniTask.SwitchToMainThread();
@@ -313,7 +344,20 @@ namespace UApp.GameGates
                 {
                     UApplication.S.ShowError(res.Code);
                 }
+                else
+                {
+                    if (!_items.TryGetValue(config.ID, out var cItem))
+                    {
+                        cItem = new C2G_LocalBattleFinished.Types.ConsumeItem();
+                        _items.Add(config.ID,cItem);
+                    }
 
+                    cItem.ItemId = config.ID;
+                    cItem.Num += 1;
+                }
+
+                
+                
                 await UniTask.SwitchToMainThread();
                 var rTarget = new ReleaseAtTarget(_characterOwner, _characterOwner);
                 Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone,
