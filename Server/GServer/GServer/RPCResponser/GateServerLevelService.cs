@@ -3,12 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
-using Google.Protobuf;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using GServer.Managers;
 using GServer.Utility;
-using MongoDB.Driver;
 using Proto;
 using ServerUtility;
 using XNet.Libs.Utility;
@@ -22,7 +19,7 @@ namespace GServer.RPCResponser
         {
 
             var dropConfig = ExcelToJSONConfigManager.GetId<DropGroupData>(groupId);
-
+            if (dropConfig == null) return (0, null);
 
             if (!GRandomer.Probability10000(dropConfig.DropPro)) return (0,null);
             var items = dropConfig.DropItem.SplitToInt();
@@ -74,8 +71,10 @@ namespace GServer.RPCResponser
             if (request.Damages.Count == 0) return new G2C_LocalBattleFinished { Code = ErrorCode.Exception };
             //no damage
 
-            var level = ExcelConfig.ExcelToJSONConfigManager.GetId<BattleLevelData>(request.LevelId);
-            if (level == null) return new G2C_LocalBattleFinished { Code = ErrorCode.Exception };
+            var level = ExcelToJSONConfigManager.GetId<BattleLevelData>(request.LevelId);
+            if (level == null || level.DropIndex <= 0)
+                return new G2C_LocalBattleFinished { Code = ErrorCode.Exception };
+
 
             var (gold, items) = DoDrop(level.DropIndex);
 

@@ -25,8 +25,6 @@ namespace GServer.RPCResponsor
 {
     public class GateServerService : Proto.GateServerService.GateServerServiceBase
     {
-
-       
         
         public override async Task<G2C_BuyPackageSize> BuyPackageSize(C2G_BuyPackageSize req , ServerCallContext context)
         {
@@ -184,7 +182,7 @@ namespace GServer.RPCResponsor
         }
 
    
-        public override async Task< G2C_OperatorEquip> OperatorEquip(C2G_OperatorEquip request, ServerCallContext context)
+        public override async Task<G2C_OperatorEquip> OperatorEquip(C2G_OperatorEquip request, ServerCallContext context)
         {
             var accountUuid = context.GetAccountId();
             var player = await UserDataManager.S.FindPlayerByAccountId(accountUuid);
