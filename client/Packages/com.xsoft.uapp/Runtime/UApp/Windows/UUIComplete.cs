@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Proto;
+using UApp;
 using UnityEngine.UI;
 using UGameTools;
 
@@ -18,10 +20,15 @@ namespace Windows
             }
         }
 
+        public void ShowWindowByResult(G2C_LocalBattleFinished reward)
+        {
+             ShowWindow();
+        }
+
         protected override void InitModel()
         {
             base.InitModel();
-            //Write Code here
+            ButtonClose.OnMouseClick(_ => { HideWindow(); });
         }
         protected override void OnShow()
         {
@@ -30,6 +37,7 @@ namespace Windows
         protected override void OnHide()
         {
             base.OnHide();
+            UApplication.S.GoBackToMainGate();
         }
     }
 }

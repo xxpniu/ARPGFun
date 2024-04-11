@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using BattleViews.Components;
@@ -177,8 +178,7 @@ namespace UApp.GameGates
         {
             if (!win)
             {
-                //go back
-                //todo:failure result no reward
+                //todo: show failure
                 UApplication.S.GoBackToMainGate();
                 return;
             }
@@ -194,8 +194,9 @@ namespace UApp.GameGates
                 cancellationToken: this.destroyCancellationToken);
             await UniTask.SwitchToMainThread();
             if(!reward.Code.IsOk()) UApplication.S.ShowError(reward.Code);
-            //todo:: show reward result
-            UApplication.S.GoBackToMainGate();
+            var ui = await UUIManager.S.CreateWindowAsync<UUIComplete>(token:this.destroyCancellationToken);
+            ui.ShowWindowByResult(reward);
+            
         }
 
         protected override void Tick()
