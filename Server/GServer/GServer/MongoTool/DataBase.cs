@@ -51,26 +51,20 @@ namespace GServer.MongoTool
             [BsonElement("id")]
             public string Uuid { set; get; }
             [BsonElement("item")]
-            public List<PackageItem> Items { set; get; }
+            public List<PackageItem> Items { set; get; } = new List<PackageItem>();
+
             [BsonElement("size")]
             public int PackageSize { set; get; }
             [BsonElement("puuid")]
             public string PlayerUuid { set; get; }
 
-            public GamePackageEntity()
-            {
-                Items = new List<PackageItem>();
-            }
-
             public bool TryGetItem(string uuid, out PackageItem item)
             {
                 foreach (var i in Items)
                 {
-                    if (i.Uuid == uuid)
-                    {
-                        item = i;
-                        return true;
-                    }
+                    if (i.Uuid != uuid) continue;
+                    item = i;
+                    return true;
                 }
                 item = null;
                 return false;
