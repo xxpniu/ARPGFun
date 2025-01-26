@@ -13,7 +13,7 @@ public class HpTipShower : MonoBehaviour
     private int nameBar = -1;
 
     // Start is called before the first frame update
-    void Awake()
+    private void Awake()
     {
         view = GetComponent<UCharacterView>();
     }

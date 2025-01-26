@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using App.Core.Core;
 using Cysharp.Threading.Tasks;
@@ -139,6 +140,14 @@ namespace UApp
             LoginServer = new ServiceAddress
                 { IpAddress = clientConfig.LoginServerHost, Port = clientConfig.LoginServerPort };
             Debug.Log($"Login:{LoginServer}");
+
+            var ips = await  Dns.GetHostAddressesAsync(clientConfig.LoginServerHost);
+
+            foreach (var ip in ips)
+            {
+                 Debug.Log($" GetIP Login Server:: {ip}");
+            }
+            
             RunReader();
             Constant = ExcelToJSONConfigManager.GetId<ConstantValue>(1);
             var la = ExcelToJSONConfigManager.Find<LanguageData>();
@@ -186,9 +195,7 @@ namespace UApp
                     MaxSize = 200
                 };
 
-
-
-
+                
                 await ChangeGate<LevelSimulatorGate>(hero, playerPackage, 1);
             }
         }
