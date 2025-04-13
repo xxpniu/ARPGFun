@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Net.Mail;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 
 [RequireComponent(typeof( Scrollbar))]
@@ -13,23 +16,29 @@ public class AutoValueScrollbar : MonoBehaviour {
         bar = GetComponent<Scrollbar>();
     }
 
-    public void ResetValue(float duration)
+
+    private CancellationTokenSource _cancellation;
+
+    public async void ResetValue(float duration)
     {
-        StopAllCoroutines();
-        StartCoroutine(RunBar(duration));
+        _cancellation?.Cancel();
+        _cancellation = new CancellationTokenSource();
+        var token = CancellationTokenSource.CreateLinkedTokenSource(_cancellation.Token, this.destroyCancellationToken);
+        RunBar(duration:duration, token.Token);
     }
 
-    private IEnumerator RunBar(float duration)
+    private async void RunBar(float duration, CancellationToken token = default)
     {
-        var start =Time.time;
+        var start = Time.time;
         bar.size = 0;
-        yield return null;
+        await UniTask.NextFrame(token);
         while (Time.time - start < duration)
         {
             bar.size = (Time.time - start) / duration;
-            yield return null;
+            await UniTask.NextFrame(token);
         }
+
         bar.size = 1;
-        yield return null;
+        await UniTask.NextFrame(token);
     }
 }
