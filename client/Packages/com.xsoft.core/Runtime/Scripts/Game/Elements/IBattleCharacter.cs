@@ -3,6 +3,7 @@ using GameLogic.Utility;
 using Proto;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
+// ReSharper disable InconsistentNaming
 
 namespace GameLogic.Game.Elements
 {

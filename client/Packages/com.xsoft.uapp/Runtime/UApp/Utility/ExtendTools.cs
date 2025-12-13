@@ -63,7 +63,7 @@ public static class ExtendTools
 
     }
 
-    public static string ToValueString(this GameLogic.Game.ComplexValue value, HeroPropertyType p)
+    public static string ToValueString(this ComplexValue value, HeroPropertyType p)
     {
         return ValueFormat[p].Invoke(value);
     }
@@ -72,12 +72,11 @@ public static class ExtendTools
     public static string GetAsFormatKeys(this string key, params string[] keys)
     {
         var list = new List<string>();
-        if (keys != null)
+        if (keys == null) return LanguageManager.S.Format(key, list.ToArray());
+        
+        foreach (var i in keys)
         {
-            foreach (var i in keys)
-            {
-                list.Add(LanguageManager.S[i]);
-            }
+            list.Add(LanguageManager.S[i]);
         }
         return LanguageManager.S.Format(key, list.ToArray());
     }

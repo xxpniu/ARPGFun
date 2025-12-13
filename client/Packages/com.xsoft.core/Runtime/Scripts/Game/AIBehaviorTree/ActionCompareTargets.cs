@@ -19,7 +19,7 @@ namespace GameLogic.Game.AIBehaviorTree
 		{
 
 			var root = context as AITreeRoot;
-			var per = root.Perception;
+			var per = root!.Perception;
 			var targets = new List<BattleCharacter>();
 			float distance = Node.Distance;
 			if (!root.GetDistanceByValueType(Node.valueOf, distance, out distance))

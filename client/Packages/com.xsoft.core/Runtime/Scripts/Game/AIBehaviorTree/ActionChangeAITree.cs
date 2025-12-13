@@ -17,11 +17,8 @@ namespace GameLogic.Game.AIBehaviorTree
                 yield return RunStatus.Success;
                 yield break;
             }
-            else
-            {
-                yield return RunStatus.Failure;
-                yield break;
-            }
+
+            yield return RunStatus.Failure;
         }
     }
 }
