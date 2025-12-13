@@ -58,8 +58,7 @@ namespace App.Core.Core
 
         public string Format(string key, params object[] pars)
         {
-            if (pars.Length > 0) return string.Format(this[key], pars);
-            return this[key];
+            return pars.Length > 0 ? string.Format(this[key], pars) : this[key];
         }
 
         public void AddLanguage(LanguageData[] la)
@@ -71,6 +70,7 @@ namespace App.Core.Core
                     case LanguageType.En:
                         AddKey(i.Key, i.EN);
                         break;
+                    case LanguageType.Zh:
                     default:
                         AddKey(i.Key, i.ZH);
                         break;

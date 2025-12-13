@@ -4,6 +4,7 @@ using BattleViews;
 using BattleViews.Components;
 using BattleViews.Utility;
 using BattleViews.Views;
+using Cysharp.Threading.Tasks;
 using EConfig;
 using EngineCore.Simulater;
 using ExcelConfig;
@@ -53,7 +54,7 @@ namespace BattleEditor
 			LanguageManager.S.AddLanguage(ExcelToJSONConfigManager.Find<LanguageData>());
 			_isStarted = false;
 		
-			await SceneManager.LoadSceneAsync("Welcome", LoadSceneMode.Additive);
+			await SceneManager.LoadSceneAsync("Welcome", LoadSceneMode.Additive)!;
 			_tCamera = FindFirstObjectByType<ThirdPersonCameraContollor>();
 		
 			PerView = UPerceptionView.Create(ExcelToJSONConfigManager.GetId<ConstantValue>(1));
@@ -143,11 +144,11 @@ namespace BattleEditor
 				properties.TryAddBase(levelData.Properties, levelData.PropertyValues);
 
 
-			var target = per!.CreateCharacter(per.AIControllor, level, data, magics,properties, 2, scene.enemyStartPoint.position + (UVector3.left * distanceCharacter / 2),
+			var character = per!.CreateCharacter(per.AIControllor, level, data, magics,properties, 2, scene.enemyStartPoint.position + (UVector3.left * distanceCharacter / 2),
 				new UVector3(0, -90, 0), string.Empty, data.Name);
 			//target.ResetHPMP();
-			if (ai) per.ChangeCharacterAI(data.AIResourcePath, target);
-			this.target = target;
+			if (ai) per.ChangeCharacterAI(data.AIResourcePath, character);
+			this.target = character;
 		}
 
     

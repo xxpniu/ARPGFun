@@ -60,8 +60,7 @@ namespace BehaviorTree
 
         public virtual Composite FindGuid(string id)
         {
-            if (Guid == id) return this;
-            return null;
+            return Guid == id ? this : null;
         }
 
         protected void Attach(string key, object val)

@@ -46,6 +46,7 @@ namespace GServer
         }
         
 
+        
         public static async Task Main(string[] args)
         {
             var config = new GateServerConfig();
