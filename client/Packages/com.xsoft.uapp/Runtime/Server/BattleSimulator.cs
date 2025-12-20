@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.Core.Components;
@@ -16,17 +15,16 @@ using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Proto;
 using UnityEngine;
-using Utility;
 using XNet.Libs.Utility;
 
 namespace Server
 {
     public class BattleSimulator : ComponentAsync
     {
-        private readonly ConcurrentQueue<BindPlayer> _addTemp = new ConcurrentQueue<BindPlayer>();
-        private readonly ConcurrentQueue<string> _kickUsers = new ConcurrentQueue<string>();
-        private readonly Dictionary<string, BattlePlayer> _battlePlayers = new Dictionary<string, BattlePlayer>();
-        private readonly ConcurrentDictionary<string, BattlePlayer> _tempPlayers = new ConcurrentDictionary<string, BattlePlayer>();
+        private readonly ConcurrentQueue<BindPlayer> _addTemp = new();
+        private readonly ConcurrentQueue<string> _kickUsers = new();
+        private readonly Dictionary<string, BattlePlayer> _battlePlayers = new();
+        private readonly ConcurrentDictionary<string, BattlePlayer> _tempPlayers = new();
 
         private BattleLevelSimulator _levelSimulator;
         public RunState stateOfRun = RunState.NoStart;

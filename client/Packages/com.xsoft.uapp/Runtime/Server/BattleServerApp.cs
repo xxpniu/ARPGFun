@@ -205,8 +205,8 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         ListenServer.BindServices(Proto.BattleServerService.BindService(Services));
         ListenServer.Interceptor.SetAuthCheck((c) =>
         {
-            if (!c.GetHeader("session-key", out string value)) return false;
-            if (!ListenServer.CheckSession(value, out string userid)) return false;
+            if (!c.GetHeader("session-key", out var value)) return false;
+            if (!ListenServer.CheckSession(value, out var userid)) return false;
             c.RequestHeaders.Add("user-key", userid);
             return true;
         });

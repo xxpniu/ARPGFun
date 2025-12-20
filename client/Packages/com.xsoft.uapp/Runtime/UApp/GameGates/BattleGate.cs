@@ -16,7 +16,6 @@ using Grpc.Core;
 using Proto;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Utility;
 using XNet.Libs.Utility;
 using Vector3 = UnityEngine.Vector3;
 using static UApp.Utility.Stream;
@@ -126,15 +125,17 @@ namespace UApp.GameGates
 
             ChannelCall = _battleService.BattleChannel(cancellationToken: Client.ShutdownToken);
 
+            async void OnBattleDisconnect ()
+            {
+                await UniTask.SwitchToMainThread();
+                Debuger.Log($"Exit handle from battle server");
+                UApplication.S.GoBackToMainGate();
+            }
+
             HandleChannel = new ResponseChannel<Any>(ChannelCall.ResponseStream, tag: "BattleHandle")
             {
                 OnReceived = (any) => { _player.Process(any); },
-                OnDisconnect = async () =>
-                {
-                    await UniTask.SwitchToMainThread();
-                    Debuger.Log($"Exit handle from battle server");
-                    UApplication.S.GoBackToMainGate();
-                }
+                OnDisconnect =  OnBattleDisconnect
             };
             PushToChannel = new RequestChannel<Any>(ChannelCall.RequestStream, tag: "BattlePushChannel");
         }
