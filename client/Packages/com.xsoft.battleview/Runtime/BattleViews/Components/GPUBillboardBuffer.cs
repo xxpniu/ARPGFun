@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BattleViews.Components
 {
-	//0-------2
+//0-------2
 //|	    / |
 //|	  /   |
 //| /	  |

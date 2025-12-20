@@ -11,7 +11,7 @@ namespace BattleViews.Components
             public Shader Shader;
         }
 
-        private readonly Queue<RevertShader> _renders = new Queue<RevertShader>();
+        private readonly Queue<RevertShader> _renders = new();
 
         private void OnEnable()
         {

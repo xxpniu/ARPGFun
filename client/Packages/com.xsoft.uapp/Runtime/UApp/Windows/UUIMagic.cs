@@ -23,14 +23,14 @@ namespace Windows
                 Template.BtClick.onClick.AddListener(() => { OnClick?.Invoke(this); });
             }
 
-            public HeroMagic magic;
-            public CharacterMagicData config;
+            public HeroMagic Magic;
+            public CharacterMagicData Config;
             public Action<ContentTableModel> OnClick;
 
             internal async void SetMagic(CharacterMagicData config,HeroMagic heroMagic)
             {
-                magic = heroMagic;
-                this.config = config ;
+                Magic = heroMagic;
+                this.Config = config ;
                 Template.lb_name.SetKey(config.Name);
                 Template.lb_Level.SetKey("UUIMagic_SEL_Level", heroMagic?.Level ?? 1);
                 Template.Icon.sprite = await  ResourcesManager.S.LoadIcon(config);
@@ -59,7 +59,7 @@ namespace Windows
             async void LevelUpCall()
             {
                 //var gate = UApplication.G<GMainGate>();
-                var request = new C2G_MagicLevelUp { Level = selectMagic?.Level ?? 1, MagicId = selectConfig.ID };
+                var request = new C2G_MagicLevelUp { Level = _selectMagic?.Level ?? 1, MagicId = _selectConfig.ID };
                 var res = await GateManager.S.GateFunction.MagicLevelUpAsync(request);
                 await UniTask.SwitchToMainThread();
                 if (res.Code.IsOk())
@@ -106,7 +106,7 @@ namespace Windows
             {
                 foreach (var i in ContentTableManager)
                 {
-                    if (i.Model.config.ID == selected)
+                    if (i.Model.Config.ID == selected)
                     {
                         OnItemClick(i.Model);
                         break;
@@ -135,7 +135,7 @@ namespace Windows
         private void OnItemClick(ContentTableModel obj)
         {
 
-            if (obj.magic == null)
+            if (obj.Magic == null)
             {
                 UUIPopup.ShowConfirm(
                     LanguageManager.S["UUIMaigc_Active_Title"],
@@ -143,7 +143,7 @@ namespace Windows
                     async () =>
                     {
                         var res = await GateManager.S.GateFunction
-                            .ActiveMagicAsync(new C2G_ActiveMagic { MagicId = obj.config.ID });
+                            .ActiveMagicAsync(new C2G_ActiveMagic { MagicId = obj.Config.ID });
                         if (res.Code.IsOk())
                         {
                             //UApplication.S.ShowNotify("")
@@ -155,16 +155,16 @@ namespace Windows
                 return;
             }
 
-            selected = obj.config.ID;
+            selected = obj.Config.ID;
             foreach (var i in ContentTableManager) i.Model.UnSelected();
             obj.Selected();
-            ShowDetail(obj.config, obj.magic);
+            ShowDetail(obj.Config, obj.Magic);
         }
 
         private async void ShowDetail(CharacterMagicData config, HeroMagic magic)
         {
-            this.selectConfig = config;
-            selectMagic = magic;
+            this._selectConfig = config;
+            _selectMagic = magic;
 
             Desc_Root.ActiveSelfObject(true);
             int level = magic?.Level ?? 1;
@@ -176,15 +176,15 @@ namespace Windows
 
             var levelData = ExcelToJSONConfigManager.First<MagicLevelUpData>(t => t.Level == level && t.MagicID == config.ID);
             var nextLevel= ExcelToJSONConfigManager.First<MagicLevelUpData>(t => t.Level == level+1 && t.MagicID == config.ID);
-            lb_needLevel.SetKey("UUIMagic_NeedLevel", levelData.NeedLevel);
+            lb_needLevel.SetKey("UUIMagic_NeedLevel", levelData?.NeedLevel);
             coin_icon.ActiveSelfObject(false);
             lb_gold.text =$"{levelData?.NeedGold}";
             des_current.SetKey("UUIMagic_CurrentLevel", levelData?.Description);
-            des_next.SetKey("UUIMagic_NextLevel", nextLevel.Description);
+            des_next.SetKey("UUIMagic_NextLevel", nextLevel?.Description);
         }
 
-        private CharacterMagicData selectConfig;
-        private HeroMagic selectMagic;
+        private CharacterMagicData _selectConfig;
+        private HeroMagic _selectMagic;
 
         protected override void OnHide()
         {

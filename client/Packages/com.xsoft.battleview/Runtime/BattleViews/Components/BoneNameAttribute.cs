@@ -10,12 +10,7 @@ namespace BattleViews.Components
 		
 		}
 
-		public BoneNameAttribute (string name,string boneName):this(name,boneName,false)
-		{
-
-		}
-
-		public BoneNameAttribute(string name,string boneName,bool temp)
+		public BoneNameAttribute(string name,string boneName,bool temp = false)
 		{
 			this.BoneName = boneName;
 			this.Name = name;
