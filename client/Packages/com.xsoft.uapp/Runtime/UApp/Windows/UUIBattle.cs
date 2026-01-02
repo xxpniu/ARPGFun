@@ -303,29 +303,31 @@ namespace Windows
 
             #region  快捷键
 
-            if (Input.GetKey(KeyCode.B))
-            {
-                BattleGate?.DoNormalAttack();
-            }
+            //todo:: 新的input system 不好支持 
+            /*  新的input system 不好支持 
+            var key = _playInput.KeyBoard.Keys.ReadValue<KeyCode>();
             
-            if (Input.GetKey(KeyCode.Q))
+            switch (key)
             {
-                UseHpItem();
-            }
-
-            if (Input.GetKey(KeyCode.E))
-            {
-                UseMpItem();
-            }
-
-            for (var i = 0; i < _keyCodes.Length; i++)
-            {
-                if (GridTableManager.Count <= i) break;
-                if (!Input.GetKey(_keyCodes[i])) continue;
-                GridTableManager[i].Model.ClickItem(null);
-            }
-
-
+                case KeyCode.B:
+                    BattleGate?.DoNormalAttack();
+                    break;
+                case KeyCode.Q:
+                    UseHpItem();
+                    break;
+                case KeyCode.E:
+                    UseMpItem();
+                    break;
+                case KeyCode.None : break;
+                default:
+                    for (var i = 0; i < _keyCodes.Length; i++)
+                    {
+                        if (GridTableManager.Count <= i) break;
+                        if (_keyCodes[i] == key) GridTableManager[i].Model.ClickItem(null);
+                    }
+                    break;
+            }*/
+            
             #endregion
             
             var view = BattleGate?.Owner;

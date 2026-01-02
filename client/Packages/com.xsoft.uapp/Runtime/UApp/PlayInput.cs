@@ -113,6 +113,89 @@ public partial class @PlayInput: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""a7a60487-a8f9-48d8-bcae-1b4ea52143f6"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""a24382f8-c5ac-4e54-a55d-c815a18f2d72"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""1525e618-445f-4df2-8ddf-d8f00ef518f7"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""250c7355-3a90-4a33-a32e-8ae265dc9acd"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""d9b8c947-30df-4168-9c4c-8c14f699f3b3"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
+        },
+        {
+            ""name"": ""KeyBoard"",
+            ""id"": ""321e6d67-133f-4f44-98fa-8bd10a2899e4"",
+            ""actions"": [
+                {
+                    ""name"": ""Keys"",
+                    ""type"": ""Button"",
+                    ""id"": ""cea37e0b-6cc0-44ef-aef2-e12d5476071d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""2a66850f-c337-48d7-afae-b1f9699a5a99"",
+                    ""path"": ""<Keyboard>/anyKey"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keys"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,11 +205,15 @@ public partial class @PlayInput: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
+        // KeyBoard
+        m_KeyBoard = asset.FindActionMap("KeyBoard", throwIfNotFound: true);
+        m_KeyBoard_Keys = m_KeyBoard.FindAction("Keys", throwIfNotFound: true);
     }
 
     ~@PlayInput()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayInput.Player.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_KeyBoard.enabled, "This will cause a leak and performance issues, PlayInput.KeyBoard.Disable() has not been called.");
     }
 
     /// <summary>
@@ -294,6 +381,102 @@ public partial class @PlayInput: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="PlayerActions" /> instance referencing this action map.
     /// </summary>
     public PlayerActions @Player => new PlayerActions(this);
+
+    // KeyBoard
+    private readonly InputActionMap m_KeyBoard;
+    private List<IKeyBoardActions> m_KeyBoardActionsCallbackInterfaces = new List<IKeyBoardActions>();
+    private readonly InputAction m_KeyBoard_Keys;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "KeyBoard".
+    /// </summary>
+    public struct KeyBoardActions
+    {
+        private @PlayInput m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public KeyBoardActions(@PlayInput wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "KeyBoard/Keys".
+        /// </summary>
+        public InputAction @Keys => m_Wrapper.m_KeyBoard_Keys;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_KeyBoard; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="KeyBoardActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(KeyBoardActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="KeyBoardActions" />
+        public void AddCallbacks(IKeyBoardActions instance)
+        {
+            if (instance == null || m_Wrapper.m_KeyBoardActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_KeyBoardActionsCallbackInterfaces.Add(instance);
+            @Keys.started += instance.OnKeys;
+            @Keys.performed += instance.OnKeys;
+            @Keys.canceled += instance.OnKeys;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="KeyBoardActions" />
+        private void UnregisterCallbacks(IKeyBoardActions instance)
+        {
+            @Keys.started -= instance.OnKeys;
+            @Keys.performed -= instance.OnKeys;
+            @Keys.canceled -= instance.OnKeys;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="KeyBoardActions.UnregisterCallbacks(IKeyBoardActions)" />.
+        /// </summary>
+        /// <seealso cref="KeyBoardActions.UnregisterCallbacks(IKeyBoardActions)" />
+        public void RemoveCallbacks(IKeyBoardActions instance)
+        {
+            if (m_Wrapper.m_KeyBoardActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="KeyBoardActions.AddCallbacks(IKeyBoardActions)" />
+        /// <seealso cref="KeyBoardActions.RemoveCallbacks(IKeyBoardActions)" />
+        /// <seealso cref="KeyBoardActions.UnregisterCallbacks(IKeyBoardActions)" />
+        public void SetCallbacks(IKeyBoardActions instance)
+        {
+            foreach (var item in m_Wrapper.m_KeyBoardActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_KeyBoardActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="KeyBoardActions" /> instance referencing this action map.
+    /// </summary>
+    public KeyBoardActions @KeyBoard => new KeyBoardActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Player" which allows adding and removing callbacks.
     /// </summary>
@@ -308,5 +491,20 @@ public partial class @PlayInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "KeyBoard" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="KeyBoardActions.AddCallbacks(IKeyBoardActions)" />
+    /// <seealso cref="KeyBoardActions.RemoveCallbacks(IKeyBoardActions)" />
+    public interface IKeyBoardActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Keys" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnKeys(InputAction.CallbackContext context);
     }
 }
