@@ -20,7 +20,6 @@ namespace Windows
             {
                 var ui = await this.CreateChildWindow<UUILevelList>();
                 ui.ShowWindow();
-                //await UUIManager.S.CreateWindowAsync<UUILevelList>((ui) => ui.ShowWindow());
             });
 
             MenuItems.onClick.AddListener(async () =>

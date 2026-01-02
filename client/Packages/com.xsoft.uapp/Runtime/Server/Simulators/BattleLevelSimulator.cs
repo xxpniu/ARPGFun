@@ -87,7 +87,7 @@ namespace Server
         
         public float totalTime = 0f;
 
-
+        
         public async Task<BattleLevelSimulator> Init(BattleSimulator simulator, BattleLevelData data, UPerceptionView view)
         {
             this.Simulator = simulator;
