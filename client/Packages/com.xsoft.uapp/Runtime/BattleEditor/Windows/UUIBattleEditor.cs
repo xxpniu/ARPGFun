@@ -67,12 +67,7 @@ namespace Windows
                 }
             });
 
-            Joystick_Left.GetComponent<ETCJoystick>().onMove.AddListener((v) =>
-            {
-                //Debug.Log(v);
-                var dir = ThirdPersonCameraContollor.Current.LookRotation* new Vector3(v.x, 0, v.y);
-                //Debug.Log($"{v}->{dir}");
-            });
+            
 
             s_distance.onValueChanged.AddListener((v) =>
             {

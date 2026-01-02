@@ -10,20 +10,25 @@ using Proto;
 using ExcelConfig;
 using GameLogic.Game.Perceptions;
 using EConfig;
+using EnhancedOnScreenControls;
 using Vector3 = UnityEngine.Vector3;
 using Layout;
 using UApp;
 using UApp.GameGates;
 using UGameTools;
+using UnityEngine.InputSystem;
 
 namespace Windows
 {
     
     partial class UUIBattle
     {
+        PlayInput _playInput;
         public class GridTableModel : TableItemModel<GridTableTemplate>
         {
             public GridTableModel() { }
+            
+           
             private SwipeButton Button {  set; get; }
 
             public override void InitModel()
@@ -116,6 +121,9 @@ namespace Windows
         {
             base.InitModel();
 
+
+            _playInput = new PlayInput();
+          
             Map = new Texture2D(Size, Size, TextureFormat.RGBA32, false, true);
             var a = new Color(1, 1, 1, 0);
             _colors = new Color32[Size * Size];
@@ -138,21 +146,7 @@ namespace Windows
                         () => { }
                     );
                 });
-
-            var bt = this.Joystick_Left.GetComponent<ETCJoystick>();
-            float lastTime = -1;
-            //Vector2 last = Vector2.zero;
-            bt.onMove.AddListener((v) =>
-            {
-                if (lastTime > UnityEngine.Time.time) return;
-                lastTime = UnityEngine.Time.time + .3f;
-                var dir = ThirdPersonCameraContollor.Current.LookRotation * new Vector3(v.x, 0, v.y);
-                BattleGate?.MoveDir(dir);
-            });
-            bt.onMoveEnd.AddListener(() =>
-            {
-                BattleGate?.MoveDir(Vector2.zero);
-            });
+      
 
             var swipeEv = swipe.GetComponent<UIEventSwipe>();
             swipeEv.OnSwiping.AddListener((v) =>
@@ -239,6 +233,7 @@ namespace Windows
         internal void ShowWindow(IBattleGate gate)
         {
             this.BattleGate = gate;
+            
             ShowWindow();
         }
 
@@ -270,17 +265,41 @@ namespace Windows
         protected override void OnShow()
         {
             base.OnShow();
+            _playInput.Enable();
             this.GridTableManager.Count = 0;
             ShowView();
+        }
+
+        protected override void OnHide()
+        {
+            base.OnHide();
+            _playInput.Disable();
         }
 
         private IBattleGate BattleGate { set; get; }
 
         private readonly KeyCode[] _keyCodes = { KeyCode.H ,KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.N, KeyCode.M};
+        
+        private  float _lastTime = -1;
 
         protected override void OnUpdate()
         {
             base.OnUpdate();
+
+            var v =_playInput.Player.Move.ReadValue<Vector2>();
+            if (v.magnitude > 0.001f)
+            {
+                if (_lastTime > Time.time) return;
+                _lastTime = Time.time + .3f;
+                var dir = ThirdPersonCameraContollor.Current.LookRotation * new Vector3(v.x, 0, v.y);
+                BattleGate?.MoveDir(dir);
+                
+            }
+            else
+            {
+                BattleGate?.MoveDir(Vector2.zero);
+            } 
+            
 
             #region  快捷键
 
