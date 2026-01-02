@@ -19,7 +19,7 @@ public class AutoValueScrollbar : MonoBehaviour {
 
     private CancellationTokenSource _cancellation;
 
-    public async void ResetValue(float duration)
+    public void ResetValue(float duration)
     {
         _cancellation?.Cancel();
         _cancellation = new CancellationTokenSource();
