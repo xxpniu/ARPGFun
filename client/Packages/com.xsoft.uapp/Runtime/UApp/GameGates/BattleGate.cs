@@ -372,10 +372,19 @@ namespace UApp.GameGates
             return !Owner.IsLock(ActionLockType.NoAi);
         }
 
-        bool IBattleGate.ReleaseSkill(HeroMagicData magicData, Vector3? forward)
+        bool IBattleGate.ReleaseSkill(HeroMagicData magicData, Vector3? forward, out ReleaseResult result)
         {
-            if (!CanNetAction()) return false;
-            if (!Owner.TryGetMagicData(magicData.MagicID, out var data)) return false;
+            if (!CanNetAction())
+            {
+                result = ReleaseResult.Stopping;
+                return false;
+            }
+
+            if (!Owner.TryGetMagicData(magicData.MagicID, out var data))
+            {
+                result = ReleaseResult.NotFoundSkill;
+                return false;
+            }
             var character = Owner as IBattleCharacter;
             var config = ExcelToJSONConfigManager.GetId<CharacterMagicData>(data.MagicID);
             if (config != null) Owner.ShowRange(config.RangeMax);
@@ -392,8 +401,11 @@ namespace UApp.GameGates
                     Position = character.Transform.position.ToPV3(),
                     Rotation = rotation // character.Rotation.eulerAngles.ToPV3()
                 });
+                result = ReleaseResult.Success;
                 return true;
             }
+
+            result = ReleaseResult.NoMp;
 
             UApplication.S.ShowNotify("BATTLE_NO_MP_TO_CAST".GetAsFormatKeys(config!.Name));
             return true;

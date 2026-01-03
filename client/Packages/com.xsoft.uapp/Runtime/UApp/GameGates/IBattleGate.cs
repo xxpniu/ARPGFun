@@ -12,6 +12,15 @@ namespace UApp.GameGates
         Ending
     }
 
+    public enum ReleaseResult
+    {
+        Success,
+        NoMp,
+        NoTarget,
+        Stopping,
+        NotFoundSkill
+    }
+
     public interface IBattleGate
     {
         float TimeServerNow { get; }
@@ -23,7 +32,7 @@ namespace UApp.GameGates
         StateType State { get; }
 
         float LeftTime { get; }
-        bool ReleaseSkill(HeroMagicData data, Vector3? dir);
+        bool ReleaseSkill(HeroMagicData data, Vector3? dir, out ReleaseResult result); 
         void Exit();
         bool MoveDir(Vector3 dir);
         bool TrySendLookForward(bool force);

@@ -44,7 +44,6 @@ namespace Windows
         protected Text Level_Number;
         protected RoundGridLayout Grid;
         protected Button bt_Exit;
-        protected Image Joystick_Left;
         protected Image swipe;
         protected Button bt_normal_att;
         protected Image att_Icon;
@@ -61,7 +60,9 @@ namespace Windows
         protected Image hp_bg;
         protected Text lb_hp;
         protected Slider MpSilder;
+        protected Image gauge_green;
         protected Text lb_mp;
+        protected Image Joystick_Left;
 
 
         protected UITableManager<AutoGenTableItem<GridTableTemplate, GridTableModel>> GridTableManager = new UITableManager<AutoGenTableItem<GridTableTemplate, GridTableModel>>();
@@ -79,7 +80,6 @@ namespace Windows
             Level_Number = FindChild<Text>("Level_Number");
             Grid = FindChild<RoundGridLayout>("Grid");
             bt_Exit = FindChild<Button>("bt_Exit");
-            Joystick_Left = FindChild<Image>("Joystick_Left");
             swipe = FindChild<Image>("swipe");
             bt_normal_att = FindChild<Button>("bt_normal_att");
             att_Icon = FindChild<Image>("att_Icon");
@@ -96,7 +96,9 @@ namespace Windows
             hp_bg = FindChild<Image>("hp_bg");
             lb_hp = FindChild<Text>("lb_hp");
             MpSilder = FindChild<Slider>("MpSilder");
+            gauge_green = FindChild<Image>("gauge_green");
             lb_mp = FindChild<Text>("lb_mp");
+            Joystick_Left = FindChild<Image>("Joystick_Left");
 
             GridTableManager.InitFromLayout(Grid);
 

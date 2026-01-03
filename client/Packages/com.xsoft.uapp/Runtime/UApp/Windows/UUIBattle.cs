@@ -3,6 +3,7 @@ using App.Core.Core;
 using App.Core.UICore.Utility;
 using BattleViews.Components;
 using BattleViews.Views;
+using Cysharp.Threading.Tasks;
 using EConfig;
 using ExcelConfig;
 using GameLogic.Game.Perceptions;
@@ -91,8 +92,32 @@ namespace Windows
                 Debug.Log($"Forward:{dir} to {forward}");
             }
 
-            if (!BattleGate.ReleaseSkill(item.Data, forward))
+            if (!BattleGate.ReleaseSkill(item.Data, forward, out var res))
+            {
+                if (res == ReleaseResult.NoMp)
+                {
+                    HighLightMp();
+                }
                 UApplication.S.ShowNotify(LanguageManager.S["UIBattle_Release_Skill_Error"]);
+            }
+        }
+
+        private async void HighLightMp()
+        {
+            var token = this.DestroyCancellationToken();
+            var delayTime = 1.5f;
+            var time = Time.time;
+            var normal = new Color(132 / 255f, 132 / 255f, 132 / 255f, 255 / 255f);
+            var highLight = Color.red;
+            var image = MpSilder.image;
+            while (time + delayTime > Time.time)
+            {
+                image.color = highLight;
+                await UniTask.DelayFrame(3, cancellationToken: token);
+                image.color = normal;
+            }
+
+            image.color = normal;
         }
 
         private void UseMpItem()

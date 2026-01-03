@@ -73,9 +73,15 @@ namespace UApp.GameGates
 
         float IBattleGate.LeftTime => LevelData.LimitTime - (((IBattleGate)this).TimeServerNow - _startTime);
 
-        bool IBattleGate.ReleaseSkill(HeroMagicData data, Vector3? forward)
+        bool IBattleGate.ReleaseSkill(HeroMagicData data, Vector3? forward, out ReleaseResult result)
         {
-            if (data.MPCost > Owner.MP) return false;
+            result = ReleaseResult.Success;
+            if (data.MPCost > Owner.MP)
+            {
+
+                result = ReleaseResult.NoMp;
+                return false;
+            }
             var character = Owner as IBattleCharacter;
             var rotation = character.Rotation.eulerAngles.ToPV3();
             var config = CM.GetId<CharacterMagicData>(data.MagicID);

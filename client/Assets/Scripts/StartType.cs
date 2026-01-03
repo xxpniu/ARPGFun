@@ -11,7 +11,7 @@ public class StartType : MonoBehaviour
     {
         Server,
         Application,
-        LocalGame
+        //LocalGame
     }
 
     [Header("Type:Server/Application")] public SceneType scene = SceneType.Application;
