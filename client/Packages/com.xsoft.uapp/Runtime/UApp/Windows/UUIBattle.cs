@@ -113,8 +113,9 @@ namespace Windows
             while (time + delayTime > Time.time)
             {
                 image.color = highLight;
-                await UniTask.DelayFrame(3, cancellationToken: token);
+                await UniTask.DelayFrame(5, cancellationToken: token);
                 image.color = normal;
+                await UniTask.DelayFrame(5, cancellationToken: token);
             }
 
             image.color = normal;
