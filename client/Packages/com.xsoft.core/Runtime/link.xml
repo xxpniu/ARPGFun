@@ -1,0 +1,5 @@
+<linker>
+    <assembly fullname="Xsoft.Proto" preserve="all">
+        <type fullname="*" preserve="all" />
+    </assembly>
+</linker>

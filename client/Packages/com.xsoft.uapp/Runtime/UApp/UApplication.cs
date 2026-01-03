@@ -150,9 +150,10 @@ namespace UApp
         private async Task StartApp()
         {
             _ = new ExcelToJSONConfigManager(ResourcesManager.S);
+            _ = ClientConfig.Descriptor;
             var json = await ResourcesManager.S.ReadStreamingFile("client.json");
             var clientConfig = ClientConfig.Parser.ParseJson(json);
-            
+
             LoginServer = new ServiceAddress
                 { IpAddress = clientConfig.LoginServerHost, Port = clientConfig.LoginServerPort };
             Debug.Log($"Login:{LoginServer}");
