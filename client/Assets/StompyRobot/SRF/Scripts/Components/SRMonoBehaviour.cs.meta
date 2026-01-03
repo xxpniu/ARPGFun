@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a97a8611d5d683b4aa89a5054bc3774e
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/Components/SRMonoBehaviour.cs
+  uploadId: 496367

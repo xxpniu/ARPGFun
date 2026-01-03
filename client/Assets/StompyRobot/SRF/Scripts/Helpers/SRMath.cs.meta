@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dc751da3d31975645847e0e4088ff560
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/Helpers/SRMath.cs
+  uploadId: 496367

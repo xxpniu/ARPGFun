@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: bed23c49fcd255d489e4d56fc45840c5
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Animations/UI/Pin/Result.controller
+  uploadId: 496367

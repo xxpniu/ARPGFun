@@ -1,58 +1,52 @@
-﻿using UnityEngine;
-using System.Collections;
-using BattleViews;
+﻿using BattleViews;
 using BattleViews.Views;
-using UnityEditor;
 using GameLogic.Game.Elements;
+using UnityEditor;
+using UnityEngine;
 
 [CustomEditor(typeof(UCharacterView))]
 public class UCharacterViewEditor : Editor
 {
-	private bool showProperties = false;
+    private bool showProperties;
 
-	public override void OnInspectorGUI()
-	{
-		EditorGUILayout.BeginVertical();
-		var uCharacterView = this.target as UCharacterView;
-		
-		if (GUILayout.Button("View AI Tree"))
-		{
-			var window = EditorWindow.GetWindow<AITreeEditor>();
-			if (window == null) return;
-			if (uCharacterView!.GElement is not BattleCharacter character) return;
-			var root = character.AiRoot;
-			
-			if (root == null)
-			{
-				EditorUtility.DisplayDialog("Failure", "Current character no ai tree", "OK");
-			}
-			else
-			{
-				root.IsDebug = true;
-				window.AttachRoot(root);
-				AIRunner.Current?.Attach(character);
-			}
-		}
-		
-		
-		if (GUILayout.Button("Kill"))
-		{
-			if (uCharacterView!.GElement is not BattleCharacter character) return;
-			character.SubHP(character.MaxHP,out _);
-		}
-		
-		
+    public override void OnInspectorGUI()
+    {
+        EditorGUILayout.BeginVertical();
+        var uCharacterView = target as UCharacterView;
 
-		showProperties = EditorGUILayout.Toggle("Display Properties", showProperties);
-		if (showProperties)
-		{
-			foreach (var i in uCharacterView!.Properties)
-			{
-				EditorGUILayout.LabelField($"[{(int)i.Property}]{i.Property}:{i.Value}");
-			}
-		}
+        if (GUILayout.Button("View AI Tree"))
+        {
+            var window = EditorWindow.GetWindow<AITreeEditor>();
+            if (window == null) return;
+            if (uCharacterView!.GElement is not BattleCharacter character) return;
+            var root = character.AiRoot;
 
-		EditorGUILayout.EndVertical();
-		base.OnInspectorGUI();
-	}
+            if (root == null)
+            {
+                EditorUtility.DisplayDialog("Failure", "Current character no ai tree", "OK");
+            }
+            else
+            {
+                root.IsDebug = true;
+                window.AttachRoot(root);
+                AIRunner.Current?.Attach(character);
+            }
+        }
+
+
+        if (GUILayout.Button("Kill"))
+        {
+            if (uCharacterView!.GElement is not BattleCharacter character) return;
+            character.SubHP(character.MaxHP, out _);
+        }
+
+
+        showProperties = EditorGUILayout.Toggle("Display Properties", showProperties);
+        if (showProperties)
+            foreach (var i in uCharacterView!.Properties)
+                EditorGUILayout.LabelField($"[{(int)i.Property}]{i.Property}:{i.Value}");
+
+        EditorGUILayout.EndVertical();
+        base.OnInspectorGUI();
+    }
 }

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3f6b60357b55b3a438c0f79ba2be864c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Profiler/SRPProfilerService.cs
+  uploadId: 496367

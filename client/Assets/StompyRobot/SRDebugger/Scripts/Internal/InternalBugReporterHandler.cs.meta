@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f424b0a8b303d9843b15a6bf70ebf4ea
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Internal/InternalBugReporterHandler.cs
+  uploadId: 496367

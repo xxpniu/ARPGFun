@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dfdfb4c8f27446b4d8aa88d3980f4c50
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Internal/BugReportApi.cs
+  uploadId: 496367

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d631692ab5174474eaaf2b43947b0b9f
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/UI/StyleSheet.cs
+  uploadId: 496367

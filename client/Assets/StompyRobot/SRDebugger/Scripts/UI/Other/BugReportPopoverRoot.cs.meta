@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5c9a194ca4d3911419f82b2f06d5ef2e
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/Other/BugReportPopoverRoot.cs
+  uploadId: 496367

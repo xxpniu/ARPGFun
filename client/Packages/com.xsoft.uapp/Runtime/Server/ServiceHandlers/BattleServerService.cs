@@ -1,18 +1,17 @@
 ﻿#pragma warning disable CS1998
 
-using System.Threading.Tasks;
-using Proto;
-using Grpc.Core;
-using XNet.Libs.Utility;
-using Utility;
-using Google.Protobuf.WellKnownTypes;
-using System.Collections.Concurrent;
-using Server.ServiceHandlers;
-using System.Linq;
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading.Tasks;
 using App.Core.Core;
 using Cysharp.Threading.Tasks;
 using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
+using Proto;
+using Server.ServiceHandlers;
+using XNet.Libs.Utility;
 
 namespace Server
 {
@@ -21,44 +20,41 @@ namespace Server
         private readonly ConcurrentDictionary<string, StreamBuffer<Any>> _pushChannels = new();
         private readonly ConcurrentDictionary<string, StreamBuffer<Any>> _requestChannels = new();
 
-        private LogServer Server { get; }
-
         public BattleServerService(LogServer server)
         {
             Server = server;
         }
+
+        private LogServer Server { get; }
 
         public override async Task<B2C_ExitBattle> ExitBattle(C2B_ExitBattle req, ServerCallContext context)
         {
             await UniTask.SwitchToMainThread();
             var accountUuid = context.GetAccountId();
             var matchServer = BattleServerApp.S.MatchServer.FirstOrDefault();
-            
+
             if (matchServer == null) return new B2C_ExitBattle { Code = ErrorCode.Ok };
             try
             {
                 if (BattleServerApp.S.KillUser(accountUuid))
-                {
-                    await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
-                        matchServer.ServicsHost, 
-                        async (c) => await c.LeaveMatchGroupAsync(
-                            new S2M_LeaveMatchGroup { AccountID = accountUuid },
-                            headers: context.GetTraceMeta()
-                            ));
-                }
-                else
-                {
                     await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
                         matchServer.ServicsHost,
-                        async (c) => await c.ExitBattleAsync(
+                        async c => await c.LeaveMatchGroupAsync(
+                            new S2M_LeaveMatchGroup { AccountID = accountUuid },
+                            context.GetTraceMeta()
+                        ));
+                else
+                    await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                        matchServer.ServicsHost,
+                        async c => await c.ExitBattleAsync(
                             new S2M_ExitBattle { UserID = accountUuid },
-                            headers: context.GetTraceMeta()));
-                }
+                            context.GetTraceMeta()));
             }
             catch (Exception ex)
             {
                 Debuger.Log(ex);
             }
+
             return new B2C_ExitBattle { Code = ErrorCode.Ok };
         }
 
@@ -67,12 +63,12 @@ namespace Server
         {
             await UniTask.SwitchToMainThread();
             var simulator = BattleServerApp.S.BattleSimulator;
-            if (!simulator) return new B2C_JoinBattle{ Code = ErrorCode.ServerHostOffLine };
-            if (!simulator.HavePlayer(request.AccountUuid)) return new B2C_JoinBattle{ Code = ErrorCode.LoginFailure};
+            if (!simulator) return new B2C_JoinBattle { Code = ErrorCode.ServerHostOffLine };
+            if (!simulator.HavePlayer(request.AccountUuid)) return new B2C_JoinBattle { Code = ErrorCode.LoginFailure };
             var loginServer = BattleServerApp.S.LoginServer.FirstOrDefault();
             if (loginServer == null)
             {
-                Debuger.LogError($"no found login");
+                Debuger.LogError("no found login");
                 return new B2C_JoinBattle { Code = ErrorCode.NofoundServerId };
             }
 
@@ -81,35 +77,35 @@ namespace Server
             {
                 var seResult = await C<LoginBattleGameServerService.LoginBattleGameServerServiceClient>
                     .RequestOnceAsync(loginServer.ServicsHost,
-                        expression: async c =>
+                        async c =>
                             await c.CheckSessionAsync(
-                                request: new S2L_CheckSession
+                                new S2L_CheckSession
                                 {
                                     UserID = request.AccountUuid,
-                                    Session = request.Session,
+                                    Session = request.Session
                                 },
-                                headers: context.GetTraceMeta()
+                                context.GetTraceMeta()
                             ));
 
                 if (!seResult.Code.IsOk()) return new B2C_JoinBattle();
                 {
                     var pack = await C<GateServerInnerService.GateServerInnerServiceClient>
                         .RequestOnceAsync(seResult.GateServerInnerHost,
-                            expression: async c =>
+                            async c =>
                                 await c.GetPlayerInfoAsync(
-                                    request: new B2G_GetPlayerInfo { AccountUuid = request.AccountUuid },
-                                    headers: context.GetTraceMeta())
-                                );
+                                    new B2G_GetPlayerInfo { AccountUuid = request.AccountUuid },
+                                    context.GetTraceMeta())
+                        );
 
-                    if (!pack.Code.IsOk()) return new B2C_JoinBattle{ Code = pack.Code};
-                    
-                    if (!Server.TryCreateSession(request.AccountUuid, out var key)) 
-                        return new B2C_JoinBattle{ Code = ErrorCode.Exception };
+                    if (!pack.Code.IsOk()) return new B2C_JoinBattle { Code = pack.Code };
+
+                    if (!Server.TryCreateSession(request.AccountUuid, out var key))
+                        return new B2C_JoinBattle { Code = ErrorCode.Exception };
                     //session-key
                     await context.WriteResponseHeadersAsync(new Metadata { { "session-key", key } });
                     Debuger.Log($"Add:{request.AccountUuid} -> {key}");
                     var battlePlayer =
-                        new BattlePlayer(request.AccountUuid,pack.Package, pack.Hero, pack.Gold, seResult);
+                        new BattlePlayer(request.AccountUuid, pack.Package, pack.Hero, pack.Gold, seResult);
                     simulator.AddPlayer(request.AccountUuid, battlePlayer);
                 }
                 return new B2C_JoinBattle { Code = ErrorCode.Ok };
@@ -130,16 +126,14 @@ namespace Server
                 i.Value.Close();
         }
 
-        public override async Task<B2C_ViewPlayerHero> ViewPlayerHero(C2B_ViewPlayerHero req,ServerCallContext context)
+        public override async Task<B2C_ViewPlayerHero> ViewPlayerHero(C2B_ViewPlayerHero req, ServerCallContext context)
         {
             await UniTask.SwitchToMainThread();
             var simulator = BattleServerApp.S.BattleSimulator;
             if (!simulator) return new B2C_ViewPlayerHero { Code = ErrorCode.Error };
 
-            if (!simulator.TryGetPlayer(req.AccountUuid, out BattlePlayer player))
-            {
+            if (!simulator.TryGetPlayer(req.AccountUuid, out var player))
                 return new B2C_ViewPlayerHero { Code = ErrorCode.NoGamePlayerData };
-            }
             var hero = player.GetHero();
             var response = new B2C_ViewPlayerHero
             {
@@ -154,39 +148,34 @@ namespace Server
                 if (e == null) continue;
                 response.WaerEquips.Add(e);
             }
-            foreach (var i in hero.Magics)
-            {
-                response.Magics.Add(i);
-            }
-            return response;
 
+            foreach (var i in hero.Magics) response.Magics.Add(i);
+            return response;
         }
 
-        public override async Task BattleChannel(IAsyncStreamReader<Any> requestStream, IServerStreamWriter<Any> responseStream, ServerCallContext context)
+        public override async Task BattleChannel(IAsyncStreamReader<Any> requestStream,
+            IServerStreamWriter<Any> responseStream, ServerCallContext context)
         {
             await UniTask.SwitchToMainThread();
             var simulator = BattleServerApp.S.BattleSimulator;
             var account = context.GetAccountId();
             var pushChannel = new ServerPushChannel<Any>(500);
             _pushChannels.TryAdd(account, pushChannel);
-            var channel = new StreamBuffer<Any>(100);
+            var channel = new StreamBuffer<Any>();
             _requestChannels.TryAdd(account, channel);
-            simulator.BindUserChannel(account, pushChannel: pushChannel, requestChannel: channel);
+            simulator.BindUserChannel(account, pushChannel, channel);
             await UniTask.SwitchToTaskPool();
-            
-            var push = Task.Factory.StartNew(async () =>
-            {
-                await pushChannel.ProcessAsync(responseStream).ConfigureAwait(false);
-            }, context.CancellationToken);
+
+            var push = Task.Factory.StartNew(
+                async () => { await pushChannel.ProcessAsync(responseStream).ConfigureAwait(false); },
+                context.CancellationToken);
 
             try
             {
                 while (!context.CancellationToken.IsCancellationRequested
-                    && channel.IsWorking
-                    && await requestStream.MoveNext(context.CancellationToken))
-                {
+                       && channel.IsWorking
+                       && await requestStream.MoveNext(context.CancellationToken))
                     channel.Push(requestStream.Current);
-                }
             }
             catch
             {
@@ -212,12 +201,7 @@ namespace Server
         public void PushToAll(IMessage msg)
         {
             var any = Any.Pack(msg);
-            foreach (var i in _pushChannels)
-            {
-                i.Value.Push(any);
-            }
+            foreach (var i in _pushChannels) i.Value.Push(any);
         }
     }
-
-
 }

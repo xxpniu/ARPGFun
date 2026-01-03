@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BehaviorTree;
 
 namespace GameLogic.Game.AIBehaviorTree
 {
-	public class DecoratonBreakTreeAndRunChild: Decorator
+    public class DecoratonBreakTreeAndRunChild : Decorator
     {
-		public DecoratonBreakTreeAndRunChild(Composite comp):base(comp)
-		{
+        public DecoratonBreakTreeAndRunChild(Composite comp) : base(comp)
+        {
+        }
 
-		}
-
-		public override IEnumerable<RunStatus> Execute(ITreeRoot context)
-		{		
-			context.Change(this.DecoratedChild);
-			yield return RunStatus.Success;
-		}
-	}
+        public override IEnumerable<RunStatus> Execute(ITreeRoot context)
+        {
+            context.Change(DecoratedChild);
+            yield return RunStatus.Success;
+        }
+    }
 }
-

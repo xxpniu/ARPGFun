@@ -1,24 +1,24 @@
 {
-    "name": "Application",
-    "rootNamespace": ".",
-    "references": [
-        "GUID:c0714e3101b644d28bc9124e6411f1fc",
-        "GUID:84651a3751eca9349aac36a66bba901b",
-        "GUID:9e24947de15b9834991c9d8411ea37cf",
-        "GUID:44a144b962a334644b339a90b234573b",
-        "GUID:c3adc9405a60646d2bc9f4a5bb49fc14",
-        "GUID:0a77b5832b84b4aa9a8f126896ed8274",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:5ffc2b5d3dc3443c9bc5fcb7b94a9524",
-        "GUID:75469ad4d38634e559750d17036d5f7c"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "Application",
+  "rootNamespace": ".",
+  "references": [
+    "GUID:c0714e3101b644d28bc9124e6411f1fc",
+    "GUID:84651a3751eca9349aac36a66bba901b",
+    "GUID:9e24947de15b9834991c9d8411ea37cf",
+    "GUID:44a144b962a334644b339a90b234573b",
+    "GUID:c3adc9405a60646d2bc9f4a5bb49fc14",
+    "GUID:0a77b5832b84b4aa9a8f126896ed8274",
+    "GUID:f51ebe6a0ceec4240a699833d6309b23",
+    "GUID:5ffc2b5d3dc3443c9bc5fcb7b94a9524",
+    "GUID:75469ad4d38634e559750d17036d5f7c"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

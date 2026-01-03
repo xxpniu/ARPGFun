@@ -2,11 +2,7 @@
 
 namespace Layout.EditorAttributes
 {
-	public class HideInEditorAttribute:Attribute
-	{
-		public HideInEditorAttribute ()
-		{
-		}
-	}
+    public class HideInEditorAttribute : Attribute
+    {
+    }
 }
-

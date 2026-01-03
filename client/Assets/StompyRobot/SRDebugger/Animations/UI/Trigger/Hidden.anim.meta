@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e11d486ec67959544b6425209045f6c7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Animations/UI/Trigger/Hidden.anim
+  uploadId: 496367

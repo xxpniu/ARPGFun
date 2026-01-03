@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3b7f14311f0b3f442b273192dc8ffe4d
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/Controls/Data/EnumControl.cs
+  uploadId: 496367

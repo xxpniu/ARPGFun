@@ -6,8 +6,15 @@ namespace BattleViews.Utility
     [Name("SettingManager")]
     public class SettingManager : XSingleton<SettingManager>
     {
+        private float _bgmValue = 1f;
 
-        private bool _savePower = false;
+
+        private float _music = 1;
+
+        private bool _notice;
+
+        private bool _savePower;
+
         public bool SavePower
         {
             set
@@ -17,12 +24,13 @@ namespace BattleViews.Utility
                     Application.targetFrameRate = 30;
                     Screen.sleepTimeout = SleepTimeout.SystemSetting;
                 }
+
                 _savePower = value;
                 PlayerPrefs.SetInt("__SETTING_Save_Power", 1);
             }
             get => _savePower;
         }
-        private float _bgmValue = 1f;
+
         public float BgmValue
         {
             set
@@ -33,21 +41,18 @@ namespace BattleViews.Utility
             get => _bgmValue;
         }
 
-        private bool _notice;
         public bool Notice
         {
             set
             {
                 _notice = value;
-                PlayerPrefs.SetInt("__SETTING_notice", 1);// == 1;
+                PlayerPrefs.SetInt("__SETTING_notice", 1); // == 1;
             }
             get => _notice;
         }
 
         public string Language { set; get; }
 
-
-        private float _music = 1;
         public float MusicValue
         {
             set
@@ -63,20 +68,18 @@ namespace BattleViews.Utility
             base.Awake();
             if (PlayerPrefs.HasKey("__SETTING_Save_Power"))
             {
-
                 SavePower = PlayerPrefs.GetInt("__SETTING_Save_Power") == 1;
                 BgmValue = PlayerPrefs.GetFloat("__SETTING_Bgm_Value");
                 Notice = PlayerPrefs.GetInt("__SETTING_notice") == 1;
                 MusicValue = PlayerPrefs.GetFloat("__SETTING_music_Value");
             }
-            else {
-                SavePower =  false;
-                BgmValue =  1;
+            else
+            {
+                SavePower = false;
+                BgmValue = 1;
                 Notice = true;
-                MusicValue =1;
+                MusicValue = 1;
             }
         }
-
-
     }
 }

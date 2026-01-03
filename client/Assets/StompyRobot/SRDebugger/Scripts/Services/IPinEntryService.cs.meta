@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 585f26678af38c7498c861763c1890fa
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Services/IPinEntryService.cs
+  uploadId: 496367

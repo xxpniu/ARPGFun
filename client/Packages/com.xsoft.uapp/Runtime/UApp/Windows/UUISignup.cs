@@ -1,15 +1,13 @@
 using App.Core.Core;
 using Cysharp.Threading.Tasks;
-using Proto;
 using UApp;
 using UApp.GameGates;
 using UnityEngine;
 
 namespace Windows
 {
-    partial class UUISignup
+    internal partial class UUISignup
     {
-
         protected override void InitModel()
         {
             base.InitModel();
@@ -49,7 +47,6 @@ namespace Windows
                 {
                     UUITipDrawer.Singleton.ShowNotify("Server Response:" + r.Code);
                 }
-                
             }
         }
 
@@ -57,6 +54,7 @@ namespace Windows
         {
             base.OnShow();
         }
+
         protected override void OnHide()
         {
             base.OnHide();

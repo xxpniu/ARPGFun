@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 21048b348f7dc284ab97209ec32253c4
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 32001
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Profiler/ProfilerLateUpdateListener.cs
+  uploadId: 496367

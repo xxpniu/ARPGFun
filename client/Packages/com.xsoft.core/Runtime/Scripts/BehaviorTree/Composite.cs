@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace BehaviorTree
 {
     public abstract class Composite
     {
+        private readonly Dictionary<string, object> _attachVariables = new();
         public string Guid { set; get; }
 
         private IEnumerator<RunStatus> Current { set; get; }
+
+        public RunStatus? LastStatus { private set; get; }
 
         public virtual void Start(ITreeRoot context)
         {
@@ -26,6 +27,7 @@ namespace BehaviorTree
                 Current.Dispose();
                 Current = null;
             }
+
             if (LastStatus == RunStatus.Running)
             {
                 Attach("failure", "block by other");
@@ -35,28 +37,19 @@ namespace BehaviorTree
 
         public RunStatus Tick(ITreeRoot context)
         {
-            if (LastStatus.HasValue && LastStatus.Value != RunStatus.Running)
-            {
-                return LastStatus.Value;
-            }
+            if (LastStatus.HasValue && LastStatus.Value != RunStatus.Running) return LastStatus.Value;
 
-            if (Current == null)
-            {
-                throw new Exception($" {this.GetType()} of {Guid} You Must start it!");
-            }
+            if (Current == null) throw new Exception($" {GetType()} of {Guid} You Must start it!");
 
             if (Current.MoveNext()) LastStatus = Current.Current;
-            else throw new Exception($"{this.GetType()} of {Guid} Nothing to run? Somethings gone terribly, terribly wrong!");
+            else
+                throw new Exception($"{GetType()} of {Guid} Nothing to run? Somethings gone terribly, terribly wrong!");
             if (LastStatus != RunStatus.Running)
                 Stop(context);
-            return this.LastStatus.Value;
+            return LastStatus.Value;
         }
 
         public abstract IEnumerable<RunStatus> Execute(ITreeRoot context);
-
-        public RunStatus? LastStatus { private set; get; }
-
-        private readonly Dictionary<string, object> _attachVariables = new();
 
         public virtual Composite FindGuid(string id)
         {
@@ -71,10 +64,7 @@ namespace BehaviorTree
 
         public void DebugVals(Action<string, object> callback)
         {
-            foreach (var i in _attachVariables)
-            {
-                callback(i.Key, i.Value);
-            }
+            foreach (var i in _attachVariables) callback(i.Key, i.Value);
         }
     }
 }

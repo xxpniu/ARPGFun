@@ -15,6 +15,6 @@ namespace BattleViews
 
     public abstract class AIRunner
     {
-        public static IAIRunner Current { set; get; } 
+        public static IAIRunner Current { set; get; }
     }
 }

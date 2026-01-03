@@ -1,11 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using Proto;
-using UnityEngine;
 using UnityEngine.TestTools;
-using Google.Protobuf.Reflection;
-using Google.Protobuf;
 
 namespace Tests
 {
@@ -17,13 +12,13 @@ namespace Tests
         {
             //ExtensionSet<EnumValueOptions>()
             //ConstExtensions.LangugageKey.g
-           // ExtensionSet.Get<EnumValueOptions>(ref sbyte,)
-           //var options = ConstReflection.Descriptor.GetOptions();
-           // options.GetExtension<>
-           //var e = EnumDescriptor.FindValueByName   HeroPropertyType.DamageMax
-           // HeroPropertyType
-           //ConstReflection.Descriptor.FindTypeByName<lan>()
-           //ConstExtensions.LangugageKey
+            // ExtensionSet.Get<EnumValueOptions>(ref sbyte,)
+            //var options = ConstReflection.Descriptor.GetOptions();
+            // options.GetExtension<>
+            //var e = EnumDescriptor.FindValueByName   HeroPropertyType.DamageMax
+            // HeroPropertyType
+            //ConstReflection.Descriptor.FindTypeByName<lan>()
+            //ConstExtensions.LangugageKey
         }
 
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use

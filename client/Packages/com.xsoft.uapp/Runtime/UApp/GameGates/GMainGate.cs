@@ -22,9 +22,19 @@ namespace UApp.GameGates
 {
     public class GMainGate : UGate
     {
+        public UPerceptionView view;
+        public MainData data;
+
+        private UCharacterView _characterView;
+        private GameGMTools _gm;
 
         private N_Notify_MatchGroup _matchGroup;
-        public N_Notify_MatchGroup Group {
+        private ServiceAddress _serverInfo;
+
+        private float _timeTo = -1f;
+
+        public N_Notify_MatchGroup Group
+        {
             set
             {
                 print($"value Set:{value}");
@@ -32,12 +42,9 @@ namespace UApp.GameGates
             }
             get => _matchGroup;
         }
-        public UPerceptionView view;
-        public MainData data;
-        
-        private UCharacterView _characterView;
-        private ServiceAddress _serverInfo;
-    
+
+        public RenderTexture LookAtView { private set; get; }
+
         public UCharacterView CreateOwner(int heroID, string heroName)
         {
             if (_characterView)
@@ -45,11 +52,12 @@ namespace UApp.GameGates
                 if (_characterView.ConfigID == heroID) return _characterView;
                 _characterView.DestroySelf(0);
             }
+
             _characterView = CreateHero(heroID, heroName);
 
             var thirdCamera = FindFirstObjectByType<ThirdPersonCameraContollor>();
             thirdCamera.SetLookAt(_characterView.GetBoneByName(UCharacterView.BottomBone), true);
-            thirdCamera.SetXY(2.8f, 0).SetDis(9f).SetForwardOffset(new Vector3(0,0.87f,0));
+            thirdCamera.SetXY(2.8f, 0).SetDis(9f).SetForwardOffset(new Vector3(0, 0.87f, 0));
             _characterView.ShowName = false;
             _characterView.LookView(LookAtView);
             return _characterView;
@@ -68,27 +76,20 @@ namespace UApp.GameGates
                     , 100, 100)
                 as UCharacterView;
 
-      
+
             return battleCharacterView;
         }
-
-        public RenderTexture LookAtView { private set; get; }
 
         internal void RotationHero(float x)
         {
             _characterView.targetLookQuaternion *= Quaternion.Euler(0, x, 0);
             _timeTo = Time.time + 2;
-        }
-
-        private float _timeTo = -1f;
-        private GameGMTools _gm;
-
-        // ReSharper disable Unity.PerformanceAnalysis
+        } // ReSharper disable Unity.PerformanceAnalysis
         protected override async Task JoinGate(params object[] args)
         {
             LookAtView = new RenderTexture(128, 128, 32);
             _serverInfo = args[0] as ServiceAddress;
-            if (_serverInfo == null) throw new NullReferenceException($"ServerInfo is null");
+            if (_serverInfo == null) throw new NullReferenceException("ServerInfo is null");
             UUIManager.Singleton.HideAll();
             UUIManager.Singleton.ShowMask(true);
             await SceneManager.LoadSceneAsync("Main");
@@ -98,7 +99,7 @@ namespace UApp.GameGates
             Debuger.Log($"Gat:{serverIP}");
 
 
-            GateManager.S.OnSyncHero = OnSyncHero; 
+            GateManager.S.OnSyncHero = OnSyncHero;
             ChatManager.S.OnMatchGroup = RefreshMatchGroup;
             ChatManager.S.OnInviteJoinMatchGroup = InviteJoinGroup;
             var r = await GateManager.S.TryToConnectedGateServer(_serverInfo);
@@ -108,24 +109,22 @@ namespace UApp.GameGates
                 UApplication.S.GotoLoginGate();
                 return;
             }
+
             if (await ChatManager.S.TryConnectChatServer(UApplication.S.ChatServer, r.Hero?.Name) == false)
-            {
                 UApplication.S.ShowError(ErrorCode.Error);
-            }
             ShowPlayer(r);
             await GateManager.S.MatchServiceClient.ReloadMatchStateAsync(new C2G_ReloadMatchState());
             _gm = gameObject.AddComponent<GameGMTools>();
             _gm.ShowGM = true;
         }
 
-       
 
         private void OnSyncHero(Task_G2C_SyncHero syncHero)
         {
             var hero = syncHero.Hero;
-            CreateOwner(hero.HeroID, hero.Name); 
+            CreateOwner(hero.HeroID, hero.Name);
         }
-        
+
 
         private void InviteJoinGroup(N_Notify_InviteJoinMatchGroup obj)
         {
@@ -151,8 +150,7 @@ namespace UApp.GameGates
         {
             if (result.HavePlayer)
             {
-            
-                var hero= GateManager.S.Hero = result.Hero; 
+                var hero = GateManager.S.Hero = result.Hero;
                 CreateOwner(hero.HeroID, hero.Name);
 
                 var m = GateManager.Try();
@@ -163,25 +161,20 @@ namespace UApp.GameGates
             }
             else
             {
-                await  UUIManager.S.CreateWindowAsync<UUIHeroCreate>((ui) =>
+                await UUIManager.S.CreateWindowAsync<UUIHeroCreate>(ui =>
                 {
                     ui.ShowWindow();
                     UUIManager.Singleton.ShowMask(false);
                 });
             }
-
-
         }
 
         private List<UCharacterView> _views = new();
 
         private void RefreshMatchGroup(N_Notify_MatchGroup group)
         {
-            this.Group = group;
-            foreach (var i in _views)
-            {
-                i.DestroySelf(0);
-            }
+            Group = group;
+            foreach (var i in _views) i.DestroySelf(0);
             _views = new List<UCharacterView>();
 
             if (group != null)
@@ -189,14 +182,15 @@ namespace UApp.GameGates
                 Debuger.Log($"Match group:{group}");
                 if (group.Players.Any(t => t.AccountID == UApplication.S.accountUuid))
                 {
-                    int index = 1;
+                    var index = 1;
                     foreach (var i in group.Players)
                     {
                         if (i.AccountID == UApplication.S.accountUuid) continue;
                         _views.Add(CreateHero(i.Hero.HeroID, i.Name, index));
                     }
                 }
-                else {
+                else
+                {
                     Group = null;
                 }
             }
@@ -207,7 +201,7 @@ namespace UApp.GameGates
         public async void ShowMain()
         {
             //await UniTask.Delay(10);
-            await UUIManager.S.CreateWindowAsync<UUIMain>((ui) =>
+            await UUIManager.S.CreateWindowAsync<UUIMain>(ui =>
             {
                 ui.ShowWindow();
                 UUIManager.S.ShowMask(false);
@@ -216,7 +210,7 @@ namespace UApp.GameGates
 
         protected override async Task ExitGate()
         {
-            GateManager.S.OnSyncHero -= OnSyncHero;  
+            GateManager.S.OnSyncHero -= OnSyncHero;
             ChatManager.S.OnMatchGroup -= RefreshMatchGroup;
             ChatManager.S.OnInviteJoinMatchGroup -= InviteJoinGroup;
             Destroy(_gm);
@@ -230,10 +224,7 @@ namespace UApp.GameGates
             if (!_characterView) return;
             var character = ExcelToJSONConfigManager
                 .First<CharacterPlayerData>(t => t.CharacterID == GateManager.S.Hero.HeroID);
-            if (!string.IsNullOrEmpty(character?.Motion))
-            {
-                _characterView.PlayMotion(character?.Motion);
-            }
+            if (!string.IsNullOrEmpty(character?.Motion)) _characterView.PlayMotion(character?.Motion);
             _characterView.targetLookQuaternion = Quaternion.Euler(0, 180, 0);
         }
     }

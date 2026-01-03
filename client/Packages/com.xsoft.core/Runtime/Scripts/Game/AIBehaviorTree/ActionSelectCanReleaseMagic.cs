@@ -2,16 +2,17 @@
 using BehaviorTree;
 using GameLogic.Game.Elements;
 using Layout.AITree;
-using Proto;
 
 namespace GameLogic.Game.AIBehaviorTree
 {
     [TreeNodeParse(typeof(TreeNodeSelectCanReleaseMagic))]
     public class ActionSelectCanReleaseMagic : ActionComposite<TreeNodeSelectCanReleaseMagic>
     {
-        public ActionSelectCanReleaseMagic(TreeNodeSelectCanReleaseMagic node) : base(node) { }
+        private readonly HashSet<int> releaseHistorys = new();
 
-        private readonly HashSet<int> releaseHistorys = new HashSet<int>();
+        public ActionSelectCanReleaseMagic(TreeNodeSelectCanReleaseMagic node) : base(node)
+        {
+        }
 
         public override IEnumerable<RunStatus> Execute(ITreeRoot context)
         {
@@ -19,11 +20,11 @@ namespace GameLogic.Game.AIBehaviorTree
             var key = string.Empty;
             var list = new List<BattleCharacterMagic>();
             root.Character.EachActiveMagicByType(Node.MTpye, root.Time,
-            (item) =>
-            {
-                list.Add(item);
-                return false;
-            });
+                item =>
+                {
+                    list.Add(item);
+                    return false;
+                });
 
 
             if (list.Count == 0)
@@ -32,6 +33,7 @@ namespace GameLogic.Game.AIBehaviorTree
                 yield return RunStatus.Failure;
                 yield break;
             }
+
             BattleCharacterMagic result = null;
             switch (Node.resultType)
             {
@@ -47,14 +49,17 @@ namespace GameLogic.Game.AIBehaviorTree
                         if (releaseHistorys.Contains(i.ConfigId)) continue;
                         result = i;
                     }
+
                     if (result == null)
                     {
                         releaseHistorys.Clear();
                         result = list[0];
                     }
+
                     releaseHistorys.Add(result.ConfigId);
                     break;
             }
+
             if (result == null)
             {
                 yield return RunStatus.Failure;
@@ -66,8 +71,6 @@ namespace GameLogic.Game.AIBehaviorTree
             if (config != null) key = config.MagicKey;
             if (context.IsDebug) Attach("select result", $"{result.ConfigId}-{key}");
             yield return RunStatus.Success;
-            yield break;
         }
     }
 }
-

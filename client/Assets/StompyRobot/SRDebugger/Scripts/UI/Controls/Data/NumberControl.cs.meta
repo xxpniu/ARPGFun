@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4a6d9f7214a7c5e4b868bfc520d92799
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/Controls/Data/NumberControl.cs
+  uploadId: 496367

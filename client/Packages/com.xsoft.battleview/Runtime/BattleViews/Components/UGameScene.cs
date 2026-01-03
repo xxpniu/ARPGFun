@@ -2,23 +2,22 @@
 
 namespace BattleViews.Components
 {
-	public class UGameScene : MonoBehaviour {
+    public class UGameScene : MonoBehaviour
+    {
+        public Transform startPoint;
 
-		// Use this for initialization
-		void Start ()
-		{
-			startPoint.gameObject.SetActive (false);
-			enemyStartPoint.gameObject.SetActive (false);
-			//tower.gameObject.SetActive (false);
-			//towerEnemy.gameObject.SetActive (false);
-		}
-		
+        public Transform enemyStartPoint;
 
-		public Transform startPoint;
+        // Use this for initialization
+        private void Start()
+        {
+            startPoint.gameObject.SetActive(false);
+            enemyStartPoint.gameObject.SetActive(false);
+            //tower.gameObject.SetActive (false);
+            //towerEnemy.gameObject.SetActive (false);
+        }
 
-		public Transform enemyStartPoint;
-
-		//public Transform tower;
-		//public Transform towerEnemy;
-	}
+        //public Transform tower;
+        //public Transform towerEnemy;
+    }
 }

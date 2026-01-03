@@ -12,42 +12,15 @@ namespace Server
 {
     public class BindPlayer
     {
-        public BattlePlayer Player;
         public string Account;
+        public BattlePlayer Player;
     }
 
     public class BattlePlayer
     {
+        private readonly int _baseGold;
 
-        #region Property
-
-        private readonly DHero _hero;
-        public BattlePackage Package { private set; get; }
-        public BattleCharacter HeroCharacter { set; get; }
-         
-
-        public int Gold
-        {
-            get => _baseGold + DiffGold;
-            private set => DiffGold = value - _baseGold;
-        }
-
-        #endregion
-
-
-        public StreamBuffer<Any> PushChannel { set; get; }
-
-        public StreamBuffer<Any> RequestChannel { set; get; }
-
-        public DHero GetHero() { return _hero; }
-
-        public string AccountId { private set; get; }
-
-        public L2S_CheckSession GateServer { set; get; }
-        
-        private readonly int _baseGold = 0;
-
-        public BattlePlayer(string account,   PlayerPackage package, DHero hero, int gold,
+        public BattlePlayer(string account, PlayerPackage package, DHero hero, int gold,
             L2S_CheckSession info,
             StreamBuffer<Any> requestChannel = null, StreamBuffer<Any> pushChannel = null)
         {
@@ -58,6 +31,35 @@ namespace Server
             PushChannel = pushChannel;
             RequestChannel = requestChannel;
             GateServer = info;
+        }
+
+
+        public StreamBuffer<Any> PushChannel { set; get; }
+
+        public StreamBuffer<Any> RequestChannel { set; get; }
+
+        public string AccountId { get; }
+
+        public L2S_CheckSession GateServer { set; get; }
+
+        private int CurrentSize => Package.Items.Count;
+
+        public bool Dirty { get; private set; }
+
+        public int DiffGold { get; private set; }
+
+        public bool IsConnected
+        {
+            get
+            {
+                if (PushChannel == null) return false;
+                return RequestChannel != null;
+            }
+        }
+
+        public DHero GetHero()
+        {
+            return _hero;
         }
 
 
@@ -77,10 +79,10 @@ namespace Server
             Dirty = true;
             return true;
         }
-        
+
         public Notify_PlayerJoinState GetNotifyPackage()
         {
-            var notify = new Notify_PlayerJoinState()
+            var notify = new Notify_PlayerJoinState
             {
                 AccountUuid = AccountId,
                 Gold = Gold,
@@ -88,7 +90,6 @@ namespace Server
                 Hero = _hero
             };
             return notify;
-
         }
 
         private PlayerPackage GetCompletedPackage()
@@ -99,10 +100,9 @@ namespace Server
                 result.Items.Add(i.Key, i.Value.Item);
                 result.MaxSize = Package.MaxSize;
             }
+
             return result;
         }
-
-        private int CurrentSize => Package.Items.Count;
 
         public bool AddDrop(PlayerItem item)
         {
@@ -120,7 +120,7 @@ namespace Server
                     if (i.Value.Item.Locked) continue;
                     if (i.Value.Item.ItemID != item.ItemID) continue;
                     if (i.Value.Item.Num == config.MaxStackNum) continue;
-                    var maxNum = config.MaxStackNum - i.Value.Item.Num; 
+                    var maxNum = config.MaxStackNum - i.Value.Item.Num;
                     if (maxNum >= item.Num)
                     {
                         i.Value.Item.Num += item.Num;
@@ -133,6 +133,7 @@ namespace Server
                     item.Num -= maxNum;
                     i.Value.SetDirty();
                 }
+
                 if (CurrentSize >= Package.MaxSize) return true;
                 var needSize = item.Num / Mathf.Max(1, config.MaxStackNum);
                 if (needSize + CurrentSize >= Package.MaxSize) return true;
@@ -140,22 +141,25 @@ namespace Server
                 {
                     var num = Mathf.Min(config.MaxStackNum, item.Num);
                     item.Num -= num;
-                    var playerItem = new PlayerItem { GUID = CreateUuid(), ItemID = item.ItemID, Level = item.Level, Num = num };
+                    var playerItem = new PlayerItem
+                        { GUID = CreateUuid(), ItemID = item.ItemID, Level = item.Level, Num = num };
                     Package.Items.Add(playerItem.GUID, new BattlePlayerItem(playerItem, true));
                 }
             }
+
             Dirty = true;
             return true;
         }
 
         internal int GetItemCount(int itemId, bool ignoreLocked = true)
         {
-            int have = 0;
+            var have = 0;
             foreach (var i in Package.Items)
             {
                 if (i.Value.Item.Locked && ignoreLocked) continue;
                 if (i.Value.Item.ItemID == itemId) have += i.Value.Item.Num;
             }
+
             return have;
         }
 
@@ -176,31 +180,17 @@ namespace Server
                     num = 0;
                     break;
                 }
+
                 i.Value.SetDirty();
                 needRemoves.Add(i.Key);
                 num = left;
             }
+
             foreach (var i in needRemoves)
-            {
                 if (!Package.RemoveItem(i))
-                {
                     Debuger.LogWaring($"Not found {i}");
-                }
-            }
             Dirty = true;
             return true;
-        }
-
-        public bool Dirty { get; private set; } = false;
-
-        public int DiffGold { get; private set; }
-        public bool IsConnected
-        {
-            get
-            {
-                if (PushChannel == null) return false;
-                return RequestChannel != null;
-            }
         }
 
         internal PlayerItem GetEquipByGuid(string guid)
@@ -237,38 +227,41 @@ namespace Server
                 _hero.Exprices = exLimit;
                 newLevel = _hero.Level;
             }
+
             Dirty = true;
             return _hero.Exprices;
         }
 
-        public void ModifyItem(IList<PlayerItem> modify =null,IList<PlayerItem> removes = null, IList<PlayerItem> adds = null)
+        public void ModifyItem(IList<PlayerItem> modify = null, IList<PlayerItem> removes = null,
+            IList<PlayerItem> adds = null)
         {
-            if (modify!=null)
-            {
+            if (modify != null)
                 foreach (var item in modify)
-                {
-                    if (this.Package.Items.TryGetValue(item.GUID, out var v))
-                    {
+                    if (Package.Items.TryGetValue(item.GUID, out var v))
                         v.Item.Num = item.Num;
-                    }
-                }
-            }
 
-            if (removes !=null)
-            {
+            if (removes != null)
                 foreach (var item in removes)
-                {
-                    this.Package.RemoveItem(item.GUID);
-                }
-            }
+                    Package.RemoveItem(item.GUID);
 
-            if (adds!=null)
-            {
+            if (adds != null)
                 foreach (var item in adds)
-                {
-                    this.Package.Items.Add(item.GUID, new BattlePlayerItem(item));
-                }
-            }
+                    Package.Items.Add(item.GUID, new BattlePlayerItem(item));
         }
+
+        #region Property
+
+        private readonly DHero _hero;
+        public BattlePackage Package { get; }
+        public BattleCharacter HeroCharacter { set; get; }
+
+
+        public int Gold
+        {
+            get => _baseGold + DiffGold;
+            private set => DiffGold = value - _baseGold;
+        }
+
+        #endregion
     }
 }

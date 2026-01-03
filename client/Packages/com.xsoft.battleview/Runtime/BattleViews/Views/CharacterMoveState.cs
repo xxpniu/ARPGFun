@@ -17,16 +17,25 @@ namespace BattleViews.Views
     {
         protected CharacterMoveState(UCharacterView view)
         {
-            this.View = view;
+            View = view;
             Velocity = Vector3.zero;
         }
 
         protected UCharacterView View { get; }
 
-        public virtual void Enter() { }
-        public virtual void Exit() { }
-        public virtual bool Tick(GTime gTime) { return true; }
-
         public virtual Vector3 Velocity { get; }
+
+        public virtual void Enter()
+        {
+        }
+
+        public virtual void Exit()
+        {
+        }
+
+        public virtual bool Tick(GTime gTime)
+        {
+            return true;
+        }
     }
 }

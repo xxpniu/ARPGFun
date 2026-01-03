@@ -1,20 +1,14 @@
-﻿using System;
-
-namespace EngineCore.Simulater
+﻿namespace EngineCore.Simulater
 {
-	public abstract class GControllor
-	{
-		
-		public GControllor (GPerception per)
-		{
-			Perception = per;
-		}
+    public abstract class GControllor
+    {
+        public GControllor(GPerception per)
+        {
+            Perception = per;
+        }
 
-		public GPerception Perception{ private set; get; }
+        public GPerception Perception { private set; get; }
 
-		public  abstract  GAction GetAction (GTime time, GObject current);
-
-
-	}
+        public abstract GAction GetAction(GTime time, GObject current);
+    }
 }
-

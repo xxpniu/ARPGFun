@@ -1,30 +1,27 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Net.Mail;
-using System.Threading;
+﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof( Scrollbar))]
-public class AutoValueScrollbar : MonoBehaviour {
+[RequireComponent(typeof(Scrollbar))]
+public class AutoValueScrollbar : MonoBehaviour
+{
+    private CancellationTokenSource _cancellation;
 
 
     private Scrollbar bar;
-	
-    void Awake()
+
+    private void Awake()
     {
         bar = GetComponent<Scrollbar>();
     }
-
-
-    private CancellationTokenSource _cancellation;
 
     public void ResetValue(float duration)
     {
         _cancellation?.Cancel();
         _cancellation = new CancellationTokenSource();
-        var token = CancellationTokenSource.CreateLinkedTokenSource(_cancellation.Token, this.destroyCancellationToken);
-        RunBar(duration:duration, token.Token);
+        var token = CancellationTokenSource.CreateLinkedTokenSource(_cancellation.Token, destroyCancellationToken);
+        RunBar(duration, token.Token);
     }
 
     private async void RunBar(float duration, CancellationToken token = default)

@@ -5,18 +5,12 @@ namespace BattleViews.Components
 {
     public class AlphaOperator : MonoBehaviour
     {
-        private struct RevertShader
-        {
-            public Renderer Renderer;
-            public Shader Shader;
-        }
-
         private readonly Queue<RevertShader> _renders = new();
 
         private void OnEnable()
         {
             var shader = Shader.Find("Shader Graphs/AlphaCharacter");
-            foreach (var i in this.transform.GetComponentsInChildren<Renderer>())
+            foreach (var i in transform.GetComponentsInChildren<Renderer>())
             {
                 var r = new RevertShader { Renderer = i, Shader = i.material.shader };
                 _renders.Enqueue(r);
@@ -37,6 +31,12 @@ namespace BattleViews.Components
         {
             var a = root.GetComponent<AlphaOperator>();
             return a ? a : root.AddComponent<AlphaOperator>();
+        }
+
+        private struct RevertShader
+        {
+            public Renderer Renderer;
+            public Shader Shader;
         }
     }
 }

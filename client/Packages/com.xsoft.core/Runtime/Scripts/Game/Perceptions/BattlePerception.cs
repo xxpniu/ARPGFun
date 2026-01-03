@@ -1,39 +1,45 @@
 ﻿using System;
-using EngineCore.Simulater;
-using GameLogic.Game.Elements;
-using GameLogic.Game.Controllors;
-using Layout.LayoutElements;
 using System.Collections.Generic;
+using System.Linq;
+using EConfig;
+using EngineCore.Simulater;
+using GameLogic.Game.AIBehaviorTree;
+using GameLogic.Game.Controllors;
+using GameLogic.Game.Elements;
 using GameLogic.Game.LayoutLogics;
+using GameLogic.Game.States;
 using Layout;
 using Layout.AITree;
-using GameLogic.Game.AIBehaviorTree;
-using Proto;
 using Layout.LayoutEffects;
-using EConfig;
-using UVector3 = UnityEngine.Vector3;
+using Layout.LayoutElements;
+using Proto;
 using UnityEngine;
-using System.Linq;
-using GameLogic.Game.States;
+using UVector3 = UnityEngine.Vector3;
 using DamageType = Layout.LayoutElements.DamageType;
 
 namespace GameLogic.Game.Perceptions
 {
     /// <summary>
-    /// 战斗感知器
+    ///     战斗感知器
     /// </summary>
-	public class BattlePerception : GPerception
+    public class BattlePerception : GPerception
     {
-        public delegate void OnDamageCall(BattleCharacter source, BattleCharacter target, DamageResult result , bool dead);
-        
-        public class EmptyController : GControllor
+        public delegate void OnDamageCall(BattleCharacter source, BattleCharacter target, DamageResult result,
+            bool dead);
+
+        public BattlePerception(GState state, IBattlePerception view) : base(state)
         {
-            public EmptyController(BattlePerception p) : base(p) { }
-            public override GAction GetAction(GTime time, GObject current)
-            {
-                return GAction.Empty;
-            }
+            OnDamage = null;
+            View = view;
+            Empty = new EmptyController(this);
+            ReleaserControllor = new MagicReleaserControllor(this);
+            BattleMissileControllor = new BattleMissileControllor(this);
+            AIControllor = new AIControllor(this);
+            BattleItemControllor = new BattleItemControllor(this);
+            StateControllor = new ControllorState(this);
         }
+
+        public IBattlePerception View { get; }
 
         public static float Distance(BattleCharacter c1, BattleCharacter c2)
         {
@@ -46,42 +52,55 @@ namespace GameLogic.Game.Perceptions
             return Math.Max(0, (c1.Position - c2).magnitude - c1.Radius);
         }
 
-        public static bool InViewSide(BattleCharacter owner , BattleCharacter target, float viewDistance, float angle)
+        public static bool InViewSide(BattleCharacter owner, BattleCharacter target, float viewDistance, float angle)
         {
             if (Distance(owner, target) > viewDistance) return false;
             var forward = target.Position - owner.Position;
             return !(angle / 2 < UVector3.Angle(forward, owner.Forward));
         }
 
-        public BattlePerception(GState state, IBattlePerception view) : base(state)
+        private void NotifyHurt(BattleCharacter sources)
         {
-            OnDamage = null;
-            View = view;
-            Empty = new EmptyController(this);
-            ReleaserControllor = new MagicReleaserControllor(this);
-            BattleMissileControllor = new BattleMissileControllor(this);
-            AIControllor = new AIControllor(this);
-            BattleItemControllor = new BattleItemControllor(this);
-            StateControllor = new ControllorState(this);
-          
+            var constant = (State as BattleState)?.ViewBase.GetConstant;
+            State.Each<BattleCharacter>(c =>
+            {
+                if (c.IsDeath) return false;
+                if (c.TeamIndex != sources.TeamIndex) return false;
+                if (Distance(c, sources) < constant!.BATTLE_NOTIFY_DISTANCE / 100f)
+                    c.FireEvent(BattleEventType.TeamBeAttack, sources);
+                return false;
+            });
         }
 
-        public IBattlePerception View { private set; get; }
+        public class EmptyController : GControllor
+        {
+            public EmptyController(BattlePerception p) : base(p)
+            {
+            }
+
+            public override GAction GetAction(GTime time, GObject current)
+            {
+                return GAction.Empty;
+            }
+        }
 
 
         #region controllor
-        public BattleMissileControllor BattleMissileControllor { private set; get; }
-        public MagicReleaserControllor ReleaserControllor { private set; get; }
-        public AIControllor AIControllor { private set; get; }
-        public BattleItemControllor BattleItemControllor { private set; get; }
+
+        public BattleMissileControllor BattleMissileControllor { get; }
+        public MagicReleaserControllor ReleaserControllor { get; }
+        public AIControllor AIControllor { get; }
+        public BattleItemControllor BattleItemControllor { get; }
         public EmptyController Empty { private set; get; }
         public ControllorState StateControllor { private set; get; }
+
         #endregion
 
-        #region create Elements 
-        public MagicReleaser CreateReleaser(string key, BattleCharacter owner, 
+        #region create Elements
+
+        public MagicReleaser CreateReleaser(string key, BattleCharacter owner,
             IReleaserTarget target, ReleaserType ty,
-            ReleaserModeType rmType, float durTime,bool canMoveCancel = false, string[] magicParams = default)
+            ReleaserModeType rmType, float durTime, bool canMoveCancel = false, string[] magicParams = default)
         {
             var magic = View.GetMagicByKey(key);
             if (magic == null)
@@ -89,12 +108,14 @@ namespace GameLogic.Game.Perceptions
                 Debug.LogError($"{key} no found!");
                 return null;
             }
-            var releaser = CreateReleaser(key, owner, magic, target, ty, rmType, durTime,canMoveCancel,magicParams);
-            
+
+            var releaser = CreateReleaser(key, owner, magic, target, ty, rmType, durTime, canMoveCancel, magicParams);
+
             return releaser;
         }
 
-        public MagicReleaser CreateReleaser(string key, BattleCharacter owner, MagicData magic, IReleaserTarget target, ReleaserType ty, 
+        public MagicReleaser CreateReleaser(string key, BattleCharacter owner, MagicData magic, IReleaserTarget target,
+            ReleaserType ty,
             ReleaserModeType rmType, float durTime, bool canMoveCancel = false, string[] magicParams = default)
         {
             if (magic.unique)
@@ -112,16 +133,14 @@ namespace GameLogic.Game.Perceptions
 
             var forward = target.TargetPosition - target.Releaser.Position;
             var r = owner.Rotation;
-            if (forward.magnitude > 0)
-            {
-                r = Quaternion.LookRotation(forward);
-            }
+            if (forward.magnitude > 0) r = Quaternion.LookRotation(forward);
 
             var view = View.CreateReleaserView(owner.Transform.position.ToPV3(),
                 r.eulerAngles.ToPV3(), target.Releaser.Index,
                 target.ReleaserTarget.Index, key, target.TargetPosition.ToPV3(), rmType);
             view.MagicData = magic;
-            var mReleaser = new MagicReleaser(key, magic, owner, target, this.ReleaserControllor, view, ty, durTime,canMoveCancel, magicParams);
+            var mReleaser = new MagicReleaser(key, magic, owner, target, ReleaserControllor, view, ty, durTime,
+                canMoveCancel, magicParams);
             switch (rmType)
             {
                 case ReleaserModeType.RmtMagic:
@@ -132,23 +151,22 @@ namespace GameLogic.Game.Perceptions
                     break;
             }
 
-            this.JoinElement(mReleaser);
+            JoinElement(mReleaser);
             return mReleaser;
         }
 
         public BattleMissile CreateMissile(MissileLayout layout, MagicReleaser releaser)
         {
-           // int targetIndex = -1;
+            // int targetIndex = -1;
             var target = releaser.Target;
 
             if (layout.movementType == MovementType.AutoTarget)
-            {
-                target = FindTarget(releaser.Releaser, TargetTeamType.Enemy, layout.maxDistance, 60, true, TargetSelectType.Random, TargetFilterType.None);
-            }
+                target = FindTarget(releaser.Releaser, TargetTeamType.Enemy, layout.maxDistance, 60, true,
+                    TargetSelectType.Random);
 
             if (target == null) return null;
 
-            var view = this.View.CreateMissile(releaser.Index,target.Index,
+            var view = View.CreateMissile(releaser.Index, target.Index,
                 layout.resourcesPath,
                 layout.offset.ToV3(),
                 layout.fromBone,
@@ -158,50 +176,49 @@ namespace GameLogic.Game.Perceptions
                 layout.maxDistance,
                 layout.maxLifeTime);
             var missile = new BattleMissile(BattleMissileControllor, releaser, view, layout, target);
-            this.JoinElement(missile);
+            JoinElement(missile);
             return missile;
         }
 
         #endregion
 
         #region Character
+
         public BattleCharacter CreateCharacter(
             GControllor controller,
             int level,
             CharacterData data,
             IList<BattleCharacterMagic> magics,
-            Dictionary<HeroPropertyType, ComplexValue > properties,
+            Dictionary<HeroPropertyType, ComplexValue> properties,
             int teamIndex,
             UVector3 position,
             UVector3 forward,
             string accountUuid,
-            string name,int ownerIndex = -1, int hp = -1,int mp =-1)
+            string name, int ownerIndex = -1, int hp = -1, int mp = -1)
         {
-            
-            var now = this.View.GetTimeSimulator().Now.Time;
-            var cds = magics.Select(t => t.ToHeroMagic(now)) .ToList();
+            var now = View.GetTimeSimulator().Now.Time;
+            var cds = magics.Select(t => t.ToHeroMagic(now)).ToList();
 
             var view = View.CreateBattleCharacterView(accountUuid, data.ID,
                 teamIndex, position.ToPV3(), forward.ToPV3(), level, name, cds,
-                ownerIndex,properties.ToHeroProperty(),
+                ownerIndex, properties.ToHeroProperty(),
                 properties[HeroPropertyType.MaxHp],
                 properties[HeroPropertyType.MaxMp]
-                );
+            );
 
-            var battleCharacter = new BattleCharacter(data,magics, controller,
-                view, accountUuid,teamIndex,  properties, ownerIndex)
+            var battleCharacter = new BattleCharacter(data, magics, controller,
+                view, accountUuid, teamIndex, properties, ownerIndex)
             {
-              
                 Level = level,
                 TDamage = Proto.DamageType.Confusion,
                 TDefance = DefanceType.Normal,
                 Category = (HeroCategory)data.Category,
                 Name = data.Name
             };
-            battleCharacter.EachMagicByType(MagicType.MtNormal, (m) =>
+            battleCharacter.EachMagicByType(MagicType.MtNormal, m =>
             {
-              m.CdTime = battleCharacter.NormalCdTime;
-              return false;
+                m.CdTime = battleCharacter.NormalCdTime;
+                return false;
             });
             battleCharacter.ResetHpMp(hp, mp);
             JoinElement(battleCharacter);
@@ -224,36 +241,36 @@ namespace GameLogic.Game.Perceptions
         }
 
 
-
         public BattleItem CreateItem(UVector3 ps, PlayerItem item, int groupIndex, int teamIndex)
         {
             var view = View.CreateDropItem(ps.ToPV3(), item, teamIndex, groupIndex);
-            var dItem = new BattleItem(this.BattleItemControllor, view, item);
-            JoinElement(dItem); 
+            var dItem = new BattleItem(BattleItemControllor, view, item);
+            JoinElement(dItem);
             return dItem;
         }
 
         public AITreeRoot ChangeCharacterAI(string pathTree, BattleCharacter character)
         {
             var ai = View.GetAITree(pathTree);
-            return ChangeCharacterAI(ai, character,pathTree);
+            return ChangeCharacterAI(ai, character, pathTree);
         }
 
         public AITreeRoot ChangeCharacterAI(TreeNode ai, BattleCharacter character, string path = null)
         {
-            var comp = AITreeParse.CreateFrom(ai,View);
-            var root = new AITreeRoot(View.GetTimeSimulator(), character, comp, ai,path);
+            var comp = AITreeParse.CreateFrom(ai, View);
+            var root = new AITreeRoot(View.GetTimeSimulator(), character, comp, ai, path);
             character.SetAITreeRoot(root);
             character.SetControllor(AIControllor);
             return root;
         }
 
         #endregion
-        
-        #region  FindTarget
+
+        #region FindTarget
+
         public BattleCharacter FindTarget(int target)
         {
-            return this.State[target] as BattleCharacter;
+            return State[target] as BattleCharacter;
         }
 
         public BattleCharacter FindTarget(BattleCharacter character, TargetTeamType type,
@@ -264,7 +281,6 @@ namespace GameLogic.Game.Perceptions
             TargetFilterType filterType = TargetFilterType.None,
             bool ignoreHidden = true)
         {
-
             var list = new List<BattleCharacter>();
             State.Each<BattleCharacter>(t =>
             {
@@ -287,9 +303,9 @@ namespace GameLogic.Game.Perceptions
                             return false;
                         break;
                     case TargetTeamType.Own:
-                        {
-                            if (character.Index != t.Index) return false;
-                        }
+                    {
+                        if (character.Index != t.Index) return false;
+                    }
                         break;
                     case TargetTeamType.All:
                         break;
@@ -304,11 +320,12 @@ namespace GameLogic.Game.Perceptions
                         if (t.HP == t.MaxHP) return false;
                         break;
                 }
+
                 list.Add(t);
                 return false;
             });
             if (list.Count <= 0) return null;
-            
+
             BattleCharacter target = null;
             switch (sType)
             {
@@ -328,7 +345,7 @@ namespace GameLogic.Game.Perceptions
                 case TargetSelectType.ForwardNearest:
                 {
                     var forward = character.Forward;
-                    var dis = 6f ;
+                    var dis = 6f;
                     foreach (var i in list)
                     {
                         var temp = UVector3.Angle(i.Position - character.Position, forward);
@@ -337,6 +354,7 @@ namespace GameLogic.Game.Perceptions
                         dis = Distance(i, character);
                         target = i;
                     }
+
                     //no nearest
                     if (target == null)
                     {
@@ -391,7 +409,8 @@ namespace GameLogic.Game.Perceptions
                     var d = (float)target.HP / target.MaxHP;
                     foreach (var i in list)
                     {
-                        var temp = (float)i.HP / i.MaxHP; ;
+                        var temp = (float)i.HP / i.MaxHP;
+                        ;
                         if (!(temp > d)) continue;
                         d = temp;
                         target = i;
@@ -409,55 +428,56 @@ namespace GameLogic.Game.Perceptions
                         d = temp;
                         target = i;
                     }
-                } break;
+                }
+                    break;
             }
 
             return target;
-
         }
 
         public List<BattleCharacter> DamageFindTarget(BattleCharacter deTarget,
             UVector3 target,
             Quaternion rotation,
-            FilterType filter,DamageType damageType,
+            FilterType filter, DamageType damageType,
             float radius, float angle, float offsetAngle,
             UVector3 offset, int teamIndex, bool igDeath = true)
         {
             switch (damageType)
             {
                 case DamageType.Area:
+                {
+                    var origin = target + rotation * offset;
+                    var q = Quaternion.Euler(0, offsetAngle, 0);
+                    var forward = q * rotation * UVector3.forward;
+                    var list = new List<BattleCharacter>();
+                    State.Each<BattleCharacter>(t =>
                     {
-                        var origin = target + rotation * offset;
-                        var q = Quaternion.Euler(0, offsetAngle, 0);
-                        var forward = q * rotation * UVector3.forward;
-                        var list = new List<BattleCharacter>();
-                        State.Each<BattleCharacter>((t) =>
+                        if (igDeath && t.IsDeath) return false; //ig
+                        //过滤
+                        switch (filter)
                         {
-                            if (igDeath && t.IsDeath) return false;//ig
-                            //过滤
-                            switch (filter)
-                            {
-                                case FilterType.Alliance:
-                                case FilterType.OwnerTeam:
-                                    if (teamIndex != t.TeamIndex) return false;
-                                    break;
-                                case FilterType.EmenyTeam:
-                                    if (teamIndex == t.TeamIndex) return false;
-                                    break;
+                            case FilterType.Alliance:
+                            case FilterType.OwnerTeam:
+                                if (teamIndex != t.TeamIndex) return false;
+                                break;
+                            case FilterType.EmenyTeam:
+                                if (teamIndex == t.TeamIndex) return false;
+                                break;
+                        }
 
-                            }
-                            if (Distance(t, origin) > radius) return false;
-                            var len = t.Position - origin;
-                            if (angle < 360)
-                            {
-                                var an = UVector3.Angle(len, forward);
-                                if (an > angle / 2) return false;
-                            }
-                            list.Add(t);
-                            return false;
-                        });
-                        return list;
-                    }
+                        if (Distance(t, origin) > radius) return false;
+                        var len = t.Position - origin;
+                        if (angle < 360)
+                        {
+                            var an = UVector3.Angle(len, forward);
+                            if (an > angle / 2) return false;
+                        }
+
+                        list.Add(t);
+                        return false;
+                    });
+                    return list;
+                }
 
                 case DamageType.Single:
                 default:
@@ -475,18 +495,16 @@ namespace GameLogic.Game.Perceptions
                             break;
                         default:
                             return new List<BattleCharacter> { deTarget };
-
                     }
-                    return new List<BattleCharacter> {  };
-                }
-                   
 
+                    return new List<BattleCharacter>();
+                }
             }
         }
-        
+
         #endregion
 
-        #region  Releaser
+        #region Releaser
 
         public void StopAllReleaserByCharacter(BattleCharacter character)
         {
@@ -494,9 +512,10 @@ namespace GameLogic.Game.Perceptions
             {
                 if (t.ReleaserTarget.Releaser == character)
                 {
-                    t.SetState(ReleaserStates.Ended);//防止AI错误
+                    t.SetState(ReleaserStates.Ended); //防止AI错误
                     GObject.Destroy(t);
                 }
+
                 return false;
             });
         }
@@ -507,9 +526,8 @@ namespace GameLogic.Game.Perceptions
             {
                 if (t.Releaser != character) return false;
                 if (move)
-                {
-                    if (!t.MoveCancel) return false;
-                }
+                    if (!t.MoveCancel)
+                        return false;
 
                 switch (type)
                 {
@@ -517,20 +535,14 @@ namespace GameLogic.Game.Perceptions
                     {
                         if (t.RType == ReleaserType.Magic)
                         {
-                            if (!t.IsLayoutStartFinish)
-                            {
-                                t.StopAllPlayer();
-                            }
+                            if (!t.IsLayoutStartFinish) t.StopAllPlayer();
                             t.SetState(ReleaserStates.ToComplete);
                         }
                     }
                         break;
                     case BreakReleaserType.Buff:
                     {
-                        if (t.RType == ReleaserType.Buff)
-                        {
-                            t.SetState(ReleaserStates.ToComplete);
-                        }
+                        if (t.RType == ReleaserType.Buff) t.SetState(ReleaserStates.ToComplete);
                     }
                         break;
                     case BreakReleaserType.ALL:
@@ -539,24 +551,11 @@ namespace GameLogic.Game.Perceptions
                     }
                         break;
                 }
+
                 return false;
             });
         }
+
         #endregion
-        private void NotifyHurt(BattleCharacter sources)
-        {
-            var constant = (State as BattleState)?.ViewBase.GetConstant;
-            State.Each<BattleCharacter>((c) => 
-            {
-                if (c.IsDeath) return false;
-                if (c.TeamIndex != sources.TeamIndex) return false;
-                if (Distance(c, sources) < (constant!.BATTLE_NOTIFY_DISTANCE/100f))
-                {
-                    c.FireEvent(BattleEventType.TeamBeAttack, sources);
-                }
-                return false;
-            });
-        }
     }
 }
-

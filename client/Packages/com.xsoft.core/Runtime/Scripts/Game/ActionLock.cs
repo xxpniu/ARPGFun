@@ -6,16 +6,22 @@ namespace GameLogic.Game
 {
     public class StateChangedEventArgs : EventArgs
     {
-        public StateChangedEventArgs() 
-        { 
-            //
-        }
         public ActionLockType Type { set; get; }
         public bool IsLocked { set; get; }
     }
 
     public class ActionLock
     {
+        //发生变化
+        public EventHandler<StateChangedEventArgs> OnStateOnChanged;
+
+        public ActionLock()
+        {
+            Locks = new Dictionary<ActionLockType, int>();
+            var values = Enum.GetValues(typeof(ActionLockType));
+            foreach (var i in values) Locks.Add((ActionLockType)i, 0);
+        }
+
         public int Value
         {
             get
@@ -23,28 +29,14 @@ namespace GameLogic.Game
                 var v = 0;
 
                 foreach (var i in Locks)
-                {
                     if (i.Value > 0)
-                    {
                         v += 1 << (int)i.Key;
-                    }
-                }
 
                 return v;
             }
         }
 
-        private Dictionary<ActionLockType, int> Locks { set; get; }
-
-        public ActionLock()
-        {
-            Locks = new Dictionary<ActionLockType, int>();
-            var values = Enum.GetValues(typeof(ActionLockType));
-            foreach (var i in values)
-            {
-                Locks.Add((ActionLockType)i, 0);
-            }
-        }
+        private Dictionary<ActionLockType, int> Locks { get; }
 
         public bool IsLock(ActionLockType type)
         {
@@ -61,9 +53,7 @@ namespace GameLogic.Game
                 var isLocked = IsLock(ty);
                 Locks[ty]++;
                 if (isLocked != IsLock(ty))
-                {
                     OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
-                }
             }
         }
 
@@ -77,14 +67,8 @@ namespace GameLogic.Game
                 var isLocked = IsLock(ty);
                 Locks[ty]--;
                 if (isLocked != IsLock(ty))
-                {
                     OnStateOnChanged?.Invoke(this, new StateChangedEventArgs { Type = ty, IsLocked = IsLock(ty) });
-                }
             }
         }
-
-        //发生变化
-        public EventHandler<StateChangedEventArgs> OnStateOnChanged;
     }
 }
-

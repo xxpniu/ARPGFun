@@ -1,22 +1,21 @@
-using UGameTools;
-using EConfig;
-using ExcelConfig;
-using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
+using EConfig;
+using ExcelConfig;
+using Proto;
 using UApp;
 using UApp.GameGates;
+using UGameTools;
 
 namespace Windows
 {
-    partial class UUIMain
+    internal partial class UUIMain
     {
-
         protected override void InitModel()
         {
             base.InitModel();
 
-            this.MenuMap.onClick.AddListener(async () =>
+            MenuMap.onClick.AddListener(async () =>
             {
                 var ui = await this.CreateChildWindow<UUILevelList>();
                 ui.ShowWindow();
@@ -24,22 +23,22 @@ namespace Windows
 
             MenuItems.onClick.AddListener(async () =>
             {
-                await UUIManager.S.CreateWindowAsync<UUIPackage>((ui) => ui.ShowWindow());
+                await UUIManager.S.CreateWindowAsync<UUIPackage>(ui => ui.ShowWindow());
             });
 
             MenuSetting.onClick.AddListener(async () =>
             {
-                await UUIManager.S.CreateWindowAsync<UUISettings>((ui) => ui.ShowWindow());
+                await UUIManager.S.CreateWindowAsync<UUISettings>(ui => ui.ShowWindow());
             });
 
             MenuWeapon.onClick.AddListener(async () =>
             {
-                await UUIManager.S.CreateWindowAsync<UUIHeroEquip>((ui) => ui.ShowWindow());
+                await UUIManager.S.CreateWindowAsync<UUIHeroEquip>(ui => ui.ShowWindow());
             });
 
             MenuShop.onClick.AddListener(async () =>
             {
-                await UUIManager.S.CreateWindowAsync<UUIItemShop>((ui) => ui.ShowWindow());
+                await UUIManager.S.CreateWindowAsync<UUIItemShop>(ui => ui.ShowWindow());
             });
             MenuSkill.onClick.AddListener(async () =>
             {
@@ -58,7 +57,7 @@ namespace Windows
             //user_info.onClick.AddListener(() => {  });
 
             var swipeEv = swip.GetComponent<UIEventSwipe>();
-            swipeEv.OnSwiping.AddListener((v) =>
+            swipeEv.OnSwiping.AddListener(v =>
             {
                 //v *= .5f;
                 var gate = UApplication.G<GMainGate>();
@@ -71,15 +70,15 @@ namespace Windows
                 await UUIManager.S.CreateWindowAsync<UUIShopGold>(ui => ui.ShowWindow());
             });
 
-            this.Button_Play.onClick.AddListener(async () =>
+            Button_Play.onClick.AddListener(async () =>
             {
                 var gate = UApplication.G<GMainGate>();
-                if(gate ==null) return;
+                if (gate == null) return;
                 var rs = await GateManager.S.MatchServiceClient
-                    .BeginGameAsync(new Proto.C2G_BeginGame
-                {
-                    GroupID = gate.Group.Id
-                });
+                    .BeginGameAsync(new C2G_BeginGame
+                    {
+                        GroupID = gate.Group.Id
+                    });
                 if (!rs.Code.IsOk()) UApplication.S.ShowError(rs.Code);
             });
 
@@ -92,13 +91,13 @@ namespace Windows
 
             bt_Exit.onClick.AddListener(() =>
             {
-                UUIPopup.ShowConfirm("Leave_Title".GetLanguageWord(), 
+                UUIPopup.ShowConfirm("Leave_Title".GetLanguageWord(),
                     "Leave_Content".GetLanguageWord(), LevelMatchCall);
                 return;
 
                 async void LevelMatchCall()
                 {
-                    await GateManager.S.MatchServiceClient.LeaveMatchGroupAsync(new Proto.C2G_LeaveMatchGroup { });
+                    await GateManager.S.MatchServiceClient.LeaveMatchGroupAsync(new C2G_LeaveMatchGroup());
                 }
             });
 
@@ -109,11 +108,10 @@ namespace Windows
         }
 
 
-
         protected override void OnShow()
         {
             base.OnShow();
-            this.Username.text = string.Empty;
+            Username.text = string.Empty;
             MenuSetting.SetKey("UI_MAIN_SETTING");
             MenuItems.SetKey("UI_MAIN_ITEM");
             MenuWeapon.SetKey("UI_MAIN_WEAPON");
@@ -142,8 +140,8 @@ namespace Windows
             lb_gold.text = m.gold.ToString("N0");
             lb_gem.text = m.coin.ToString("N0");
             if (m.Hero == null) return;
-            this.Level_Number.text = $"{m.Hero.Level}";
-            this.Username.text = $"{m.Hero.Name}";
+            Level_Number.text = $"{m.Hero.Level}";
+            Username.text = $"{m.Hero.Name}";
             var leveUp = ExcelToJSONConfigManager.First<CharacterLevelUpData>(t => t.Level == m.Hero.Level + 1);
             lb_exp.text = $"{m.Hero.Exprices}/{leveUp?.NeedExp ?? '-'}";
             float v = 0;

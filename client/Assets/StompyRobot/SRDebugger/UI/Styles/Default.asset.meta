@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: cdfb48dd49c2d7a4d9f8805cd96e0241
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/UI/Styles/Default.asset
+  uploadId: 496367

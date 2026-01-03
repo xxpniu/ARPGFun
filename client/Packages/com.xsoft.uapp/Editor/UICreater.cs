@@ -1,93 +1,15 @@
-﻿using UnityEngine;
-using UnityEditor.SceneManagement;
-using System.Collections;
-using UnityEditor;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnityEditor;
+using UnityEngine;
 using UnityEngine.UI;
 //using Assets.Scripts;
 //using Assets.Scripts.Tools;
-using System;
 
 public class UICreater : EditorWindow
 {
-
-    [MenuItem("GAME/UI/AUTO_GEN_WINDOWS_CODE #1")]
-    [MenuItem("GameObject/UI/AUTO_GEN_WINDOWS_CODE", false, 0)]
-    public static void OpenEditor()
-    {
-        var winds = (UICreater)GetWindow(typeof(UICreater), true, "Gen UI Code");
-        winds.minSize = new Vector2(300, 400);
-        winds.windowsRoot = Path.Combine(Application.dataPath, "Scripts/Application/Windows");
-    }
-
-    public void OnGUI()
-    { 
-        if (Selection.activeGameObject != currentSelect)
-        {
-            Names = new Dictionary<string, string>();
-            Tables = new Dictionary<string, TableComponent>();
-            currentSelect = Selection.activeGameObject;
-            className = currentSelect.name;
-            Init(currentSelect.transform);
-        }
-
-        EditorGUILayout.BeginVertical();
-
-        GUILayout.Label("Tag:"+EXPORT_TAG+" Will Be Export(请保证到处元素的唯一性)");
-        GUILayout.Space(20);
-        if (currentSelect != null && Names != null)
-        {
-            GUILayout.Label($"找到{Names.Count}个UI控件");
-            GUILayout.BeginHorizontal();
-            windowsRoot = EditorGUILayout.TextField("Code Path:", windowsRoot);
-            if(GUILayout.Button("Select",GUILayout.Width(100)))
-            {
-                windowsRoot = EditorUtility.SaveFolderPanel("Select Code Path",Path.Combine(Application.dataPath, "Scripts/Application/Windows"),"");
-            }
-            GUILayout.EndHorizontal();
-            EditorGUILayout.TextField("ClassName:", className);
-            GUILayout.Label("UITemplate File Name:" + className + ".Designer.cs");
-
-            createModelFile = EditorGUILayout.ToggleLeft("创建逻辑文件（PS:将覆盖原有逻辑文件，非首次创建建议不要选择）", createModelFile);
-            showExample = EditorGUILayout.Foldout(showExample, "代码概要");
-            if (showExample)
-            {
-                scroll = GUILayout.BeginScrollView(scroll, GUILayout.Height(200));
-                EditorGUILayout.BeginVertical();
-                foreach (var i in Names)
-                {
-                    GUILayout.Label(string.Format("public {1} {0}", i.Key, i.Value) + " {set;get;}");
-                }
-
-                foreach (var i in Tables)
-                {
-                    GUILayout.Label("Table:" + i.Key);
-                    foreach (var f in i.Value.Components)
-                    {
-                        GUILayout.Label(string.Format("   public {1} {0}", f.Key, f.Value) + " {set;get;}");
-                    }
-                }
-
-                EditorGUILayout.EndVertical();
-                GUILayout.EndScrollView();
-            }
-
-            var rect = new Rect(position.width - 105, position.height - 25, 100, 20);
-            if(GUI.Button(rect,"Gen"))
-            {
-                if(EditorUtility.DisplayDialog("Save File To:", windowsRoot,"Create","Cancel"))
-                {
-                    Export();
-                }
-            }
-        }
-        EditorGUILayout.EndVertical();
-
-
-    }
-
     private const string TableTemplateField = @"            public [Type] [Name];";
 
     private const string TableTemplateFindField = @"                [Name] = FindChild<[Type]>(" + "\"[Name]\"" + ");";
@@ -104,7 +26,8 @@ public class UICreater : EditorWindow
 
     private const string TemplateFields = @"        protected [Type] [Name];";
 
-    private const string TemplateTableManager = @"        protected UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>> [TableName]TableManager = new UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>>();";
+    private const string TemplateTableManager =
+        @"        protected UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>> [TableName]TableManager = new UITableManager<AutoGenTableItem<[TableName]TableTemplate, [TableName]TableModel>>();";
 
     private const string TemplateFieldFind = @"            [Name] = FindChild<[Type]>(" + "\"[Name]\"" + ");";
 
@@ -139,7 +62,8 @@ namespace Windows
     }
 }";
 
-    private const string TableModelClass = @"        public class [TableName]TableModel : TableItemModel<[TableName]TableTemplate>
+    private const string TableModelClass =
+        @"        public class [TableName]TableModel : TableItemModel<[TableName]TableTemplate>
         {
             public [TableName]TableModel(){}
             public override void InitModel()
@@ -176,6 +100,106 @@ namespace Windows
     }
 }";
 
+    private const string EXPORT_TAG = "Export";
+
+    private static readonly Type[] types =
+    {
+        typeof(RoundGridLayout),
+        typeof(GridLayoutGroup),
+        typeof(VerticalLayoutGroup),
+        typeof(HorizontalLayoutGroup),
+        typeof(Button),
+        typeof(Slider),
+        typeof(Text),
+        typeof(Toggle),
+        typeof(ToggleGroup),
+        typeof(InputField),
+        typeof(Dropdown),
+        typeof(Scrollbar),
+        typeof(ScrollRect),
+        typeof(Image),
+        typeof(RawImage)
+    };
+
+    private string className = string.Empty;
+    private bool createModelFile;
+
+
+    private GameObject currentSelect;
+
+    private Dictionary<string, string> Names;
+
+
+    private Vector2 scroll;
+    private bool showExample = true;
+    private Dictionary<string, TableComponent> Tables;
+    private string windowsRoot = string.Empty;
+
+    public void OnGUI()
+    {
+        if (Selection.activeGameObject != currentSelect)
+        {
+            Names = new Dictionary<string, string>();
+            Tables = new Dictionary<string, TableComponent>();
+            currentSelect = Selection.activeGameObject;
+            className = currentSelect.name;
+            Init(currentSelect.transform);
+        }
+
+        EditorGUILayout.BeginVertical();
+
+        GUILayout.Label("Tag:" + EXPORT_TAG + " Will Be Export(请保证到处元素的唯一性)");
+        GUILayout.Space(20);
+        if (currentSelect != null && Names != null)
+        {
+            GUILayout.Label($"找到{Names.Count}个UI控件");
+            GUILayout.BeginHorizontal();
+            windowsRoot = EditorGUILayout.TextField("Code Path:", windowsRoot);
+            if (GUILayout.Button("Select", GUILayout.Width(100)))
+                windowsRoot = EditorUtility.SaveFolderPanel("Select Code Path",
+                    Path.Combine(Application.dataPath, "Scripts/Application/Windows"), "");
+            GUILayout.EndHorizontal();
+            EditorGUILayout.TextField("ClassName:", className);
+            GUILayout.Label("UITemplate File Name:" + className + ".Designer.cs");
+
+            createModelFile = EditorGUILayout.ToggleLeft("创建逻辑文件（PS:将覆盖原有逻辑文件，非首次创建建议不要选择）", createModelFile);
+            showExample = EditorGUILayout.Foldout(showExample, "代码概要");
+            if (showExample)
+            {
+                scroll = GUILayout.BeginScrollView(scroll, GUILayout.Height(200));
+                EditorGUILayout.BeginVertical();
+                foreach (var i in Names)
+                    GUILayout.Label(string.Format("public {1} {0}", i.Key, i.Value) + " {set;get;}");
+
+                foreach (var i in Tables)
+                {
+                    GUILayout.Label("Table:" + i.Key);
+                    foreach (var f in i.Value.Components)
+                        GUILayout.Label(string.Format("   public {1} {0}", f.Key, f.Value) + " {set;get;}");
+                }
+
+                EditorGUILayout.EndVertical();
+                GUILayout.EndScrollView();
+            }
+
+            var rect = new Rect(position.width - 105, position.height - 25, 100, 20);
+            if (GUI.Button(rect, "Gen"))
+                if (EditorUtility.DisplayDialog("Save File To:", windowsRoot, "Create", "Cancel"))
+                    Export();
+        }
+
+        EditorGUILayout.EndVertical();
+    }
+
+    [MenuItem("GAME/UI/AUTO_GEN_WINDOWS_CODE #1")]
+    [MenuItem("GameObject/UI/AUTO_GEN_WINDOWS_CODE", false, 0)]
+    public static void OpenEditor()
+    {
+        var winds = (UICreater)GetWindow(typeof(UICreater), true, "Gen UI Code");
+        winds.minSize = new Vector2(300, 400);
+        winds.windowsRoot = Path.Combine(Application.dataPath, "Scripts/Application/Windows");
+    }
+
     private void Export()
     {
         var fields = new StringBuilder();
@@ -202,7 +226,9 @@ namespace Windows
                 tFields.AppendLine(TableTemplateField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
                 tFieldFinds.AppendLine(TableTemplateFindField.Replace("[Name]", f.Key).Replace("[Type]", f.Value));
             }
-            tempTemplate = tempTemplate.Replace("[TableTemplateField]", tFields.ToString()).Replace("[TableTemplateFindField]", tFieldFinds.ToString());
+
+            tempTemplate = tempTemplate.Replace("[TableTemplateField]", tFields.ToString())
+                .Replace("[TableTemplateFindField]", tFieldFinds.ToString());
             //tempModel.Replace();
             tableModel.AppendLine(tempModel);
             tableTemplate.AppendLine(tempTemplate);
@@ -229,31 +255,6 @@ namespace Windows
         AssetDatabase.Refresh();
     }
 
-
-    private Vector2 scroll;
-    private bool showExample = true;
-    private string className = string.Empty;
-    private string windowsRoot=string.Empty;
-    private bool createModelFile = false;
-
-    private static Type[] types = new Type[]{
-        typeof(RoundGridLayout),
-        typeof(GridLayoutGroup),
-        typeof(VerticalLayoutGroup),
-        typeof(HorizontalLayoutGroup),
-        typeof(Button),
-        typeof(Slider),
-        typeof(Text),
-        typeof(Toggle),
-        typeof(ToggleGroup),
-        typeof(InputField),
-        typeof(Dropdown),
-        typeof(Scrollbar),
-        typeof(ScrollRect),
-        typeof(Image),
-        typeof(RawImage)
-    };
-
     private Component GetComponent(Transform root)
     {
         foreach (var i in types)
@@ -269,9 +270,9 @@ namespace Windows
     public void Init(Transform root)
     {
         #region CollectItem
+
         if (root.CompareTag(EXPORT_TAG))
         {
-            
             var ui = GetComponent(root);
             if (ui != null)
             {
@@ -279,19 +280,16 @@ namespace Windows
                 if (!Names.ContainsKey(ui.name))
                 {
                     Names.Add(ui.name, ui.GetType().Name);
-                    if(ui.GetType().IsSubclassOf(typeof(LayoutGroup)))
+                    if (ui.GetType().IsSubclassOf(typeof(LayoutGroup)))
                     {
                         var table = new TableComponent();
                         table.Name = ui.name;
                         table.Type = TableTypes.UIGrid;
                         for (var i = 0; i < root.childCount; i++)
-                        {
                             GetChildExportItems(root.GetChild(i), table.Components);
-                        }
                         Tables.Add(table.Name, table);
                         return;
                     }
-
                 }
             }
             else
@@ -300,62 +298,43 @@ namespace Windows
                     Names.Add(root.name, root.GetType().Name);
             }
         }
+
         #endregion
 
-        for(var i=0;i<root.childCount;i++)
-        {
-            Init(root.GetChild(i));
-        }
+        for (var i = 0; i < root.childCount; i++) Init(root.GetChild(i));
     }
 
     private void GetChildExportItems(Transform root, Dictionary<string, string> dic)
     {
-        if(root.CompareTag(EXPORT_TAG))
+        if (root.CompareTag(EXPORT_TAG))
         {
-            var ui = this.GetComponent(root);
-            if(ui!=null)
+            var ui = GetComponent(root);
+            if (ui != null)
             {
                 if (!dic.ContainsKey(ui.name))
-                {
                     dic.Add(ui.name, ui.GetType().Name);
-                }
-                else {
+                else
                     Debug.LogError("name is exists !!-> Name:" + ui.name);
-                }
             }
             else
             {
                 var trans = root.transform;
                 if (!dic.ContainsKey(trans.name))
-                {
                     dic.Add(trans.name, trans.GetType().Name);
-                }
                 else
-                {
                     Debug.LogError("name is exists !!-> Name:" + trans.name);
-                }
             }
         }
 
-        for(var i=0;i<root.childCount;i++)
-        {
-            GetChildExportItems(root.GetChild(i), dic);
-        }
+        for (var i = 0; i < root.childCount; i++) GetChildExportItems(root.GetChild(i), dic);
     }
-    private const string EXPORT_TAG = "Export";
-
-    private Dictionary<string, string> Names;
-    private Dictionary<string, TableComponent> Tables;
-    
-
-    private GameObject currentSelect;
 
 
     private class TableComponent
     {
         public string Name { set; get; }
 
-        public Dictionary<string, string> Components { set; get; } = new();
+        public Dictionary<string, string> Components { get; } = new();
 
         public TableTypes Type { set; get; }
     }

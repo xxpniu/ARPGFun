@@ -10,7 +10,6 @@ namespace Tests
         [Test]
         public void MessageRequestTestoSimplePasses()
         {
-
             // Use the Assert class to test conditions
         }
 

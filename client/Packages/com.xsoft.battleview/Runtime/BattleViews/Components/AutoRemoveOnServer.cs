@@ -11,6 +11,5 @@ namespace BattleViews.Components
         Destroy(this.gameObject);
 #endif
         }
-
     }
 }

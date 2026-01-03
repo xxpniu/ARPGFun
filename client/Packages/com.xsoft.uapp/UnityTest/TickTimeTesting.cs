@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using EngineCore.Simulater;
 using NUnit.Framework;
 using UnityEngine;
@@ -13,12 +12,7 @@ namespace Tests
         [Test]
         public void TickTimeTestingSimplePasses()
         {
-            
-           
-            for (var d = 0; d < 100; d++)
-            {
-                Tick(d);
-            }
+            for (var d = 0; d < 100; d++) Tick(d);
 
             return;
 
@@ -26,10 +20,7 @@ namespace Tests
             {
                 var time = new GTime(24 * 60 * 60 * day, .3f);
                 var start = time;
-                for (var i = 0; i < 300; i++)
-                {
-                    time.TickTime(0.03f);
-                }
+                for (var i = 0; i < 300; i++) time.TickTime(0.03f);
                 var total = time - start;
                 Debug.Log($"{total}");
             }

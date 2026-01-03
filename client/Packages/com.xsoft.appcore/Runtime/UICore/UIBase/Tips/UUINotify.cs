@@ -1,16 +1,11 @@
-﻿using System;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 
 namespace Tips
 {
     [UITipResourcesAttribute("UUINotify")]
-    public class UUINotify:UUITip
+    public class UUINotify : UUITip
     {
-        public UUINotify()
-        {
-        }
-
-        private Text  t_text;
+        private Text t_text;
 
         protected override void OnCreate()
         {
@@ -23,4 +18,3 @@ namespace Tips
         }
     }
 }
-

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 33988643b054b86429b4c5f0a1c2308b
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Services/IOptionsService.cs
+  uploadId: 496367

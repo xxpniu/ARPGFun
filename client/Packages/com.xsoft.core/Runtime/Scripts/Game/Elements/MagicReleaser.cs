@@ -1,13 +1,17 @@
 ﻿using System;
-using Layout;
-using GameLogic.Game.LayoutLogics;
-using EngineCore.Simulater;
 using System.Collections.Generic;
+using EngineCore.Simulater;
+using GameLogic.Game.LayoutLogics;
 using GameLogic.Game.Perceptions;
-using Layout.LayoutEffects;
-using Proto;
-using Layout.LayoutElements;
+using Layout;
 using Layout.AITree;
+using Layout.LayoutEffects;
+using Layout.LayoutElements;
+using Proto;
+using UnityEngine;
+using EventType = Layout.EventType;
+using Vector3 = UnityEngine.Vector3;
+
 //using UnityEngine;
 
 
@@ -37,19 +41,28 @@ namespace GameLogic.Game.Elements
 
     public class RevertData
     {
-        public BattleCharacter target;
-        public HeroPropertyType property;
         public AddType addtype;
         public float addValue;
+        public HeroPropertyType property;
+        public BattleCharacter target;
     }
 
-    public class MagicReleaser : BattleElement<IMagicReleaser>,ICharacterWatcher
+    public class MagicReleaser : BattleElement<IMagicReleaser>, ICharacterWatcher
     {
-        public float TickTime = -1;
         private readonly List<RevertActionLock> _actionReverts = new();
+
+        private readonly HashSet<int> _hitList = new();
+
+        private readonly Dictionary<int, AttachedElement> _objs = new();
+
+        private readonly LinkedList<TimeLinePlayer> _players = new();
+        private readonly Queue<int> _removeTemp = new();
         private readonly List<RevertData> _reverts = new();
 
-        public bool MoveCancel { get; } = false;
+        private int _playerIndex;
+
+        private TimeLinePlayer startLayout;
+        public float TickTime = -1;
 
         public MagicReleaser(
             string key,
@@ -58,9 +71,9 @@ namespace GameLogic.Game.Elements
             IReleaserTarget target,
             GControllor controllor,
             IMagicReleaser view,
-            ReleaserType type,float durTime, bool moveCancel ,
+            ReleaserType type, float durTime, bool moveCancel,
             string[] magicParams = default
-            )
+        )
             : base(controllor, view)
         {
             MoveCancel = moveCancel;
@@ -70,48 +83,110 @@ namespace GameLogic.Game.Elements
             Magic = magic;
             RType = type;
             OnExitedState = ReleaseAll;
-            Durtime = type == ReleaserType.Buff? durTime:-1;
+            Durtime = type == ReleaserType.Buff ? durTime : -1;
             Params = magicParams;
         }
 
+        public bool MoveCancel { get; }
+
         public string MagicKey { private set; get; }
 
-        public BattleCharacter Owner { private set;  get; }
-        
+        public BattleCharacter Owner { private set; get; }
+
         //绑定生命周期 buff用
-        public BattleCharacter BindLifeCharacter { get; private set; } 
+        public BattleCharacter BindLifeCharacter { get; private set; }
 
         public float Durtime { set; get; }
+
+        public string[] Params { private set; get; }
+
+
+        public ReleaserType RType { get; }
+
+        public MagicData Magic { get; }
+
+        public IReleaserTarget ReleaserTarget { get; }
+
+        public ReleaserStates State { private set; get; }
+
+        public int UnitCount => _objs.Count;
+
+        public bool IsCompleted
+        {
+            get
+            {
+                if (State == ReleaserStates.NOStart)
+                    return false;
+
+                var current = _players.First;
+                while (current != null)
+                {
+                    if (!current.Value.IsFinshed) return false;
+                    current = current.Next;
+                }
+
+                if (_objs.Count > 0)
+                    foreach (var i in _objs)
+                        if (i.Value.Element.Enable)
+                            return false;
+                return true;
+            }
+        }
+
+        public EventType? LastEvent { get; private set; }
+
+        public bool IsLayoutStartFinish
+        {
+            get
+            {
+                if (State == ReleaserStates.NOStart) return false;
+                if (State == ReleaserStates.Starting && startLayout != null) return startLayout.IsFinshed;
+                return true;
+            }
+        }
+
+        public BattleCharacter Releaser => ReleaserTarget.Releaser;
+
+        public BattleCharacter Target => ReleaserTarget.ReleaserTarget;
+
+        public int DisposeValue { get; internal set; } = 0;
+        public Vector3 Position => View.Position;
+        public Quaternion Rotation => View.Rotation;
+
+        void ICharacterWatcher.OnFireEvent(BattleEventType eventType, object args)
+        {
+            if (RType == ReleaserType.Buff)
+                switch (eventType)
+                {
+                    case BattleEventType.Skill:
+                        if ((DisposeValue & (int)DisposeType.SKILL) > 0) ToCompleted();
+                        break;
+                    case BattleEventType.Move:
+                        if ((DisposeValue & (int)DisposeType.MOVE) > 0) ToCompleted();
+                        break;
+                    case BattleEventType.Hurt:
+                        if ((DisposeValue & (int)DisposeType.HURT) > 0) ToCompleted();
+                        break;
+                    case BattleEventType.NormalAttack:
+                        if ((DisposeValue & (int)DisposeType.NormarlAttack) > 0) ToCompleted();
+                        break;
+                }
+        }
 
         public void SetParam(params string[] parms)
         {
             Params = parms;
         }
 
-        public string[] Params { private set; get; }
-        
-
-        public ReleaserType RType { private set; get; }
-
-        public MagicData Magic { private set; get; }
-
-        public IReleaserTarget ReleaserTarget { private set; get; }
-
-        public ReleaserStates State { private set; get; }
-
-        public int UnitCount => this._objs.Count;
-
         public void SetState(ReleaserStates state)
         {
             State = state;
         }
 
-        private int _playerIndex = 0;
-
-        public void OnEvent(Layout.EventType eventType, BattleCharacter target = null)
+        public void OnEvent(EventType eventType, BattleCharacter target = null)
         {
-            target = target??ReleaserTarget.ReleaserTarget;
-            var per = this.Controller.Perception as BattlePerception;
+            target = target ?? ReleaserTarget.ReleaserTarget;
+            var per = Controller.Perception as BattlePerception;
             LastEvent = eventType;
 
             for (var index = 0; index < Magic.Containers.Count; index++)
@@ -124,46 +199,30 @@ namespace GameLogic.Game.Elements
                     _playerIndex++;
                     var player = new TimeLinePlayer(_playerIndex, timeLine, this, i, target);
                     _players.AddLast(player);
-                    if (i.line == null) View.PlayTimeLine(_playerIndex, index, target.Index, (int)eventType);//for runtime
+                    if (i.line == null)
+                        View.PlayTimeLine(_playerIndex, index, target.Index, (int)eventType); //for runtime
                     else View.PlayTest(_playerIndex, i.line);
-                    if (i.type == Layout.EventType.EVENT_START)
+                    if (i.type == EventType.EVENT_START)
                     {
-                        if (startLayout != null)
-                        {
-                            throw new Exception("Start layout must only one!");
-                        }
+                        if (startLayout != null) throw new Exception("Start layout must only one!");
                         startLayout = player;
                     }
                 }
-            } 
+            }
         }
-
-        private TimeLinePlayer startLayout;
-
-        public class AttachedElement
-        {
-            public GObject Element;
-            public float time;
-            public bool HaveLeftTime;
-            public bool Managed = false;
-        }
-
-        private readonly Dictionary<int, AttachedElement> _objs = new Dictionary<int, AttachedElement>();
 
         public void AttachElement(GObject el, bool onlyWatch = false, float time = -1f)
         {
-            if (_objs.ContainsKey(el.Index))
-            {
-                return;
-            }
-            var att = new AttachedElement()
+            if (_objs.ContainsKey(el.Index)) return;
+            var att = new AttachedElement
             {
                 time = time,
                 Element = el,
                 HaveLeftTime = time >= 0f,
                 Managed = !onlyWatch
             };
-            _objs.Add(el.Index, att); ;
+            _objs.Add(el.Index, att);
+            ;
         }
 
         internal void Cancel()
@@ -172,12 +231,8 @@ namespace GameLogic.Game.Elements
             SetState(ReleaserStates.ToComplete);
         }
 
-        private readonly LinkedList<TimeLinePlayer> _players = new LinkedList<TimeLinePlayer>();
-        private readonly Queue<int> _removeTemp = new Queue<int>();
-
         public void Tick(GTime time)
         {
-           
             var current = _players.First;
             while (current != null)
             {
@@ -186,6 +241,7 @@ namespace GameLogic.Game.Elements
                     current.Value.Destory();
                     _players.Remove(current);
                 }
+
                 current = current.Next;
             }
 
@@ -200,95 +256,42 @@ namespace GameLogic.Game.Elements
                     {
                         i.Value.time -= time.DeltaTime;
                         if (i.Value.Element is BattleCharacter character)
-                        {
                             if (i.Value.time <= 0)
-                            {
-                                character.SubHP(character.MaxHP,out _);
-                            }
-                        }
+                                character.SubHP(character.MaxHP, out _);
                     }
+
                     continue;
                 }
-                else
-                {
-                    _removeTemp.Enqueue(i.Key);
-                }
+
+                _removeTemp.Enqueue(i.Key);
             }
 
-            while (_removeTemp.Count > 0)
-            {
-                _objs.Remove(_removeTemp.Dequeue());
-            }
-
+            while (_removeTemp.Count > 0) _objs.Remove(_removeTemp.Dequeue());
         }
 
-        internal void ShowDamageRange(DamageLayout layout, UnityEngine. Vector3 tar,  UnityEngine.Quaternion rototion)
+        internal void ShowDamageRange(DamageLayout layout, Vector3 tar, Quaternion rototion)
         {
-            this.View.ShowDamageRanger(layout,tar, rototion);
-        }
-
-        public bool IsCompleted
-        {
-            get
-            {
-
-                if (State == ReleaserStates.NOStart)
-                    return false;
-
-                var current = _players.First;
-                while (current != null)
-                {
-                    if (!current.Value.IsFinshed) return false;
-                    current = current.Next;
-                }
-
-                if (_objs.Count > 0)
-                {
-                    foreach (var i in _objs)
-                    {
-                        if (i.Value.Element.Enable) return false;
-                    }
-                }
-                return true;
-            }
+            View.ShowDamageRanger(layout, tar, rototion);
         }
 
         public float GetLayoutTimeByPath(string path)
         {
             foreach (var i in _players)
-            {
-                if (i.TypeEvent.layoutPath == path) return i.PlayTime;
-            }
+                if (i.TypeEvent.layoutPath == path)
+                    return i.PlayTime;
             return -1f;
         }
 
-        public Layout.EventType? LastEvent { get; private set; }
-
-        public bool IsLayoutStartFinish
-        {
-            get
-            {
-                if (State == ReleaserStates.NOStart) return false;
-                if (State == ReleaserStates.Starting && startLayout!=null) return startLayout.IsFinshed;
-                return true;
-            }
-        }
-
-        public BattleCharacter Releaser => ReleaserTarget.Releaser;
-
-        public BattleCharacter Target => ReleaserTarget.ReleaserTarget;
-
-        public int DisposeValue { get; internal set; } = 0;
-        public UnityEngine.Vector3 Position => View.Position;
-        public UnityEngine.Quaternion Rotation => View.Rotation;
-
         public void StopAllPlayer()
         {
-            foreach (var i in _players) { i.Destory(); View.CancelTimeLine(i.Index); }
+            foreach (var i in _players)
+            {
+                i.Destory();
+                View.CancelTimeLine(i.Index);
+            }
+
             _players.Clear();
         }
-
-        private readonly HashSet<int> _hitList = new HashSet<int>();
 
         internal bool TryHit(BattleCharacter hit)
         {
@@ -300,20 +303,12 @@ namespace GameLogic.Game.Elements
         private void ReleaseAll(GObject el)
         {
             foreach (var i in _reverts)
-            {
                 if (i.target.Enable)
-                {
                     i.target.ModifyValueMinutes(i.property, i.addtype, i.addValue);
-                }
-            }
 
             foreach (var i in _actionReverts)
-            {
                 if (i.target.Enable)
-                {
                     i.target.UnLockAction(i.type);
-                }
-            }
 
             _actionReverts.Clear();
             _reverts.Clear();
@@ -325,13 +320,9 @@ namespace GameLogic.Game.Elements
             }
 
             _objs.Clear();
-            foreach (var i in _players)
-            {
-                i.Destory();
-            }
+            foreach (var i in _players) i.Destory();
 
             _players.Clear();
-
         }
 
 
@@ -340,7 +331,7 @@ namespace GameLogic.Game.Elements
             _objs.Remove(battleCharacter.Index);
         }
 
-        public bool IsRunning(Layout.EventType type)
+        public bool IsRunning(EventType type)
         {
             foreach (var i in _players)
             {
@@ -351,12 +342,13 @@ namespace GameLogic.Game.Elements
             return false;
         }
 
-        internal RevertData RevertProperty(BattleCharacter effectTarget, HeroPropertyType property, AddType addType, float addValue)
+        internal RevertData RevertProperty(BattleCharacter effectTarget, HeroPropertyType property, AddType addType,
+            float addValue)
         {
-            var rP = new RevertData { addtype = addType, addValue = addValue, property = property, target = effectTarget };
+            var rP = new RevertData
+                { addtype = addType, addValue = addValue, property = property, target = effectTarget };
             _reverts.Add(rP);
             return rP;
-
         }
 
         public RevertActionLock RevertLock(BattleCharacter effectTarget, ActionLockType lockType)
@@ -378,64 +370,38 @@ namespace GameLogic.Game.Elements
             Releaser.RemoveEventWatcher(this);
         }
 
-        void ICharacterWatcher.OnFireEvent(BattleEventType eventType, object args)
-        {
-            if (this.RType == ReleaserType.Buff)
-            {
-                switch (eventType)
-                {
-                    case BattleEventType.Skill:
-                        if ((DisposeValue & (int)DisposeType.SKILL )>0)
-                        {
-                            this.ToCompleted();
-                        }
-                        break;
-                    case BattleEventType.Move:
-                        if ((DisposeValue & (int)DisposeType.MOVE) > 0)
-                        {
-                            this.ToCompleted();
-                        }
-                        break;
-                    case BattleEventType.Hurt:
-                        if ((DisposeValue & (int)DisposeType.HURT) > 0)
-                        {
-                            this.ToCompleted();
-                        }
-                        break;
-                    case BattleEventType.NormalAttack:
-                        if ((DisposeValue & (int)DisposeType.NormarlAttack) > 0)
-                        {
-                            this.ToCompleted();
-                        }
-                        break;
-                }
-            }
-        }
-
         private void ToCompleted()
         {
-            if (State == ReleaserStates.Completing || State == ReleaserStates.Ended || State == ReleaserStates.ToComplete) return;
+            if (State == ReleaserStates.Completing || State == ReleaserStates.Ended ||
+                State == ReleaserStates.ToComplete) return;
             State = ReleaserStates.ToComplete;
         }
 
         internal int TryGetParams(GetValueFrom vF)
         {
-            var index =(int) vF - 1;
+            var index = (int)vF - 1;
             if (Params == null) return 0;
-            if (this.Params.Length <= index) return 0;
+            if (Params.Length <= index) return 0;
             if (index < 0) return 0;
-            if (int.TryParse(this.Params[index], out var v)) return v;
+            if (int.TryParse(Params[index], out var v)) return v;
             return 0;
         }
 
         /// <summary>
-        /// 绑定一个对象的生命周期 如果消失就结束技能
+        ///     绑定一个对象的生命周期 如果消失就结束技能
         /// </summary>
         /// <param name="lifeCharacter"></param>
         public void BindCharacter(BattleCharacter lifeCharacter)
         {
             BindLifeCharacter = lifeCharacter;
         }
+
+        public class AttachedElement
+        {
+            public GObject Element;
+            public bool HaveLeftTime;
+            public bool Managed;
+            public float time;
+        }
     }
 }
-

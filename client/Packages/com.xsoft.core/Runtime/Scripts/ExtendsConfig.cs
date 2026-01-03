@@ -13,16 +13,15 @@ namespace GameLogic
 {
     public static class ExtendsConfig
     {
-        public static void TryToAddBase(this Dictionary<HeroPropertyType, ComplexValue> values, HeroPropertyType type,
+        public static void TryToAddBase(this Dictionary<P, ComplexValue> values, P type,
             ComplexValue value)
         {
-            if(values.TryGetValue(type,out var v))
-            {v.SetBaseValue(v.BaseValue+value.BaseValue);}
+            if (values.TryGetValue(type, out var v))
+                v.SetBaseValue(v.BaseValue + value.BaseValue);
             else
-            {
                 values.TryAdd(type, value);
-            }
         }
+
         public static IList<int> SplitToInt(this string str, char sKey = '|')
         {
             var arrs = str.Split(sKey);
@@ -41,24 +40,21 @@ namespace GameLogic
                 Debug.LogError($"No found Equip By Id:{config.Params1}");
                 return properties;
             }
-            var level = ExcelToJSONConfigManager.First<EquipmentLevelUpData>(t => t.Level == pItem.Level && t.Quality == config.Quality);
+
+            var level = ExcelToJSONConfigManager.First<EquipmentLevelUpData>(t =>
+                t.Level == pItem.Level && t.Quality == config.Quality);
 
             properties.TryAddBase(equip.Properties, equip.PropertyValues);
 
-    
+
             if (pItem.Data != null)
-            {
                 foreach (var v in pItem.Data.Values)
                 {
                     var k = (P)v.Key;
                     properties.TryAdd(k, v.Value, AddType.Append);
                 }
-            }
 
-            foreach (var p in properties)
-            {
-                p.Value.SetRate(level?.AppendRate ?? 0);
-            }
+            foreach (var p in properties) p.Value.SetRate(level?.AppendRate ?? 0);
             return properties;
         }
 
@@ -71,7 +67,7 @@ namespace GameLogic
         {
             //var att = mc;
             var aiType = (MagicReleaseAITarget)att.AITargetType;
-            TargetTeamType type = TargetTeamType.All;
+            var type = TargetTeamType.All;
             switch (aiType)
             {
                 case MagicReleaseAITarget.MatEnemy:
@@ -92,6 +88,7 @@ namespace GameLogic
                     type = TargetTeamType.All;
                     break;
             }
+
             return type;
         }
 
@@ -109,11 +106,10 @@ namespace GameLogic
 
         public static IList<BattleCharacterMagic> CreateHeroMagic(this CharacterData data, DHero hero = null)
         {
-            
             var magics = ExcelToJSONConfigManager.Find<CharacterMagicData>(t =>
             {
                 return t.CharacterID == data.ID
-                && (MagicReleaseType)t.ReleaseType == MagicReleaseType.MrtMagic;
+                       && (MagicReleaseType)t.ReleaseType == MagicReleaseType.MrtMagic;
             });
             var list = new List<BattleCharacterMagic>();
             foreach (var i in magics)
@@ -140,12 +136,9 @@ namespace GameLogic
         {
             if (hero == null) return null;
             foreach (var i in hero.Magics)
-            {
                 if (i.MagicKey == magicID)
-                {
-                    return ExcelToJSONConfigManager.First<MagicLevelUpData>(t => t.MagicID == magicID && t.Level == i.Level);
-                }
-            }
+                    return ExcelToJSONConfigManager.First<MagicLevelUpData>(t =>
+                        t.MagicID == magicID && t.Level == i.Level);
             return null;
         }
 
@@ -162,6 +155,7 @@ namespace GameLogic
                     Debug.LogError($"No found [{i}]{(P)i} in StatData");
                     continue;
                 }
+
                 ComplexValue value = Mathf.Max(0, stat.InitValue);
                 if (stat?.MaxValue > 0) value.Max = stat.MaxValue;
                 initProperties.Add((P)i, value);
@@ -177,6 +171,7 @@ namespace GameLogic
                 dic.Add(p, v);
                 return false;
             }
+
             dic[p].ModifyValueAdd(addType, v);
             return true;
         }
@@ -201,14 +196,11 @@ namespace GameLogic
         public static IList<HeroProperty> ToHeroProperty(this Dictionary<P, ComplexValue> dic)
         {
             var list = new List<HeroProperty>();
-            foreach (var i in dic)
-            {
-                list.Add(new HeroProperty { Value = i.Value, Property = i.Key });
-            }
+            foreach (var i in dic) list.Add(new HeroProperty { Value = i.Value, Property = i.Key });
             return list;
         }
 
-        public static Dictionary<P, ComplexValue> CreateMonsterProperties(this CharacterData data, MonsterData monster )
+        public static Dictionary<P, ComplexValue> CreateMonsterProperties(this CharacterData data, MonsterData monster)
         {
             var p = GetInitStat();
             //Monster no character base
@@ -217,11 +209,12 @@ namespace GameLogic
             return p;
         }
 
-        public static Dictionary<P, ComplexValue> CreatePlayerProperties(this CharacterData data, CharacterLevelUpData level = null)
+        public static Dictionary<P, ComplexValue> CreatePlayerProperties(this CharacterData data,
+            CharacterLevelUpData level = null)
         {
             var p = GetInitStat();
             p.TryAddBase(data.Properties, data.PropertyValues);
-            if (level != null)  p.TryAddBase(level.Properties, level.PropertyValues);
+            if (level != null) p.TryAddBase(level.Properties, level.PropertyValues);
             return p;
         }
     }

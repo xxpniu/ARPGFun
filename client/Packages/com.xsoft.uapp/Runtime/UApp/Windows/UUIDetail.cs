@@ -1,32 +1,21 @@
-using UGameTools;
-using Proto;
-using ExcelConfig;
-using EConfig;
-using GameLogic;
-using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using Cysharp.Threading.Tasks;
+using EConfig;
+using ExcelConfig;
+using GameLogic;
+using Proto;
 using UApp;
-using UApp.GameGates;
+using UGameTools;
 
 namespace Windows
 {
-    partial class UUIDetail
+    internal partial class UUIDetail
     {
-        public class EquipmentPropertyTableModel : TableItemModel<EquipmentPropertyTableTemplate>
-        {
-            public EquipmentPropertyTableModel() { }
-            public override void InitModel()
-            {
-                //todo
-            }
+        private ItemData config;
 
-            internal void SetLabel(string label)
-            {
-                Template.lb_text.text = label;
-            }
-        }
+        private PlayerItem item;
+        private bool nobt;
 
         protected override void InitModel()
         {
@@ -34,14 +23,14 @@ namespace Windows
             bt_cancel.onClick.AddListener(HideWindow);
             bt_sale.onClick.AddListener(SaleCall);
             bt_equip.onClick.AddListener(EquipCall);
-            uiRoot.transform.OnMouseClick(_ => { HideWindow(); }).CheckMove= false;
-            
+            uiRoot.transform.OnMouseClick(_ => { HideWindow(); }).CheckMove = false;
+
             return;
-            
+
             async void SaleCall()
             {
-                this.HideWindow();
-                await UUIManager.S.CreateWindowAsync<UUISaleItem>(ui => { ui.Show(this.item); });
+                HideWindow();
+                await UUIManager.S.CreateWindowAsync<UUISaleItem>(ui => { ui.Show(item); });
             }
 
             async void EquipCall()
@@ -73,23 +62,21 @@ namespace Windows
 
         private async void ShowData()
         {
-            
             bt_equip.SetKey("UUIDetail_WEAR");
             bt_sale.SetKey("UUIDetail_SELL");
 
             config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
-            t_num.text = $"{ item.Num}";
+            t_num.text = $"{item.Num}";
             t_descript.SetKey(config.Description);
             t_name.SetKey(config.Name);
-            t_prices.SetKey("UUIDetail_PRICES", $"{ config.SalePrice}") ;
+            t_prices.SetKey("UUIDetail_PRICES", $"{config.SalePrice}");
             icon.sprite = await ResourcesManager.S.LoadIcon(config);
 
             ItemLevel.ActiveSelfObject(item.Level > 0);
             lb_level.text = $"{item.Level}";
             ItemCount.ActiveSelfObject(item.Num > 1);
             Locked.ActiveSelfObject(item.Locked);
-            
-           
+
 
             if (nobt)
             {
@@ -118,7 +105,8 @@ namespace Windows
                 var eq = ExcelToJSONConfigManager.GetId<EquipmentData>(config.ID);
                 ShowEquip(item);
             }
-            else {
+            else
+            {
                 EquipmentPropertyTableManager.Count = 0;
             }
         }
@@ -128,7 +116,7 @@ namespace Windows
         {
             var properties = pItem.GetProperties();
             EquipmentPropertyTableManager.Count = properties.Count;
-            int index = 0;
+            var index = 0;
             foreach (var i in properties)
             {
                 var stat = ExcelToJSONConfigManager.GetId<StatData>((int)i.Key);
@@ -139,21 +127,29 @@ namespace Windows
             }
         }
 
-        private ItemData config;
-        private bool nobt = false;
-
         protected override void OnHide()
         {
             base.OnHide();
         }
 
-        private PlayerItem item;
-
         public void Show(PlayerItem playerItem, bool nobt = false)
         {
             this.nobt = nobt;
-            this.item = playerItem;
-            this.ShowWindow();
+            item = playerItem;
+            ShowWindow();
+        }
+
+        public class EquipmentPropertyTableModel : TableItemModel<EquipmentPropertyTableTemplate>
+        {
+            public override void InitModel()
+            {
+                //todo
+            }
+
+            internal void SetLabel(string label)
+            {
+                Template.lb_text.text = label;
+            }
         }
     }
 }

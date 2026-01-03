@@ -8,9 +8,8 @@ using XNet.Libs.Utility;
 
 namespace Windows
 {
-    partial class UUILogin
+    internal partial class UUILogin
     {
-
         public const string UserNameKey = "KEY_NAME";
         public const string PasswordKey = "Key_Password";
 
@@ -18,16 +17,16 @@ namespace Windows
         {
             base.InitModel();
 
-            this.ButtonBlue.onClick.AddListener(LoginCall);
+            ButtonBlue.onClick.AddListener(LoginCall);
             TextSignup.onClick.AddListener(SignupCall);
-            
+
             ButtonClose.onClick.AddListener(() =>
             {
                 //do nothing
             });
             return;
 
-            async  void SignupCall()
+            async void SignupCall()
             {
                 await UUIManager.S.CreateWindowAsync<UUISignup>(ui => ui.ShowWindow());
             }
@@ -55,13 +54,9 @@ namespace Windows
                 var r = await LoginGate.DoLogin(userName, md5);
                 UUIManager.S.UnMaskEvent();
                 if (r.Code.IsOk())
-                {
                     UApplication.S.GoServerMainGate(r.ChatServer, r.GateServer, r.UserID, r.Session);
-                }
                 else
-                {
                     UApplication.S.ShowError(r.Code);
-                }
             }
         }
 

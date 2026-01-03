@@ -1,11 +1,9 @@
-﻿using System;
-using EngineCore.Simulater;
+﻿using EngineCore.Simulater;
 
 namespace GameLogic
 {
-	public interface IStateLoader
-	{
-		void Load(GState state);
-	}
+    public interface IStateLoader
+    {
+        void Load(GState state);
+    }
 }
-

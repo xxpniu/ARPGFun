@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 43bd0242747ae6042a436f1ff85403d4
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/PinEntryServiceImpl.cs
+  uploadId: 496367

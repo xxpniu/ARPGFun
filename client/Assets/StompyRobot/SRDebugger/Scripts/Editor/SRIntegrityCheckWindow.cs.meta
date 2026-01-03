@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 8d3667acfb91436880aa7f35bcc5fe43
+timeCreated: 1611919957
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Editor/SRIntegrityCheckWindow.cs
+  uploadId: 496367

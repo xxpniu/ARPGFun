@@ -1,46 +1,19 @@
 using System;
-using UnityEngine.UI;
-using UGameTools;
-using ExcelConfig;
-using EConfig;
-using UnityEngine;
-using System.Collections;
-using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using BattleViews.Views;
 using Cysharp.Threading.Tasks;
+using EConfig;
+using ExcelConfig;
+using Proto;
 using UApp;
 using UApp.GameGates;
 
 namespace Windows
 {
-    partial class UUIHeroCreate
+    internal partial class UUIHeroCreate
     {
-        public class ListTableModel : TableItemModel<ListTableTemplate>
-        {
-            public ListTableModel(){}
-            public override void InitModel()
-            {
-                this.Template.BtHero.onClick.AddListener(() =>
-                {
-                    OnClick?.Invoke(this);
-                });
-            }
-
-            internal void SetData(CharacterPlayerData characterPlayer)
-            {
-                Config = characterPlayer;
-                ChaData = ExcelToJSONConfigManager.GetId<CharacterData>(Config.CharacterID);
-                this.Template.lb_name.SetKey(ChaData.Name);
-            }
-
-            public CharacterPlayerData Config;
-
-            public CharacterData ChaData;
-
-            public Action<ListTableModel> OnClick;
-        }
+        private int _selectedID;
 
         protected override void InitModel()
         {
@@ -57,7 +30,7 @@ namespace Windows
                     return;
                 }
 
-                var request = new Proto.C2G_CreateHero { HeroID = _selectedID, HeroName = InputField.text };
+                var request = new C2G_CreateHero { HeroID = _selectedID, HeroName = InputField.text };
                 var r = await GateManager.S.GateFunction.CreateHeroAsync(request);
                 await UniTask.SwitchToMainThread();
                 if (r.Code.IsOk())
@@ -66,7 +39,9 @@ namespace Windows
                     HideWindow();
                 }
                 else
+                {
                     UApplication.S.ShowError(r.Code);
+                }
             }
         }
 
@@ -89,20 +64,17 @@ namespace Windows
             }
         }
 
-        private int _selectedID = 0;
-
         private void ClickItem(ListTableModel obj)
         {
-            SetHeroId(obj.Config,obj.ChaData);
-           
+            SetHeroId(obj.Config, obj.ChaData);
         }
 
-        private void SetHeroId(CharacterPlayerData hero, CharacterData  character)
+        private void SetHeroId(CharacterPlayerData hero, CharacterData character)
         {
             _selectedID = character.ID;
 
-            var v =UApplication.G<GMainGate>().CreateOwner(character.ID, character.Name);
-            lb_description.SetKey(  hero.Description);
+            var v = UApplication.G<GMainGate>().CreateOwner(character.ID, character.Name);
+            lb_description.SetKey(hero.Description);
 
             RunMotion(v, hero.Motion);
         }
@@ -112,13 +84,34 @@ namespace Windows
             await UniTask.Delay(250);
 
             if (!view) return;
-            if (this.CancellationToken.IsCancellationRequested) return;
+            if (CancellationToken.IsCancellationRequested) return;
             view.PlayMotion(motion);
         }
 
         protected override void OnHide()
         {
             base.OnHide();
+        }
+
+        public class ListTableModel : TableItemModel<ListTableTemplate>
+        {
+            public CharacterData ChaData;
+
+            public CharacterPlayerData Config;
+
+            public Action<ListTableModel> OnClick;
+
+            public override void InitModel()
+            {
+                Template.BtHero.onClick.AddListener(() => { OnClick?.Invoke(this); });
+            }
+
+            internal void SetData(CharacterPlayerData characterPlayer)
+            {
+                Config = characterPlayer;
+                ChaData = ExcelToJSONConfigManager.GetId<CharacterData>(Config.CharacterID);
+                Template.lb_name.SetKey(ChaData.Name);
+            }
         }
     }
 }

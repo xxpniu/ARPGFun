@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: dc845b8723c64841aa76e259d4a0b6c4
+timeCreated: 1582392762
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/Other/ErrorNotifier.cs
+  uploadId: 496367

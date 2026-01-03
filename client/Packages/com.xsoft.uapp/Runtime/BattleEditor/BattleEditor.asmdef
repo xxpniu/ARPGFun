@@ -1,21 +1,21 @@
 {
-    "name": "BattleEditor",
-    "rootNamespace": ".",
-    "references": [
-        "GUID:c0714e3101b644d28bc9124e6411f1fc",
-        "GUID:2aabdf7acfca649068f34bec3c6dfdae",
-        "GUID:0a77b5832b84b4aa9a8f126896ed8274",
-        "GUID:44a144b962a334644b339a90b234573b",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:c42ee4e8d3b5b4821a75d0785b3302a2"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "BattleEditor",
+  "rootNamespace": ".",
+  "references": [
+    "GUID:c0714e3101b644d28bc9124e6411f1fc",
+    "GUID:2aabdf7acfca649068f34bec3c6dfdae",
+    "GUID:0a77b5832b84b4aa9a8f126896ed8274",
+    "GUID:44a144b962a334644b339a90b234573b",
+    "GUID:f51ebe6a0ceec4240a699833d6309b23",
+    "GUID:c42ee4e8d3b5b4821a75d0785b3302a2"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BehaviorTree;
 using Layout.AITree;
 
 namespace GameLogic.Game.AIBehaviorTree
 {
     [TreeNodeParse(typeof(TreeNodeSetIntKey))]
-    public class ActionSetIntKey:ActionComposite<TreeNodeSetIntKey>
+    public class ActionSetIntKey : ActionComposite<TreeNodeSetIntKey>
     {
-        public ActionSetIntKey(TreeNodeSetIntKey node):base(node)
+        public ActionSetIntKey(TreeNodeSetIntKey node) : base(node)
         {
         }
 
@@ -16,10 +15,7 @@ namespace GameLogic.Game.AIBehaviorTree
         {
             if (context is AITreeRoot root)
             {
-                if (!root.TryGet(Node.Key, out int value))
-                {
-                    value = 0;
-                }
+                if (!root.TryGet(Node.Key, out int value)) value = 0;
 
                 if (Node.operatorType == OperatorType.Clear)
                 {
@@ -29,10 +25,7 @@ namespace GameLogic.Game.AIBehaviorTree
                 }
 
 
-                if (root.IsDebug)
-                {
-                    Attach("Org Value", value);
-                }
+                if (root.IsDebug) Attach("Org Value", value);
                 var opValue = Node.OperatorValue;
                 switch (Node.operatorType)
                 {
@@ -52,10 +45,7 @@ namespace GameLogic.Game.AIBehaviorTree
 
                 root[Node.Key] = value;
 
-                if (root.IsDebug)
-                {
-                    Attach("Value", value);
-                }
+                if (root.IsDebug) Attach("Value", value);
 
 
                 yield return RunStatus.Success;
@@ -63,7 +53,6 @@ namespace GameLogic.Game.AIBehaviorTree
             }
 
             yield return RunStatus.Failure;
-            yield break;
         }
     }
 }

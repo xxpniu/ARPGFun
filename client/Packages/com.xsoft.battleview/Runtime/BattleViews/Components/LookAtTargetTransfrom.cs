@@ -4,14 +4,13 @@ namespace BattleViews.Components
 {
     public class LookAtTargetTransfrom : MonoBehaviour
     {
+        public Transform target;
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (target)
-                this.transform.LookAt(target);
+                transform.LookAt(target);
         }
-
-        public Transform target;
     }
 }

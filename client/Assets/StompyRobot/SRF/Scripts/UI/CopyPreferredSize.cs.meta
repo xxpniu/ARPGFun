@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 32609112f4257a740aa4b920a8556d24
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/UI/CopyPreferredSize.cs
+  uploadId: 496367

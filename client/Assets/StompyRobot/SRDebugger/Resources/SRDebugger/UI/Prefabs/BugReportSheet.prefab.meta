@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 307fd4bc23452cc41bdacc036bc9e0b1
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Resources/SRDebugger/UI/Prefabs/BugReportSheet.prefab
+  uploadId: 496367

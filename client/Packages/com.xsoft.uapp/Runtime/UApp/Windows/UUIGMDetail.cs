@@ -1,29 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using UApp;
-using UnityEngine.UI;
-using UGameTools;
 
 namespace Windows
 {
-    partial class UUIGMDetail
+    internal partial class UUIGMDetail
     {
-        public class ContentTableModel : TableItemModel<ContentTableTemplate>
-        {
-            public ContentTableModel(){}
-            public override void InitModel()
-            {
-                //todo
-            }
-
-            internal void SetLabel(string v,string def)
-            {
-                this.Template.lb_text.text = v;
-                this.Template.InputField.text = def ?? string.Empty;
-            }
-        }
+        private GMCommandAttribute cmd;
 
         protected override void InitModel()
         {
@@ -34,13 +16,10 @@ namespace Windows
             {
                 var sb = new StringBuilder();
                 sb.Append(cmd.GMkey);
-                foreach (var i in ContentTableManager)
-                {
-                    sb.Append($" {i.Template.InputField.text}");
-                }
+                foreach (var i in ContentTableManager) sb.Append($" {i.Template.InputField.text}");
 
                 GateManager.S.SendCommand(sb.ToString());
-                this.HideWindow();
+                HideWindow();
             });
             //Write Code here
         }
@@ -48,26 +27,39 @@ namespace Windows
         protected override void OnShow()
         {
             base.OnShow();
-            this.ContentTableManager.Count = cmd.parmas.Length;
-            int index = 0;
+            ContentTableManager.Count = cmd.parmas.Length;
+            var index = 0;
             foreach (var i in ContentTableManager)
             {
-                i.Model.SetLabel(cmd.parmas[index],cmd.DefaultParamas?[index]);
+                i.Model.SetLabel(cmd.parmas[index], cmd.DefaultParamas?[index]);
                 index++;
             }
         }
+
         protected override void OnHide()
         {
             base.OnHide();
         }
 
-        private GMCommandAttribute cmd;
-
         internal void ShowWindow(GMCommandAttribute command)
         {
-            this.cmd = command;
+            cmd = command;
 
-            this.ShowWindow();
+            ShowWindow();
+        }
+
+        public class ContentTableModel : TableItemModel<ContentTableTemplate>
+        {
+            public override void InitModel()
+            {
+                //todo
+            }
+
+            internal void SetLabel(string v, string def)
+            {
+                Template.lb_text.text = v;
+                Template.InputField.text = def ?? string.Empty;
+            }
         }
     }
 }

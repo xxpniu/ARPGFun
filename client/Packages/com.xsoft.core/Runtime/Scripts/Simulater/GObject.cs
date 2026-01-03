@@ -3,117 +3,105 @@ using System.Collections.Generic;
 
 namespace EngineCore.Simulater
 {
-	public abstract class GObject
-	{
+    public abstract class GObject
+    {
+        private readonly Dictionary<string, object> values = new();
 
-		public int Index { private set; get; }
+        private DateTime? _destroyTime;
 
-		private readonly Dictionary<string, object> values = new Dictionary<string, object>();
+        private bool _hadBeenDestroy;
 
-		private GObject(int index)
-		{
-			this.Index = index;
-		}
+        private GObject(int index)
+        {
+            Index = index;
+        }
 
-		public GObject(GControllor controller) : this(controller.Perception.State.NextElementID())
-		{
-			Controller = controller;
-		}
+        public GObject(GControllor controller) : this(controller.Perception.State.NextElementID())
+        {
+            Controller = controller;
+        }
 
-		public GControllor Controller { private set; get; }
+        public int Index { private set; get; }
+
+        public GControllor Controller { private set; get; }
 
         public object this[string key]
         {
-			set
+            set
             {
-				values.Remove(key);
-				values[key] = value;
+                values.Remove(key);
+                values[key] = value;
             }
-			get
+            get
             {
-				if (values.TryGetValue(key, out object v)) return v;
-				return null;
+                if (values.TryGetValue(key, out var v)) return v;
+                return null;
             }
         }
 
-		public void Clear()
+        public bool Enable { private set; get; }
+
+        public bool IsAliveAble => !_hadBeenDestroy;
+
+        public bool CanDestroy
         {
-			values.Clear();
+            get
+            {
+                if (Enable) return false;
+                if (_destroyTime.HasValue) return _destroyTime.Value < DateTime.Now;
+                return true;
+            }
         }
 
-		public void SetControllor(GControllor controllor)
-		{
-			OnChangedControllor(this.Controller, controllor);
-			this.Controller = controllor;
-		}
+        public void Clear()
+        {
+            values.Clear();
+        }
 
-		private bool _hadBeenDestroy = false;
+        public void SetControllor(GControllor controllor)
+        {
+            OnChangedControllor(Controller, controllor);
+            Controller = controllor;
+        }
 
-		public bool Enable { private set; get; }
+        internal static void JoinState(GObject el)
+        {
+            if (el._hadBeenDestroy) return;
+            el.Enable = true;
+            el.OnJoinState();
+        }
 
-		public bool IsAliveAble => !_hadBeenDestroy;
+        internal static void ExitState(GObject el)
+        {
+            el.OnExitState();
+        }
 
-		#region Events
+        public static void Destroy(GObject el, float time = -1f)
+        {
+            if (time > 0) el._destroyTime = DateTime.Now.AddSeconds(time);
+            el._hadBeenDestroy = true;
+            if (el.Enable) el.Enable = false;
+        }
 
-		protected virtual void OnJoinState()
-		{
+        public static implicit operator bool(GObject el)
+        {
+            return el is { Enable: true };
+        }
 
-		}
+        #region Events
 
-		protected virtual void OnExitState()
-		{
+        protected virtual void OnJoinState()
+        {
+        }
 
-		}
+        protected virtual void OnExitState()
+        {
+        }
 
-		protected virtual void OnChangedControllor(GControllor old, GControllor current)
-		{
+        protected virtual void OnChangedControllor(GControllor old, GControllor current)
+        {
+        }
 
-		}
-
-		#endregion
-
-		private DateTime? _destroyTime;
-
-		public bool CanDestroy
-		{
-			get
-			{
-				if (this.Enable) return false;
-				if (_destroyTime.HasValue)
-				{
-					return _destroyTime.Value < DateTime.Now;
-				}
-				return true;
-			}
-		}
-
-		internal static void JoinState(GObject el)
-		{
-			if (el._hadBeenDestroy) return;
-			el.Enable = true;
-			el.OnJoinState();
-		}
-
-		internal static void ExitState(GObject el)
-		{
-			el.OnExitState();
-		}
-
-		public static void Destroy(GObject el, float time = -1f)
-		{
-			if (time > 0) el._destroyTime = DateTime.Now.AddSeconds(time);
-			el._hadBeenDestroy = true;
-			if (el.Enable) el.Enable = false;
-		}
-
-		public static implicit operator bool(GObject el)
-		{
-			return el is { Enable: true };
-		}
-		
-		
-		 
-	}
-	
+        #endregion
+    }
 }
-

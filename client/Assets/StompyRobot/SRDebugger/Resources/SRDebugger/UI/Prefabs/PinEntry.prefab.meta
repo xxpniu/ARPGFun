@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 3234e6770548fe841adb652f4ad4bca6
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Resources/SRDebugger/UI/Prefabs/PinEntry.prefab
+  uploadId: 496367

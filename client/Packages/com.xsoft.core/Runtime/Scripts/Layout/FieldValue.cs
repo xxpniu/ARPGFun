@@ -1,25 +1,26 @@
 ﻿using System;
+
 namespace Layout
 {
     public class FieldValue
     {
-        private static Random _rander = new Random();
-
         public enum ValueType
         {
             Fixed,
             Range
         }
 
-        
-        public int min;
-        
+        private static readonly Random _rander = new();
+
         public int max;
 
-        
+
+        public int min;
+
+
         public ValueType type = ValueType.Fixed;
 
-        
+
         public int Value
         {
             get
@@ -36,7 +37,7 @@ namespace Layout
 
         public static implicit operator FieldValue(int value)
         {
-            return new FieldValue() { max = value, min = value, type = ValueType.Fixed };
+            return new FieldValue { max = value, min = value, type = ValueType.Fixed };
         }
 
         public static implicit operator int(FieldValue value)
@@ -48,6 +49,5 @@ namespace Layout
         {
             return value.Value;
         }
-
     }
 }

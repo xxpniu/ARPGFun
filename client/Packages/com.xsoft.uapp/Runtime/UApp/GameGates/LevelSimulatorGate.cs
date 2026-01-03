@@ -18,7 +18,7 @@ using GameLogic.Game.Perceptions;
 using GameLogic.Game.States;
 using Google.Protobuf;
 using Proto;
-using UGameTools;
+using Server.Map;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using CM = ExcelConfig.ExcelToJSONConfigManager;
@@ -26,201 +26,36 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace UApp.GameGates
 {
-    public class LevelSimulatorGate : UGate, IStateLoader,IBattleGate
+    public class LevelSimulatorGate : UGate, IStateLoader, IBattleGate
     {
+        //private List<Proto.C2G_LocalBattleFinished.Types.BattleDamage> _damages = new();
+        private readonly Dictionary<int, C2G_LocalBattleFinished.Types.BattleDamage> _damages = new();
+        private readonly Dictionary<int, C2G_LocalBattleFinished.Types.ConsumeItem> _items = new();
+
+
+        private BattleCharacter _characterOwner;
+
+        private bool _isFinished;
+        private float _lastSyncTime;
+
+        private MapElementSpawn _mCreator;
+
+        private float _startTime;
+
+        private ITimeSimulator _timeSimulator;
+        private DHero Hero;
         private int LevelId;
-        private DHero Hero; 
         public RenderTexture LookAtView { get; private set; }
         public BattleLevelData LevelData { get; private set; }
         public UPerceptionView PerView { get; private set; }
-
-        private ITimeSimulator _timeSimulator;
 
         public BattleState State { private set; get; }
 
         public BattlePerception Per => State.Perception as BattlePerception;
 
-        private bool _isFinished = false;
-
-        protected override async Task JoinGate(params object[] args)
-        {
-            await base.JoinGate();
-        
-            UUIManager.S.ShowMask(true);
-            UUIManager.S.HideAll();
-            Hero = args[0] as DHero;
-            LevelId = (int)args[2];
-            await InitLevel(LevelId);
-        }
-
-        protected override async Task ExitGate()
-        {
-            State?.Stop(_timeSimulator.Now);
-            await Task.CompletedTask;
-        }
-
-        private async Task InitLevel(int levelId)
-        {
-            LookAtView = new RenderTexture(128, 128, 32);
-            LevelData = CM.GetId<BattleLevelData>(levelId);
-            await Addressables.LoadSceneAsync($"Assets/Levels/{LevelData.LevelName}.unity").Task;
-         
-
-            PerView = UPerceptionView.Create(UApplication.S.Constant);
-            PerView.OnCreateCharacter = (c) => c.TryAdd<HpTipShower>();
-            _timeSimulator = PerView;
-            await UniTask.Yield();
-            State = new BattleState(PerView, this, PerView);
-            State.Start(this.GetTime());
-
-        
-            await ResourcesManager.S.LoadResourcesWithExName<TextAsset>(LevelData.ElementConfigPath, (rs) =>
-            {
-                Config = rs.text.Parser<MapConfig>();
-            });
-            _mCreator = new Server.Map.MapElementSpawn(this.Per, Config);
-
-            var data = CM.GetId<CharacterData>(Hero.HeroID);
-            var magic = Hero.CreateHeroMagic();
-            var properties = BattleUtility.CreateHeroProperties(Hero, ((IBattleGate)this).Package);
-    
-            var playerBornPositions = Config.Elements.Where(t => t.Type == MapElementType.MetPlayerInit)
-                .Select(t => t).ToArray();
-
-
-            var pos = GRandomer.RandomArray(playerBornPositions);//.position;        
-            _characterOwner = Per.CreateCharacter(Per.StateControllor,
-                Hero.Level,
-                data,
-                magic, properties,
-                0,
-                pos.Position.ToUV3(),
-                Quaternion.LookRotation(pos.Forward.ToUV3()).eulerAngles,
-                string.Empty,
-                Hero.Name);
-            await UniTask.Delay(1000);
-            //var root = Per.ChangeCharacterAI(data.AIResourcePath, _characterOwner);
-            //Debug.Log($"AI:{root.NodeRoot.name}"); 
-            Owner = _characterOwner.CharacterView as UCharacterView;
-            PerView.OwnerTeamIndex = Owner!.TeamId;
-            PerView.OwnerIndex = Owner.Index;
-            FindFirstObjectByType<ThirdPersonCameraContollor>()
-                .SetLookAt(Owner.GetBoneByName(UCharacterView.RootBone))
-                //.SetForwardOffset(Vector3.forward * 2f)
-                .SetXY(40, Owner.GetBoneByName(UCharacterView.RootBone).rotation.eulerAngles.y)
-                .SetDis(18.2f);
-            Owner.LookView(LookAtView);
-            await UUIManager.S.CreateWindowAsync<Windows.UUIBattle>(
-                ui => ui.ShowWindow(this), wRender: WRenderType.WithCanvas
-                    );
-            UUIManager.S.ShowMask(false);
-
-            _characterOwner.OnDead = (obj) =>
-            {
-                Windows.UUIPopup.ShowConfirm(LanguageManager.S["Level_Relive_Title"], 
-                    LanguageManager.S["Level_Relive_Content"],   
-                    () => { UApplication.S.GoBackToMainGate(); },
-                    onlyOk: true);
-                //UUIManager.S.CreateWindowAsync<Windows.>
-            };   
-            
-            await _mCreator.Spawn();
-            _startTime = ((IBattleGate)this).TimeServerNow;
-            _isFinished = false;
-
-            (State.Perception as BattlePerception)!.OnDamage = OnDamage;
-
-        }
-
-        //private List<Proto.C2G_LocalBattleFinished.Types.BattleDamage> _damages = new();
-        private readonly Dictionary<int, Proto.C2G_LocalBattleFinished.Types.BattleDamage> _damages = new();
-        private readonly Dictionary<int, Proto.C2G_LocalBattleFinished.Types.ConsumeItem> _items = new();
-
-        private void OnDamage(BattleCharacter source, BattleCharacter target, DamageResult result, bool dead)
-        {
-            //2 is monster
-            if (target.TeamIndex != 2) return;
-            if (target["__Monster"] is not MonsterData mData) return;
-            if (!_damages.TryGetValue(target.Index, out var damage))
-            {
-                damage = new C2G_LocalBattleFinished.Types.BattleDamage();
-                _damages.Add(target.Index, damage);
-            }
-
-            damage.MonsterId = target.Index;
-            damage.TotalDamage += result.Damage;
-            damage.MonsterConfigId = mData.ID;
-            if (dead) damage.DeadTime = (int)(GetTime().Time * 1000);
-        }
-
-        private float _startTime = 0;
-
-        private Server.Map.MapElementSpawn _mCreator;
-
-    
-        private BattleCharacter _characterOwner;
-        private float _lastSyncTime;
-
         public UCharacterView Owner { private set; get; }
 
-        private GTime GetTime()
-        {
-            return _timeSimulator.Now;
-        }
-
-        void IStateLoader.Load(GState state)
-        {
-            
-        }
-        
-
-        private async void ShowBattleResult(bool win = false)
-        {
-            if (!win)
-            {
-                //todo: show failure
-                UApplication.S.GoBackToMainGate();
-                return;
-            }
-
-            var request = new C2G_LocalBattleFinished
-            {
-                Damages = { _damages.Values },
-                LevelId = LevelId,
-                CostTime = (int)(this.GetTime().Time- this._startTime),
-                Items = { _items.Values }
-            };
-            var reward = await GateManager.S.LevelServiceClient.LocalBattleFinishedAsync(request,
-                cancellationToken: this.destroyCancellationToken);
-            await UniTask.SwitchToMainThread();
-            if(!reward.Code.IsOk()) UApplication.S.ShowError(reward.Code);
-            var ui = await UUIManager.S.CreateWindowAsync<UUIComplete>(token:this.destroyCancellationToken);
-            ui.ShowWindowByResult(reward);
-            
-        }
-
-        protected override void Tick()
-        {
-            if (State == null) return;
-            if(_isFinished) return;
-            GState.Tick(State, _timeSimulator.Now);
-            PerView.GetAndClearNotify();
-            
-            
-            
-            if (((IBattleGate)this).LeftTime <= 0)
-            {
-                //time Over
-                _isFinished = true;
-                ShowBattleResult(false);
-            }
-
-            if (_mCreator?.IsAllMonsterDeath() == true)
-            {
-                _isFinished = true;
-                ShowBattleResult(true);
-            }
-        }
+        public MapConfig Config { get; private set; }
 
         float IBattleGate.TimeServerNow => _timeSimulator.Now.Time;
 
@@ -230,11 +65,9 @@ namespace UApp.GameGates
 
         UCharacterView IBattleGate.Owner => Owner;
 
-        PlayerPackage IBattleGate.Package =>  GateManager.S.Package;
+        PlayerPackage IBattleGate.Package => GateManager.S.Package;
 
         DHero IBattleGate.Hero => Hero;
-
-        public MapConfig Config { get; private set; }
 
         StateType IBattleGate.State => StateType.Running;
 
@@ -252,11 +85,12 @@ namespace UApp.GameGates
                 rotation = Quaternion.LookRotation(forward.Value).eulerAngles.ToPV3();
                 Debug.Log($"Euler:{Quaternion.LookRotation(forward.Value).eulerAngles}");
             }
+
             SendAction(new Action_ClickSkillIndex
             {
                 MagicId = data.MagicID,
                 Position = character.Transform.position.ToPV3(),
-                Rotation = rotation 
+                Rotation = rotation
             });
 
             return true;
@@ -267,7 +101,7 @@ namespace UApp.GameGates
             UApplication.S.GoBackToMainGate();
         }
 
-        bool IBattleGate.MoveDir(UnityEngine.Vector3 dir)
+        bool IBattleGate.MoveDir(Vector3 dir)
         {
             if (Owner.IsLock(ActionLockType.NoMove)) return false;
             if (Owner.IsDeath) return false;
@@ -290,21 +124,12 @@ namespace UApp.GameGates
             else
             {
                 var stopMove = new Action_StopMove { StopPos = pos.ToPV3() };
-                if (Owner.DoStopMove())
-                {
-                    SendAction(stopMove);
-                    //if (this is IBattleGate b)
-                    //    b.TrySendLookForward(true);
-                }
+                if (Owner.DoStopMove()) SendAction(stopMove);
+                //if (this is IBattleGate b)
+                //    b.TrySendLookForward(true);
             }
 
             return true;
-        }
-
-        private void SendAction(IMessage action)
-        {
-            if (Owner.IsDeath) return;
-            _characterOwner?.AddNetAction(action);
         }
 
         bool IBattleGate.TrySendLookForward(bool force)
@@ -320,7 +145,6 @@ namespace UApp.GameGates
 
         bool IBattleGate.SendUseItem(ItemType type)
         {
-
             var package = GateManager.S.Package;
             foreach (var i in package.Items)
             {
@@ -334,7 +158,7 @@ namespace UApp.GameGates
             return false;
 
 
-            async void UseItem(PlayerItem item,ItemData config)
+            async void UseItem(PlayerItem item, ItemData config)
             {
                 var res = await GateManager.S.LevelServiceClient.UseItemAsync(new C2G_UseItem
                 {
@@ -350,21 +174,20 @@ namespace UApp.GameGates
                     if (!_items.TryGetValue(config.ID, out var cItem))
                     {
                         cItem = new C2G_LocalBattleFinished.Types.ConsumeItem();
-                        _items.Add(config.ID,cItem);
+                        _items.Add(config.ID, cItem);
                     }
 
                     cItem.ItemId = config.ID;
                     cItem.Num += 1;
                 }
 
-                
-                
+
                 await UniTask.SwitchToMainThread();
                 var rTarget = new ReleaseAtTarget(_characterOwner, _characterOwner);
-                Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic, ReleaserModeType.RmtNone,
+                Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic,
+                    ReleaserModeType.RmtNone,
                     -1);
             }
-
         }
 
         bool IBattleGate.IsHpFull()
@@ -377,6 +200,170 @@ namespace UApp.GameGates
             return false;
         }
 
+        void IStateLoader.Load(GState state)
+        {
+        }
 
+        protected override async Task JoinGate(params object[] args)
+        {
+            await base.JoinGate();
+
+            UUIManager.S.ShowMask(true);
+            UUIManager.S.HideAll();
+            Hero = args[0] as DHero;
+            LevelId = (int)args[2];
+            await InitLevel(LevelId);
+        }
+
+        protected override async Task ExitGate()
+        {
+            State?.Stop(_timeSimulator.Now);
+            await Task.CompletedTask;
+        }
+
+        private async Task InitLevel(int levelId)
+        {
+            LookAtView = new RenderTexture(128, 128, 32);
+            LevelData = CM.GetId<BattleLevelData>(levelId);
+            await Addressables.LoadSceneAsync($"Assets/Levels/{LevelData.LevelName}.unity").Task;
+
+
+            PerView = UPerceptionView.Create(UApplication.S.Constant);
+            PerView.OnCreateCharacter = c => c.TryAdd<HpTipShower>();
+            _timeSimulator = PerView;
+            await UniTask.Yield();
+            State = new BattleState(PerView, this, PerView);
+            State.Start(GetTime());
+
+
+            await ResourcesManager.S.LoadResourcesWithExName<TextAsset>(LevelData.ElementConfigPath,
+                rs => { Config = rs.text.Parser<MapConfig>(); });
+            _mCreator = new MapElementSpawn(Per, Config);
+
+            var data = CM.GetId<CharacterData>(Hero.HeroID);
+            var magic = Hero.CreateHeroMagic();
+            var properties = BattleUtility.CreateHeroProperties(Hero, ((IBattleGate)this).Package);
+
+            var playerBornPositions = Config.Elements.Where(t => t.Type == MapElementType.MetPlayerInit)
+                .Select(t => t).ToArray();
+
+
+            var pos = GRandomer.RandomArray(playerBornPositions); //.position;        
+            _characterOwner = Per.CreateCharacter(Per.StateControllor,
+                Hero.Level,
+                data,
+                magic, properties,
+                0,
+                pos.Position.ToUV3(),
+                Quaternion.LookRotation(pos.Forward.ToUV3()).eulerAngles,
+                string.Empty,
+                Hero.Name);
+            await UniTask.Delay(1000);
+            //var root = Per.ChangeCharacterAI(data.AIResourcePath, _characterOwner);
+            //Debug.Log($"AI:{root.NodeRoot.name}"); 
+            Owner = _characterOwner.CharacterView as UCharacterView;
+            PerView.OwnerTeamIndex = Owner!.TeamId;
+            PerView.OwnerIndex = Owner.Index;
+            FindFirstObjectByType<ThirdPersonCameraContollor>()
+                .SetLookAt(Owner.GetBoneByName(UCharacterView.RootBone))
+                //.SetForwardOffset(Vector3.forward * 2f)
+                .SetXY(40, Owner.GetBoneByName(UCharacterView.RootBone).rotation.eulerAngles.y)
+                .SetDis(18.2f);
+            Owner.LookView(LookAtView);
+            await UUIManager.S.CreateWindowAsync<UUIBattle>(
+                ui => ui.ShowWindow(this), WRenderType.WithCanvas
+            );
+            UUIManager.S.ShowMask(false);
+
+            _characterOwner.OnDead = obj =>
+            {
+                UUIPopup.ShowConfirm(LanguageManager.S["Level_Relive_Title"],
+                    LanguageManager.S["Level_Relive_Content"],
+                    () => { UApplication.S.GoBackToMainGate(); },
+                    onlyOk: true);
+                //UUIManager.S.CreateWindowAsync<Windows.>
+            };
+
+            await _mCreator.Spawn();
+            _startTime = ((IBattleGate)this).TimeServerNow;
+            _isFinished = false;
+
+            (State.Perception as BattlePerception)!.OnDamage = OnDamage;
+        }
+
+        private void OnDamage(BattleCharacter source, BattleCharacter target, DamageResult result, bool dead)
+        {
+            //2 is monster
+            if (target.TeamIndex != 2) return;
+            if (target["__Monster"] is not MonsterData mData) return;
+            if (!_damages.TryGetValue(target.Index, out var damage))
+            {
+                damage = new C2G_LocalBattleFinished.Types.BattleDamage();
+                _damages.Add(target.Index, damage);
+            }
+
+            damage.MonsterId = target.Index;
+            damage.TotalDamage += result.Damage;
+            damage.MonsterConfigId = mData.ID;
+            if (dead) damage.DeadTime = (int)(GetTime().Time * 1000);
+        }
+
+        private GTime GetTime()
+        {
+            return _timeSimulator.Now;
+        }
+
+
+        private async void ShowBattleResult(bool win = false)
+        {
+            if (!win)
+            {
+                //todo: show failure
+                UApplication.S.GoBackToMainGate();
+                return;
+            }
+
+            var request = new C2G_LocalBattleFinished
+            {
+                Damages = { _damages.Values },
+                LevelId = LevelId,
+                CostTime = (int)(GetTime().Time - _startTime),
+                Items = { _items.Values }
+            };
+            var reward = await GateManager.S.LevelServiceClient.LocalBattleFinishedAsync(request,
+                cancellationToken: destroyCancellationToken);
+            await UniTask.SwitchToMainThread();
+            if (!reward.Code.IsOk()) UApplication.S.ShowError(reward.Code);
+            var ui = await UUIManager.S.CreateWindowAsync<UUIComplete>(token: destroyCancellationToken);
+            ui.ShowWindowByResult(reward);
+        }
+
+        protected override void Tick()
+        {
+            if (State == null) return;
+            if (_isFinished) return;
+            GState.Tick(State, _timeSimulator.Now);
+            PerView.GetAndClearNotify();
+
+
+            if (((IBattleGate)this).LeftTime <= 0)
+            {
+                //time Over
+                _isFinished = true;
+                ShowBattleResult();
+            }
+
+            if (_mCreator?.IsAllMonsterDeath() == true)
+            {
+                _isFinished = true;
+                ShowBattleResult(true);
+            }
+        }
+
+        private void SendAction(IMessage action)
+        {
+            if (Owner.IsDeath) return;
+            _characterOwner?.AddNetAction(action);
+        }
     }
 }

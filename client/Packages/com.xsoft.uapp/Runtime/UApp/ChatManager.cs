@@ -1,27 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows;
 using App.Core.Core;
 using Cysharp.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Proto;
-using Utility;
 using XNet.Libs.Utility;
 using static UApp.Utility.Stream;
+using Void = Proto.Void;
 
 namespace UApp
 {
     [Name("ChatManager")]
     public class ChatManager : XSingleton<ChatManager>
     {
+        public string Host;
+        public int Port;
+        public Action<N_Notify_InviteJoinMatchGroup> OnInviteJoinMatchGroup;
+
+        public Action<N_Notify_MatchGroup> OnMatchGroup;
 
         public Action<Chat> OnReceivedChat;
         public Action<PlayerState> OnReceivePlayerStateChange;
         public Action<N_Notify_BattleServer> OnStartBattle;
-        
-        public Action<N_Notify_MatchGroup> OnMatchGroup;
-        public Action<N_Notify_InviteJoinMatchGroup> OnInviteJoinMatchGroup;
 
         private ResponseChannel<Any> ChatHandleChannel { get; set; }
         private string HeroName { get; set; }
@@ -29,16 +32,43 @@ namespace UApp
 
         public Dictionary<string, PlayerState> Friends { get; } = new();
 
-        public string Host;
-        public int Port;
-        
-        private  async void ShowConnect()
+        public ChatService.ChatServiceClient ChatClient { private set; get; }
+        private AsyncServerStreamingCall<Any> LoginCall { get; set; }
+
+        protected override async void OnDestroy()
+        {
+            base.OnDestroy();
+            if (ChatHandleChannel != null)
+            {
+                await ChatHandleChannel.ShutDownAsync(false)!;
+                ChatHandleChannel = null;
+            }
+
+            if (ChatChannel != null)
+            {
+                try
+                {
+                    await ChatChannel.ShutdownAsync();
+                }
+                catch
+                {
+                    //ignore
+                }
+
+                ChatChannel = null;
+            }
+
+            LoginCall?.Dispose();
+            LoginCall = null;
+        }
+
+        private async void ShowConnect()
         {
             await UniTask.SwitchToMainThread();
 
-            Windows.UUIPopup.ShowConfirm("Chat_Disconnect".GetLanguageWord(),
+            UUIPopup.ShowConfirm("Chat_Disconnect".GetLanguageWord(),
                 "Chat_Disconnect_content".GetLanguageWord(),
-                 ReConnected);
+                ReConnected);
             return;
 
             async void ReConnected()
@@ -47,17 +77,13 @@ namespace UApp
             }
         }
 
-        public ChatService.ChatServiceClient ChatClient { private set; get; }
-        private AsyncServerStreamingCall<Any> LoginCall { get; set; }
-
         public async Task<bool> TryConnectChatServer(ServiceAddress serviceAddress, string heroName)
         {
-
             if (ChatHandleChannel?.IsWorking == true) return true;
 
             Host = serviceAddress.IpAddress;
             Port = serviceAddress.Port;
-        
+
             if (ChatChannel != null)
             {
                 await ChatHandleChannel?.ShutDownAsync(false)!;
@@ -67,9 +93,10 @@ namespace UApp
             }
 
 
-            this.HeroName = heroName;
+            HeroName = heroName;
             ChatChannel = new LogChannel(serviceAddress);
-            var chat = ChatChannel.CreateClient<ChatService.ChatServiceClient>();// (ChatChannel.CreateLogCallInvoker());
+            var chat = ChatChannel
+                .CreateClient<ChatService.ChatServiceClient>(); // (ChatChannel.CreateLogCallInvoker());
             ChatClient = chat;
             LoginCall = chat.Login(new C2CH_Login
             {
@@ -79,7 +106,7 @@ namespace UApp
             }, cancellationToken: ChatChannel.ShutdownToken);
             var header = await LoginCall.ResponseHeadersAsync;
             ChatChannel.SessionKey = header.Get(HeadKeys.SessionKey)?.Value ?? string.Empty;
-            Debuger.Log($"ChatChannel.SessionKey:{ChatChannel.SessionKey }");
+            Debuger.Log($"ChatChannel.SessionKey:{ChatChannel.SessionKey}");
 
             if (string.IsNullOrEmpty(ChatChannel.SessionKey))
             {
@@ -88,14 +115,11 @@ namespace UApp
                 return false;
             }
 
-            var friend = await chat.QueryFriendAsync(new Proto.Void());
+            var friend = await chat.QueryFriendAsync(new Void());
 
             Friends.Clear();
 
-            foreach (var i in friend.States)
-            {
-                Friends.Add(i.User.Uuid, i);
-            }
+            foreach (var i in friend.States) Friends.Add(i.User.Uuid, i);
 
             if (!friend.Code.IsOk())
             {
@@ -105,7 +129,7 @@ namespace UApp
                 return false;
             }
 
-            ChatHandleChannel = new ResponseChannel<Any>(LoginCall.ResponseStream, true, tag: "ChatHandle")
+            ChatHandleChannel = new ResponseChannel<Any>(LoginCall.ResponseStream, true, "ChatHandle")
             {
                 OnReceived = OnReceived,
                 OnDisconnect = TryConnected
@@ -146,7 +170,7 @@ namespace UApp
                 }
                 else
                 {
-                    Windows.UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(),
+                    UUIPopup.ShowConfirm("BattleJoinTitle".GetLanguageWord(),
                         "BattleJoinContent".GetLanguageWord(),
                         () => UApplication.S.GotoBattleGate(battleServer.Server, battleServer.LevelID),
                         LevelMatch);
@@ -183,38 +207,10 @@ namespace UApp
             ShowConnect();
         }
 
-        protected override async void OnDestroy()
-        {
-            base.OnDestroy();
-            if (ChatHandleChannel != null)
-            {
-                await ChatHandleChannel.ShutDownAsync(false)!;
-                ChatHandleChannel = null;
-            }
-            if (ChatChannel != null)
-            {
-                try
-                {
-                    await ChatChannel.ShutdownAsync();
-                }
-                catch
-                {
-                    //ignore
-                }
-
-                ChatChannel = null;
-            }
-
-            LoginCall?.Dispose();
-            LoginCall = null;
-            
-        }
-
         public async void SendChat(params Chat[] msg)
         {
-            var res =  await ChatClient.SendChatAsync(new C2CH_Chat { Mesg = { msg } });
-            if(!res.Code.IsOk()) UApplication.S.ShowError(res.Code);
+            var res = await ChatClient.SendChatAsync(new C2CH_Chat { Mesg = { msg } });
+            if (!res.Code.IsOk()) UApplication.S.ShowError(res.Code);
         }
     }
 }
-

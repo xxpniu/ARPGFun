@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3f7d209d96c186e488b96fa4cd40c808
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/SROptions.Test.cs
+  uploadId: 496367

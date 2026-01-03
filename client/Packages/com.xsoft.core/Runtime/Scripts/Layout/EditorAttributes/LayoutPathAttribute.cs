@@ -2,11 +2,7 @@
 
 namespace Layout.EditorAttributes
 {
-	public class LayoutPathAttribute:Attribute
-	{
-		public LayoutPathAttribute ()
-		{
-		}
-	}
+    public class LayoutPathAttribute : Attribute
+    {
+    }
 }
-

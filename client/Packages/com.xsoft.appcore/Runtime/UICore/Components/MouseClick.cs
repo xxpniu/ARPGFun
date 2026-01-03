@@ -4,10 +4,14 @@ using UnityEngine.EventSystems;
 
 public class UIMouseClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    private bool IsDown = false;
+    public bool CheckMove;
+    private bool IsDown;
+
+    public Action<object> OnClick;
     private float time = -1f;
 
-    public bool CheckMove = false;
+    public object userState;
+
     void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
     {
         time = Time.time;
@@ -26,6 +30,7 @@ public class UIMouseClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
                 DoClick();
             }
         }
+
         IsDown = false;
     }
 
@@ -33,8 +38,4 @@ public class UIMouseClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     {
         OnClick?.Invoke(userState);
     }
-
-    public Action<object> OnClick;
-
-    public object userState;
 }

@@ -1,20 +1,17 @@
-﻿using System;
-
-namespace EngineCore.Simulater
+﻿namespace EngineCore.Simulater
 {
-	public abstract class GPerception
-	{
-		protected GPerception (GState state)
-		{
-			this.State = state;
-		}
+    public abstract class GPerception
+    {
+        protected GPerception(GState state)
+        {
+            State = state;
+        }
 
-		public GState State{set;get;}
+        public GState State { set; get; }
 
-		protected void JoinElement(GObject el)
+        protected void JoinElement(GObject el)
         {
             State.AddElement(el);
         }
-	}
+    }
 }
-

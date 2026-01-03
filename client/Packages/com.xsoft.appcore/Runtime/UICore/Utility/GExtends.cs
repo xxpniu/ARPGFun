@@ -5,8 +5,7 @@ using UnityEngine.UI;
 namespace App.Core.UICore.Utility
 {
     public static class GExtends
-	{
-
+    {
         public static void ActiveSelfObject(this Component com, bool active)
         {
             com.gameObject.SetActive(active);
@@ -17,7 +16,8 @@ namespace App.Core.UICore.Utility
         {
             u.transform.SetLayer(LayerMask.NameToLayer(layer));
         }
-        public static T TryAdd<T>(this GameObject obj) where T:Component
+
+        public static T TryAdd<T>(this GameObject obj) where T : Component
         {
             if (obj.TryGetComponent(out T c)) return c;
             return obj.AddComponent<T>();
@@ -35,53 +35,47 @@ namespace App.Core.UICore.Utility
             trans.localRotation = Quaternion.identity;
         }
 
-        public static void SetLayer(this Transform trans ,int layer)
+        public static void SetLayer(this Transform trans, int layer)
         {
             trans.gameObject.layer = layer;
             foreach (var i in trans.GetComponentsInChildren<Transform>()) i.gameObject.layer = layer;
         }
 
-        public static T FindChild<T> (this Transform trans, string name) where T :Component
-		{
-			var t = FindInAllChild (trans, name);
-			if (t == null) return null;
-			else return t.GetComponent<T>();
-		}
+        public static T FindChild<T>(this Transform trans, string name) where T : Component
+        {
+            var t = FindInAllChild(trans, name);
+            if (t == null) return null;
+            return t.GetComponent<T>();
+        }
 
         private static Transform FindInAllChild(Transform trans, string name)
         {
-            if (trans.name == name) { return trans; }
+            if (trans.name == name) return trans;
 
             for (var i = 0; i < trans.childCount; i++)
             {
                 var t = FindInAllChild(trans.GetChild(i), name);
                 if (t != null) return t;
             }
+
             return null;
         }
 
 
-		
-
         public static void DrawSphere(Vector3 center, float m_Radius, Vector3 forward)
         {
-
             // 绘制圆环
-            Vector3 beginPoint = Vector3.zero;
-            Vector3 firstPoint = Vector3.zero;
+            var beginPoint = Vector3.zero;
+            var firstPoint = Vector3.zero;
             for (float theta = 0; theta < 2 * Mathf.PI; theta += 0.2f)
             {
-                float x = m_Radius * Mathf.Cos(theta);
-                float z = m_Radius * Mathf.Sin(theta);
-                Vector3 endPoint = new Vector3(x, 0, z);
+                var x = m_Radius * Mathf.Cos(theta);
+                var z = m_Radius * Mathf.Sin(theta);
+                var endPoint = new Vector3(x, 0, z);
                 if (theta == 0)
-                {
                     firstPoint = endPoint;
-                }
                 else
-                {
                     Gizmos.DrawLine(beginPoint + center, endPoint + center);
-                }
                 beginPoint = endPoint;
             }
 
@@ -108,6 +102,5 @@ namespace App.Core.UICore.Utility
         {
             t.text = LanguageManager.S.Format(key, pars);
         }
-
     }
 }

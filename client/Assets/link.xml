@@ -11,6 +11,6 @@
         <namespace fullname="Vuforia" preserve="all"/>
     </assembly>
     <assembly fullname="System.Core">
-        <type fullname="System.Linq.Expressions.Interpreter.LightLambda" preserve="all" />
+        <type fullname="System.Linq.Expressions.Interpreter.LightLambda" preserve="all"/>
     </assembly>
 </linker>

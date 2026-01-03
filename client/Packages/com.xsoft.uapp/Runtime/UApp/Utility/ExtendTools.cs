@@ -4,14 +4,11 @@ using App.Core.Core;
 using EConfig;
 using ExcelConfig;
 using GameLogic.Game;
-using Google.Protobuf;
-using org.apache.zookeeper.data;
 using Proto;
 
 public static class ExtendTools
 {
-
-    private static readonly Dictionary<HeroPropertyType, Func<int, string>> ValueFormat  =new Dictionary<HeroPropertyType, Func<int, string>>();
+    private static readonly Dictionary<HeroPropertyType, Func<int, string>> ValueFormat = new();
 
     static ExtendTools()
     {
@@ -60,7 +57,6 @@ public static class ExtendTools
         ExtendTools.ValueFormat.Add(HeroPropertyType.ViewDistance, DisFormat);
         //ValueFormat.Add(HeroPropertyType.VsBoss, prof);
         // ValueFormat.Add(HeroPropertyType.VsElite, prof);
-
     }
 
     public static string ToValueString(this ComplexValue value, HeroPropertyType p)
@@ -73,11 +69,8 @@ public static class ExtendTools
     {
         var list = new List<string>();
         if (keys == null) return LanguageManager.S.Format(key, list.ToArray());
-        
-        foreach (var i in keys)
-        {
-            list.Add(LanguageManager.S[i]);
-        }
+
+        foreach (var i in keys) list.Add(LanguageManager.S[i]);
         return LanguageManager.S.Format(key, list.ToArray());
     }
 
@@ -96,6 +89,4 @@ public static class ExtendTools
         var stat = ExcelToJSONConfigManager.GetId<StatData>((int)p);
         return stat.WordKey.GetLanguageWord();
     }
-
-  
 }

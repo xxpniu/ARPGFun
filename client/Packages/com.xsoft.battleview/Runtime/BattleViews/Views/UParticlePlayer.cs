@@ -1,15 +1,14 @@
 ﻿using App.Core.Core;
 using GameLogic.Game.LayoutLogics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace BattleViews.Views
 {
-    public class UParticlePlayer:MonoBehaviour, IParticlePlayer
+    public class UParticlePlayer : MonoBehaviour, IParticlePlayer
     {
         public string path;
 
-        private bool _isDestroy = false;
+        private bool _isDestroy;
 
         private async void Start()
         {
@@ -19,22 +18,22 @@ namespace BattleViews.Views
         }
 
         #region IParticlePlayer implementation
+
         public void DestroyParticle()
         {
             _isDestroy = true;
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
 
         public void AutoDestroy(float time)
         {
             _isDestroy = true;
-            Destroy(gameObject, time); 
+            Destroy(gameObject, time);
         }
-        
+
 
         public bool CanDestroy => !_isDestroy;
 
         #endregion
-
     }
 }

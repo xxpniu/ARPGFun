@@ -1,46 +1,22 @@
 using System;
-using UGameTools;
-using EConfig;
-using Proto;
-using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using Cysharp.Threading.Tasks;
+using EConfig;
 using ExcelConfig;
+using Proto;
 using UApp;
-using UApp.GameGates;
 
 namespace Windows
 {
-    partial class UUIShopGold
+    internal partial class UUIShopGold
     {
-        public class ContentsTableModel : TableItemModel<ContentsTableTemplate>
-        {
-            public ContentsTableModel(){}
-            public override void InitModel()
-            {
-                Template.ButtonBlue.onClick.AddListener(() => OnClick?.Invoke(this));
-            }
-
-            public Action<ContentsTableModel> OnClick;
-
-            public GoldShopData Config;
-
-            internal async void SetConfig(GoldShopData item)
-            {
-                this.Config = item;
-                Template.icon.sprite = await ResourcesManager.S.LoadIcon(item);
-                Template.lb_gold.text = $"{item.ReceiveGold}";
-                Template.ButtonBlue.SetText($"{item.Prices}");
-                Template.lb_name.SetKey(item.Name);
-            }
-        }
-
         protected override void InitModel()
         {
             base.InitModel();
-            ButtonClose.onClick.AddListener(HideWindow) ;
+            ButtonClose.onClick.AddListener(HideWindow);
         }
+
         protected override void OnShow()
         {
             base.OnShow();
@@ -55,8 +31,6 @@ namespace Windows
                 i.Model.OnClick = OnItemClick;
                 index++;
             }
-
-
         }
 
         private void OnItemClick(ContentsTableModel obj)
@@ -85,5 +59,25 @@ namespace Windows
             }
         }
 
+        public class ContentsTableModel : TableItemModel<ContentsTableTemplate>
+        {
+            public GoldShopData Config;
+
+            public Action<ContentsTableModel> OnClick;
+
+            public override void InitModel()
+            {
+                Template.ButtonBlue.onClick.AddListener(() => OnClick?.Invoke(this));
+            }
+
+            internal async void SetConfig(GoldShopData item)
+            {
+                Config = item;
+                Template.icon.sprite = await ResourcesManager.S.LoadIcon(item);
+                Template.lb_gold.text = $"{item.ReceiveGold}";
+                Template.ButtonBlue.SetText($"{item.Prices}");
+                Template.lb_name.SetKey(item.Name);
+            }
+        }
     }
 }

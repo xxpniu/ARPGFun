@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 2ac1e31ed7a70544795db2044eb915e1
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Resources/SRDebugger/UI/Prefabs/Options/NumberOption.prefab
+  uploadId: 496367

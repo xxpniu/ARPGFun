@@ -1,31 +1,37 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using App.Core.UICore.Utility;
 using BattleViews.Utility;
 using UApp;
-using UnityEngine.UI;
 using UGameTools;
 
 namespace Windows
 {
-    partial class UUISettings
+    internal partial class UUISettings
     {
-
         protected override void InitModel()
         {
             base.InitModel();
 
             ButtonClose.onClick.AddListener(HideWindow);
-            ButtonExit.OnMouseClick((o) => { UApplication.S.GotoLoginGate(); HideWindow(); });
+            ButtonExit.OnMouseClick(o =>
+            {
+                UApplication.S.GotoLoginGate();
+                HideWindow();
+            });
 
-            Slider_bgm.onValueChanged.AddListener((v) => {SettingManager.S.BgmValue = v;});
-            sfx_Slider.onValueChanged.AddListener((v) => { SettingManager.S.MusicValue = v; });
-            SaveToggle.onValueChanged.AddListener(v => { SettingManager.S.SavePower = v; SetKeyText(); });
-            NoticeToggle.onValueChanged.AddListener(v => { SettingManager.S.Notice = v; SetKeyText(); });
-
+            Slider_bgm.onValueChanged.AddListener(v => { SettingManager.S.BgmValue = v; });
+            sfx_Slider.onValueChanged.AddListener(v => { SettingManager.S.MusicValue = v; });
+            SaveToggle.onValueChanged.AddListener(v =>
+            {
+                SettingManager.S.SavePower = v;
+                SetKeyText();
+            });
+            NoticeToggle.onValueChanged.AddListener(v =>
+            {
+                SettingManager.S.Notice = v;
+                SetKeyText();
+            });
         }
+
         protected override void OnShow()
         {
             base.OnShow();
@@ -42,8 +48,8 @@ namespace Windows
         private void SetKeyText()
         {
             lb_title.SetKey("UUISetting_Title");
-            this.lb_save_Text.SetKey("UUISetting_SAVE");
-            this.lb_notice_Text.SetKey("UUISetting_NOTICE");
+            lb_save_Text.SetKey("UUISetting_SAVE");
+            lb_notice_Text.SetKey("UUISetting_NOTICE");
             lb_sfx.SetKey("UUISetting_sfx");
             lb_bgm.SetKey("UUISetting_Bgm");
 

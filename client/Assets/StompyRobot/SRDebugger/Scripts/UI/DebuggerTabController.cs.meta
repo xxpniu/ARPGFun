@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 295aaaf6e216af84e99f15dff7b6fc32
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/DebuggerTabController.cs
+  uploadId: 496367

@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: b1e14a36132e86c4a86149b6ecbe53f4
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Resources/SRDebugger/UI/Prefabs/BugReportPopover.prefab
+  uploadId: 496367

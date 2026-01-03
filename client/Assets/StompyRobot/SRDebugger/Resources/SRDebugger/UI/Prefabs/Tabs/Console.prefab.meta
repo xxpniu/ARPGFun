@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: abd74791d32aafa4c9ca4f20145cd14c
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Resources/SRDebugger/UI/Prefabs/Tabs/Console.prefab
+  uploadId: 496367

@@ -5,19 +5,17 @@ using UnityEditor.iOS.Xcode;
 
 public class BuildPostProcessor
 {
-
-
     [PostProcessBuild(1)]
     public static void OnPostProcessBuild(BuildTarget target, string path)
     {
         if (target == BuildTarget.iOS)
         {
             // Read.
-            string projectPath = PBXProject.GetPBXProjectPath(path);
-            PBXProject project = new PBXProject();
+            var projectPath = PBXProject.GetPBXProjectPath(path);
+            var project = new PBXProject();
             project.ReadFromString(File.ReadAllText(projectPath));
             //string targetName = project.GetUnityFrameworkTargetGuid() // note, not "project." ...
-            string targetGuid = project.GetUnityFrameworkTargetGuid();
+            var targetGuid = project.GetUnityFrameworkTargetGuid();
 
             AddFrameworks(project, targetGuid);
 
@@ -26,7 +24,7 @@ public class BuildPostProcessor
         }
     }
 
-    static void AddFrameworks(PBXProject project, string targetGuid)
+    private static void AddFrameworks(PBXProject project, string targetGuid)
     {
         // Frameworks (eppz! Photos, Google Analytics).
         //project.AddFrameworkToProject(targetGUID, "MessageUI.framework", false);

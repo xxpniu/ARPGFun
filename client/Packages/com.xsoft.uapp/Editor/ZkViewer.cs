@@ -6,59 +6,28 @@ using org.apache.zookeeper;
 using UnityEditor;
 using UnityEngine;
 
-
-
-
 public class ZkViewer : EditorWindow
 {
-    private class ZkWatcher : Watcher
-    {
-        public override async Task process(WatchedEvent @event)
-        {
-            Debug.Log($"{@event}");
-            await Task.CompletedTask;
-        }
-    }
+    public string Host = "129.211.9.75:2181";
+    private GUIStyle dstyle;
 
-    public class ZkTreeNode
-    {
-        public DataResult Data;
-        public List<ZkTreeNode> Childs { get; } = new List<ZkTreeNode>();
-        public int ChildNum { get; internal set; }
 
-        public string Path;
-        public ZkTreeNode Parent;
-        public string name;
-        public bool LoadedChilds = false;
-    }
+    private int line;
+
+    [NonSerialized] private ZkTreeNode Root;
+
+    private Vector2 scroll = Vector2.zero;
 
     private GUIStyle style;
-    private GUIStyle dstyle;
-    [MenuItem("Window/ZkViewer")]
-    public static void OpenWindow()
-    {
-        var viewer = GetWindow<ZkViewer>("ZkViewer");
 
-        viewer. style = new GUIStyle() { fixedHeight =25 };
-        viewer.dstyle = new GUIStyle { fixedHeight = 25, normal = new GUIStyleState { background = Texture2D.grayTexture } };
-        viewer.ShowModalUtility();
-    }
-
-    public string Host = "129.211.9.75:2181";
-
-    [NonSerialized]
-    private ZkTreeNode Root;
-
-    [NonSerialized]
-    private ZooKeeper zk;
+    [NonSerialized] private ZooKeeper zk;
 
     private void OnGUI()
     {
-
         line = 0;
         var size = Vector2.one * 200;
 
-        GUILayout.BeginArea(new Rect(this.position.width-(size.x+5),5, size.x,size.y));
+        GUILayout.BeginArea(new Rect(position.width - (size.x + 5), 5, size.x, size.y));
         GUILayout.BeginVertical();
 
         if (zk == null)
@@ -69,8 +38,8 @@ public class ZkViewer : EditorWindow
             {
                 zk?.closeAsync();
                 zk = new ZooKeeper(Host, 3000, new ZkWatcher());
-                Root = new ZkTreeNode() { Path = "/" };
-                _= Task.Factory.StartNew(()=> LoadChildAsync(Root));
+                Root = new ZkTreeNode { Path = "/" };
+                _ = Task.Factory.StartNew(() => LoadChildAsync(Root));
             }
         }
         else
@@ -83,31 +52,34 @@ public class ZkViewer : EditorWindow
                 zk = null;
             }
         }
+
         GUILayout.EndVertical();
         GUILayout.EndArea();
 
-        if (Root == null)
-        {
-            return;
-        }
+        if (Root == null) return;
 
-        var w = this.position.width - (size.x + 25);
+        var w = position.width - (size.x + 25);
 
-        scroll= EditorGUILayout.BeginScrollView(scroll,GUILayout.Width(w));
+        scroll = EditorGUILayout.BeginScrollView(scroll, GUILayout.Width(w));
         DrawNode(Root, 0);
         EditorGUILayout.EndScrollView();
-        
     }
 
-    private Vector2 scroll = Vector2.zero;
+    [MenuItem("Window/ZkViewer")]
+    public static void OpenWindow()
+    {
+        var viewer = GetWindow<ZkViewer>("ZkViewer");
 
+        viewer.style = new GUIStyle { fixedHeight = 25 };
+        viewer.dstyle = new GUIStyle
+            { fixedHeight = 25, normal = new GUIStyleState { background = Texture2D.grayTexture } };
+        viewer.ShowModalUtility();
+    }
 
-    private int line = 0;
-
-    private  void DrawNode(ZkTreeNode node, int top)
+    private void DrawNode(ZkTreeNode node, int top)
     {
         GUILayout.BeginVertical();
-        GUILayout.BeginHorizontal(style: line++ % 2 == 0 ? dstyle : style);
+        GUILayout.BeginHorizontal(line++ % 2 == 0 ? dstyle : style);
 
         GUILayout.Label("", GUILayout.Width(top * 20));
         GUILayout.Label($"{node.Path}{node.name}");
@@ -117,9 +89,7 @@ public class ZkViewer : EditorWindow
             if (!node.LoadedChilds)
             {
                 if (GUILayout.Button("+", GUILayout.Width(20)))
-                {
-                    _= Task.Factory.StartNew(()=> LoadChildAsync(node));// LoadChildAsync(node);
-                }
+                    _ = Task.Factory.StartNew(() => LoadChildAsync(node)); // LoadChildAsync(node);
             }
             else
             {
@@ -132,20 +102,15 @@ public class ZkViewer : EditorWindow
         }
 
         if (GUILayout.Button("Data", GUILayout.Width(60)))
-        {
             if (node.Data != null)
             {
                 var str = Encoding.UTF8.GetString(node.Data.Data);
                 EditorUtility.DisplayDialog(node.Path, str, "Ok");
             }
-        }
 
         GUILayout.EndHorizontal();
         GUILayout.EndVertical();
-        foreach (var i in node.Childs)
-        {
-            DrawNode(i, top + 1);
-        }
+        foreach (var i in node.Childs) DrawNode(i, top + 1);
     }
 
 
@@ -157,10 +122,7 @@ public class ZkViewer : EditorWindow
         foreach (var c in childs.Children)
         {
             var t = $"{node.Path}/{c}";
-            if (node.Path == "/")
-            {
-                t = $"/{c}";
-            }
+            if (node.Path == "/") t = $"/{c}";
 
             Debug.Log(t);
             var data = await zk.getDataAsync(t);
@@ -174,7 +136,28 @@ public class ZkViewer : EditorWindow
             };
             node.Childs.Add(n);
         }
+
         node.LoadedChilds = true;
     }
-}
 
+    private class ZkWatcher : Watcher
+    {
+        public override async Task process(WatchedEvent @event)
+        {
+            Debug.Log($"{@event}");
+            await Task.CompletedTask;
+        }
+    }
+
+    public class ZkTreeNode
+    {
+        public DataResult Data;
+        public bool LoadedChilds;
+        public string name;
+        public ZkTreeNode Parent;
+
+        public string Path;
+        public List<ZkTreeNode> Childs { get; } = new();
+        public int ChildNum { get; internal set; }
+    }
+}

@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 38622dccbe5c7c84782cd2c695aa3521
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/UI/Prefabs/SideBar/ConsoleTabButtonContent.prefab
+  uploadId: 496367

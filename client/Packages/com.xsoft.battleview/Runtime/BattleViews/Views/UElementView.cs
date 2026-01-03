@@ -8,15 +8,33 @@ namespace BattleViews.Views
 {
     public abstract class UElementView : MonoBehaviour, IBattleElement, ISerializationElement
     {
-
-        public int Index { set; get; }
         public UPerceptionView PerView { private set; get; }
 
         public GObject GElement { private set; get; }
 
+        public int Index { set; get; }
+
+        public abstract IMessage ToInitNotify();
+
         public void SetPerception(UPerceptionView view)
         {
             PerView = view;
+        }
+
+
+        public void DestroySelf(float time = 0.3f)
+        {
+            if (!this) return;
+            Destroy(gameObject, time);
+        }
+
+        public virtual void OnJoined()
+        {
+        }
+
+        protected void CreateNotify(IMessage notify)
+        {
+            PerView.AddNotify(notify); //  AddNotify();
         }
 
         #region IBattleElement implementation
@@ -24,7 +42,7 @@ namespace BattleViews.Views
         void IBattleElement.JoinState(int index)
         {
             OnJoined();
-            this.Index = index;
+            Index = index;
 #if UNITY_SERVER || UNITY_EDITOR
             CreateNotify(ToInitNotify());
 #endif
@@ -46,21 +64,5 @@ namespace BattleViews.Views
         }
 
         #endregion
-
-
-        public void DestroySelf(float time = 0.3f)
-        {
-            if (!this) return;
-            Destroy(this.gameObject, time);
-        }
-
-        public virtual void OnJoined() { }
-
-        public abstract IMessage ToInitNotify();
-
-        protected void CreateNotify(IMessage notify)
-        {
-            PerView.AddNotify(notify);//  AddNotify();
-        }
     }
 }

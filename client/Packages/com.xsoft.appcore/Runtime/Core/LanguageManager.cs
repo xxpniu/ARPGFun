@@ -10,7 +10,7 @@ namespace App.Core.Core
     public class LanguageManager : XSingleton<LanguageManager>
     {
         public enum LanguageType
-        { 
+        {
             Zh,
             En
         }
@@ -19,10 +19,11 @@ namespace App.Core.Core
 
         public readonly Dictionary<string, string> Keys = new();
 
+        public string this[string key] => string.IsNullOrEmpty(key) ? string.Empty : Keys.GetValueOrDefault(key, key);
+
         protected override void Awake()
         {
             base.Awake();
-            
         }
 
         private async void Start()
@@ -30,31 +31,27 @@ namespace App.Core.Core
             var xml = await ResourcesManager.S.ReadStreamingFile("Language.xml");
 
             var ls = XmlParser.DeSerialize<LanguageSetting>(xml);
-            foreach (var i in ls.Keys)
-            {
-                AddKey(i.Key, i.Value);
-            }
+            foreach (var i in ls.Keys) AddKey(i.Key, i.Value);
         }
 
         private void AddKey(string key, string word)
         {
             try
             {
-           
                 if (Keys.ContainsKey(key))
                 {
                     Debug.LogError($"{key} exists!");
-                    return; ;
+                    return;
+                    ;
                 }
+
                 Keys.Add(key, word);
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 Debuger.LogError($"{key}->{word} \n{ex}");
             }
-
         }
-
-        public string this[string key] => string.IsNullOrEmpty(key) ? string.Empty : Keys.GetValueOrDefault(key, key);
 
         public string Format(string key, params object[] pars)
         {
@@ -64,7 +61,6 @@ namespace App.Core.Core
         public void AddLanguage(LanguageData[] la)
         {
             foreach (var i in la)
-            {
                 switch (LType)
                 {
                     case LanguageType.En:
@@ -75,8 +71,6 @@ namespace App.Core.Core
                         AddKey(i.Key, i.ZH);
                         break;
                 }
-            
-            }
         }
     }
 }

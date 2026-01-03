@@ -1,21 +1,20 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Core;
-using System.Threading;
 using XNet.Libs.Utility;
 
 namespace Server.ServiceHandlers
 {
-    public class ServerPushChannel<TData>:StreamBuffer<TData>
-        where TData :IMessage,new()
+    public class ServerPushChannel<TData> : StreamBuffer<TData>
+        where TData : IMessage, new()
     {
-        public ServerPushChannel(int max = 300):base(max)
-        {
-
-        }
-
         private CancellationTokenSource _token;
+
+        public ServerPushChannel(int max = 300) : base(max)
+        {
+        }
 
         private void Resume()
         {
@@ -40,7 +39,6 @@ namespace Server.ServiceHandlers
         public async Task ProcessAsync(IServerStreamWriter<TData> responseStream)
         {
             while (IsWorking)
-            {
                 try
                 {
                     while (TryPull(out var data))
@@ -53,14 +51,14 @@ namespace Server.ServiceHandlers
                         }
                     }
                     catch (OperationCanceledException)
-                    { }
+                    {
+                    }
                 }
                 catch (Exception)
                 {
                     Close();
                     break;
                 }
-            }
         }
     }
 }

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0d1845f798a1b5a47af337e37e463641
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/UI/Editor/SRNumberButtonEditor.cs
+  uploadId: 496367

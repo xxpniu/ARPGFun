@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 83ca528cafb0d2e40866729c49dc2d76
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/Coroutines.cs
+  uploadId: 496367

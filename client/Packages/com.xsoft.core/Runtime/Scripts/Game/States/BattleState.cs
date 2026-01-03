@@ -1,11 +1,8 @@
-﻿using System;
+﻿using EngineCore.Simulater;
 using GameLogic.Game.Perceptions;
-using EngineCore.Simulater;
-using GameLogic.Game.Elements;
-using P = Proto.HeroPropertyType;
+
 namespace GameLogic.Game.States
 {
-
     public class BattleState : GState
     {
         public BattleState(IViewBase viewBase, IStateLoader loader, ITimeSimulator simulator)
@@ -14,7 +11,7 @@ namespace GameLogic.Game.States
             Perception = new BattlePerception(this, viewBase.Create(simulator));
             loader.Load(this);
         }
+
         public IViewBase ViewBase { private set; get; }
     }
 }
-

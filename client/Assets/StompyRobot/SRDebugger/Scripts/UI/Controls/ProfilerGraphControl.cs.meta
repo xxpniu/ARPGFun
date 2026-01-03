@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e5812a284a856b743b4f54c6a4637061
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/Controls/ProfilerGraphControl.cs
+  uploadId: 496367

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9fff10238b625f545b2d88c80d4cf9d4
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/Controls/Profiler/ProfilerMonoBlock.cs
+  uploadId: 496367

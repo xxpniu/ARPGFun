@@ -1,21 +1,23 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Reflection;
+using UnityEngine;
 
 public static class EditorExtensions
 {
     /// <summary>
-    /// FindDerivedTypesFromAssembly allows a user to query all of types derived from a
-    /// particular Type at runtime.
-    /// Example usage:
-    ///     foreach (System.Type st in EditorUtility.FindDerivedTypesFromAssembly(System.Reflection.Assembly.GetAssembly(typeof(BaseTimelineEvent)), typeof(BaseTimelineEvent), true))
+    ///     FindDerivedTypesFromAssembly allows a user to query all of types derived from a
+    ///     particular Type at runtime.
+    ///     Example usage:
+    ///     foreach (System.Type st in
+    ///     EditorUtility.FindDerivedTypesFromAssembly(System.Reflection.Assembly.GetAssembly(typeof(BaseTimelineEvent)),
+    ///     typeof(BaseTimelineEvent), true))
     /// </summary>
     /// <param name="assembly">The assembly to search in</param>
     /// <param name="baseType">The base Type from which all returned Types derive</param>
     /// <param name="classOnly">If true, only class Types will be returned</param>
     /// <returns></returns>
-    public static System.Type[] FindDerivedTypesFromAssembly(this System.Reflection.Assembly assembly, System.Type baseType, bool classOnly = true)
+    public static Type[] FindDerivedTypesFromAssembly(this Assembly assembly, Type baseType, bool classOnly = true)
     {
         if (assembly == null)
             Debug.LogError("Assembly must be defined");
@@ -27,7 +29,7 @@ public static class EditorExtensions
             {
                 if (classOnly && !type.IsClass)
                     return false;
-                
+
                 if (baseType.IsInterface)
                 {
                     var it = type.GetInterface(baseType.FullName);
@@ -48,15 +50,15 @@ public static class EditorExtensions
     }
 
     /// <summary>
-    /// A convenient method for calling the above.
-    /// Example usage:
+    ///     A convenient method for calling the above.
+    ///     Example usage:
     ///     List<System.Type> subTypes = EditorUtility.FindDerivedTypes(typeof(BaseTimelineEvent)).ToList();
     /// </summary>
     /// <param name="baseType"></param>
     /// <param name="classOnly"></param>
     /// <returns></returns>
-    public static System.Type[] FindDerivedTypes(System.Type baseType, bool classOnly = true)
+    public static Type[] FindDerivedTypes(Type baseType, bool classOnly = true)
     {
-        return FindDerivedTypesFromAssembly(System.Reflection.Assembly.GetAssembly(baseType), baseType, classOnly);
+        return FindDerivedTypesFromAssembly(Assembly.GetAssembly(baseType), baseType, classOnly);
     }
 }

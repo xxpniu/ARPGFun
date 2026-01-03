@@ -1,33 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine.UI;
-using UGameTools;
-
 namespace Windows
 {
-    partial class UUIBattleResult
+    internal partial class UUIBattleResult
     {
-
         protected override void InitModel()
         {
             base.InitModel();
             Bt_Ok.onClick.AddListener(() =>
-                {
-                    //UApplication.Singleton.GoToMainGate();
-                });
+            {
+                //UApplication.Singleton.GoToMainGate();
+            });
 
-            Bt_Again.onClick.AddListener(() =>
-                {
-                   
-                });
+            Bt_Again.onClick.AddListener(() => { });
             //Write Code here
         }
+
         protected override void OnShow()
         {
             base.OnShow();
         }
+
         protected override void OnHide()
         {
             base.OnHide();
@@ -35,7 +26,6 @@ namespace Windows
 
         public void ShowResult(bool isWin)
         {
-            
         }
     }
 }

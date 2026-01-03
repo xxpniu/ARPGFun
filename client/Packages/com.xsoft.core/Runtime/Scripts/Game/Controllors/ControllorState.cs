@@ -1,25 +1,24 @@
-﻿using EngineCore.Simulater;
+﻿using EConfig;
+using EngineCore.Simulater;
 using GameLogic.Game.Elements;
 using GameLogic.Game.LayoutLogics;
 using GameLogic.Game.Perceptions;
-using Layout.AITree;
 using Layout.LayoutEffects;
 using Proto;
 using UnityEngine;
 using XNet.Libs.Utility;
-using UVector3 = UnityEngine.Vector3;
 
 namespace GameLogic.Game.Controllors
 {
     public class ControllorState : GControllor
     {
         private const string TimeKey = "__SkillTime__";
-        public BattlePerception BattlePerception => Perception as BattlePerception;
 
         public ControllorState(BattlePerception per) : base(per)
         {
-
         }
+
+        public BattlePerception BattlePerception => Perception as BattlePerception;
 
         public override GAction GetAction(GTime time, GObject current)
         {
@@ -31,21 +30,15 @@ namespace GameLogic.Game.Controllors
                 case Action_MoveJoystick move:
                 {
                     var lastSkillTime = character[TimeKey];
-                    if (lastSkillTime != null &&  (float)lastSkillTime +0.2f > time.Time)
-                    {
-                        return GAction.Empty;
-                    }
+                    if (lastSkillTime != null && (float)lastSkillTime + 0.2f > time.Time) return GAction.Empty;
 
-                    if (character.MoveTo(move.WillPos.ToUV3(), out UVector3 _))
-                    {
-                        CancelStartingReleaser(character);
-                    }
+                    if (character.MoveTo(move.WillPos.ToUV3(), out var _)) CancelStartingReleaser(character);
                     break;
                 }
                 case Action_NormalAttack normal:
                 {
                     character.EachActiveMagicByType(MagicType.MtNormal, time.Time,
-                        (t) =>
+                        t =>
                         {
                             var key = t.Config.MagicKey;
                             if (!TryGetReleaserTarget(t.Config, character, out var target)) return true;
@@ -55,7 +48,6 @@ namespace GameLogic.Game.Controllors
                             character[TimeKey] = time.Time;
                             return true;
                         });
-
                 }
                     break;
                 case Action_ClickSkillIndex skill:
@@ -64,7 +56,8 @@ namespace GameLogic.Game.Controllors
                     var key = data.Config.MagicKey;
                     if (!TryGetReleaserTarget(data.Config, character, out var target)) break;
                     if (!character.SubMp(data.MpCost)) break;
-                    if (!TryReleaseMagic(target, character,key, Quaternion.Euler(skill.Rotation.ToUV3()),  data.Params)) break;
+                    if (!TryReleaseMagic(target, character, key, Quaternion.Euler(skill.Rotation.ToUV3()),
+                            data.Params)) break;
                     character.IsCoolDown(skill.MagicId, time.Time, true);
                     character[TimeKey] = time.Time;
                 }
@@ -85,8 +78,8 @@ namespace GameLogic.Game.Controllors
         {
             BattlePerception.BreakReleaserByCharacter(character, BreakReleaserType.InStartLayoutMagic, true);
         }
-        
-        private bool TryReleaseMagic(IReleaserTarget target, BattleCharacter character, 
+
+        private bool TryReleaseMagic(IReleaserTarget target, BattleCharacter character,
             string key, Quaternion? forward = null, string[] magicParams = default)
         {
             if (forward.HasValue)
@@ -101,12 +94,12 @@ namespace GameLogic.Game.Controllors
         }
 
 
-        private bool TryGetReleaserTarget(EConfig.CharacterMagicData config, BattleCharacter character,
+        private bool TryGetReleaserTarget(CharacterMagicData config, BattleCharacter character,
             out IReleaserTarget target)
         {
             target = null;
             var tCharacter = BattlePerception.FindTarget(character, config.GetTeamType(),
-                config.RangeMax/100f, 360, ignoreHidden:false);
+                config.RangeMax / 100f, 360, ignoreHidden: false);
             if (tCharacter)
             {
                 target = new ReleaseAtTarget(character, tCharacter);

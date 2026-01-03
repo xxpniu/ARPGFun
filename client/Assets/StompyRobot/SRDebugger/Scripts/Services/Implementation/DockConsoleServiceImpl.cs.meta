@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 456e72e9efa4586489f625dc79f1c54d
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/DockConsoleServiceImpl.cs
+  uploadId: 496367

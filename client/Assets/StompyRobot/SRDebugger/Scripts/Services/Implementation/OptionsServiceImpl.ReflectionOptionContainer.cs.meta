@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 3343cb41b53a47568cb627f032f95dd7
+timeCreated: 1609341203
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/OptionsServiceImpl.ReflectionOptionContainer.cs
+  uploadId: 496367

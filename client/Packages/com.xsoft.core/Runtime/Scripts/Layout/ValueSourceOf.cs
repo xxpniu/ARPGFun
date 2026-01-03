@@ -1,5 +1,4 @@
-﻿using System;
-using GameLogic.Game.Elements;
+﻿using GameLogic.Game.Elements;
 using Layout.EditorAttributes;
 using Proto;
 
@@ -7,11 +6,9 @@ namespace Layout
 {
     public class ValueSourceOf
     {
-        [Label("取值来源")]
-        public GetValueFrom ValueForm = GetValueFrom.CurrentConfig;
+        [Label("数值")] public int Value;
 
-        [Label("数值")]
-        public int Value = 0;
+        [Label("取值来源")] public GetValueFrom ValueForm = GetValueFrom.CurrentConfig;
 
         public override string ToString()
         {
@@ -20,11 +17,12 @@ namespace Layout
 
         public static implicit operator ValueSourceOf(int value)
         {
-            return new ValueSourceOf() {  ValueForm = GetValueFrom.CurrentConfig, Value = value};
+            return new ValueSourceOf { ValueForm = GetValueFrom.CurrentConfig, Value = value };
         }
+
         public static implicit operator ValueSourceOf(float value)
         {
-            return new ValueSourceOf() { ValueForm = GetValueFrom.CurrentConfig, Value = (int)value };
+            return new ValueSourceOf { ValueForm = GetValueFrom.CurrentConfig, Value = (int)value };
         }
 
 
@@ -33,11 +31,10 @@ namespace Layout
             switch (ValueForm)
             {
                 case GetValueFrom.CurrentConfig: return Value;
-                 
+
                 default:
                     return releaser.TryGetParams(ValueForm);
             }
-        
         }
     }
 }

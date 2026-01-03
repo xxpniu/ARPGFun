@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Xml.Serialization;
 
 // <summary>
@@ -11,7 +12,12 @@ namespace App.Core.Core
     public sealed class XmlParser
     {
         /// <summary>
-        /// 序列化一个对象，返回对象被序列化后的值
+        ///     UTF No BOM
+        /// </summary>
+        public static Encoding UTF8 = new UTF8Encoding(false);
+
+        /// <summary>
+        ///     序列化一个对象，返回对象被序列化后的值
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
@@ -21,16 +27,17 @@ namespace App.Core.Core
             var xml = new XmlSerializer(typeof(T));
             var mem = new StringBuilder();
             {
-                using (var sw = new System.IO.StringWriter(mem))
+                using (var sw = new StringWriter(mem))
                 {
                     xml.Serialize(sw, obj);
                 }
+
                 return mem.ToString();
             }
         }
 
         /// <summary>
-        /// 反序列化一个xml文本 成一个对象
+        ///     反序列化一个xml文本 成一个对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="xml"></param>
@@ -38,16 +45,10 @@ namespace App.Core.Core
         public static T DeSerialize<T>(string xml)
         {
             var xmler = new XmlSerializer(typeof(T));
-            using (var tr = new System.IO.StringReader(xml))
+            using (var tr = new StringReader(xml))
             {
-                return (T)(xmler.Deserialize(tr));
+                return (T)xmler.Deserialize(tr);
             }
         }
-
-        /// <summary>
-        /// UTF No BOM
-        /// </summary>
-        public static Encoding UTF8 = new UTF8Encoding(false);
     }
 }
-

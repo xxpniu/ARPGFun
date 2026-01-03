@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: ca60d3f1302b47e1a3c6f43ed06dedcf
+timeCreated: 1611413144
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Editor/SRDebugEditor.cs
+  uploadId: 496367

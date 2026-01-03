@@ -12,17 +12,26 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace BattleViews.Views
 {
-    public class UBattleMissileView : UElementView ,IBattleMissile
+    public class UBattleMissileView : UElementView, IBattleMissile
     {
-	
-        Transform IBattleMissile.Transform => transform;
+        public string res;
+        public float speed;
+
+        public string fromBone;
+        public string toBone;
+        public int releaserIndex;
+        public Vector3 offset;
+        public int TargetIndex;
+        internal float MaxDis;
+        internal float MaxLifeTime;
+        internal MovementType MType;
 
 
         private IEnumerator Start()
         {
             var viewRelease = PerView.GetViewByIndex<UMagicReleaserView>(releaserIndex);
-            var viewTarget = viewRelease.CharacterTarget as UCharacterView;
-            var characterView = viewRelease.CharacterReleaser as UCharacterView;
+            var viewTarget = viewRelease.CharacterTarget;
+            var characterView = viewRelease.CharacterReleaser;
             var rotation = ((IBattleCharacter)characterView).Rotation;
             var target = PerView.GetViewByIndex<UCharacterView>(TargetIndex);
 
@@ -33,26 +42,26 @@ namespace BattleViews.Views
 
             var forward = characterView.GetBoneByName(UCharacterView.RootBone).forward;
 
-            yield return ResourcesManager.Singleton.LoadResourcesWithExName<GameObject>(res, (obj) =>
+            yield return ResourcesManager.Singleton.LoadResourcesWithExName<GameObject>(res, obj =>
             {
                 if (obj == null) return;
                 if (!this) return;
-                var ins = Instantiate(obj,this.transform);
-            
+                var ins = Instantiate(obj, transform);
+
                 var path = ins.GetComponent<MissileFollowPath>();
                 if (!path)
                 {
                     var go = new GameObject("MISSILE");
-                    go.transform.SetParent(this.transform);
+                    go.transform.SetParent(transform);
                     go.transform.RestRTS();
                     path = go.TryAdd<MissileFollowPath>();
                     ins.transform.SetParent(go.transform, false);
                     path.Moveing = ins.transform;
                 }
+
                 ins.transform.RestRTS();
 
                 if (path && viewTarget)
-                {
                     switch (MType)
                     {
                         case MovementType.Follow:
@@ -65,23 +74,11 @@ namespace BattleViews.Views
                             path.BeginAutoTarget(target.GetBoneByName(toBone), speed);
                             break;
                     }
-                }
             });
 #endif
-            yield break;
         }
 
-        public string res;
-        public float speed;
-
-        public string fromBone;
-        public string toBone;
-        public int releaserIndex;
-        public Vector3 offset;
-        internal float MaxDis;
-        internal float MaxLifeTime;
-        internal MovementType MType;
-        public int TargetIndex;
+        Transform IBattleMissile.Transform => transform;
 
         public override IMessage ToInitNotify()
         {
@@ -101,6 +98,5 @@ namespace BattleViews.Views
             };
             return createNotify;
         }
-
     }
 }

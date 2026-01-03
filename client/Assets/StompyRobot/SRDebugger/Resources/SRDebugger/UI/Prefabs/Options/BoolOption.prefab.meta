@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: c00f61f0f69828745b7ef9145737e260
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Resources/SRDebugger/UI/Prefabs/Options/BoolOption.prefab
+  uploadId: 496367

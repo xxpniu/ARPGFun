@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 714123ebf07616740963b992cf10f84c
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/UI/Editor/StompyRobot.SRF.Editor.asmdef
+  uploadId: 496367

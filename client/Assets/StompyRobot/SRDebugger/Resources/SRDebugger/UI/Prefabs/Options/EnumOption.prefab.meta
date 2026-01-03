@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 4a8c35e6c2782f145a2598c874369a08
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Resources/SRDebugger/UI/Prefabs/Options/EnumOption.prefab
+  uploadId: 496367

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ca9e6e61f807f3442b520b02db3a48c7
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/Components/SRSingleton.cs
+  uploadId: 496367

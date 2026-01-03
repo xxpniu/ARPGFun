@@ -1,21 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class RoundGridLayout : LayoutGroup
 {
-
-    public Vector2 cellSize = new Vector2(100,100);
     public enum StartAxis
     {
-        Top, Bottom, Left, Right
+        Top,
+        Bottom,
+        Left,
+        Right
     }
 
-    public bool preserve = false;
+    public Vector2 cellSize = new(100, 100);
+
+    public bool preserve;
     public StartAxis axis = StartAxis.Bottom;
-    [Range(0,180)]
-    public float childAngle = 30;
+
+    [Range(0, 180)] public float childAngle = 30;
+
     public float radius = 200;
 
     public override void CalculateLayoutInputVertical()
@@ -39,9 +41,9 @@ public class RoundGridLayout : LayoutGroup
         foreach (var i in rectChildren)
         {
             m_Tracker.Add(this, i,
-                       DrivenTransformProperties.Anchors |
-                       DrivenTransformProperties.AnchoredPosition |
-                       DrivenTransformProperties.SizeDelta);
+                DrivenTransformProperties.Anchors |
+                DrivenTransformProperties.AnchoredPosition |
+                DrivenTransformProperties.SizeDelta);
 
             i.anchorMin = Vector2.up;
             i.anchorMax = Vector2.up;
@@ -71,8 +73,8 @@ public class RoundGridLayout : LayoutGroup
 
         for (var index = 1; index <= rectChildren.Count; index++)
         {
-            int x = 0;
-            int y = 0;
+            var x = 0;
+            var y = 0;
 
             var q = Quaternion.Euler(0, angle, 0);
             var pos = q * forward * radius;
@@ -80,9 +82,9 @@ public class RoundGridLayout : LayoutGroup
             y = (int)pos.z;
 
             if (!preserve)
-                angle += this.childAngle;
+                angle += childAngle;
             else
-                angle -= this.childAngle;
+                angle -= childAngle;
 
             SetChildAlongAxis(rectChildren[index - 1], 0, x, cellSize.x);
             SetChildAlongAxis(rectChildren[index - 1], 1, y, cellSize.y);

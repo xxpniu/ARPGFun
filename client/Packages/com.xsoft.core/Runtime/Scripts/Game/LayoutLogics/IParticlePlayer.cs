@@ -1,12 +1,9 @@
-﻿using System;
-
-namespace GameLogic.Game.LayoutLogics
+﻿namespace GameLogic.Game.LayoutLogics
 {
-	public interface IParticlePlayer
-	{
-		void DestroyParticle();
-		void AutoDestroy(float time);
-		bool CanDestroy{ get;}
-	}
+    public interface IParticlePlayer
+    {
+        bool CanDestroy { get; }
+        void DestroyParticle();
+        void AutoDestroy(float time);
+    }
 }
-

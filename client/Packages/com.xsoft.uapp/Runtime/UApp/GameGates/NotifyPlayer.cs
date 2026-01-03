@@ -9,39 +9,20 @@ using GameLogic.Utility;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Proto;
-using UGameTools;
 using UnityEngine;
-using XNet.Libs.Utility;
+using Type = System.Type;
 
 namespace UApp.GameGates
 {
     /// <summary>
-    /// 游戏中的通知播放者
+    ///     游戏中的通知播放者
     /// </summary>
     public class NotifyPlayer
     {
-        private struct NotifyMapping
-        {
-            public NeedNotifyAttribute Attr { set; get; }
-            public MethodInfo Method { set; get; }
-            public System.Type Type { set; get; }
-        }
-
-        private readonly Dictionary<string, NotifyMapping> _perceptionInvokes = new();
+        private const string Index = "Index";
         private readonly Dictionary<string, NotifyMapping> _elementInvokes = new();
 
-        private IBattlePerception PerView { set; get; }
-
-        #region Events
-
-        public Action<Notify_CharacterExp> OnAddExp;
-        public Action<IBattleCharacter> OnCreateUser;
-        public Action<Notify_PlayerJoinState> OnJoined;
-        public Action<Notify_DropGold> OnDropGold;
-        public Action<Notify_SyncServerTime> OnSyncServerTime;
-        public Action<Notify_BattleEnd> OnBattleEnd;
-
-        #endregion
+        private readonly Dictionary<string, NotifyMapping> _perceptionInvokes = new();
 
         public NotifyPlayer(IBattlePerception view)
         {
@@ -66,6 +47,8 @@ namespace UApp.GameGates
             AddType<IBattleItem>();
         }
 
+        private IBattlePerception PerView { get; }
+
         private void AddType<T>()
         {
             var invokes = typeof(T).GetMethods();
@@ -85,10 +68,8 @@ namespace UApp.GameGates
             }
         }
 
-        private const string Index = "Index";
-
         /// <summary>
-        /// 处理网络包的解析
+        ///     处理网络包的解析
         /// </summary>
         /// <param name="any">Notify.</param>
         public void Process(Any any)
@@ -101,10 +82,7 @@ namespace UApp.GameGates
                 var notify = Activator.CreateInstance(m.Type) as IMessage;
                 notify.MergeFrom(any.Value.ToByteArray());
                 var ps = new List<object>();
-                foreach (var i in m.Attr.FieldNames)
-                {
-                    ps.Add(m.Type.GetProperty(i)!.GetValue(notify));
-                }
+                foreach (var i in m.Attr.FieldNames) ps.Add(m.Type.GetProperty(i)!.GetValue(notify));
 
                 var go = m.Method.Invoke(PerView, ps.ToArray());
 
@@ -150,46 +128,46 @@ namespace UApp.GameGates
                 }
 
                 var ps = new List<object>();
-                foreach (var f in em.Attr.FieldNames)
-                {
-                    ps.Add(notify.GetType().GetProperty(f)!.GetValue(notify));
-                }
+                foreach (var f in em.Attr.FieldNames) ps.Add(notify.GetType().GetProperty(f)!.GetValue(notify));
 
                 em.Method.Invoke(v, ps.ToArray());
 #if DEVELOPMENT_BUILD
                 Debuger.Log($"{notify.GetType()} - {notify}");
 #endif
                 return;
-
             }
 
             //处理特别消息
             if (any.TryUnpack(out Notify_PlayerJoinState p))
-            {
                 OnJoined?.Invoke(p);
-            }
             else if (any.TryUnpack(out Notify_DropGold dropGold))
-            {
                 OnDropGold?.Invoke(dropGold);
-            }
             else if (any.TryUnpack(out Notify_CharacterExp exp))
-            {
                 OnAddExp?.Invoke(exp);
-            }
             else if (any.TryUnpack(out Notify_SyncServerTime sTime))
-            {
                 OnSyncServerTime?.Invoke(sTime);
-            }
             else if (any.TryUnpack(out Notify_BattleEnd end))
-            {
                 OnBattleEnd?.Invoke(end);
-            }
             else
-            {
                 Debug.LogError($"NO Handle:{any}");
-            }
         }
+
+        private struct NotifyMapping
+        {
+            public NeedNotifyAttribute Attr { set; get; }
+            public MethodInfo Method { set; get; }
+            public Type Type { set; get; }
+        }
+
+        #region Events
+
+        public Action<Notify_CharacterExp> OnAddExp;
+        public Action<IBattleCharacter> OnCreateUser;
+        public Action<Notify_PlayerJoinState> OnJoined;
+        public Action<Notify_DropGold> OnDropGold;
+        public Action<Notify_SyncServerTime> OnSyncServerTime;
+        public Action<Notify_BattleEnd> OnBattleEnd;
+
+        #endregion
     }
 }
-
-

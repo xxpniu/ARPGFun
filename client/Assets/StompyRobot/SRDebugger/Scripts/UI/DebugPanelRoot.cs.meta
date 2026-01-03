@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 64a45d1be7c826148a745e7d38b02161
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/DebugPanelRoot.cs
+  uploadId: 496367

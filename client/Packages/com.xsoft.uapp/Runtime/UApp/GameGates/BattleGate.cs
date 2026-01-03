@@ -25,6 +25,28 @@ namespace UApp.GameGates
     public class BattleGate : UGate, IBattleGate
     {
         public StateType state = StateType.None;
+        private ServiceAddress _battleServer;
+        private BattleServerService.BattleServerServiceClient _battleService;
+        private NotifyPlayer _player;
+        private float _serverStartTime;
+
+        private float _startTime = -1f;
+
+        public BattleLevelData Level { private set; get; }
+
+        public float TimeServerNow
+        {
+            get
+            {
+                if (_startTime < 0) return 0f;
+                return Time.time - _startTime + _serverStartTime;
+            }
+        }
+
+        public PlayerPackage Package { get; private set; }
+        public DHero Hero { private set; get; }
+        public LogChannel Client { set; get; }
+        public UPerceptionView PreView { get; internal set; }
 
         public StateType State
         {
@@ -42,7 +64,7 @@ namespace UApp.GameGates
             var r = await _battleService.ExitBattleAsync(new C2B_ExitBattle
             {
                 AccountUuid = UApplication.S.accountUuid
-            },cancellationToken: this.destroyCancellationToken);
+            }, cancellationToken: destroyCancellationToken);
             try
             {
                 await Client.ShutdownAsync();
@@ -65,27 +87,6 @@ namespace UApp.GameGates
             _battleServer = serverInfo;
             Level = ExcelToJSONConfigManager.GetId<BattleLevelData>(levelID);
         }
-
-        public BattleLevelData Level { private set; get; }
-
-        public float TimeServerNow
-        {
-            get
-            {
-                if (_startTime < 0) return 0f;
-                return Time.time - _startTime + _serverStartTime;
-            }
-        }
-
-        private float _startTime = -1f;
-        private float _serverStartTime = 0;
-        public PlayerPackage Package { get; private set; }
-        public DHero Hero { private set; get; }
-        private NotifyPlayer _player;
-        private ServiceAddress _battleServer;
-        public LogChannel Client { set; get; }
-        private BattleServerService.BattleServerServiceClient _battleService;
-        public UPerceptionView PreView { get; internal set; }
 
         #region implemented abstract members of UGate
 
@@ -117,7 +118,6 @@ namespace UApp.GameGates
             var res = await query;
             if (!res.Code.IsOk())
             {
-
                 UApplication.S.ShowError(res.Code);
                 UApplication.S.GoBackToMainGate();
                 return;
@@ -125,17 +125,17 @@ namespace UApp.GameGates
 
             ChannelCall = _battleService.BattleChannel(cancellationToken: Client.ShutdownToken);
 
-            async void OnBattleDisconnect ()
+            async void OnBattleDisconnect()
             {
                 await UniTask.SwitchToMainThread();
-                Debuger.Log($"Exit handle from battle server");
+                Debuger.Log("Exit handle from battle server");
                 UApplication.S.GoBackToMainGate();
             }
 
             HandleChannel = new ResponseChannel<Any>(ChannelCall.ResponseStream, tag: "BattleHandle")
             {
-                OnReceived = (any) => { _player.Process(any); },
-                OnDisconnect =  OnBattleDisconnect
+                OnReceived = any => { _player.Process(any); },
+                OnDisconnect = OnBattleDisconnect
             };
             PushToChannel = new RequestChannel<Any>(ChannelCall.RequestStream, tag: "BattlePushChannel");
         }
@@ -212,9 +212,7 @@ namespace UApp.GameGates
             Hero.Level = exp.Level;
 
             if (exp.Level != exp.OldLeve)
-            {
-                await UUIManager.S.CreateWindowAsync<UUILevelUp>((ui) => { ui.ShowWindow(exp.Level); });
-            }
+                await UUIManager.S.CreateWindowAsync<UUILevelUp>(ui => { ui.ShowWindow(exp.Level); });
 
             UUIManager.S.UpdateUIData();
             //UUIManager.S.GetUIWindow<UUIBattle>()?.InitHero(Hero);
@@ -255,7 +253,7 @@ namespace UApp.GameGates
             character.OnDead = () =>
             {
                 UUIPopup.ShowConfirm("Level_Relive_Title".GetLanguageWord(),
-                    "Level_Relive_Content".GetLanguageWord(), () => { SendAction(new Action_Relive { }); },
+                    "Level_Relive_Content".GetLanguageWord(), () => { SendAction(new Action_Relive()); },
                     () => { UApplication.S.GoBackToMainGate(); });
             };
         }
@@ -268,13 +266,9 @@ namespace UApp.GameGates
         private void TriggerItem(UBattleItem item)
         {
             if (item.IsOwner(Owner.Index))
-            {
                 SendAction(new Action_CollectItem { Index = item.Index });
-            }
             else
-            {
                 UApplication.S.ShowNotify($"{item.Config.Name.GetLanguageWord()} Can't collect!");
-            }
         }
 
         public UCharacterView Owner { private set; get; }
@@ -296,7 +290,7 @@ namespace UApp.GameGates
             }
         }
 
-        private float _lastSyncTime = 0;
+        private float _lastSyncTime;
         private float _releaseLockTime = -1;
 
         bool IBattleGate.MoveDir(Vector3 dir)
@@ -322,10 +316,7 @@ namespace UApp.GameGates
             }
 
             var stopMove = new Action_StopMove { StopPos = pos.ToPV3() };
-            if (Owner.DoStopMove())
-            {
-                SendAction(stopMove);
-            }
+            if (Owner.DoStopMove()) SendAction(stopMove);
 
             return true;
         }
@@ -335,8 +326,15 @@ namespace UApp.GameGates
             return false;
         }
 
-        bool IBattleGate.IsMpFull() => Owner && Owner.IsFullMp;
-        bool IBattleGate.IsHpFull() => Owner && Owner.IsFullHp;
+        bool IBattleGate.IsMpFull()
+        {
+            return Owner && Owner.IsFullMp;
+        }
+
+        bool IBattleGate.IsHpFull()
+        {
+            return Owner && Owner.IsFullHp;
+        }
 
         private void ReleaseLock()
         {
@@ -356,15 +354,9 @@ namespace UApp.GameGates
 
         protected override void Tick()
         {
-            if (Client != null)
-            {
-                PreView.GetAndClearNotify();
-            }
+            if (Client != null) PreView.GetAndClearNotify();
 
-            if (EndTime > 0)
-            {
-                EndTime -= Time.deltaTime;
-            }
+            if (EndTime > 0) EndTime -= Time.deltaTime;
         }
 
         private void SendAction(IMessage action)
@@ -392,10 +384,7 @@ namespace UApp.GameGates
             {
                 ReleaseLock();
                 var rotation = character.Rotation.eulerAngles.ToPV3();
-                if (forward.HasValue)
-                {
-                    rotation = Quaternion.LookRotation(forward.Value).eulerAngles.ToPV3();
-                }
+                if (forward.HasValue) rotation = Quaternion.LookRotation(forward.Value).eulerAngles.ToPV3();
 
                 SendAction(new Action_ClickSkillIndex
                 {

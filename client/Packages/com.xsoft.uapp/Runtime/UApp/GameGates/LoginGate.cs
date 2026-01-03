@@ -9,27 +9,27 @@ using XNet.Libs.Utility;
 
 namespace UApp.GameGates
 {
-    public class LoginGate:UGate
+    public class LoginGate : UGate
     {
         protected override async Task JoinGate(params object[] args)
         {
             GateManager.Try()?.Reset();
             ChatManager.Try()?.Reset();
-            
+
             await SceneManager.LoadSceneAsync("null");
             UUIManager.Singleton.HideAll();
 
-            await UUIManager.S.CreateWindowAsync<UUILogin>((ui) => { ui.ShowWindow(); });
+            await UUIManager.S.CreateWindowAsync<UUILogin>(ui => { ui.ShowWindow(); });
         }
-        
+
         public static async Task<L2C_Reg> DoReg(string username, string password, Action<L2C_Reg> callback = default)
         {
-            L2C_Reg r ;
+            L2C_Reg r;
             try
             {
                 r = await C<LoginServerService.LoginServerServiceClient>.RequestOnceAsync(
-                    ip: UApplication.S.LoginServer,
-                    expression: async serviceClient =>
+                    UApplication.S.LoginServer,
+                    async serviceClient =>
                         await serviceClient.RegAsync(new C2L_Reg
                             {
                                 Password = password,
@@ -37,9 +37,8 @@ namespace UApp.GameGates
                                 Version = 0
                             }
                         ),
-                      deadTime: DateTime.UtcNow.AddSeconds(10)
-                    );
-
+                    DateTime.UtcNow.AddSeconds(10)
+                );
             }
             catch (Exception ex)
             {
@@ -64,7 +63,7 @@ namespace UApp.GameGates
             {
                 r = await C<LoginServerService.LoginServerServiceClient>
                     .RequestOnceAsync(UApplication.S.LoginServer,
-                        expression: async (c) => await c.LoginAsync(new C2L_Login
+                        async c => await c.LoginAsync(new C2L_Login
                         {
                             Password = pwd,
                             UserName = userName,

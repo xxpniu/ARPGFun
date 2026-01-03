@@ -1,16 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using BattleViews.Components;
+﻿using BattleViews.Components;
 using BattleViews.Views;
 using UnityEngine;
-
 
 [RequireComponent(typeof(UCharacterView))]
 public class HpTipShower : MonoBehaviour
 {
     public UCharacterView view;
-    private float showHpBarTime=-1;
-    private int nameBar = -1;
+    private int _nameBar = -1;
+    private float _showHpBarTime = -1;
 
     // Start is called before the first frame update
     private void Awake()
@@ -18,35 +15,34 @@ public class HpTipShower : MonoBehaviour
         view = GetComponent<UCharacterView>();
     }
 
+    // Update is called once per frame
+    private void Update()
+    {
+        if (ThirdPersonCameraContollor.Current == null) return;
+        //var over
+        if (!(Vector3.Distance(transform.position, ThirdPersonCameraContollor.Current.LookPos) < 20)) return;
+        //player
+        if ((!(_showHpBarTime > Time.time)
+             && view.TeamId != view.PerView.OwnerTeamIndex)
+            || view.IsDeath
+            || !ThirdPersonCameraContollor.Current) return;
+
+        if (ThirdPersonCameraContollor.Current.InView(transform.position))
+            //Debug.Log($"Print name");
+            _nameBar = UUITipDrawer.S.DrawUUITipNameBar(_nameBar, view.Name, view.Level, view.HP, view.HpMax,
+                view.TeamId == view.PerView.OwnerTeamIndex,
+                view.GetBoneByName(UCharacterView.TopBone).position + Vector3.up * .05f,
+                ThirdPersonCameraContollor.Current.currentCamera);
+    }
+
 
     private void OnDead()
     {
-        showHpBarTime = -1;
+        _showHpBarTime = -1;
     }
 
     private void OnHpChanged()
     {
-        showHpBarTime = Time.time + 3f;
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-        if(ThirdPersonCameraContollor.Current ==null) return;
-        //var over
-        if (!(Vector3.Distance(this.transform.position, ThirdPersonCameraContollor.Current.LookPos) < 20)) return;
-        //player
-        if ((!(showHpBarTime > Time.time) 
-             && view.TeamId != view.PerView.OwnerTeamIndex) 
-            || view.IsDeath 
-            || !ThirdPersonCameraContollor.Current) return;
-        
-        if (ThirdPersonCameraContollor.Current.InView(this.transform.position))
-        {
-            //Debug.Log($"Print name");
-            nameBar = UUITipDrawer.S.DrawUUITipNameBar(nameBar,view. Name,  view.Level,view.HP, view.HpMax,
-                view. TeamId == view.PerView.OwnerTeamIndex,
-                view. GetBoneByName(UCharacterView. TopBone).position + Vector3.up * .05f, ThirdPersonCameraContollor.Current.currentCamera);
-        }
+        _showHpBarTime = Time.time + 3f;
     }
 }

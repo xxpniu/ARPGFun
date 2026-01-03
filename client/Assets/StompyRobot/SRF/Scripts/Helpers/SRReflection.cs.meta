@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6aaf1b857713dd44a955633b6458f1c2
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/Helpers/SRReflection.cs
+  uploadId: 496367

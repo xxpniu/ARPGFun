@@ -11,7 +11,6 @@ namespace BattleViews.Utility
 {
     public static class BattleUtility
     {
-
         public static Dictionary<P, ComplexValue> CreateHeroProperties(DHero hero, PlayerPackage package)
         {
             var data = CM.GetId<CharacterData>(hero.HeroID);
@@ -28,10 +27,7 @@ namespace BattleViews.Utility
                 }
 
                 var ps = equip.GetProperties();
-                foreach (var p in ps)
-                {
-                    properties.TryToAddBase(p.Key, p.Value);
-                }
+                foreach (var p in ps) properties.TryToAddBase(p.Key, p.Value);
             }
 
             return properties;

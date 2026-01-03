@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 54dcbf94ddefe604898e059992c2f974
+NativeFormatImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/UI/Prefabs/InfoBlock.prefab
+  uploadId: 496367

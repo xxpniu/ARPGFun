@@ -15,10 +15,11 @@ namespace UGameTools
             return t;
         }
 
-        public static async Task<T> CreateChildWindow<T>(this UUIWindow win,　WRenderType renderType = WRenderType.Base) where T : UUIWindow, new()
+        public static async Task<T> CreateChildWindow<T>(this UUIWindow win,　WRenderType renderType = WRenderType.Base)
+            where T : UUIWindow, new()
         {
-           // var parent = win;
-            var ui = await UUIManager.S.CreateWindowAsync<T>( wRender : renderType);
+            // var parent = win;
+            var ui = await UUIManager.S.CreateWindowAsync<T>(wRender: renderType);
             //ui = ui;
             return ui;
         }

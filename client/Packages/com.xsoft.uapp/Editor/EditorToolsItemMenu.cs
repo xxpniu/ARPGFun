@@ -1,8 +1,8 @@
-﻿
-using System.IO;
+﻿using System.IO;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using BattleViews.Utility;
+using Proto;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -14,14 +14,12 @@ public sealed class EditorToolsItemMenu
 
     private static bool ShowSave()
     {
-        for (int i = 0; i < SceneManager.loadedSceneCount; i++)
+        for (var i = 0; i < SceneManager.loadedSceneCount; i++)
         {
             var s = SceneManager.GetSceneAt(i);
-            if (s.isDirty)
-            {
-                return EditorUtility.DisplayDialog("Notify", "Drop modify？", "Yes", "Cancel");
-            }
+            if (s.isDirty) return EditorUtility.DisplayDialog("Notify", "Drop modify？", "Yes", "Cancel");
         }
+
         return true;
     }
 
@@ -45,17 +43,16 @@ public sealed class EditorToolsItemMenu
     [MenuItem("GAME/Play Game &s")]
     public static void GoToStarScene()
     {
-
         if (!ShowSave()) return;
         if (EditorApplication.isPlaying)
         {
             EditorApplication.Beep();
             return;
         }
+
         var editor = "Assets/Scenes/Launch.unity";
         EditorSceneManager.OpenScene(editor);
         EditorApplication.isPlaying = true;
-
     }
 
 
@@ -63,18 +60,20 @@ public sealed class EditorToolsItemMenu
     public static void GoImportSceneConfig()
     {
         var path = $"{Application.dataPath}/AssetRes/Level/";
-        var file = EditorUtility.OpenFilePanelWithFilters("Import Map Config", path, new[] { "json config","json" });
+        var file = EditorUtility.OpenFilePanelWithFilters("Import Map Config", path, new[] { "json config", "json" });
         if (string.IsNullOrEmpty(file)) return;
-        var config = File.ReadAllText(file).Parser<Proto.MapConfig>();
+        var config = File.ReadAllText(file).Parser<MapConfig>();
 
         var obj = GameObject.Find(EL_ROOT);
-        if (obj) if (!EditorUtility.DisplayDialog("Elements Root Exist", "Do you want import again?", "Yes", "No")) return;
+        if (obj)
+            if (!EditorUtility.DisplayDialog("Elements Root Exist", "Do you want import again?", "Yes", "No"))
+                return;
 
         Object.DestroyImmediate(obj);
 
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive ); 
-        
-        
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+
+
         var go = new GameObject(EL_ROOT);
         go.transform.SetAsFirstSibling();
         foreach (var i in config.Elements)
@@ -99,16 +98,15 @@ public sealed class EditorToolsItemMenu
     [MenuItem("GAME/Map/Export &e")]
     public static void GoExportSceneConfig()
     {
-
         var path = $"{Application.dataPath}/AssetRes/Level/";
         var file = EditorUtility.SaveFilePanel("Import Map Config", path, "level", "json");
         if (string.IsNullOrEmpty(file)) return;
 
         var groups = Object.FindObjectsByType<MonsterGroupPosition>(FindObjectsSortMode.None);
-        var config = new Proto.MapConfig();
+        var config = new MapConfig();
         foreach (var i in groups)
         {
-            var el = new Proto.MapElement
+            var el = new MapElement
             {
                 ConfigID = i.ConfigID,
                 Forward = i.transform.forward.ToPVer3(),
@@ -126,4 +124,3 @@ public sealed class EditorToolsItemMenu
         EditorSceneManager.CloseScene(SceneManager.GetActiveScene(), true);
     }
 }
-

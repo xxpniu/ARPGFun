@@ -1,87 +1,55 @@
 ﻿using System;
 using App.Core.Core;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 
-public class UITipResourcesAttribute:Attribute
+public class UITipResourcesAttribute : Attribute
 {
-	public UITipResourcesAttribute(string name)
-	{
-		this.Name = name;
-	}
-
-	public string Name{ private set;get;}
-}
-
-public abstract class UUITip:UUIElement
-{
-	
-    public class CreateUIAsync<T> : CustomYieldInstruction where T:UUITip,new()
+    public UITipResourcesAttribute(string name)
     {
-        public CreateUIAsync(int index,Transform parent, bool world)
-        {
-            var attrs = typeof(T).GetCustomAttributes(typeof(UITipResourcesAttribute), false) as UITipResourcesAttribute[];
-            if ( attrs ==null || attrs.Length == 0) throw new Exception($"no found UITipResourcesAttribute");
-            Load(attrs[0].Name,index,parent,world);
-        }
-
-        private async void Load(string resources,int index,Transform parent, bool world)
-        {
-	        var res = await ResourcesManager.S.LoadResourcesWithExName<GameObject>($"Tips/{resources}.prefab",null);
-	        var root = UnityEngine.Object.Instantiate(res);
-	        var tip = new T
-	        {
-		        IsWorld = world,
-		        InstanceID = index
-	        };
-	        root.name = $"_TIP_{index}_{typeof(T).Name}";
-	        tip.uiRoot = root;
-	        tip.Rect.SetParent(parent, false);
-	        tip.OnCreate();
-	        Tip = tip;
-	        IsDone = true;
-        }
-
-        public T Tip { private set; get; }
-
-        public bool IsDone { private set; get; }
-        public override bool keepWaiting => !IsDone;
+        Name = name;
     }
 
+    public string Name { get; }
+}
 
-	private bool LastUpdate = false;
+public abstract class UUITip : UUIElement
+{
+    private bool LastUpdate;
 
-    public int InstanceID { get; protected set; } = 0;
+    public int InstanceID { get; protected set; }
 
-    protected override void OnDestroy ()
-	{
-		GameObject.Destroy(this.uiRoot, 0.1f);
-		this._rect = null;
-	}
+    public bool IsWorld { private set; get; }
 
-    public bool IsWorld { private set; get; } = false;
+    public bool CanDestory => !LastUpdate;
 
-	public void LateUpdate()
-	{
-		LastUpdate = false;
-	}
+    protected override void OnDestroy()
+    {
+        Object.Destroy(uiRoot, 0.1f);
+        _rect = null;
+    }
 
-    public bool CanDestory{ get{ return !LastUpdate;}}
+    public void LateUpdate()
+    {
+        LastUpdate = false;
+    }
+
     public void LookAt(Camera c)
     {
         uiRoot.transform.LookAt(c.transform);
     }
 
-    public static CreateUIAsync<T> CreateAsync<T>(int index,Transform parent, bool world) where T: UUITip,new()
+    public static CreateUIAsync<T> CreateAsync<T>(int index, Transform parent, bool world) where T : UUITip, new()
     {
-        return new CreateUIAsync<T>(index,parent, world);
+        return new CreateUIAsync<T>(index, parent, world);
     }
 
-	public static void Update(UUITip tip,Vector2 pos)
-	{
+    public static void Update(UUITip tip, Vector2 pos)
+    {
         tip.Rect.position = new Vector3(pos.x, pos.y, 0);
         Update(tip);
-	}
+    }
 
     public static void Update(UUITip tip, Vector3 pos)
     {
@@ -97,9 +65,38 @@ public abstract class UUITip:UUIElement
 
     protected virtual void OnUpdate()
     {
-        
     }
 
+    public class CreateUIAsync<T> : CustomYieldInstruction where T : UUITip, new()
+    {
+        public CreateUIAsync(int index, Transform parent, bool world)
+        {
+            var attrs =
+                typeof(T).GetCustomAttributes(typeof(UITipResourcesAttribute), false) as UITipResourcesAttribute[];
+            if (attrs == null || attrs.Length == 0) throw new Exception("no found UITipResourcesAttribute");
+            Load(attrs[0].Name, index, parent, world);
+        }
 
+        public T Tip { private set; get; }
 
+        public bool IsDone { private set; get; }
+        public override bool keepWaiting => !IsDone;
+
+        private async void Load(string resources, int index, Transform parent, bool world)
+        {
+            var res = await ResourcesManager.S.LoadResourcesWithExName<GameObject>($"Tips/{resources}.prefab");
+            var root = Object.Instantiate(res);
+            var tip = new T
+            {
+                IsWorld = world,
+                InstanceID = index
+            };
+            root.name = $"_TIP_{index}_{typeof(T).Name}";
+            tip.uiRoot = root;
+            tip.Rect.SetParent(parent, false);
+            tip.OnCreate();
+            Tip = tip;
+            IsDone = true;
+        }
+    }
 }

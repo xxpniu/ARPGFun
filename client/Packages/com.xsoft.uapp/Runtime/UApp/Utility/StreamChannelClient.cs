@@ -13,26 +13,28 @@ namespace UApp.Utility
 {
     public class Stream : ComponentAsync
     {
+        private readonly ConcurrentQueue<Action> _calls = new();
+        public Action DestroyCall { get; internal set; }
+        public Action UpdateCall { get; internal set; }
+
         protected override void Update()
         {
             base.Update();
             UpdateCall?.Invoke();
         }
+
         public void OnDestroy()
         {
-            Debuger.Log($"{this.name} OnDestroyed");
+            Debuger.Log($"{name} OnDestroyed");
             DestroyCall?.Invoke();
         }
-        public Action DestroyCall { get; internal set; }
-        public Action UpdateCall { get; internal set; }
-        private readonly ConcurrentQueue<Action> _calls = new ConcurrentQueue<Action>();
 
         public abstract class StreamChannel<TData>
             where TData : IMessage, new()
         {
-            protected readonly StreamBuffer<TData> Buffer = new StreamBuffer<TData>();
+            protected readonly StreamBuffer<TData> Buffer = new();
 
-            private Stream Com { get; }
+            public Action OnDisconnect;
 
             public StreamChannel(bool dontUpload = false, string tag = null)
             {
@@ -40,17 +42,21 @@ namespace UApp.Utility
                 var go = new GameObject(tag ?? $"Channel_{typeof(TData).Name}");
                 Com = go.AddComponent<Stream>();
                 if (dontUpload) DontDestroyOnLoad(go);
-                Com.UpdateCall = this.OnUpdate;
-                Com.DestroyCall = this.OnDestroy;
+                Com.UpdateCall = OnUpdate;
+                Com.DestroyCall = OnDestroy;
                 IsWorking = true;
                 Task.Factory.StartNew(async () =>
                 {
                     await Process().ConfigureAwait(false);
-                    await ShutDownAsync(true);
-                }, this.CancellationToken.Token);
+                    await ShutDownAsync();
+                }, CancellationToken.Token);
             }
 
+            private Stream Com { get; }
+
             protected CancellationTokenSource CancellationToken { get; }
+
+            public bool IsWorking { get; private set; }
 
             protected abstract Task ShutDownProcessAsync();
 
@@ -59,10 +65,10 @@ namespace UApp.Utility
                 IsWorking = false;
                 if (!TryCancel()) return;
                 await ShutDownProcessAsync();
-                await UniTask.SwitchToMainThread(); 
+                await UniTask.SwitchToMainThread();
                 if (haveCallBack) OnDisconnect?.Invoke();
                 OnDisconnect = null;
-                Destroy(Com.gameObject); 
+                Destroy(Com.gameObject);
             }
 
             private bool TryCancel()
@@ -83,18 +89,17 @@ namespace UApp.Utility
             }
 
             protected abstract Task Process();
-
-            public Action OnDisconnect;
-            
-            public bool IsWorking { get; private set; }
         }
 
         public class ResponseChannel<TData> : StreamChannel<TData>
             where TData : IMessage, new()
         {
-            public ResponseChannel(IAsyncStreamReader<TData> call, bool dontUpload = false, string tag = null) : base(dontUpload, tag)
+            public Action<TData> OnReceived;
+
+            public ResponseChannel(IAsyncStreamReader<TData> call, bool dontUpload = false, string tag = null) : base(
+                dontUpload, tag)
             {
-                this.Call = call;
+                Call = call;
             }
 
             private IAsyncStreamReader<TData> Call { get; }
@@ -106,29 +111,27 @@ namespace UApp.Utility
                     while (await Call.MoveNext(CancellationToken.Token)
                                .ConfigureAwait(false)
                            && Buffer.IsWorking)
-                    {
                         Buffer.Push(Call.Current);
-                    }
                 }
-                catch (TaskCanceledException) { }
-                catch (RpcException) { }
+                catch (TaskCanceledException)
+                {
+                }
+                catch (RpcException)
+                {
+                }
                 catch (Exception ex)
                 {
                     Debuger.LogError(ex);
                     Debug.LogException(ex);
                 }
+
                 Buffer.Close();
             }
 
             protected override void OnUpdate()
             {
-                while (Buffer.TryPull(out var data))
-                {
-                    OnReceived?.Invoke(data);
-                }
+                while (Buffer.TryPull(out var data)) OnReceived?.Invoke(data);
             }
-
-            public Action<TData> OnReceived;
 
             protected override async Task ShutDownProcessAsync()
             {
@@ -139,14 +142,15 @@ namespace UApp.Utility
         public class RequestChannel<TData> : StreamChannel<TData>
             where TData : IMessage, new()
         {
-            public RequestChannel(IAsyncStreamWriter<TData> call, bool dontUpload = false, string tag = null) : base(dontUpload, tag)
+            private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+
+            public RequestChannel(IAsyncStreamWriter<TData> call, bool dontUpload = false, string tag = null) : base(
+                dontUpload, tag)
             {
-                this.Call = call;
+                Call = call;
             }
 
             private IAsyncStreamWriter<TData> Call { get; }
-
-            private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
             protected override async Task Process()
             {
@@ -154,11 +158,8 @@ namespace UApp.Utility
                 {
                     while (Buffer.IsWorking)
                     {
-                        while (Buffer.TryPull(out TData i))
-                        {
-                            await Call.WriteAsync(i).ConfigureAwait(false);
-                        }
-                        await _semaphoreSlim.WaitAsync(this.CancellationToken.Token);
+                        while (Buffer.TryPull(out var i)) await Call.WriteAsync(i).ConfigureAwait(false);
+                        await _semaphoreSlim.WaitAsync(CancellationToken.Token);
                     }
                 }
                 catch (RpcException)
@@ -169,12 +170,13 @@ namespace UApp.Utility
                 {
                     Debuger.LogError(ex);
                 }
+
                 Buffer.Close();
             }
 
             public bool Push(TData data)
             {
-                var t = this.Buffer.Push(data);
+                var t = Buffer.Push(data);
                 Resume();
                 return t;
             }
@@ -196,9 +198,5 @@ namespace UApp.Utility
                 await Task.CompletedTask;
             }
         }
-
-
     }
 }
-
-

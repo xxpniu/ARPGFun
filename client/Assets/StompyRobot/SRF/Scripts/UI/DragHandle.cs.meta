@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8faed27c04557e24e8aecd35f2b4d9d3
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/UI/DragHandle.cs
+  uploadId: 496367

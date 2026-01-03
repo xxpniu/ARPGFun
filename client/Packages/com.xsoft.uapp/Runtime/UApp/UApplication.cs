@@ -10,39 +10,47 @@ using Grpc.Core;
 using Proto;
 using UApp.GameGates;
 using UnityEngine;
-using UnityEngine.Serialization;
 using XNet.Libs.Utility;
 
 namespace UApp
 {
     /// <summary>
-    /// 处理 App
+    ///     处理 App
     /// </summary>
     [Name("GameApplication")]
     public class UApplication : XSingleton<UApplication>
     {
-        public bool localGame = false;
+        public bool localGame;
         public int localDataIndex = 2;
-        public ServiceAddress LoginServer;
-        public ServiceAddress GateServer;
-        public ServiceAddress ChatServer;
-        public ServiceAddress BattleServer;
 
         public int ReceiveTotal;
         public int SendTotal;
         public float ConnectTime;
 
-        public int index = 0;
+        public int index;
 
         public string accountUuid;
         public string sessionKey; //login token
         public string heroName;
 
-        public float pingDelay = 0f;
+        public float pingDelay;
+        public ServiceAddress BattleServer;
+        public ServiceAddress ChatServer;
+        public ServiceAddress GateServer;
+        public ServiceAddress LoginServer;
+
+
+        public static T G<T>() where T : UGate
+        {
+            return S._gate as T;
+        }
 
         #region Gate
 
-        public void GoBackToMainGate() => GoToMainGate(GateServer);
+        public void GoBackToMainGate()
+        {
+            GoToMainGate(GateServer);
+        }
 
         public async void GoToMainGate(ServiceAddress info)
         {
@@ -57,7 +65,6 @@ namespace UApp
             accountUuid = userID;
             sessionKey = session;
             GoToMainGate(GateServer);
-
         }
 
         public async void StartLocalLevel(DHero hero, PlayerPackage package, int levelID)
@@ -100,7 +107,6 @@ namespace UApp
         protected override void Awake()
         {
             base.Awake();
-           
         }
 
         protected override void OnDestroy()
@@ -112,7 +118,6 @@ namespace UApp
 
             async void DestroyChannel()
             {
-
                 //var temp = _gate;
                 _gate = null;
                 //await UGate.DoExitGate(temp);
@@ -120,7 +125,6 @@ namespace UApp
                 await GrpcEnvironment.ShutdownChannelsAsync();
                 Debuger.Log("Application Quit: stop all channel!!");
             }
-
         }
 
         protected void Update()
@@ -135,32 +139,32 @@ namespace UApp
         {
             _ = new ExcelToJSONConfigManager(ResourcesManager.S);
             var json = await ResourcesManager.S.ReadStreamingFile("client.json");
-           // await UniTask.SwitchToMainThread();
+            // await UniTask.SwitchToMainThread();
             var clientConfig = ClientConfig.Parser.ParseJson(json);
             LoginServer = new ServiceAddress
                 { IpAddress = clientConfig.LoginServerHost, Port = clientConfig.LoginServerPort };
             Debug.Log($"Login:{LoginServer}");
 
-            var ips = await  Dns.GetHostAddressesAsync(clientConfig.LoginServerHost);
+            var ips = await Dns.GetHostAddressesAsync(clientConfig.LoginServerHost);
 
-            foreach (var ip in ips)
-            {
-                 Debug.Log($" GetIP Login Server:: {ip}");
-            }
-            
+            foreach (var ip in ips) Debug.Log($" GetIP Login Server:: {ip}");
+
             RunReader();
             Constant = ExcelToJSONConfigManager.GetId<ConstantValue>(1);
             var la = ExcelToJSONConfigManager.Find<LanguageData>();
             LanguageManager.S.AddLanguage(la);
             GrpcEnvironment.SetLogger(new GrpcLoger());
-            
-            if (!localGame) GotoLoginGate();
+
+            if (!localGame)
+            {
+                GotoLoginGate();
+            }
             else
             {
                 // Init(args[0] as DHero, args[1] as PlayerPackage, (int)args[2]);
                 var config = ExcelToJSONConfigManager.GetId<CharacterData>(localDataIndex);
                 var itemCfg = ExcelToJSONConfigManager.GetId<ItemData>(config.InitEquip);
-                var item = new PlayerItem()
+                var item = new PlayerItem
                 {
                     ItemID = itemCfg.ID,
                     Level = 10,
@@ -173,7 +177,7 @@ namespace UApp
                     Num = 1
                 };
 
-                var hero = new DHero()
+                var hero = new DHero
                 {
                     Level = 40,
                     HeroID = config.ID,
@@ -186,20 +190,19 @@ namespace UApp
                             Part = EquipmentType.Arm
                         }
                     },
-                    HP = 100000,
+                    HP = 100000
                 };
 
-                var playerPackage = new PlayerPackage()
+                var playerPackage = new PlayerPackage
                 {
                     Items = { { item.GUID, item } },
                     MaxSize = 200
                 };
 
-                
+
                 await ChangeGate<LevelSimulatorGate>(hero, playerPackage, 1);
             }
         }
-
 
         #endregion
 
@@ -209,7 +212,7 @@ namespace UApp
         {
             try
             {
-                var token = this.destroyCancellationToken;
+                var token = destroyCancellationToken;
                 while (!token.IsCancellationRequested)
                 {
                     await UniTask.Yield(token);
@@ -237,14 +240,5 @@ namespace UApp
         private Queue<AppNotify> NotifyMessages { get; } = new();
 
         #endregion
-
-    
-        public static T G<T>() where T : UGate
-        {
-            return S._gate as T;
-        }
-
     }
 }
-
-

@@ -12,122 +12,39 @@ using Grpc.Core;
 using org.apache.zookeeper;
 using Proto;
 using Proto.ServerConfig;
+using Server;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utility;
 using XNet.Libs.Utility;
 using CM = ExcelConfig.ExcelToJSONConfigManager;
 using static org.apache.zookeeper.ZooDefs;
+using BattleInnerServices = Server.BattleInnerServices;
+using BattleServerService = Server.BattleServerService;
 using Extends = Utility.Extends;
-using Server;
 
 
 public class BattleServerApp : XSingleton<BattleServerApp>
 {
-    private class ZkWatcher : Watcher
-    {
-        public override Task process(WatchedEvent @event)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
     [Header("Server ID")] public string ServerID = "local";
+
+    private volatile bool _exited;
+
+    private string _serverRoot;
 
     public BattleServerConfig Config { private set; get; }
 
     public ConstantValue Constant { private set; get; }
 
     public ZooKeeper Zk { get; private set; }
-    public Server.BattleInnerServices BattleInner { get; private set; }
+    public BattleInnerServices BattleInner { get; private set; }
     public LogServer ServerHost { get; private set; }
     public WatcherServer<string, LoginServerConfig> LoginServer { private set; get; }
     public WatcherServer<string, MatchServerConfig> MatchServer { get; private set; }
 
-    /// <summary>
-    /// Is running
-    /// </summary>
-    /// <param name="accountUuid"></param>
-    /// <returns></returns>
-    public bool KillUser(string accountUuid)
-    {
-        if (!BattleSimulator) return false;
-        BattleSimulator.KickUser(accountUuid);
-        return BattleSimulator.stateOfRun == RunState.Running;
-    }
-
-    internal async Task<bool> BeginSimulator(IList<string> players, int levelID)
-    {
-        if (BattleSimulator)
-        {
-            Debuger.LogError($"Not found BattleSimulator");
-            return false;
-        }
-
-        await UnRegBattleServer();
-        await UniTask.SwitchToMainThread();
-        await BeginSimulatorWorker(players, levelID);
-        Debuger.Log($"start simulator of Level:{levelID}");
-        return BattleSimulator;
-    }
-
-    private async Task BeginSimulatorWorker(IList<string> players, int levelID)
-    {
-        var level = CM.GetId<BattleLevelData>(levelID);
-        await ResourcesManager.S.LoadLevelAsync(level).Task;
-        
-        var go = new GameObject($"Simulator_{levelID}", typeof(BattleSimulator));
-        var si = go.GetComponent<BattleSimulator>();
-        si.OnExited = () =>
-        {
-            BattleSimulator = null;
-            Services?.CloseAllChannel();
-        };
-        si.OnEnd = SiOnEnd;
-        BattleSimulator = await si.Begin(level, players);
-    }
-
-    private async void SiOnEnd(bool force)
-    {
-        Debuger.Log($"Process end!");
-        Debuger.Log($"Begin Process end task!");
-        try
-        {
-            if (!force)
-            {
-                const int delay = 30;
-                var end = new Notify_BattleEnd() { EndTime = delay };
-                Services?.PushToAll(end);
-                await UniTask.Delay(delay * 1000);
-            }
-
-            var matchServer = MatchServer.FirstOrDefault();
-            if (matchServer == null) return;
-            await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
-                ip:matchServer.ServicsHost,
-                expression: async client =>
-                    await client.FinishBattleAsync(new S2M_FinishBattle { BattleServerID = Config.ServerID })
-                ); 
-            Services?.CloseAllChannel();
-        }
-        catch (Exception ex)
-        {
-            Debuger.LogError(ex);
-        }
-
-        await UniTask.SwitchToMainThread();
-        
-        if (BattleSimulator)
-        {
-            Destroy(BattleSimulator);
-            BattleSimulator = null;
-        }
-        SceneManager.LoadScene("null");
-        await UniTask.Delay(1000);
-        await RegBattleServer();
-    }
-
     public BattleSimulator BattleSimulator { private set; get; }
+
+    private LogServer ListenServer { get; set; }
+    public BattleServerService Services { private set; get; }
 
     protected override void Awake()
     {
@@ -139,16 +56,13 @@ public class BattleServerApp : XSingleton<BattleServerApp>
     {
         var commandLineArgs = Environment.GetCommandLineArgs();
 
-        foreach (var arg in commandLineArgs)
-        {
-            print(arg);
-        }
+        foreach (var arg in commandLineArgs) print(arg);
 
         Config = new BattleServerConfig();
 
         var json = await ResourcesManager.S.ReadStreamingFile("server.json");
         Config = BattleServerConfig.Parser.ParseJson(json);
-        
+
 #if UNITY_SERVER || UNITY_EDITOR
         Parser.Default.ParseArguments<CommandOption>(commandLineArgs)
             .WithParsed(o =>
@@ -168,7 +82,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
                 o.ZkRoot?.Set(s => Config.BattleServerRoot = s);
             });
 #endif
-        
+
         ServerID = Config.ServerID;
         Debuger.Log($"{ServerID}->{Config}");
         _ = new CM(ResourcesManager.S);
@@ -182,17 +96,104 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         Debuger.Log($"Start task finish:{cts.IsCancellationRequested}");
     }
 
+    protected override async void OnDestroy()
+    {
+        base.OnDestroy();
+        await Exit();
+    }
+
+    /// <summary>
+    ///     Is running
+    /// </summary>
+    /// <param name="accountUuid"></param>
+    /// <returns></returns>
+    public bool KillUser(string accountUuid)
+    {
+        if (!BattleSimulator) return false;
+        BattleSimulator.KickUser(accountUuid);
+        return BattleSimulator.stateOfRun == RunState.Running;
+    }
+
+    internal async Task<bool> BeginSimulator(IList<string> players, int levelID)
+    {
+        if (BattleSimulator)
+        {
+            Debuger.LogError("Not found BattleSimulator");
+            return false;
+        }
+
+        await UnRegBattleServer();
+        await UniTask.SwitchToMainThread();
+        await BeginSimulatorWorker(players, levelID);
+        Debuger.Log($"start simulator of Level:{levelID}");
+        return BattleSimulator;
+    }
+
+    private async Task BeginSimulatorWorker(IList<string> players, int levelID)
+    {
+        var level = CM.GetId<BattleLevelData>(levelID);
+        await ResourcesManager.S.LoadLevelAsync(level).Task;
+
+        var go = new GameObject($"Simulator_{levelID}", typeof(BattleSimulator));
+        var si = go.GetComponent<BattleSimulator>();
+        si.OnExited = () =>
+        {
+            BattleSimulator = null;
+            Services?.CloseAllChannel();
+        };
+        si.OnEnd = SiOnEnd;
+        BattleSimulator = await si.Begin(level, players);
+    }
+
+    private async void SiOnEnd(bool force)
+    {
+        Debuger.Log("Process end!");
+        Debuger.Log("Begin Process end task!");
+        try
+        {
+            if (!force)
+            {
+                const int delay = 30;
+                var end = new Notify_BattleEnd { EndTime = delay };
+                Services?.PushToAll(end);
+                await UniTask.Delay(delay * 1000);
+            }
+
+            var matchServer = MatchServer.FirstOrDefault();
+            if (matchServer == null) return;
+            await C<MatchServices.MatchServicesClient>.RequestOnceAsync(
+                matchServer.ServicsHost,
+                async client =>
+                    await client.FinishBattleAsync(new S2M_FinishBattle { BattleServerID = Config.ServerID })
+            );
+            Services?.CloseAllChannel();
+        }
+        catch (Exception ex)
+        {
+            Debuger.LogError(ex);
+        }
+
+        await UniTask.SwitchToMainThread();
+
+        if (BattleSimulator)
+        {
+            Destroy(BattleSimulator);
+            BattleSimulator = null;
+        }
+
+        SceneManager.LoadScene("null");
+        await UniTask.Delay(1000);
+        await RegBattleServer();
+    }
+
     public async void StartTest()
     {
 #if UNITY_EDITOR
         await BeginSimulator(new List<string>(), 1);
-        Debuger.Log($"Start:1");
+        Debuger.Log("Start:1");
 #endif
         await Task.CompletedTask;
     }
-
-    private LogServer ListenServer { get; set; }
-    public Server.BattleServerService Services { private set; get; }
 
     private async Task StartServerAsync(CancellationToken token = default)
     {
@@ -201,9 +202,9 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         {
             Ports = { new ServerPort("0.0.0.0", Config.ListenHost.Port, ServerCredentials.Insecure) }
         };
-        Services = new Server.BattleServerService(ListenServer);
+        Services = new BattleServerService(ListenServer);
         ListenServer.BindServices(Proto.BattleServerService.BindService(Services));
-        ListenServer.Interceptor.SetAuthCheck((c) =>
+        ListenServer.Interceptor.SetAuthCheck(c =>
         {
             if (!c.GetHeader("session-key", out var value)) return false;
             if (!ListenServer.CheckSession(value, out var userid)) return false;
@@ -212,7 +213,7 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         });
         ListenServer.Start();
 
-        BattleInner = new Server.BattleInnerServices();
+        BattleInner = new BattleInnerServices();
         ServerHost = new LogServer
             {
                 Ports = { new ServerPort("0.0.0.0", Config.ServicsHost.Port, ServerCredentials.Insecure) }
@@ -236,15 +237,11 @@ public class BattleServerApp : XSingleton<BattleServerApp>
 
         Debuger.Log($"Begin try create :{Config.BattleServerRoot}");
         if (await Zk.existsAsync(Config.BattleServerRoot) == null)
-        {
             await Zk.createAsync(Config.BattleServerRoot, new byte[] { 0 }, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        }
 
         _serverRoot = $"{Config.BattleServerRoot}/{ServerID}";
         await RegBattleServer();
     }
-
-    private string _serverRoot;
 
     private async Task UnRegBattleServer()
     {
@@ -259,22 +256,22 @@ public class BattleServerApp : XSingleton<BattleServerApp>
         Debuger.Log($"reg server to zk:{_serverRoot} {res}");
     }
 
-    protected override async void OnDestroy()
-    {
-        base.OnDestroy();
-        await Exit();
-    }
-
-    private volatile bool _exited;
-
     private async Task Exit()
     {
         if (_exited) return;
         _exited = true;
-        Debuger.Log($"exit server");
+        Debuger.Log("exit server");
         await Zk.closeAsync();
         await ServerHost.ShutdownAsync();
         await ListenServer.ShutdownAsync();
         await GrpcEnvironment.ShutdownChannelsAsync();
+    }
+
+    private class ZkWatcher : Watcher
+    {
+        public override Task process(WatchedEvent @event)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

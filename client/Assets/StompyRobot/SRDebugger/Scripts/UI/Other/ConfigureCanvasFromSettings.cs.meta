@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f0ad3d8afa9fd64429a249b5bbb19557
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/UI/Other/ConfigureCanvasFromSettings.cs
+  uploadId: 496367

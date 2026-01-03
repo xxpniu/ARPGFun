@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2415a15c0c9eea041863fc6c1a434ede
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRF/Scripts/UI/ResponsiveEnable.cs
+  uploadId: 496367

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c38092124e5b1114d9f037f64769dc5f
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27688
+  packageName: SRDebugger - Console & Tools On-Device
+  packageVersion: 1.12.1
+  assetPath: Assets/StompyRobot/SRDebugger/Scripts/Editor/ProfilerCameraListenerEditor.cs
+  uploadId: 496367

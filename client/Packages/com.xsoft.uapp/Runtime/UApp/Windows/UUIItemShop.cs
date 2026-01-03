@@ -1,78 +1,19 @@
 using System;
-using UGameTools;
-using Google.Protobuf.Collections;
-using Proto;
-using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using Cysharp.Threading.Tasks;
+using EConfig;
+using ExcelConfig;
+using Google.Protobuf.Collections;
+using Proto;
 using UApp;
 using UApp.GameGates;
 
 namespace Windows
 {
-    partial class UUIItemShop
+    internal partial class UUIItemShop
     {
         public RepeatedField<ItemsShop> Shops { get; private set; }
-
-        public class ShopTabTableModel : TableItemModel<ShopTabTableTemplate>
-        {
-            public ShopTabTableModel(){}
-            public override void InitModel()
-            {
-                this.Template.ToggleSelected.onValueChanged.AddListener((isOn) => {
-                    if (isOn) OnSelected?.Invoke(this);
-                });
-            }
-            public Action<ShopTabTableModel> OnSelected;
-
-            public ItemsShop Shop { get; private set; }
-
-            internal void SetData(ItemsShop itemsShop)
-            {
-                this.Shop = itemsShop;
-                var config = ExcelConfig.ExcelToJSONConfigManager.GetId<EConfig.ItemShopData>(itemsShop.ShopId);
-                this.Template.ShopName.SetKey(config?.Name);
-            }
-        }
-        public class ContentTableModel : TableItemModel<ContentTableTemplate>
-        {
-            public ContentTableModel(){}
-            public override void InitModel()
-            {
-                Template.ButtonCoin.onClick.AddListener(() => {
-                    OnBuy?.Invoke(this);
-                });
-
-                Template.ButtonGold.onClick.AddListener(() => {
-                    OnBuy?.Invoke(this);
-                });
-
-                Template.ItemBg.onClick.AddListener(() => { OnDetail?.Invoke(this); });
-            }
-
-            public Action<ContentTableModel> OnDetail;
-
-            public Action<ContentTableModel> OnBuy;
-
-            public ItemsShop.Types.ShopItem ShopItem { get; private set; }
-            public ItemsShop Shop { get; private set; }
-            public EConfig.ItemData Config { get; private set; }
-            internal async void SetItem(ItemsShop.Types.ShopItem shopItem, ItemsShop shop)
-            {
-                this.ShopItem = shopItem;
-                this.Shop = shop;
-                Config = ExcelConfig.ExcelToJSONConfigManager.GetId<EConfig.ItemData>(ShopItem.ItemId);
-                await ResourcesManager.S.LoadIcon(Config,s=> Template.icon.sprite = s);
-                Template.Name.SetKey(Config.Name);
-                Template.ItemCount.ActiveSelfObject(shopItem.PackageNum > 1);
-                Template.t_num.text = $"{ShopItem.PackageNum}";
-                Template.ButtonCoin.ActiveSelfObject(ShopItem.CType == ItemsShop.Types.CoinType.Coin);
-                Template.ButtonGold.ActiveSelfObject(ShopItem.CType == ItemsShop.Types.CoinType.Gold);
-                Template.ButtonGold.SetText($"{shopItem.Prices}");
-                Template.ButtonCoin.SetText($"{shopItem.Prices}");
-            }
-        }
 
         protected override void InitModel()
         {
@@ -96,9 +37,10 @@ namespace Windows
                 HideWindow();
                 UApplication.S.ShowError(r.Code);
                 return;
-            } 
-            this.Shops = r.Shops;
-            this.ShopTabTableManager.Count = Shops.Count;
+            }
+
+            Shops = r.Shops;
+            ShopTabTableManager.Count = Shops.Count;
             var index = 0;
             foreach (var i in ShopTabTableManager)
             {
@@ -106,13 +48,14 @@ namespace Windows
                 i.Model.OnSelected = Selected;
                 index++;
             }
+
             if (Shops.Count > 0) ShopTabTableManager[0].Template.ToggleSelected.isOn = true;
         }
 
         private void Selected(ShopTabTableModel obj)
         {
             ContentTableManager.Count = obj.Shop.Items.Count;
-            int index = 0;
+            var index = 0;
             foreach (var i in ContentTableManager)
             {
                 i.Model.SetItem(obj.Shop.Items[index], obj.Shop);
@@ -143,13 +86,10 @@ namespace Windows
                 var r = await GateManager.S.GateFunction.BuyItemAsync(request);
                 await UniTask.SwitchToMainThread();
                 if (r.Code.IsOk())
-                {
-                    UApplication.S.ShowNotify(LanguageManager.S.Format("UUIItemShop_BUY", LanguageManager.S[$"{obj.Config.Name}"], $"{obj.ShopItem.PackageNum}"));
-                }
+                    UApplication.S.ShowNotify(LanguageManager.S.Format("UUIItemShop_BUY",
+                        LanguageManager.S[$"{obj.Config.Name}"], $"{obj.ShopItem.PackageNum}"));
                 else
-                {
                     UApplication.S.ShowError(r.Code);
-                }
             }
         }
 
@@ -158,6 +98,61 @@ namespace Windows
             base.OnHide();
         }
 
+        public class ShopTabTableModel : TableItemModel<ShopTabTableTemplate>
+        {
+            public Action<ShopTabTableModel> OnSelected;
 
+            public ItemsShop Shop { get; private set; }
+
+            public override void InitModel()
+            {
+                Template.ToggleSelected.onValueChanged.AddListener(isOn =>
+                {
+                    if (isOn) OnSelected?.Invoke(this);
+                });
+            }
+
+            internal void SetData(ItemsShop itemsShop)
+            {
+                Shop = itemsShop;
+                var config = ExcelToJSONConfigManager.GetId<ItemShopData>(itemsShop.ShopId);
+                Template.ShopName.SetKey(config?.Name);
+            }
+        }
+
+        public class ContentTableModel : TableItemModel<ContentTableTemplate>
+        {
+            public Action<ContentTableModel> OnBuy;
+
+            public Action<ContentTableModel> OnDetail;
+
+            public ItemsShop.Types.ShopItem ShopItem { get; private set; }
+            public ItemsShop Shop { get; private set; }
+            public ItemData Config { get; private set; }
+
+            public override void InitModel()
+            {
+                Template.ButtonCoin.onClick.AddListener(() => { OnBuy?.Invoke(this); });
+
+                Template.ButtonGold.onClick.AddListener(() => { OnBuy?.Invoke(this); });
+
+                Template.ItemBg.onClick.AddListener(() => { OnDetail?.Invoke(this); });
+            }
+
+            internal async void SetItem(ItemsShop.Types.ShopItem shopItem, ItemsShop shop)
+            {
+                ShopItem = shopItem;
+                Shop = shop;
+                Config = ExcelToJSONConfigManager.GetId<ItemData>(ShopItem.ItemId);
+                await ResourcesManager.S.LoadIcon(Config, s => Template.icon.sprite = s);
+                Template.Name.SetKey(Config.Name);
+                Template.ItemCount.ActiveSelfObject(shopItem.PackageNum > 1);
+                Template.t_num.text = $"{ShopItem.PackageNum}";
+                Template.ButtonCoin.ActiveSelfObject(ShopItem.CType == ItemsShop.Types.CoinType.Coin);
+                Template.ButtonGold.ActiveSelfObject(ShopItem.CType == ItemsShop.Types.CoinType.Gold);
+                Template.ButtonGold.SetText($"{shopItem.Prices}");
+                Template.ButtonCoin.SetText($"{shopItem.Prices}");
+            }
+        }
     }
 }

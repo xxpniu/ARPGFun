@@ -10,31 +10,23 @@ using Layout;
 using Layout.LayoutElements;
 using Proto;
 using UnityEngine;
+using DamageType = Layout.LayoutElements.DamageType;
+using EventType = Layout.EventType;
 using UVector3 = UnityEngine.Vector3;
 
 namespace BattleViews.Views
 {
     public class UMagicReleaserView : UElementView, IMagicReleaser
     {
-        public void SetData(int releaser, int target, UVector3 targetPos, ReleaserModeType rmType,string magicKey)
-        {
-            CharacterTarget = PerView.GetViewByIndex<UCharacterView>(target);
-            CharacterReleaser = PerView.GetViewByIndex<UCharacterView>(releaser);
-            RIndex = releaser;
-            TIndex = target;
-            TargetPos = targetPos;
-            RMType = rmType;
-            if (PerView is IBattlePerception per)
-            {
-                if(Magic ==null && !string.IsNullOrEmpty(magicKey))
-                    Magic = per?.GetMagicByKey(magicKey);
-            }
-            MagicKey = magicKey;
-        }
+        public UVector3 TargetPos;
+
+        private readonly LinkedList<TimeLineViewPlayer> _players = new();
+
+
+        private readonly List<IParticlePlayer> pPlayers = new();
 
 
         private MagicData Magic;
-        public UVector3 TargetPos;
         private int RIndex;
         private int TIndex;
 
@@ -45,13 +37,28 @@ namespace BattleViews.Views
 
         public string MagicKey { get; private set; }
 
-        UVector3 IMagicReleaser.Position => this.transform.position; 
+        private void Update()
+        {
+            TickTimeLine(PerView.GetTime());
+        }
 
-        Quaternion IMagicReleaser.Rotation => this.transform.rotation;
+        private void OnDestroy()
+        {
+            foreach (var i in pPlayers) i.DestroyParticle();
+            pPlayers.Clear();
+            foreach (var i in _players) i.Destory();
+            _players.Clear();
+        }
 
-        MagicData IMagicReleaser.MagicData { get => Magic; set => Magic = value; }
+        UVector3 IMagicReleaser.Position => transform.position;
 
-        private readonly LinkedList<TimeLineViewPlayer> _players = new LinkedList<TimeLineViewPlayer>();
+        Quaternion IMagicReleaser.Rotation => transform.rotation;
+
+        MagicData IMagicReleaser.MagicData
+        {
+            get => Magic;
+            set => Magic = value;
+        }
 
         void IMagicReleaser.PlayTimeLine(int pIndex, int pathIndex, int targetIndex, int type)
         {
@@ -67,9 +74,13 @@ namespace BattleViews.Views
 #endif
 #if !UNITY_SERVER
 
-            if (Magic == null) { Debug.LogError($"Not found magic key {MagicKey}"); return; }
+            if (Magic == null)
+            {
+                Debug.LogError($"Not found magic key {MagicKey}");
+                return;
+            }
 
-            var eType = (Layout.EventType)type;
+            var eType = (EventType)type;
             var tar = PerView.GetViewByIndex<UCharacterView>(targetIndex);
             if (PerView is IBattlePerception per)
             {
@@ -78,6 +89,7 @@ namespace BattleViews.Views
                     Debug.LogError($"Index out of bounds {pathIndex} magic containers {Magic?.Containers?.Count}");
                     return;
                 }
+
                 var e = Magic.Containers[pathIndex];
                 PlayLine(pIndex, per?.GetTimeLineByPath(e.layoutPath), tar, eType);
             }
@@ -91,32 +103,57 @@ namespace BattleViews.Views
             {
                 Index = Index,
                 PlayIndex = pIndex
-            }); ;
+            });
+            ;
 #endif
 #if !UNITY_SERVER
             foreach (var i in _players)
-            {
                 if (i.Index == pIndex)
                 {
                     _players.Remove(i);
                     i.Destory();
                     break;
                 }
-            }     
 #endif
         }
 
-        private TimeLineViewPlayer PlayLine(int pIndex,TimeLine timeLine, UCharacterView eventTarget, Layout.EventType type)
+        void IMagicReleaser.PlayTest(int pIndex, TimeLine line)
         {
-            if (timeLine == null) return null;
-            var player = new TimeLineViewPlayer(pIndex,timeLine, this, eventTarget, type);
-            _players.AddLast(player);
-            return player;
+            PlayLine(pIndex, line, CharacterTarget, EventType.EVENT_START);
         }
 
-        void IMagicReleaser.PlayTest(int pIndex,TimeLine line)
+
+        void IMagicReleaser.ShowDamageRanger(DamageLayout layout, UVector3 tar, Quaternion rototion)
         {
-            PlayLine(pIndex, line, this.CharacterTarget, Layout.EventType.EVENT_START);
+#if UNITY_EDITOR
+            if (layout.RangeType.damageType == DamageType.Area)
+            {
+                var pos = tar + rototion * layout.RangeType.offsetPosition.ToUV3();
+                DamageRangeDebuger.TryGet(gameObject).AddDebug(layout, pos, rototion);
+            }
+#endif
+        }
+
+        public void SetData(int releaser, int target, UVector3 targetPos, ReleaserModeType rmType, string magicKey)
+        {
+            CharacterTarget = PerView.GetViewByIndex<UCharacterView>(target);
+            CharacterReleaser = PerView.GetViewByIndex<UCharacterView>(releaser);
+            RIndex = releaser;
+            TIndex = target;
+            TargetPos = targetPos;
+            RMType = rmType;
+            if (PerView is IBattlePerception per)
+                if (Magic == null && !string.IsNullOrEmpty(magicKey))
+                    Magic = per?.GetMagicByKey(magicKey);
+            MagicKey = magicKey;
+        }
+
+        private TimeLineViewPlayer PlayLine(int pIndex, TimeLine timeLine, UCharacterView eventTarget, EventType type)
+        {
+            if (timeLine == null) return null;
+            var player = new TimeLineViewPlayer(pIndex, timeLine, this, eventTarget, type);
+            _players.AddLast(player);
+            return player;
         }
 
         private void TickTimeLine(GTime time)
@@ -129,12 +166,10 @@ namespace BattleViews.Views
                     current.Value.Destory();
                     _players.Remove(current);
                 }
+
                 current = current.Next;
             }
         }
-
-
-        private readonly List<IParticlePlayer> pPlayers  = new List<IParticlePlayer>();
 
         internal void AttachParticle(IParticlePlayer particle)
         {
@@ -156,32 +191,5 @@ namespace BattleViews.Views
             };
             return createNotify;
         }
-
-        private void OnDestroy()
-        {
-            foreach (var i in pPlayers) i.DestroyParticle();
-            pPlayers.Clear();
-            foreach (var i in _players) i.Destory();
-            _players.Clear();
-        }
-
-        private void Update()
-        {
-            TickTimeLine(PerView.GetTime());
-        }
-
-
-        void IMagicReleaser.ShowDamageRanger(DamageLayout layout, UVector3 tar, Quaternion rototion)
-        {
-#if UNITY_EDITOR
-            if (layout.RangeType.damageType == Layout.LayoutElements.DamageType.Area)
-            {
-                var pos = tar + rototion * layout.RangeType.offsetPosition.ToUV3();
-                DamageRangeDebuger.TryGet(this.gameObject).AddDebug(layout, pos,rototion);
-            }
-#endif
-        }
-
-  
     }
 }

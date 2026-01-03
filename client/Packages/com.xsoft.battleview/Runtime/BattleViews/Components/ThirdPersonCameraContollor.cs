@@ -3,10 +3,28 @@
 namespace BattleViews.Components
 {
     [RequireComponent(typeof(Camera))]
-    public class ThirdPersonCameraContollor : UnityEngine.MonoBehaviour
+    public class ThirdPersonCameraContollor : MonoBehaviour
     {
-        public static ThirdPersonCameraContollor Current { private set; get; }
         public Camera currentCamera;
+
+        public float dampping = 25f;
+
+
+        public float distance = 10;
+        public float rotationX = 30; //{ private set; get; } = 45;
+        public float rotationY; // { private set; get; } = 0;
+
+        public Transform lookTarget;
+        public Vector3 forwardOffset = Vector3.zero;
+
+        private Vector2 _xRange = new(5, 85);
+        private float rx;
+        private float ry;
+        public static ThirdPersonCameraContollor Current { private set; get; }
+
+        public Vector3 LookPos { get; private set; }
+
+        public Quaternion LookRotation => Quaternion.Euler(0, ry, 0);
 
         private void Awake()
         {
@@ -14,60 +32,43 @@ namespace BattleViews.Components
             currentCamera = GetComponent<Camera>();
         }
 
-        public float dampping = 25f;
-
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-
             rx = Mathf.Lerp(rx, rotationX, Time.deltaTime * dampping);
             ry = Mathf.Lerp(ry, rotationY, Time.deltaTime * dampping);
             if (lookTarget)
-            {
-                targetPos = Vector3.Lerp(targetPos,
+                LookPos = Vector3.Lerp(LookPos,
                     lookTarget.position + lookTarget.rotation * forwardOffset, Time.deltaTime * dampping);
-            }
 
-            this.transform.position = targetPos - (Quaternion.Euler(rx, ry, 0) * Vector3.forward) * distance;
-            this.transform.LookAt(targetPos);
+            transform.position = LookPos - Quaternion.Euler(rx, ry, 0) * Vector3.forward * distance;
+            transform.LookAt(LookPos);
         }
-
-
-        public float distance = 10;
-        private float rx = 0;
-        private float ry = 0;
-        private Vector3 targetPos;
-        public float rotationX = 30; //{ private set; get; } = 45;
-        public float rotationY = 0; // { private set; get; } = 0;
-
-        public Transform lookTarget;
-        public Vector3 forwardOffset = Vector3.zero;
 
         public ThirdPersonCameraContollor SetLookAt(Transform tr, bool noDelay = false)
         {
             lookTarget = tr;
-            if (noDelay) targetPos = lookTarget.position + Quaternion.Euler(0, rotationY, 0) * forwardOffset;
+            if (noDelay) LookPos = lookTarget.position + Quaternion.Euler(0, rotationY, 0) * forwardOffset;
             return this;
         }
 
         public ThirdPersonCameraContollor SetForwardOffset(Vector3 offset)
         {
-            this.forwardOffset = offset;
+            forwardOffset = offset;
             return this;
         }
 
         public void SetLookAt(Vector3 tr)
         {
-            targetPos = tr;
+            LookPos = tr;
         }
 
         public ThirdPersonCameraContollor SetDis(float dis)
         {
-            this.distance = dis;
+            distance = dis;
             return this;
         }
 
-        private Vector2 _xRange = new Vector2(5, 85);
         public ThirdPersonCameraContollor SetClampX(float min, float max)
         {
             _xRange = new Vector2(min, max);
@@ -87,10 +88,6 @@ namespace BattleViews.Components
             return this;
         }
 
-        public Vector3 LookPos => targetPos;
-
-        public Quaternion LookRotation => Quaternion.Euler(0, ry, 0);
-
         public bool InView(Vector3 position)
         {
             var vp = currentCamera.WorldToViewportPoint(position);
@@ -99,8 +96,8 @@ namespace BattleViews.Components
 
         public ThirdPersonCameraContollor SetXY(float x, float y)
         {
-            this.rotationX = x;
-            this.rotationY = y;
+            rotationX = x;
+            rotationY = y;
             return this;
         }
     }

@@ -1,80 +1,25 @@
 using System;
 using System.Collections.Generic;
-using UGameTools;
-using Proto;
-using ExcelConfig;
-using EConfig;
-using GameLogic.Game;
-using P = Proto.HeroPropertyType;
-using GameLogic;
-using System.Threading.Tasks;
 using App.Core.Core;
 using App.Core.UICore.Utility;
 using Cysharp.Threading.Tasks;
+using EConfig;
+using ExcelConfig;
+using GameLogic;
+using GameLogic.Game;
+using Proto;
 using UApp;
 using UApp.GameGates;
+using P = Proto.HeroPropertyType;
 
 namespace Windows
 {
-    partial class UUIItemRefresh
+    internal partial class UUIItemRefresh
     {
-        public class PropertyListTableModel : TableItemModel<PropertyListTableTemplate>
-        {
-            public PropertyListTableModel(){}
-            public override void InitModel()
-            {
-                //todo
-            }
+        private EquipRefreshData currentRefreshData;
+        private List<PlayerItem> customItems;
 
-            internal void SetLabel(string v)
-            {
-                Template.lb_text.text = v;
-            }
-        }
-        public class ItemListTableModel : TableItemModel<ItemListTableTemplate>
-        {
-            public ItemListTableModel(){}
-            public override void InitModel()
-            {
-                this.Template.BtSelected.onClick.AddListener(() => OnClick?.Invoke(this));
-            }
-
-            public Action<ItemListTableModel> OnClick;
-
-
-            public PlayerItem PlayerItem { private set; get; }
-            internal void SetEmpty()
-            {
-                Template.icon_right.ActiveSelfObject(false);
-                Template.AddIconSel.ActiveSelfObject(true);
-                Template.ERoot.ActiveSelfObject(false);
-            }
-
-            public async void SetPlayItem(PlayerItem item)
-            {
-                PlayerItem = item;
-                Template.ERoot.ActiveSelfObject(item.Level > 0);
-                Template.AddIconSel.ActiveSelfObject(false);
-                var config = ExcelToJSONConfigManager.GetId<ItemData>(PlayerItem.ItemID);
-                Template.equip_lvl.text = $"+{item.Level}";
-                await ResourcesManager.S.LoadIcon(config, s =>
-                {
-                    this.Template.icon_right.sprite = s;
-                    Template.icon_right.ActiveSelfObject(true);
-                });
-            }
-        }
-        public class EquipmentPropertyTableModel : TableItemModel<EquipmentPropertyTableTemplate>
-        {
-            public EquipmentPropertyTableModel(){}
-
-            public override void InitModel() { }
-  
-            internal void SetLabel(string v)
-            {
-                Template.lb_text.text = v;
-            }
-        }
+        private PlayerItem refreshItem;
 
         protected override void InitModel()
         {
@@ -104,10 +49,7 @@ namespace Windows
             var gate = UApplication.G<GMainGate>();
             var request = new C2G_RefreshEquip { EquipUuid = refreshItem.GUID };
 
-            foreach (var i in customItems)
-            {
-                request.CoustomItem.Add(i.GUID);
-            }
+            foreach (var i in customItems) request.CoustomItem.Add(i.GUID);
 
             var res = await GateManager.S.GateFunction.RefreshEquipAsync(request);
             await UniTask.SwitchToMainThread();
@@ -116,6 +58,7 @@ namespace Windows
                 UApplication.S.ShowNotify(LanguageManager.S["UUIItemRefresh_Sucess"]);
                 return;
             }
+
             UApplication.S.ShowError(res.Code);
         }
 
@@ -137,10 +80,6 @@ namespace Windows
             ShowRight(refreshItem);
         }
 
-        private PlayerItem refreshItem;
-        private EquipRefreshData currentRefreshData;
-        private List<PlayerItem> customItems;
-
         private void ShowRight(PlayerItem item)
         {
             var config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
@@ -153,7 +92,7 @@ namespace Windows
             }
 
             Right.ActiveSelfObject(true);
-            
+
             var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(config.ID);
             //var refreshData = currentRefreshData = ExcelToJSONConfigManager.GetId<EquipRefreshData>(config.Quality);
             ItemListTableManager.Count = refreshData.NeedItemCount;
@@ -162,6 +101,7 @@ namespace Windows
                 i.Model.SetEmpty();
                 i.Model.OnClick = ClickCustom;
             }
+
             LevelUp.ActiveSelfObject(refreshData.MaxRefreshTimes > item.Data?.RefreshTime);
             lb_pro.SetKey("UUIRefreshItem_pro", currentRefreshData.Pro / 100);
             coin_icon.ActiveSelfObject(false);
@@ -173,7 +113,8 @@ namespace Windows
         {
             UUIManager.S.CreateWindowAsync<UUISelectItem>(ui =>
             {
-                ui.ShowSelect(currentRefreshData?.NeedItemCount??1,true, refreshItem.GUID, currentRefreshData.NeedQuality);
+                ui.ShowSelect(currentRefreshData?.NeedItemCount ?? 1, true, refreshItem.GUID,
+                    currentRefreshData.NeedQuality);
                 ui.OnSelectedItems = OnSelectCustomItems;
             });
         }
@@ -181,14 +122,16 @@ namespace Windows
         private void OnSelectCustomItems(List<PlayerItem> obj)
         {
             customItems = obj;
-            int index = 0;
+            var index = 0;
             foreach (var i in ItemListTableManager)
             {
                 i.Model.SetPlayItem(obj[index]);
                 index++;
             }
+
             ShowProperty(obj);
         }
+
         private void ShowProperty(List<PlayerItem> obj)
         {
             var properties = new Dictionary<P, ComplexValue>();
@@ -197,13 +140,13 @@ namespace Windows
                 var item = ExcelToJSONConfigManager.GetId<ItemData>(it.ItemID);
                 var equip = ExcelToJSONConfigManager.GetId<EquipmentData>(item.ID);
                 var pro = equip.Properties.SplitToInt();
-               
+
                 for (var ip = 0; ip < pro.Count; ip++)
                 {
                     var pr = (P)pro[ip];
                     var fpv = ExcelToJSONConfigManager.GetId<RefreshPropertyValueData>((int)pr);
                     if (fpv == null) continue;
-                    if (!properties.ContainsKey(pr))  properties.Add(pr, 0);
+                    if (!properties.ContainsKey(pr)) properties.Add(pr, 0);
                 }
             }
 
@@ -214,13 +157,13 @@ namespace Windows
             }
 
             EquipmentPropertyTableManager.Count = properties.Count;
-            int index = 0;
+            var index = 0;
             foreach (var i in properties)
             {
-                var stat = ExcelToJSONConfigManager.GetId<EConfig.StatData>((int)i.Key);
+                var stat = ExcelToJSONConfigManager.GetId<StatData>((int)i.Key);
                 EquipmentPropertyTableManager[index]
                     .Model.SetLabel(
-                    $"{stat.WordKey.GetLanguageWord()}:{currentRefreshData.PropertyAppendMin * i.Value.FinalValue}~{currentRefreshData.PropertyAppendMax * i.Value.FinalValue}");
+                        $"{stat.WordKey.GetLanguageWord()}:{currentRefreshData.PropertyAppendMin * i.Value.FinalValue}~{currentRefreshData.PropertyAppendMax * i.Value.FinalValue}");
                 index++;
             }
         }
@@ -234,17 +177,18 @@ namespace Windows
             currentRefreshData = ExcelToJSONConfigManager.GetId<EquipRefreshData>(item.Quality);
             lb_Lvl.text = $"+{it.Level}";
             lb_equipname.SetKey(item.Name);
-            lb_description.SetKey( item.Description);
-            lb_equiprefresh.SetKey("UUIItemRefresh_RefreshTimes", $"{ currentRefreshData.MaxRefreshTimes - it.Data?.RefreshTime}");
+            lb_description.SetKey(item.Description);
+            lb_equiprefresh.SetKey("UUIItemRefresh_RefreshTimes",
+                $"{currentRefreshData.MaxRefreshTimes - it.Data?.RefreshTime}");
             LevelRoot.ActiveSelfObject(it.Level > 0);
             var properties = it.GetProperties();
-            PropertyListTableManager .Count = properties.Count;
-            int index = 0;
+            PropertyListTableManager.Count = properties.Count;
+            var index = 0;
             foreach (var i in properties)
             {
                 PropertyListTableManager[index]
                     .Model.SetLabel(
-                    $"{i.Key.ToWord()}:{i.Value.ToString()}");
+                        $"{i.Key.ToWord()}:{i.Value}");
 
                 index++;
             }
@@ -255,8 +199,8 @@ namespace Windows
             base.OnShow();
             customItems = null;
             lb_Lvl.text =
-            lb_equipname.text = lb_equiprefresh.text =
-            lb_description.text = string.Empty;
+                lb_equipname.text = lb_equiprefresh.text =
+                    lb_description.text = string.Empty;
 
             LevelRoot.ActiveSelfObject(false);
             Right.ActiveSelfObject(false);
@@ -272,15 +216,72 @@ namespace Windows
             {
                 var gata = GateManager.Try();
                 if (gata.Package.Items.TryGetValue(refreshItem.GUID, out refreshItem))
-                {
                     OnSelectRefresh(new List<PlayerItem> { refreshItem });
-                }
             }
         }
 
         protected override void OnHide()
         {
             base.OnHide();
+        }
+
+        public class PropertyListTableModel : TableItemModel<PropertyListTableTemplate>
+        {
+            public override void InitModel()
+            {
+                //todo
+            }
+
+            internal void SetLabel(string v)
+            {
+                Template.lb_text.text = v;
+            }
+        }
+
+        public class ItemListTableModel : TableItemModel<ItemListTableTemplate>
+        {
+            public Action<ItemListTableModel> OnClick;
+
+
+            public PlayerItem PlayerItem { private set; get; }
+
+            public override void InitModel()
+            {
+                Template.BtSelected.onClick.AddListener(() => OnClick?.Invoke(this));
+            }
+
+            internal void SetEmpty()
+            {
+                Template.icon_right.ActiveSelfObject(false);
+                Template.AddIconSel.ActiveSelfObject(true);
+                Template.ERoot.ActiveSelfObject(false);
+            }
+
+            public async void SetPlayItem(PlayerItem item)
+            {
+                PlayerItem = item;
+                Template.ERoot.ActiveSelfObject(item.Level > 0);
+                Template.AddIconSel.ActiveSelfObject(false);
+                var config = ExcelToJSONConfigManager.GetId<ItemData>(PlayerItem.ItemID);
+                Template.equip_lvl.text = $"+{item.Level}";
+                await ResourcesManager.S.LoadIcon(config, s =>
+                {
+                    Template.icon_right.sprite = s;
+                    Template.icon_right.ActiveSelfObject(true);
+                });
+            }
+        }
+
+        public class EquipmentPropertyTableModel : TableItemModel<EquipmentPropertyTableTemplate>
+        {
+            public override void InitModel()
+            {
+            }
+
+            internal void SetLabel(string v)
+            {
+                Template.lb_text.text = v;
+            }
         }
     }
 }

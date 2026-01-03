@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using App.Core.Core;
 using NUnit.Framework;
 using UnityEngine;

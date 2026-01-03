@@ -1,12 +1,11 @@
-﻿using System;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using Layout.EditorAttributes;
 
 namespace Layout.LayoutEffects
 {
     [EditorEffect("传送目标")]
     [EffectId(1)]
-    public class TransportEffect:EffectBase
+    public class TransportEffect : EffectBase
     {
         public enum TranportValueOf
         {
@@ -14,15 +13,9 @@ namespace Layout.LayoutEffects
             Value
         }
 
-        public TransportEffect()
-        {
-        }
+        [Label("取值方式")] public TranportValueOf ValueOf = TranportValueOf.ReleaseTargetPos;
 
-        [Label("取值方式")]
-        public TranportValueOf ValueOf = TranportValueOf.ReleaseTargetPos;
-
-        [HideInEditor]
-        public float x, y, z = 0;
+        [HideInEditor] public float x, y, z;
 
         [XmlIgnore]
         [Label("目标位置")]
@@ -34,10 +27,7 @@ namespace Layout.LayoutEffects
                 y = value.y;
                 z = value.z;
             }
-            get
-            {
-                return new Vector3(x, y, z);
-            }
+            get => new(x, y, z);
         }
     }
 }
