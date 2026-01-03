@@ -141,6 +141,8 @@ namespace BattleViews.Views
             GPUBillboardBuffer.S.DisplayNumberRandom($"{mp}", new Vector2(.2f, .2f), pos, Color.blue, true, _param);
 #endif
         }
+        
+        
 
         public T GetViewByIndex<T>(int releaseIndex) where T : UElementView
         {

@@ -5,8 +5,10 @@
     <assembly fullname="Google.Protobuf" preserve="all"/>
     <assembly fullname="JSON" preserve="all"/>
     <assembly fullname="XNet.Libs" preserve="all"/>
-    <assembly fullname="Xsoft.Proto" preserve="all"/>
+    <assembly fullname="Proto" preserve="all"/>
     <assembly fullname="App.Core" preserve="all"/>
+    <assembly fullname="Xsoft.Proto" preserve="all"/>
+    <assembly fullname="EConfig" preserve="all"/>
     <assembly fullname="Vuforia.UnityExtensions">
         <namespace fullname="Vuforia" preserve="all"/>
     </assembly>

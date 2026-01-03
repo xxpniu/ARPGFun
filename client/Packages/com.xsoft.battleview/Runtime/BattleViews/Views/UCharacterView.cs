@@ -283,6 +283,8 @@ namespace BattleViews.Views
 #endif
 #if !UNITY_SERVER
             if (mp > 0) PerView.ShowMpCure(GetBoneByName(BodyBone).position, mp);
+            //cost mp
+            //Debug.Log($"{mp} - {cur} - {maxMp}");
 #endif
         }
 

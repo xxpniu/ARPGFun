@@ -137,10 +137,22 @@ namespace UApp
 
         private async void Start()
         {
+            try
+            {
+                await StartApp();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+        }
+
+        private async Task StartApp()
+        {
             _ = new ExcelToJSONConfigManager(ResourcesManager.S);
             var json = await ResourcesManager.S.ReadStreamingFile("client.json");
-            // await UniTask.SwitchToMainThread();
             var clientConfig = ClientConfig.Parser.ParseJson(json);
+            
             LoginServer = new ServiceAddress
                 { IpAddress = clientConfig.LoginServerHost, Port = clientConfig.LoginServerPort };
             Debug.Log($"Login:{LoginServer}");
