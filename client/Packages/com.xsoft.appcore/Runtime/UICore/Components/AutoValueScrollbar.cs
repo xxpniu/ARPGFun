@@ -26,16 +26,23 @@ public class AutoValueScrollbar : MonoBehaviour
 
     private async void RunBar(float duration, CancellationToken token = default)
     {
-        var start = Time.time;
-        bar.size = 0;
-        await UniTask.NextFrame(token);
-        while (Time.time - start < duration)
+        try
         {
-            bar.size = (Time.time - start) / duration;
+            var start = Time.time;
+            bar.size = 0;
+            await UniTask.NextFrame(token);
+            while (Time.time - start < duration)
+            {
+                bar.size = (Time.time - start) / duration;
+                await UniTask.NextFrame(token);
+            }
+
+            bar.size = 1;
             await UniTask.NextFrame(token);
         }
-
-        bar.size = 1;
-        await UniTask.NextFrame(token);
+        catch
+        {
+            //ignore
+        }
     }
 }

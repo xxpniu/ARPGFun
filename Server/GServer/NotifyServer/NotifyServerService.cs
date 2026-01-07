@@ -38,7 +38,7 @@ namespace NotifyServer
 
         private async Task< bool> TryConnect(ChatServerConfig c)
         {
-            if (_chatServers.TryGetValue(c.ChatServerID, out ChatChannel channel))
+            if (_chatServers.TryGetValue(c.ChatServerID, out var channel))
             {
                 if (channel.Config.Equals(c)) return false;
                 await channel.Channel.ShutdownAsync();
