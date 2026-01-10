@@ -2228,6 +2228,11 @@
             魔法
              </summary>
         </member>
+        <member name="F:Proto.MagicReleaseType.MrtRecure">
+             <summary>
+            被动恢复
+             </summary>
+        </member>
         <member name="F:Proto.MagicReleaseAITarget.MatAll">
              <summary>
             所有
