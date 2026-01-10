@@ -72,9 +72,13 @@ namespace GServer.RPCResponser
             //no damage
 
             var level = ExcelToJSONConfigManager.GetId<BattleLevelData>(request.LevelId);
-            if (level == null || level.DropIndex <= 0)
+            if (level is not { DropIndex: > 0 })
+            {
+                Debuger.LogError($"drop index is invalid: {request.LevelId}");
                 return new G2C_LocalBattleFinished { Code = ErrorCode.Exception };
+            }
 
+            
 
             var (gold, items) = DoDrop(level.DropIndex);
 

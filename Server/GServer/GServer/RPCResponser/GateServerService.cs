@@ -254,6 +254,6 @@ namespace GServer.RPCResponsor
         {
             return await UserDataManager.S.ActiveMagic(context.GetAccountId(), req.MagicId);
         }
-
+        
   }
 }
