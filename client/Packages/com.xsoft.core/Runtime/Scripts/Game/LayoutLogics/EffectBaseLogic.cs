@@ -119,8 +119,9 @@ namespace GameLogic.Game.LayoutLogics
             var per = releaser.Controller.Perception as BattlePerception;
 
             var rT = new ReleaseAtTarget(releaser.Releaser, effectTarget);
+            //buff
             var r = per!.CreateReleaser(effect!.buffMagicKey, releaser.Releaser, rT,
-                ReleaserType.Buff, ReleaserModeType.RmtBuff,
+                ReleaserType.Buff, MagicReleaseType.MrtBuff,
                 effect.durationTime.ProcessValue(releaser) / 1000f);
             r.BindCharacter(effectTarget);
             if (effect.CopyParams) r.SetParam(releaser.Params);

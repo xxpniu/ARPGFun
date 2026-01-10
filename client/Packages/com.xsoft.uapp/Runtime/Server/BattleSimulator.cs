@@ -209,7 +209,7 @@ namespace Server
 
             var rTarget = new ReleaseAtTarget(player.HeroCharacter, player.HeroCharacter);
             if (_levelSimulator.CreateReleaser(config.Params1, player.HeroCharacter, rTarget, ReleaserType.Magic,
-                    ReleaserModeType.RmtNone, -1))
+                    MagicReleaseType.MrtNone, -1))
                 player.PushChannel.Push(
                     Any.Pack(new Notify_ErrorCode { Code = ErrorCode.Ok, Msg = "ITEM_USE_SUCCESS" }));
         }

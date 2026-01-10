@@ -89,7 +89,9 @@ enum MagicReleaseType
 	MRT_NormalAttack =1;//普通攻击
 	MRT_BornMagic =2;//出生技能
 	MRT_Magic = 3;//魔法
-	MRT_Recure=4;//被动恢复
+	MRT_Talent=4; //天赋
+	MRT_Recure=5;//恢复 mp/hp 的技能
+	MRT_Buff=6; //buff
 }
 
 enum MagicReleaseAITarget

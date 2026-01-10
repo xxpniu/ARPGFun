@@ -337,7 +337,7 @@ namespace BattleViews.Views
         }
 
         IMagicReleaser IBattlePerception.CreateReleaserView(Vector3 pos, Vector3 ration, int releaser, int target,
-            string magicKey, Vector3 targetPos, ReleaserModeType rmType)
+            string magicKey, Vector3 targetPos, MagicReleaseType rmType)
         {
             var obj = new GameObject($"Releaser:{magicKey}");
             obj.transform.SetParent(transform, false);

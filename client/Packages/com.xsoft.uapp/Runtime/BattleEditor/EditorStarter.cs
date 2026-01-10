@@ -116,7 +116,7 @@ namespace BattleEditor
             var per = _curState.Perception as BattlePerception;
             currentReleaser = per!.CreateReleaser(string.Empty, releaser, magic,
                 new ReleaseAtTarget(releaser, target),
-                ReleaserType.Magic, ReleaserModeType.RmtMagic, 0);
+                ReleaserType.Magic, MagicReleaseType.MrtMagic, 0);
         }
 
         public void ReplaceRelease(int level, CharacterData data, bool stay, bool ai)

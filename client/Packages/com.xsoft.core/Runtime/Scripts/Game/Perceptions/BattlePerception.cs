@@ -99,8 +99,7 @@ namespace GameLogic.Game.Perceptions
         #region create Elements
 
         public MagicReleaser CreateReleaser(string key, BattleCharacter owner,
-            IReleaserTarget target, ReleaserType ty,
-            ReleaserModeType rmType, float durTime, bool canMoveCancel = false, string[] magicParams = default)
+            IReleaserTarget target, /*技能 OR buff*/ReleaserType ty,MagicReleaseType mrt, float durTime, bool canMoveCancel = false, string[] magicParams = default)
         {
             var magic = View.GetMagicByKey(key);
             if (magic == null)
@@ -109,14 +108,13 @@ namespace GameLogic.Game.Perceptions
                 return null;
             }
 
-            var releaser = CreateReleaser(key, owner, magic, target, ty, rmType, durTime, canMoveCancel, magicParams);
+            var releaser = CreateReleaser(key, owner, magic, target, ty, mrt, durTime, canMoveCancel, magicParams);
 
             return releaser;
         }
 
         public MagicReleaser CreateReleaser(string key, BattleCharacter owner, MagicData magic, IReleaserTarget target,
-            ReleaserType ty,
-            ReleaserModeType rmType, float durTime, bool canMoveCancel = false, string[] magicParams = default)
+            ReleaserType ty,MagicReleaseType mrt,float durTime, bool canMoveCancel = false, string[] magicParams = default)
         {
             if (magic.unique)
             {
@@ -137,16 +135,16 @@ namespace GameLogic.Game.Perceptions
 
             var view = View.CreateReleaserView(owner.Transform.position.ToPV3(),
                 r.eulerAngles.ToPV3(), target.Releaser.Index,
-                target.ReleaserTarget.Index, key, target.TargetPosition.ToPV3(), rmType);
+                target.ReleaserTarget.Index, key, target.TargetPosition.ToPV3(), mrt);
             view.MagicData = magic;
             var mReleaser = new MagicReleaser(key, magic, owner, target, ReleaserControllor, view, ty, durTime,
                 canMoveCancel, magicParams);
-            switch (rmType)
+            switch (mrt)
             {
-                case ReleaserModeType.RmtMagic:
+                case  MagicReleaseType.MrtMagic:
                     owner.FireEvent(BattleEventType.Skill, mReleaser);
                     break;
-                case ReleaserModeType.RmtNormalAttack:
+                case MagicReleaseType.MrtNormalAttack:
                     owner.FireEvent(BattleEventType.NormalAttack, mReleaser);
                     break;
             }

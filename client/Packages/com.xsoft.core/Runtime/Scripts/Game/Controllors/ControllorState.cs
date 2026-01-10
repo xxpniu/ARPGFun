@@ -96,7 +96,7 @@ namespace GameLogic.Game.Controllors
             }
 
             return BattlePerception.CreateReleaser(key, character, target,
-                ReleaserType.Magic, ReleaserModeType.RmtMagic,
+                ReleaserType.Magic, MagicReleaseType.MrtMagic,
                 -1, true, magicParams);
         }
 

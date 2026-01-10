@@ -118,7 +118,7 @@ message Notify_CreateReleaser
 	int32 TargetIndex=3;
 	string MagicKey=4;
 	Vector3 Position = 5;
-	ReleaserModeType RMType = 6;
+	MagicReleaseType RMType = 6;
 	Vector3 OPosition = 7; //释放者当前位置
 	Vector3 ORotation =8;//释放者当前朝向
 }

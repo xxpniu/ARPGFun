@@ -71,7 +71,7 @@ namespace BattleViews.Views
             {
                 foreach (var i in _timeLinePlayers)
                 {
-                    if (i.RView.RMType != ReleaserModeType.RmtMagic) continue;
+                    if (i.RView.RMType != MagicReleaseType.MrtMagic) continue;
                     if (i.EventType == EventType.EVENT_START) return true;
                 }
 

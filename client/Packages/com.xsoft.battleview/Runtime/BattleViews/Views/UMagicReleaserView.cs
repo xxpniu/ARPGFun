@@ -33,7 +33,7 @@ namespace BattleViews.Views
         public UCharacterView CharacterTarget { private set; get; }
         public UCharacterView CharacterReleaser { private set; get; }
 
-        public ReleaserModeType RMType { private set; get; }
+        public MagicReleaseType RMType { private set; get; }
 
         public string MagicKey { get; private set; }
 
@@ -134,7 +134,7 @@ namespace BattleViews.Views
 #endif
         }
 
-        public void SetData(int releaser, int target, UVector3 targetPos, ReleaserModeType rmType, string magicKey)
+        public void SetData(int releaser, int target, UVector3 targetPos, MagicReleaseType rmType, string magicKey)
         {
             CharacterTarget = PerView.GetViewByIndex<UCharacterView>(target);
             CharacterReleaser = PerView.GetViewByIndex<UCharacterView>(releaser);
@@ -185,7 +185,7 @@ namespace BattleViews.Views
                 TargetIndex = TIndex,
                 MagicKey = MagicKey,
                 Position = TargetPos.ToPV3(),
-                RMType = RMType,
+                //RMType = RMType,
                 OPosition = transform.position.ToPV3(),
                 ORotation = transform.rotation.eulerAngles.ToPV3()
             };

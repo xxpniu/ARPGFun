@@ -117,17 +117,6 @@ message ClientConfig
 	int32 LoginServerPort=2;
 }
 
-
-enum ReleaserModeType
-{
-	RMT_NONE =0;
-	RMT_Magic =1;
-	RMT_NormalAttack =2;
-	RMT_Buff =4;
-}
-
-
-
 message ServiceAddress
 {
     string IpAddress = 1;

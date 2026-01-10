@@ -179,10 +179,10 @@ namespace Server
         }
 
         public MagicReleaser CreateReleaser(string key, BattleCharacter heroCharacter, ReleaseAtTarget rTarget,
-            ReleaserType Rt, ReleaserModeType rmType, int dur)
+            ReleaserType rt, MagicReleaseType rmType, int dur)
         {
             if (State.Perception is BattlePerception per)
-                return per.CreateReleaser(key, heroCharacter, rTarget, Rt, rmType, dur);
+                return per.CreateReleaser(key, heroCharacter, rTarget, rt, rmType, dur);
             return null;
         }
 

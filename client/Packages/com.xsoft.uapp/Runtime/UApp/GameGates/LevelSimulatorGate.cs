@@ -82,7 +82,7 @@ namespace UApp.GameGates
                 result = ReleaseResult.NoMp;
                 return false;
             }
-            var character = Owner as IBattleCharacter;
+            IBattleCharacter character = Owner;
             var rotation = character.Rotation.eulerAngles.ToPV3();
             var config = CM.GetId<CharacterMagicData>(data.MagicID);
             if (config != null) Owner.ShowRange(config.RangeMax);
@@ -187,11 +187,13 @@ namespace UApp.GameGates
                     cItem.Num += 1;
                 }
 
+                //ReleaserModeType
 
                 await UniTask.SwitchToMainThread();
                 var rTarget = new ReleaseAtTarget(_characterOwner, _characterOwner);
+                //todo::
                 Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic,
-                    ReleaserModeType.RmtNone,
+                    MagicReleaseType.MrtRecure,
                     -1);
             }
         }

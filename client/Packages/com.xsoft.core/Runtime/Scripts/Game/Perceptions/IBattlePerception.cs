@@ -63,7 +63,7 @@ namespace GameLogic.Game.Perceptions
         [NeedNotify(typeof(Notify_CreateReleaser), "OPosition", "ORotation", "ReleaserIndex", "TargetIndex", "MagicKey",
             "Position", "RMType")]
         IMagicReleaser CreateReleaserView(Vector3 pos, Vector3 rotation, int releaser, int target, string magicKey,
-            Vector3 targetPos, ReleaserModeType rmType);
+            Vector3 targetPos,  MagicReleaseType rmt); 
 
         /// <summary>
         ///     Creates the missile.

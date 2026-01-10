@@ -27,6 +27,9 @@ namespace GameLogic.Game.Elements
         Ended
     }
 
+    /// <summary>
+    /// 释放者所系统 技能 还是 buff
+    /// </summary>
     public enum ReleaserType
     {
         Magic,
