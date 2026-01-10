@@ -35,7 +35,8 @@ namespace LoginServer
         protected override async Task Start(CancellationToken token = default)
         {
             NetProtoTool.EnableLog = Config.Log;
-            
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+    
             Debuger.Log($"Start Login server");
 
             //var new = new ChannelOption();
