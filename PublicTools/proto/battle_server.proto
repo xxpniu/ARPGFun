@@ -74,6 +74,10 @@ message Action_StopMove
 	Vector3 StopPos = 1;//结束位置
 }
 
+message Action_BreakRelease{
+
+}
+
 message Action_NormalAttack
 {
 

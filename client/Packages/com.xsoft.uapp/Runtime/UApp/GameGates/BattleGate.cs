@@ -432,6 +432,11 @@ namespace UApp.GameGates
             return false;
         }
 
+        void IBattleGate.TryBreakRelease()
+        {
+            //TODO::
+            //SendAction(new Action_BreakRelease());
+        }
         #endregion
     }
 }

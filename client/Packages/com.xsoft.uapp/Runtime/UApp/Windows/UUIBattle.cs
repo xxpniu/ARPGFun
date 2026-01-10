@@ -92,14 +92,13 @@ namespace Windows
                 Debug.Log($"Forward:{dir} to {forward}");
             }
 
-            if (!BattleGate.ReleaseSkill(item.Data, forward, out var res))
+            if (BattleGate.ReleaseSkill(item.Data, forward, out var res)) return;
+            //释放失败
+            if (res == ReleaseResult.NoMp)
             {
-                if (res == ReleaseResult.NoMp)
-                {
-                    HighLightMp();
-                }
-                UApplication.S.ShowNotify(LanguageManager.S["UIBattle_Release_Skill_Error"]);
+                HighLightMp();
             }
+            UApplication.S.ShowNotify(LanguageManager.S["UIBattle_Release_Skill_Error"]);
         }
 
         private async void HighLightMp()
@@ -202,21 +201,32 @@ namespace Windows
             _playInput.Disable();
         }
 
+        private bool _isMovingHold = false;
+
         protected override void OnUpdate()
         {
             base.OnUpdate();
 
             var v = _playInput.Player.Move.ReadValue<Vector2>();
+            var last = _isMovingHold;
             if (v.magnitude > 0.001f)
             {
                 if (_lastTime > Time.time) return;
                 _lastTime = Time.time + .3f;
                 var dir = ThirdPersonCameraContollor.Current.LookRotation * new Vector3(v.x, 0, v.y);
                 BattleGate?.MoveDir(dir);
+                _isMovingHold = true;
             }
             else
             {
                 BattleGate?.MoveDir(Vector2.zero);
+                _isMovingHold = false;
+            }
+
+            if (!last && _isMovingHold)
+            {
+                //主动移动 打断吟唱
+                BattleGate?.TryBreakRelease();
             }
 
 
@@ -398,7 +408,7 @@ namespace Windows
                 });
             }
 
-            public void ClickItem(Vector2? dir)
+            private void ClickItem(Vector2? dir)
             {
                 if (_lastTime + 0.3f > Time.time) return;
                 _lastTime = Time.time;

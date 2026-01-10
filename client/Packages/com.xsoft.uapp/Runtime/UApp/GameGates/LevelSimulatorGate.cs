@@ -210,6 +210,12 @@ namespace UApp.GameGates
         {
         }
 
+        void IBattleGate.TryBreakRelease()
+        {
+            //todo:
+            //SendAction(new Action_BreakRelease());
+        }
+
         protected override async Task JoinGate(params object[] args)
         {
             await base.JoinGate();
