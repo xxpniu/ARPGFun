@@ -63,7 +63,7 @@ namespace BattleViews.Views
 
         public IList<HeroProperty> Properties = new List<HeroProperty>();
 
-        private CharacterMoveState State;
+        private CharacterMoveState _state;
 
         public bool InStartLayout
         {
@@ -140,17 +140,17 @@ namespace BattleViews.Views
         {
             LookQuaternion = Quaternion.Lerp(LookQuaternion, targetLookQuaternion, Time.deltaTime * damping);
 
-            if (State == null || State?.Tick(PerView.GetTime()) == true) GoToEmpty();
+            if (_state == null || _state?.Tick(PerView.GetTime()) == true) GoToEmpty();
 
-            if (_lockRotationTime < Time.time && State?.Velocity.magnitude > 0.1f)
-                targetLookQuaternion = Quaternion.LookRotation(State.Velocity, Vector3.up);
+            if (_lockRotationTime < Time.time && _state?.Velocity.magnitude > 0.1f)
+                targetLookQuaternion = Quaternion.LookRotation(_state.Velocity, Vector3.up);
 
 #if !UNITY_SERVER
 
             if (_hideTime < Time.time)
                 if (_range && _range.activeSelf)
                     _range.SetActive(false);
-            PlaySpeed(State?.Velocity.magnitude ?? 0);
+            PlaySpeed(_state?.Velocity.magnitude ?? 0);
 #endif
         }
 
@@ -370,7 +370,7 @@ namespace BattleViews.Views
             MpMax = mpMax;
         }
 
-        bool IBattleCharacter.IsMoving => !(State is Empty);
+        bool IBattleCharacter.IsMoving => !(_state is Empty);
 
         Vector3? IBattleCharacter.MoveTo(Proto.Vector3 position, Proto.Vector3 target, float stopDis)
         {
@@ -449,21 +449,21 @@ namespace BattleViews.Views
 
         private T ChangeState<T>(T s) where T : CharacterMoveState
         {
-            State?.Exit();
-            State = s;
-            State?.Enter();
+            _state?.Exit();
+            _state = s;
+            _state?.Enter();
             return s;
         }
 
         private void GoToEmpty()
         {
-            if (State is Empty) return;
+            if (_state is Empty) return;
             ChangeState(new Empty(this));
         }
 
         public bool DoStopMove()
         {
-            if (State is not ForwardMove) return false;
+            if (_state is not ForwardMove) return false;
             GoToEmpty();
             return true;
         }
@@ -696,7 +696,7 @@ namespace BattleViews.Views
 
         private void MoveByDir(Vector3 forward)
         {
-            if (State is ForwardMove m)
+            if (_state is ForwardMove m)
             {
                 m.ChangeDir(forward);
             }
@@ -709,7 +709,7 @@ namespace BattleViews.Views
 
         private Vector3? MoveToPos(Vector3 target, float stopDis = 0)
         {
-            return State switch
+            return _state switch
             {
                 DestinationMove m => m.ChangeTarget(target, stopDis),
                 Empty => ChangeState(new DestinationMove(this)).ChangeTarget(target, stopDis),

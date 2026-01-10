@@ -298,11 +298,13 @@ namespace UApp.GameGates
             if (!CanNetAction()) return false;
             if (_releaseLockTime > Time.time) return false;
             if (Owner.IsLock(ActionLockType.NoMove)) return false;
+            //if (Owner.InStartLayout) return false; //吟唱阶段不能移动
             var pos = Owner.transform.position;
             if (dir.magnitude > 0.01f)
             {
                 var dn = new Vector3(dir.x, 0, dir.z);
                 dn = dn.normalized;
+              
                 var willPos = Owner.MoveJoystick(dn);
                 if (!(_lastSyncTime + 0.2f < Time.time)) return true;
                 var joystickMove = new Action_MoveJoystick
@@ -434,8 +436,7 @@ namespace UApp.GameGates
 
         void IBattleGate.TryBreakRelease()
         {
-            //TODO::
-            //SendAction(new Action_BreakRelease());
+            SendAction(new Action_BreakRelease());
         }
         #endregion
     }

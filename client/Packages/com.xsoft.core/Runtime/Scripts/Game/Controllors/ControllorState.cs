@@ -31,11 +31,15 @@ namespace GameLogic.Game.Controllors
                 {
                     var lastSkillTime = character[TimeKey];
                     if (lastSkillTime != null && (float)lastSkillTime + 0.2f > time.Time) return GAction.Empty;
-
-                    if (character.MoveTo(move.WillPos.ToUV3(), out var _)) CancelStartingReleaser(character);
+                    if (BattlePerception.IsInStartLayoutMagicPlaying(character))
+                    {
+                        character.StopMove();
+                        break;
+                    }
+                    character.MoveTo(move.WillPos.ToUV3(), out var _);
                     break;
                 }
-                case Action_NormalAttack normal:
+                case Action_NormalAttack:
                 {
                     character.EachActiveMagicByType(MagicType.MtNormal, time.Time,
                         t =>
@@ -63,6 +67,9 @@ namespace GameLogic.Game.Controllors
                 }
                     break;
 
+                case Action_BreakRelease:
+                    CancelStartingReleaser(character);
+                    break;
                 case Action_StopMove stop:
                     character.StopMove(stop.StopPos.ToUV3());
                     break;

@@ -89,12 +89,16 @@ public class UUIManager : XSingleton<UUIManager>
     protected override void Awake()
     {
         base.Awake();
-        if (eventMask != null)
-            eventMask.SetActive(false);
+        if (eventMask != null) eventMask.SetActive(false);
 
+      
+
+    }
+
+    private void Start()
+    {
         Ratio = Screen.width / (float)Screen.height;
         Debug.Log($"W:{Screen.width} H:{Screen.height}");
-
         var w = Mathf.Lerp(0, 1, Mathf.Max(0, (Ratio - 1.5f) / .5f));
 
         var bc = BaseCanvas.GetComponent<CanvasScaler>();
@@ -270,9 +274,9 @@ public class UUIManager : XSingleton<UUIManager>
                 i.Value.HideWindow();
     }
 
-    public void MaskEvent()
+    public void MaskEvent(float maxTime = 2f)
     {
-        _maskTime = Time.time + 2f;
+        _maskTime = Time.time + maxTime;
         eventMask.SetActive(true);
     }
 

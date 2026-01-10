@@ -520,13 +520,31 @@ namespace GameLogic.Game.Perceptions
             });
         }
 
+        public bool IsInStartLayoutMagicPlaying(BattleCharacter character, bool move = false)
+        {
+            bool isInStartLayout = false;
+            State.Each<MagicReleaser>(t =>
+            {
+                if (t.Releaser != character) return false;
+                if (t.IsLayoutStartFinish) return false;
+                if (move) //如果移动检查启用
+                    if (!t.MoveCancel) //技能移动不能取消 跳过
+                        return false;
+                
+                isInStartLayout = true;
+                return true;
+
+            });
+            return isInStartLayout;
+        }
+
         public void BreakReleaserByCharacter(BattleCharacter character, BreakReleaserType type, bool move = false)
         {
             State.Each<MagicReleaser>(t =>
             {
                 if (t.Releaser != character) return false;
-                if (move)
-                    if (!t.MoveCancel)
+                if (move) //如果移动检查启用
+                    if (!t.MoveCancel) //技能移动不能取消 跳过
                         return false;
 
                 switch (type)

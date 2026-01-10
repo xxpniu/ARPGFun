@@ -30,7 +30,7 @@ namespace Windows
                     return;
                 }
 
-                UUIManager.S.MaskEvent();
+                UUIManager.S.MaskEvent(12);
                 await UniTask.Yield();
                 var gate = UApplication.G<LoginGate>();
                 var r = await LoginGate.DoReg(userName, pwd);

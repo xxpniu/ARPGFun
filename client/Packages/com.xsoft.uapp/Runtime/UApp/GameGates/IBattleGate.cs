@@ -30,7 +30,6 @@ namespace UApp.GameGates
         PlayerPackage Package { get; }
         DHero Hero { get; }
         StateType State { get; }
-
         float LeftTime { get; }
         bool ReleaseSkill(HeroMagicData data, Vector3? dir, out ReleaseResult result); 
         void Exit();

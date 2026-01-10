@@ -111,7 +111,7 @@ namespace UApp.GameGates
         {
             if (Owner.IsLock(ActionLockType.NoMove)) return false;
             if (Owner.IsDeath) return false;
-
+            if (Owner.InStartLayout) return false; //吟唱阶段不能移动
             var pos = Owner.transform.position;
             if (dir.magnitude > 0.01f)
             {
@@ -212,8 +212,7 @@ namespace UApp.GameGates
 
         void IBattleGate.TryBreakRelease()
         {
-            //todo:
-            //SendAction(new Action_BreakRelease());
+            SendAction(new Action_BreakRelease());
         }
 
         protected override async Task JoinGate(params object[] args)
@@ -292,8 +291,7 @@ namespace UApp.GameGates
                 UUIPopup.ShowConfirm(LanguageManager.S["Level_Relive_Title"],
                     LanguageManager.S["Level_Relive_Content"],
                     () => { UApplication.S.GoBackToMainGate(); },
-                    onlyOk: true);
-                //UUIManager.S.CreateWindowAsync<Windows.>
+                    onlyOk: true); 
             };
 
             await _mCreator.Spawn();

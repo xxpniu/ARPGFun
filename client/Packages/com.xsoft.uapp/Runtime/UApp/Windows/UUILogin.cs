@@ -48,7 +48,7 @@ namespace Windows
                     PlayerPrefs.DeleteKey(PasswordKey);
                 }
 
-                UUIManager.S.MaskEvent();
+                UUIManager.S.MaskEvent(10);
                 await UniTask.Yield();
                 var md5 = Md5Tool.GetMd5Hash(pwd);
                 var r = await LoginGate.DoLogin(userName, md5);

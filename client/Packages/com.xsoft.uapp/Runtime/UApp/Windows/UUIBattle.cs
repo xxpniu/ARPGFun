@@ -214,8 +214,8 @@ namespace Windows
                 if (_lastTime > Time.time) return;
                 _lastTime = Time.time + .3f;
                 var dir = ThirdPersonCameraContollor.Current.LookRotation * new Vector3(v.x, 0, v.y);
-                BattleGate?.MoveDir(dir);
                 _isMovingHold = true;
+                if (BattleGate?.MoveDir(dir) != true) BattleGate?.MoveDir(Vector2.zero); //无法移动的时候发送一个停止的信号
             }
             else
             {
