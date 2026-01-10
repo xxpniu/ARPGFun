@@ -137,7 +137,7 @@ namespace GameLogic.Game.Perceptions
                 r.eulerAngles.ToPV3(), target.Releaser.Index,
                 target.ReleaserTarget.Index, key, target.TargetPosition.ToPV3(), mrt);
             view.MagicData = magic;
-            var mReleaser = new MagicReleaser(key, magic, owner, target, ReleaserControllor, view, ty, durTime,
+            var mReleaser = new MagicReleaser(key, magic, owner, target, ReleaserControllor, view, ty, mrt, durTime,
                 canMoveCancel, magicParams);
             switch (mrt)
             {
@@ -525,6 +525,7 @@ namespace GameLogic.Game.Perceptions
             {
                 if (t.Releaser != character) return false;
                 if (t.IsLayoutStartFinish) return false;
+                if (t.MRT != MagicReleaseType.MrtMagic) return false;
                 if (move) //如果移动检查启用
                     if (!t.MoveCancel) //技能移动不能取消 跳过
                         return false;

@@ -106,11 +106,8 @@ namespace GameLogic
 
         public static IList<BattleCharacterMagic> CreateHeroMagic(this CharacterData data, DHero hero = null)
         {
-            var magics = ExcelToJSONConfigManager.Find<CharacterMagicData>(t =>
-            {
-                return t.CharacterID == data.ID
-                       && (MagicReleaseType)t.ReleaseType == MagicReleaseType.MrtMagic;
-            });
+            var magics = ExcelToJSONConfigManager.Find<CharacterMagicData>(t => t.CharacterID == data.ID
+                                                                                && (MagicReleaseType)t.ReleaseType == MagicReleaseType.MrtMagic);
             var list = new List<BattleCharacterMagic>();
             foreach (var i in magics)
             {

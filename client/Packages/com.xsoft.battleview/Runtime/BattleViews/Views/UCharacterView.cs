@@ -65,6 +65,7 @@ namespace BattleViews.Views
 
         private CharacterMoveState _state;
 
+        //only magic 
         public bool InStartLayout
         {
             get

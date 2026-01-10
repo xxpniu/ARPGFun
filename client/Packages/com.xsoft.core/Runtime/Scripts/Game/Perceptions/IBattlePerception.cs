@@ -32,7 +32,7 @@ namespace GameLogic.Game.Perceptions
         /// <summary>
         ///     获取当前的layout
         /// </summary>
-        /// <returns>The time line by path.</returns>
+        /// <returns>The timeline by path.</returns>
         /// <param name="path">Path.</param>
         TimeLine GetTimeLineByPath(string path);
 

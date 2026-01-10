@@ -55,6 +55,9 @@ public class UCharacterViewEditor : Editor
                 EditorGUILayout.LabelField($"[{(int)magic.MagicID}] {magic.MType} mp{magic.MPCost}");
             } 
         }
+        
+        EditorGUILayout.Separator();
+        EditorGUILayout.Toggle("IsStartLayoutPlaying", uCharacterView!.InStartLayout);
            
 
         EditorGUILayout.EndVertical();

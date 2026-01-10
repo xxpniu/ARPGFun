@@ -107,33 +107,33 @@ namespace UApp.GameGates
             UApplication.S.GoBackToMainGate();
         }
 
+        bool IBattleGate.IsInStartLayout()
+        {
+            return Owner.InStartLayout;
+        }
+
         bool IBattleGate.MoveDir(Vector3 dir)
         {
-            if (Owner.IsLock(ActionLockType.NoMove)) return false;
             if (Owner.IsDeath) return false;
-            if (Owner.InStartLayout) return false; //吟唱阶段不能移动
             var pos = Owner.transform.position;
-            if (dir.magnitude > 0.01f)
-            {
-                var dn = new Vector3(dir.x, 0, dir.z);
-                dn = dn.normalized;
-                var willPos = Owner.MoveJoystick(dn);
-                if (!(_lastSyncTime + 0.2f < Time.time)) return true;
-                var joystickMove = new Action_MoveJoystick
-                {
-                    Position = pos.ToPV3(),
-                    WillPos = willPos.ToPV3()
-                };
-                SendAction(joystickMove);
-                _lastSyncTime = Time.time;
-            }
-            else
+            if (dir.magnitude < 0.01f || Owner.InStartLayout || Owner.IsLock(ActionLockType.NoMove))
             {
                 var stopMove = new Action_StopMove { StopPos = pos.ToPV3() };
                 if (Owner.DoStopMove()) SendAction(stopMove);
-                //if (this is IBattleGate b)
-                //    b.TrySendLookForward(true);
+                return true;
             }
+
+            var dn = new Vector3(dir.x, 0, dir.z);
+            dn = dn.normalized;
+            var willPos = Owner.MoveJoystick(dn);
+            if (!(_lastSyncTime + 0.2f < Time.time)) return true;
+            var joystickMove = new Action_MoveJoystick
+            {
+                Position = pos.ToPV3(),
+                WillPos = willPos.ToPV3()
+            };
+            SendAction(joystickMove);
+            _lastSyncTime = Time.time;
 
             return true;
         }
@@ -191,7 +191,6 @@ namespace UApp.GameGates
 
                 await UniTask.SwitchToMainThread();
                 var rTarget = new ReleaseAtTarget(_characterOwner, _characterOwner);
-                //todo::
                 Per.CreateReleaser(config.Params1, _characterOwner, rTarget, ReleaserType.Magic,
                     MagicReleaseType.MrtRecure,
                     -1);

@@ -293,33 +293,44 @@ namespace UApp.GameGates
         private float _lastSyncTime;
         private float _releaseLockTime = -1;
 
+        bool IBattleGate.IsInStartLayout()
+        {
+            return Owner.InStartLayout;
+        }
+
+        private bool CheckMove()
+        {
+            if (_releaseLockTime > Time.time) return false;
+            if (Owner.IsLock(ActionLockType.NoMove)) return false;
+            //add more
+            return true;
+        }
+
         bool IBattleGate.MoveDir(Vector3 dir)
         {
             if (!CanNetAction()) return false;
-            if (_releaseLockTime > Time.time) return false;
-            if (Owner.IsLock(ActionLockType.NoMove)) return false;
-            //if (Owner.InStartLayout) return false; //吟唱阶段不能移动
+          
             var pos = Owner.transform.position;
-            if (dir.magnitude > 0.01f)
+            if (dir.magnitude < 0.01f || Owner.InStartLayout || !CheckMove())
             {
-                var dn = new Vector3(dir.x, 0, dir.z);
-                dn = dn.normalized;
-              
-                var willPos = Owner.MoveJoystick(dn);
-                if (!(_lastSyncTime + 0.2f < Time.time)) return true;
-                var joystickMove = new Action_MoveJoystick
-                {
-                    Position = pos.ToPV3(),
-                    WillPos = willPos.ToPV3()
-                };
-                SendAction(joystickMove);
-                _lastSyncTime = Time.time;
+
+                var stopMove = new Action_StopMove { StopPos = pos.ToPV3() };
+                if (Owner.DoStopMove()) SendAction(stopMove);
                 return true;
             }
 
-            var stopMove = new Action_StopMove { StopPos = pos.ToPV3() };
-            if (Owner.DoStopMove()) SendAction(stopMove);
+            var dn = new Vector3(dir.x, 0, dir.z);
+            dn = dn.normalized;
 
+            var willPos = Owner.MoveJoystick(dn);
+            if (!(_lastSyncTime + 0.2f < Time.time)) return true;
+            var joystickMove = new Action_MoveJoystick
+            {
+                Position = pos.ToPV3(),
+                WillPos = willPos.ToPV3()
+            };
+            SendAction(joystickMove);
+            _lastSyncTime = Time.time;
             return true;
         }
 
@@ -438,6 +449,8 @@ namespace UApp.GameGates
         {
             SendAction(new Action_BreakRelease());
         }
+
+     
         #endregion
     }
 }

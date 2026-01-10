@@ -64,8 +64,10 @@ namespace GameLogic.Game.Elements
 
         private int _playerIndex;
 
-        private TimeLinePlayer startLayout;
+        private TimeLinePlayer _startLayout;
         public float TickTime = -1;
+        
+        public MagicReleaseType MRT { private set;  get; }
 
         public MagicReleaser(
             string key,
@@ -74,7 +76,7 @@ namespace GameLogic.Game.Elements
             IReleaserTarget target,
             GControllor controllor,
             IMagicReleaser view,
-            ReleaserType type, float durTime, bool moveCancel,
+            ReleaserType type,MagicReleaseType mrt,  float durTime, bool moveCancel,
             string[] magicParams = default
         )
             : base(controllor, view)
@@ -87,6 +89,7 @@ namespace GameLogic.Game.Elements
             RType = type;
             OnExitedState = ReleaseAll;
             Durtime = type == ReleaserType.Buff ? durTime : -1;
+            MRT = mrt;
             Params = magicParams;
         }
 
@@ -143,7 +146,7 @@ namespace GameLogic.Game.Elements
             get
             {
                 if (State == ReleaserStates.NOStart) return false;
-                if (State == ReleaserStates.Starting && startLayout != null) return startLayout.IsFinshed;
+                if (State == ReleaserStates.Starting && _startLayout != null) return _startLayout.IsFinshed;
                 return true;
             }
         }
@@ -207,8 +210,8 @@ namespace GameLogic.Game.Elements
                     else View.PlayTest(_playerIndex, i.line);
                     if (i.type == EventType.EVENT_START)
                     {
-                        if (startLayout != null) throw new Exception("Start layout must only one!");
-                        startLayout = player;
+                        if (_startLayout != null) throw new Exception("Start layout must only one!");
+                        _startLayout = player;
                     }
                 }
             }

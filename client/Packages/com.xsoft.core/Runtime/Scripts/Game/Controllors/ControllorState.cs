@@ -33,6 +33,7 @@ namespace GameLogic.Game.Controllors
                     if (lastSkillTime != null && (float)lastSkillTime + 0.2f > time.Time) return GAction.Empty;
                     if (BattlePerception.IsInStartLayoutMagicPlaying(character))
                     {
+                        Debug.Log($"stop move");
                         character.StopMove();
                         break;
                     }
@@ -95,9 +96,10 @@ namespace GameLogic.Game.Controllors
                 character.CharacterView.SetLookRotation(angleY);
             }
 
-            return BattlePerception.CreateReleaser(key, character, target,
+            var release = BattlePerception.CreateReleaser(key, character, target,
                 ReleaserType.Magic, MagicReleaseType.MrtMagic,
                 -1, true, magicParams);
+            return release;
         }
 
 

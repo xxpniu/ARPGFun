@@ -39,6 +39,7 @@ namespace UApp.GameGates
         bool SendUseItem(ItemType type);
         bool IsHpFull();
         bool IsMpFull();
-        void TryBreakRelease(); 
+        void TryBreakRelease();
+        bool IsInStartLayout();
     }
 }

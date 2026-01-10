@@ -79,6 +79,38 @@ namespace Windows
 
             ThirdPersonCameraContollor.Current
                 .SetClampX(15, 80).SetForwardOffset(Vector3.up * 1.5f);
+
+            onMove += (sender, v) =>
+            {
+                //Debug.Log($"Moving {v}");
+                if (_lastTime >Time.time) return;
+                _lastTime = Time.time + .3f; 
+                //技能释放不能移动 无法移动的时候发送一个停止的信号
+                if (BattleGate?.IsInStartLayout() == true)
+                {
+                    BattleGate?.MoveDir(Vector2.zero);
+                    Debug.Log($"吟唱阶段 不能移动");
+                }
+                else
+                { 
+                    var dir = ThirdPersonCameraContollor.Current.LookRotation * new Vector3(v.x, 0, v.y);
+                    BattleGate?.MoveDir(dir);
+                }
+            };
+
+            onMoveEnd += (sender, vector2) =>
+            {
+                //Debug.Log($"Move end");
+                BattleGate?.MoveDir(Vector2.zero);
+            };
+
+            onMoveStart += (sender, vector2) =>
+            {
+                //Debug.Log($"Move start");
+                BattleGate?.MoveDir(Vector2.zero);
+                BattleGate?.TryBreakRelease();
+            };
+
         }
 
         private void OnRelease(GridTableModel item, Vector2? dir)
@@ -200,35 +232,32 @@ namespace Windows
             base.OnHide();
             _playInput.Disable();
         }
+ 
+        private bool _joystickState = false;
 
-        private bool _isMovingHold = false;
+        private EventHandler<Vector2> onMove;
+        private EventHandler onMoveEnd;
+        private EventHandler onMoveStart;
 
         protected override void OnUpdate()
         {
             base.OnUpdate();
 
             var v = _playInput.Player.Move.ReadValue<Vector2>();
-            var last = _isMovingHold;
-            if (v.magnitude > 0.001f)
+            var joystickLast = _joystickState;
+            _joystickState = v.magnitude > 0.001f;
+            //Debug.Log($"v {v} {_joystickState} = {joystickLast}");
+            if (_joystickState != joystickLast)
             {
-                if (_lastTime > Time.time) return;
-                _lastTime = Time.time + .3f;
-                var dir = ThirdPersonCameraContollor.Current.LookRotation * new Vector3(v.x, 0, v.y);
-                _isMovingHold = true;
-                if (BattleGate?.MoveDir(dir) != true) BattleGate?.MoveDir(Vector2.zero); //无法移动的时候发送一个停止的信号
+                if(!_joystickState) { onMoveEnd?.Invoke(this, null);}
+                else
+                {
+                    onMoveStart?.Invoke(this, null);
+                }
             }
-            else
-            {
-                BattleGate?.MoveDir(Vector2.zero);
-                _isMovingHold = false;
-            }
-
-            if (!last && _isMovingHold)
-            {
-                //主动移动 打断吟唱
-                BattleGate?.TryBreakRelease();
-            }
-
+            if(_joystickState) onMove?.Invoke(this,v);
+            
+ 
 
             #region 快捷键
 
