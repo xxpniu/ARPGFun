@@ -185,7 +185,7 @@ namespace BattleViews.Views
                 TargetIndex = TIndex,
                 MagicKey = MagicKey,
                 Position = TargetPos.ToPV3(),
-                //RMType = RMType,
+                RMType = RMType,
                 OPosition = transform.position.ToPV3(),
                 ORotation = transform.rotation.eulerAngles.ToPV3()
             };
