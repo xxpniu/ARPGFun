@@ -5,22 +5,24 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUIItemShop")]
+    // ReSharper disable once InconsistentNaming
     partial class UUIItemShop : UUIAutoGenWindow
     {
         public class ShopTabTableTemplate : TableItemTemplate
         {
             public ShopTabTableTemplate(){}
             public Toggle ToggleSelected;
-            public Text ShopName;
+            public TextMeshProUGUI ShopName;
 
             public override void InitTemplate()
             {
                 ToggleSelected = FindChild<Toggle>("ToggleSelected");
-                ShopName = FindChild<Text>("ShopName");
+                ShopName = FindChild<TextMeshProUGUI>("ShopName");
 
             }
         }
@@ -30,12 +32,12 @@ namespace Windows
             public Button ItemBg;
             public Image icon;
             public Image ItemCount;
-            public Text t_num;
+            public TextMeshProUGUI t_num;
             public Image Locked;
             public Image ItemLevel;
-            public Text lb_level;
+            public TextMeshProUGUI lb_level;
             public Image WearOn;
-            public Text Name;
+            public TextMeshProUGUI Name;
             public Button ButtonGold;
             public Button ButtonCoin;
 
@@ -44,12 +46,12 @@ namespace Windows
                 ItemBg = FindChild<Button>("ItemBg");
                 icon = FindChild<Image>("icon");
                 ItemCount = FindChild<Image>("ItemCount");
-                t_num = FindChild<Text>("t_num");
+                t_num = FindChild<TextMeshProUGUI>("t_num");
                 Locked = FindChild<Image>("Locked");
                 ItemLevel = FindChild<Image>("ItemLevel");
-                lb_level = FindChild<Text>("lb_level");
+                lb_level = FindChild<TextMeshProUGUI>("lb_level");
                 WearOn = FindChild<Image>("WearOn");
-                Name = FindChild<Text>("Name");
+                Name = FindChild<TextMeshProUGUI>("Name");
                 ButtonGold = FindChild<Button>("ButtonGold");
                 ButtonCoin = FindChild<Button>("ButtonCoin");
 

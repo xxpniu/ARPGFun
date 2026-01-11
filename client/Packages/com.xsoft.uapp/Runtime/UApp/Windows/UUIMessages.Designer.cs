@@ -5,10 +5,12 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUIMessages")]
+    // ReSharper disable once InconsistentNaming
     partial class UUIMessages : UUIAutoGenWindow
     {
         public class ContentTableTemplate : TableItemTemplate
@@ -16,15 +18,15 @@ namespace Windows
             public ContentTableTemplate(){}
             public Image ButtonBrown;
             public Image ButtonGreen;
-            public Text TextName;
-            public Text TextMessage;
+            public TextMeshProUGUI TextName;
+            public TextMeshProUGUI TextMessage;
 
             public override void InitTemplate()
             {
                 ButtonBrown = FindChild<Image>("ButtonBrown");
                 ButtonGreen = FindChild<Image>("ButtonGreen");
-                TextName = FindChild<Text>("TextName");
-                TextMessage = FindChild<Text>("TextMessage");
+                TextName = FindChild<TextMeshProUGUI>("TextName");
+                TextMessage = FindChild<TextMeshProUGUI>("TextMessage");
 
             }
         }

@@ -5,17 +5,19 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUILevelUp")]
+    // ReSharper disable once InconsistentNaming
     partial class UUILevelUp : UUIAutoGenWindow
     {
 
 
         protected Image Root;
         protected Button ButtonClose;
-        protected Text lb_level;
+        protected TextMeshProUGUI lb_level;
 
 
 
@@ -25,7 +27,7 @@ namespace Windows
             base.InitTemplate();
             Root = FindChild<Image>("Root");
             ButtonClose = FindChild<Button>("ButtonClose");
-            lb_level = FindChild<Text>("lb_level");
+            lb_level = FindChild<TextMeshProUGUI>("lb_level");
 
 
         }

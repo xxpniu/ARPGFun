@@ -5,22 +5,24 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUILogin")]
+    // ReSharper disable once InconsistentNaming
     partial class UUILogin : UUIAutoGenWindow
     {
 
 
         protected Button ButtonClose;
-        protected Text lb_title;
+        protected TextMeshProUGUI lb_title;
         protected Button TextSignup;
-        protected Text Text;
+        protected TextMeshProUGUI Text;
         protected Button ButtonBlue;
-        protected InputField TextInputBoxUserName;
-        protected InputField TextInputBoxPassWord;
-        protected Text lb_remember;
+        protected TMP_InputField TextInputBoxUserName;
+        protected TMP_InputField TextInputBoxPassWord;
+        protected TextMeshProUGUI lb_remember;
         protected Toggle CheckBox;
 
 
@@ -30,13 +32,13 @@ namespace Windows
         {
             base.InitTemplate();
             ButtonClose = FindChild<Button>("ButtonClose");
-            lb_title = FindChild<Text>("lb_title");
+            lb_title = FindChild<TextMeshProUGUI>("lb_title");
             TextSignup = FindChild<Button>("TextSignup");
-            Text = FindChild<Text>("Text");
+            Text = FindChild<TextMeshProUGUI>("Text");
             ButtonBlue = FindChild<Button>("ButtonBlue");
-            TextInputBoxUserName = FindChild<InputField>("TextInputBoxUserName");
-            TextInputBoxPassWord = FindChild<InputField>("TextInputBoxPassWord");
-            lb_remember = FindChild<Text>("lb_remember");
+            TextInputBoxUserName = FindChild<TMP_InputField>("TextInputBoxUserName");
+            TextInputBoxPassWord = FindChild<TMP_InputField>("TextInputBoxPassWord");
+            lb_remember = FindChild<TextMeshProUGUI>("lb_remember");
             CheckBox = FindChild<Toggle>("CheckBox");
 
 

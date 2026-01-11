@@ -5,10 +5,12 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUIMain")]
+    // ReSharper disable once InconsistentNaming
     partial class UUIMain : UUIAutoGenWindow
     {
 
@@ -23,21 +25,21 @@ namespace Windows
         protected Button MenuRefresh;
         protected Button MenuMessages;
         protected Image message_notification;
-        protected Text MessagCountText;
+        protected TextMeshProUGUI MessagCountText;
         protected Button MenuMap;
         protected Image mission_notification;
         protected Button Menu;
         protected Button Button_Friend;
         protected Slider ExpSilder;
-        protected Text lb_exp;
+        protected TextMeshProUGUI lb_exp;
         protected RawImage user_defalut;
         protected Button user_info;
-        protected Text Level_Number;
-        protected Text Username;
+        protected TextMeshProUGUI Level_Number;
+        protected TextMeshProUGUI Username;
         protected Image swip;
-        protected Text lb_gold;
+        protected TextMeshProUGUI lb_gold;
         protected Button btn_goldadd;
-        protected Text lb_gem;
+        protected TextMeshProUGUI lb_gem;
         protected Image btn_addgem;
         protected Button MenuSetting;
         protected RectTransform Match;
@@ -62,21 +64,21 @@ namespace Windows
             MenuRefresh = FindChild<Button>("MenuRefresh");
             MenuMessages = FindChild<Button>("MenuMessages");
             message_notification = FindChild<Image>("message_notification");
-            MessagCountText = FindChild<Text>("MessagCountText");
+            MessagCountText = FindChild<TextMeshProUGUI>("MessagCountText");
             MenuMap = FindChild<Button>("MenuMap");
             mission_notification = FindChild<Image>("mission_notification");
             Menu = FindChild<Button>("Menu");
             Button_Friend = FindChild<Button>("Button_Friend");
             ExpSilder = FindChild<Slider>("ExpSilder");
-            lb_exp = FindChild<Text>("lb_exp");
+            lb_exp = FindChild<TextMeshProUGUI>("lb_exp");
             user_defalut = FindChild<RawImage>("user_defalut");
             user_info = FindChild<Button>("user_info");
-            Level_Number = FindChild<Text>("Level_Number");
-            Username = FindChild<Text>("Username");
+            Level_Number = FindChild<TextMeshProUGUI>("Level_Number");
+            Username = FindChild<TextMeshProUGUI>("Username");
             swip = FindChild<Image>("swip");
-            lb_gold = FindChild<Text>("lb_gold");
+            lb_gold = FindChild<TextMeshProUGUI>("lb_gold");
             btn_goldadd = FindChild<Button>("btn_goldadd");
-            lb_gem = FindChild<Text>("lb_gem");
+            lb_gem = FindChild<TextMeshProUGUI>("lb_gem");
             btn_addgem = FindChild<Image>("btn_addgem");
             MenuSetting = FindChild<Button>("MenuSetting");
             Match = FindChild<RectTransform>("Match");

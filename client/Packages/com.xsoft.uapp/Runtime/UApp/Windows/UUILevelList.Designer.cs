@@ -5,10 +5,12 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUILevelList")]
+    // ReSharper disable once InconsistentNaming
     partial class UUILevelList : UUIAutoGenWindow
     {
         public class ContentTableTemplate : TableItemTemplate
@@ -17,22 +19,22 @@ namespace Windows
             public Button ButtonBrown;
             public Button ButtonGreen;
             public Image missionImage;
-            public Text Name;
-            public Text Desc;
+            public TextMeshProUGUI Name;
+            public TextMeshProUGUI Desc;
 
             public override void InitTemplate()
             {
                 ButtonBrown = FindChild<Button>("ButtonBrown");
                 ButtonGreen = FindChild<Button>("ButtonGreen");
                 missionImage = FindChild<Image>("missionImage");
-                Name = FindChild<Text>("Name");
-                Desc = FindChild<Text>("Desc");
+                Name = FindChild<TextMeshProUGUI>("Name");
+                Desc = FindChild<TextMeshProUGUI>("Desc");
 
             }
         }
 
 
-        protected Text lb_title;
+        protected TextMeshProUGUI lb_title;
         protected Button Bt_Return;
         protected VerticalLayoutGroup Content;
 
@@ -43,7 +45,7 @@ namespace Windows
         protected override void InitTemplate()
         {
             base.InitTemplate();
-            lb_title = FindChild<Text>("lb_title");
+            lb_title = FindChild<TextMeshProUGUI>("lb_title");
             Bt_Return = FindChild<Button>("Bt_Return");
             Content = FindChild<VerticalLayoutGroup>("Content");
 
