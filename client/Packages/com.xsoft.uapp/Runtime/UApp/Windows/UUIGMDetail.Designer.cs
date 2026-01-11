@@ -5,22 +5,24 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUIGMDetail")]
+    // ReSharper disable once InconsistentNaming
     partial class UUIGMDetail : UUIAutoGenWindow
     {
         public class ContentTableTemplate : TableItemTemplate
         {
             public ContentTableTemplate(){}
-            public InputField InputField;
-            public Text lb_text;
+            public TMP_InputField InputField;
+            public TextMeshProUGUI lb_text;
 
             public override void InitTemplate()
             {
-                InputField = FindChild<InputField>("InputField");
-                lb_text = FindChild<Text>("lb_text");
+                InputField = FindChild<TMP_InputField>("InputField");
+                lb_text = FindChild<TextMeshProUGUI>("lb_text");
 
             }
         }

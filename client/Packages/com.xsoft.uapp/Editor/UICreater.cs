@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +41,7 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
@@ -111,6 +113,8 @@ namespace Windows
         typeof(Button),
         typeof(Slider),
         typeof(Text),
+        typeof(TMP_InputField),
+        typeof(TextMeshProUGUI),
         typeof(Toggle),
         typeof(ToggleGroup),
         typeof(InputField),
@@ -119,6 +123,7 @@ namespace Windows
         typeof(ScrollRect),
         typeof(Image),
         typeof(RawImage)
+       
     };
 
     private string className = string.Empty;

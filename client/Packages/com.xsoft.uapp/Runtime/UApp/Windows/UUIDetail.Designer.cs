@@ -5,20 +5,22 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUIDetail")]
+    // ReSharper disable once InconsistentNaming
     partial class UUIDetail : UUIAutoGenWindow
     {
         public class EquipmentPropertyTableTemplate : TableItemTemplate
         {
             public EquipmentPropertyTableTemplate(){}
-            public Text lb_text;
+            public TextMeshProUGUI lb_text;
 
             public override void InitTemplate()
             {
-                lb_text = FindChild<Text>("lb_text");
+                lb_text = FindChild<TextMeshProUGUI>("lb_text");
 
             }
         }
@@ -28,15 +30,15 @@ namespace Windows
         protected Button ItemBg;
         protected Image icon;
         protected Image ItemCount;
-        protected Text t_num;
+        protected TextMeshProUGUI t_num;
         protected Image Locked;
         protected Image ItemLevel;
-        protected Text lb_level;
+        protected TextMeshProUGUI lb_level;
         protected Image WearOn;
-        protected Text t_name;
-        protected Text t_descript;
+        protected TextMeshProUGUI t_name;
+        protected TextMeshProUGUI t_descript;
         protected GridLayoutGroup EquipmentProperty;
-        protected Text t_prices;
+        protected TextMeshProUGUI t_prices;
         protected Button bt_cancel;
         protected Button bt_sale;
         protected Button bt_equip;
@@ -52,20 +54,20 @@ namespace Windows
             ItemBg = FindChild<Button>("ItemBg");
             icon = FindChild<Image>("icon");
             ItemCount = FindChild<Image>("ItemCount");
-            t_num = FindChild<Text>("t_num");
+            t_num = FindChild<TextMeshProUGUI>("t_num");
             Locked = FindChild<Image>("Locked");
             ItemLevel = FindChild<Image>("ItemLevel");
-            lb_level = FindChild<Text>("lb_level");
+            lb_level = FindChild<TextMeshProUGUI>("lb_level");
             WearOn = FindChild<Image>("WearOn");
-            t_name = FindChild<Text>("t_name");
-            t_descript = FindChild<Text>("t_descript");
+            t_name = FindChild<TextMeshProUGUI>("t_name");
+            t_descript = FindChild<TextMeshProUGUI>("t_descript");
             EquipmentProperty = FindChild<GridLayoutGroup>("EquipmentProperty");
-            t_prices = FindChild<Text>("t_prices");
+            t_prices = FindChild<TextMeshProUGUI>("t_prices");
             bt_cancel = FindChild<Button>("bt_cancel");
             bt_sale = FindChild<Button>("bt_sale");
             bt_equip = FindChild<Button>("bt_equip");
 
-            EquipmentPropertyTableManager.InitFromGrid(EquipmentProperty);
+            EquipmentPropertyTableManager.InitFromLayout(EquipmentProperty);
 
         }
     }

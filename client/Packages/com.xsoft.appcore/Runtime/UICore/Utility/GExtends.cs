@@ -1,4 +1,5 @@
 ﻿using App.Core.Core;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -99,6 +100,11 @@ namespace App.Core.UICore.Utility
         }
 
         public static void SetKey(this Text t, string key, params object[] pars)
+        {
+            t.text = LanguageManager.S.Format(key, pars);
+        }
+        
+        public static void SetKey(this  TextMeshProUGUI t, string key, params object[] pars)
         {
             t.text = LanguageManager.S.Format(key, pars);
         }

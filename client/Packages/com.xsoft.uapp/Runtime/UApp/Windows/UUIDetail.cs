@@ -65,6 +65,7 @@ namespace Windows
             bt_equip.SetKey("UUIDetail_WEAR");
             bt_sale.SetKey("UUIDetail_SELL");
 
+            
             config = ExcelToJSONConfigManager.GetId<ItemData>(item.ItemID);
             t_num.text = $"{item.Num}";
             t_descript.SetKey(config.Description);

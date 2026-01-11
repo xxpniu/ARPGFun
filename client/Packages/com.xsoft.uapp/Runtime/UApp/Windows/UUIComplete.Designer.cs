@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
@@ -15,12 +16,12 @@ namespace Windows
         public class ItemContentTableTemplate : TableItemTemplate
         {
             public ItemContentTableTemplate(){}
-            public Text itemText;
+            public TextMeshProUGUI itemText;
             public Image Icon;
 
             public override void InitTemplate()
             {
-                itemText = FindChild<Text>("itemText");
+                itemText = FindChild<TextMeshProUGUI>("itemText");
                 Icon = FindChild<Image>("Icon");
 
             }
@@ -31,15 +32,15 @@ namespace Windows
         protected Image ButtonBrown;
         protected Image ButtonGreen;
         protected Image ButtonClose;
-        protected Text TitleText;
+        protected TextMeshProUGUI TitleText;
         protected Image Starb1;
         protected Image Star1;
         protected Image Starb2;
         protected Image Star2;
         protected Image Starb3;
         protected Image Star3;
-        protected Text ScoreText;
-        protected Text ScoreNumber;
+        protected TextMeshProUGUI ScoreText;
+        protected TextMeshProUGUI ScoreNumber;
         protected HorizontalLayoutGroup ItemContent;
 
 
@@ -53,15 +54,15 @@ namespace Windows
             ButtonBrown = FindChild<Image>("ButtonBrown");
             ButtonGreen = FindChild<Image>("ButtonGreen");
             ButtonClose = FindChild<Image>("ButtonClose");
-            TitleText = FindChild<Text>("TitleText");
+            TitleText = FindChild<TextMeshProUGUI>("TitleText");
             Starb1 = FindChild<Image>("Starb1");
             Star1 = FindChild<Image>("Star1");
             Starb2 = FindChild<Image>("Starb2");
             Star2 = FindChild<Image>("Star2");
             Starb3 = FindChild<Image>("Starb3");
             Star3 = FindChild<Image>("Star3");
-            ScoreText = FindChild<Text>("ScoreText");
-            ScoreNumber = FindChild<Text>("ScoreNumber");
+            ScoreText = FindChild<TextMeshProUGUI>("ScoreText");
+            ScoreNumber = FindChild<TextMeshProUGUI>("ScoreNumber");
             ItemContent = FindChild<HorizontalLayoutGroup>("ItemContent");
 
             ItemContentTableManager.InitFromLayout(ItemContent);

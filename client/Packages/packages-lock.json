@@ -332,6 +332,13 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.yasirkula.texttotmp": {
+      "version": "https://github.com/yasirkula/UnityTextToTextMeshProUpgradeTool.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3f1cb846c3744668aeffe320c52d7a80a1b2bcfe"
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,

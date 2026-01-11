@@ -10,6 +10,7 @@ using GameLogic;
 using GameLogic.Game;
 using Layout.LayoutEffects;
 using Proto;
+using TMPro;
 using UApp;
 using UnityEngine.UI;
 using P = Proto.HeroPropertyType;
@@ -229,7 +230,7 @@ namespace Windows
         public class HeroPartData
         {
             public Image icon;
-            public Text level;
+            public TextMeshProUGUI level;
             public Button bt;
             public Image rootLvl;
         }
