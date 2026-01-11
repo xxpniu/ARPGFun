@@ -5,10 +5,12 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUIShopGold")]
+    // ReSharper disable once InconsistentNaming
     partial class UUIShopGold : UUIAutoGenWindow
     {
         public class ContentsTableTemplate : TableItemTemplate
@@ -16,15 +18,15 @@ namespace Windows
             public ContentsTableTemplate(){}
             public Button ButtonBlue;
             public Image icon;
-            public Text lb_gold;
-            public Text lb_name;
+            public TextMeshProUGUI lb_gold;
+            public TextMeshProUGUI lb_name;
 
             public override void InitTemplate()
             {
                 ButtonBlue = FindChild<Button>("ButtonBlue");
                 icon = FindChild<Image>("icon");
-                lb_gold = FindChild<Text>("lb_gold");
-                lb_name = FindChild<Text>("lb_name");
+                lb_gold = FindChild<TextMeshProUGUI>("lb_gold");
+                lb_name = FindChild<TextMeshProUGUI>("lb_name");
 
             }
         }

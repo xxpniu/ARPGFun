@@ -5,30 +5,32 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUIUserList")]
+    // ReSharper disable once InconsistentNaming
     partial class UUIUserList : UUIAutoGenWindow
     {
         public class ContentTableTemplate : TableItemTemplate
         {
             public ContentTableTemplate(){}
+            public TextMeshProUGUI TextName;
+            public TextMeshProUGUI TextLvScore;
             public Button AddBlue;
-            public Text TextName;
-            public Text TextLvScore;
 
             public override void InitTemplate()
             {
+                TextName = FindChild<TextMeshProUGUI>("TextName");
+                TextLvScore = FindChild<TextMeshProUGUI>("TextLvScore");
                 AddBlue = FindChild<Button>("AddBlue");
-                TextName = FindChild<Text>("TextName");
-                TextLvScore = FindChild<Text>("TextLvScore");
 
             }
         }
 
 
-        protected Text Lb_TitleText;
+        protected TextMeshProUGUI Lb_TitleText;
         protected Button ButtonClose;
         protected VerticalLayoutGroup Content;
 
@@ -39,7 +41,7 @@ namespace Windows
         protected override void InitTemplate()
         {
             base.InitTemplate();
-            Lb_TitleText = FindChild<Text>("Lb_TitleText");
+            Lb_TitleText = FindChild<TextMeshProUGUI>("Lb_TitleText");
             ButtonClose = FindChild<Button>("ButtonClose");
             Content = FindChild<VerticalLayoutGroup>("Content");
 

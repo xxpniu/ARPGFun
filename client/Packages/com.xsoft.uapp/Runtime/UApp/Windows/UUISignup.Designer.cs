@@ -5,10 +5,12 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUISignup")]
+    // ReSharper disable once InconsistentNaming
     partial class UUISignup : UUIAutoGenWindow
     {
 
@@ -16,9 +18,9 @@ namespace Windows
         protected Button ButtonClose;
         protected Button TextSignin;
         protected Button ButtonBlue;
-        protected InputField TextInputBoxEmail;
-        protected InputField TextInputBoxPassword;
-        protected InputField TextInputBoxPasswordRepeat;
+        protected TMP_InputField TextInputBoxEmail;
+        protected TMP_InputField TextInputBoxPassword;
+        protected TMP_InputField TextInputBoxPasswordRepeat;
 
 
 
@@ -29,9 +31,9 @@ namespace Windows
             ButtonClose = FindChild<Button>("ButtonClose");
             TextSignin = FindChild<Button>("TextSignin");
             ButtonBlue = FindChild<Button>("ButtonBlue");
-            TextInputBoxEmail = FindChild<InputField>("TextInputBoxEmail");
-            TextInputBoxPassword = FindChild<InputField>("TextInputBoxPassword");
-            TextInputBoxPasswordRepeat = FindChild<InputField>("TextInputBoxPasswordRepeat");
+            TextInputBoxEmail = FindChild<TMP_InputField>("TextInputBoxEmail");
+            TextInputBoxPassword = FindChild<TMP_InputField>("TextInputBoxPassword");
+            TextInputBoxPasswordRepeat = FindChild<TMP_InputField>("TextInputBoxPasswordRepeat");
 
 
         }

@@ -1,14 +1,15 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 [UITipResources("UUIName")]
 public class UUIName : UUITip
 {
-    public Text Name { get; private set; }
+    public TextMeshProUGUI Name { get; private set; }
 
     protected override void OnCreate()
     {
-        Name = FindChild<Text>("lb_Name");
+        Name = FindChild<TextMeshProUGUI>("lb_Name");
     }
 
     public void ShowName(string name, bool owner)

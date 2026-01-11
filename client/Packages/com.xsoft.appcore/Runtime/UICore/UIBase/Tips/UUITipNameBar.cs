@@ -1,4 +1,5 @@
 ﻿using App.Core.UICore.Utility;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,9 +10,9 @@ namespace Tips
     {
         private Slider GreenSlider;
 
-        private Text Level;
+        private TextMeshProUGUI Level;
 
-        private Text Name;
+        private TextMeshProUGUI Name;
         private Slider RedSlider;
 
         private Transform SkillGuageGreen;
@@ -19,8 +20,8 @@ namespace Tips
 
         protected override void OnCreate()
         {
-            Name = FindChild<Text>("lb_Name");
-            Level = FindChild<Text>("Level");
+            Name = FindChild<TextMeshProUGUI>("lb_Name");
+            Level = FindChild<TextMeshProUGUI>("Level");
             SkillGuageGreen = FindChild<Transform>("SkillGuageGreen");
             GreenSlider = FindChild<Slider>("GreenSlider");
             SkillGuageRed = FindChild<Transform>("SkillGuageRed");

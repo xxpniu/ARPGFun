@@ -5,36 +5,38 @@ using System.Text;
 using UnityEngine;
 using UGameTools;
 using UnityEngine.UI;
+using TMPro;
 //AUTO GenCode Don't edit it.
 namespace Windows
 {
     [UIResources("UUISelectItem")]
+    // ReSharper disable once InconsistentNaming
     partial class UUISelectItem : UUIAutoGenWindow
     {
         public class ContentTableTemplate : TableItemTemplate
         {
             public ContentTableTemplate(){}
-            public Text lb_Name;
+            public TextMeshProUGUI lb_Name;
             public Button ItemBg;
             public Image icon;
             public Image ItemCount;
-            public Text lb_count;
+            public TextMeshProUGUI lb_count;
             public Image Locked;
             public Image ItemLevel;
-            public Text lb_level;
+            public TextMeshProUGUI lb_level;
             public Image WearOn;
             public Image Selected;
 
             public override void InitTemplate()
             {
-                lb_Name = FindChild<Text>("lb_Name");
+                lb_Name = FindChild<TextMeshProUGUI>("lb_Name");
                 ItemBg = FindChild<Button>("ItemBg");
                 icon = FindChild<Image>("icon");
                 ItemCount = FindChild<Image>("ItemCount");
-                lb_count = FindChild<Text>("lb_count");
+                lb_count = FindChild<TextMeshProUGUI>("lb_count");
                 Locked = FindChild<Image>("Locked");
                 ItemLevel = FindChild<Image>("ItemLevel");
-                lb_level = FindChild<Text>("lb_level");
+                lb_level = FindChild<TextMeshProUGUI>("lb_level");
                 WearOn = FindChild<Image>("WearOn");
                 Selected = FindChild<Image>("Selected");
 
