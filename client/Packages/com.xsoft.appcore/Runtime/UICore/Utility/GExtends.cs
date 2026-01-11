@@ -87,14 +87,14 @@ namespace App.Core.UICore.Utility
 
         public static void SetText(this Button bt, string text)
         {
-            var t = bt.transform.FindChild<Text>("Text");
+            var t = bt.transform.FindChild<TextMeshProUGUI>("Text");
             if (t == null) return;
             t.text = text;
         }
 
         public static void SetKey(this Button bt, string key, params object[] pars)
         {
-            var t = bt.transform.FindChild<Text>("Text");
+            var t = bt.transform.FindChild<TextMeshProUGUI>("Text");
             if (t == null) return;
             t.SetKey(key, pars);
         }
