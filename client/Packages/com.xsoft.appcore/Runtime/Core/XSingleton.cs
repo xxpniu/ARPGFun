@@ -8,6 +8,11 @@ namespace App.Core.Core
     public class DestroyOnLoadAttribute : Attribute
     {
     }
+    
+    [AttributeUsage(AttributeTargets.Class)]
+    public class NoCreateAttribute : Attribute
+    {
+    }
 
     [AttributeUsage(AttributeTargets.Class)]
     public class NameAttribute : Attribute
@@ -19,6 +24,8 @@ namespace App.Core.Core
 
         public string Name { set; get; }
     }
+    
+    
 
 
     public class XSingleton<T> : MonoBehaviour where T : MonoBehaviour, new()
@@ -41,7 +48,14 @@ namespace App.Core.Core
                         Debug.Log($"Instance from FindFirstObjectByType<{typeof(T).FullName}>()");
                     }
                 }
+                
                 if (_instance) return _instance;
+                
+                var nocreate = type.GetCustomAttribute<NoCreateAttribute>();
+                if (nocreate != null)
+                {
+                    throw new NotSupportedException("Can't create singleton");
+                }
                 Debug.Log($"Instance create from AddComponent<{typeof(T).FullName}>()");
                 _instance = new GameObject(name).AddComponent<T>();
                 return _instance;

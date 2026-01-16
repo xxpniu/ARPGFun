@@ -30,12 +30,11 @@ namespace Windows
                     return;
                 }
 
-                UUIManager.S.MaskEvent(12);
+                using var masker = UUIManager.CreateEventMasker(12);
                 await UniTask.Yield();
                 var gate = UApplication.G<LoginGate>();
                 var r = await LoginGate.DoReg(userName, pwd);
                 await UniTask.SwitchToMainThread();
-                UUIManager.S.UnMaskEvent();
                 if (r.Code.IsOk())
                 {
                     UApplication.Singleton.GoServerMainGate(r.ChatServer, r.GateServer, r.UserID, r.Session);

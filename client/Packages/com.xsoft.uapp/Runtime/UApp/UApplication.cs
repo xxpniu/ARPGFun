@@ -17,7 +17,7 @@ namespace UApp
     /// <summary>
     ///     处理 App
     /// </summary>
-    [Name("GameApplication")]
+    [Name("GameApplication"),NoCreate]
     public class UApplication : XSingleton<UApplication>
     {
         public bool localGame;

@@ -45,13 +45,7 @@ namespace UApp
         {
             GUI.Label(
                 new Rect(Screen.width - 220, 5, 200, 40),
-                string.Format("FPS:{0:0}P:{1:0}\nS:{2:0.00}kb/s R:{3:0.00}kb/s(AVG)",
-                    1 / Time.deltaTime,
-                    UApplication.Singleton.pingDelay,
-                    UApplication.Singleton.SendTotal / 1024.0f /
-                    Mathf.Max(1, Time.time - UApplication.Singleton.ConnectTime),
-                    UApplication.Singleton.ReceiveTotal / 1024.0f /
-                    Mathf.Max(1, Time.time - UApplication.Singleton.ConnectTime)),
+                $"FPS:{1 / Time.deltaTime:0}P:{UApplication.Singleton.pingDelay:0}\nS:{UApplication.Singleton.SendTotal / 1024.0f / Mathf.Max(1, Time.time - UApplication.Singleton.ConnectTime):0.00}kb/s R:{UApplication.Singleton.ReceiveTotal / 1024.0f / Mathf.Max(1, Time.time - UApplication.Singleton.ConnectTime):0.00}kb/s(AVG)",
                 1 / Time.deltaTime > 28 ? green : red);
 
             if (!ShowGM) return;

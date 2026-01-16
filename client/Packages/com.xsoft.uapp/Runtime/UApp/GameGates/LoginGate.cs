@@ -55,7 +55,7 @@ namespace UApp.GameGates
             return r;
         }
 
-        public static async Task<L2C_Login> DoLogin(string userName, string pwd, Action<L2C_Login> callback = default)
+        public static async Task<L2C_Login> DoLogin(string userName, string pwd, float  timeOut = 10, Action<L2C_Login> callback = default)
         {
             //UUIManager.Try()?.ShowMask(true);
             L2C_Login r = null;
@@ -68,7 +68,7 @@ namespace UApp.GameGates
                             Password = pwd,
                             UserName = userName,
                             Version = 0
-                        }), DateTime.UtcNow.AddSeconds(10));
+                        }), DateTime.UtcNow.AddSeconds(timeOut));
             }
             catch (Exception ex)
             {

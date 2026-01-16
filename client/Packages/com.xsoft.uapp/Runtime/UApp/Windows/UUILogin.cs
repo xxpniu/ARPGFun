@@ -48,11 +48,12 @@ namespace Windows
                     PlayerPrefs.DeleteKey(PasswordKey);
                 }
 
-                UUIManager.S.MaskEvent(10);
+                const float timeOut = 8;
+                using var maker = UUIManager.CreateEventMasker(timeOut);
                 await UniTask.Yield();
                 var md5 = Md5Tool.GetMd5Hash(pwd);
-                var r = await LoginGate.DoLogin(userName, md5);
-                UUIManager.S.UnMaskEvent();
+                var r = await LoginGate.DoLogin(userName, md5, timeOut);
+
                 if (r.Code.IsOk())
                     UApplication.S.GoServerMainGate(r.ChatServer, r.GateServer, r.UserID, r.Session);
                 else

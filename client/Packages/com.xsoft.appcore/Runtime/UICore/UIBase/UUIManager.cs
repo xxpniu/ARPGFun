@@ -57,7 +57,7 @@ public enum WRenderType
     WithCanvas
 }
 
-[Name("UIManager")]
+[Name("UIManager"), NoCreate]
 // ReSharper disable once CheckNamespace
 // ReSharper disable once InconsistentNaming
 public class UUIManager : XSingleton<UUIManager>
@@ -90,9 +90,6 @@ public class UUIManager : XSingleton<UUIManager>
     {
         base.Awake();
         if (eventMask != null) eventMask.SetActive(false);
-
-      
-
     }
 
     private void Start()
@@ -274,15 +271,35 @@ public class UUIManager : XSingleton<UUIManager>
                 i.Value.HideWindow();
     }
 
-    public void MaskEvent(float maxTime = 2f)
+    private void MaskEvent(float maxTime = 2f)
     {
         _maskTime = Time.time + maxTime;
         eventMask.SetActive(true);
     }
 
-    public void UnMaskEvent()
+    private void UnMaskEvent()
     {
         _maskTime = -1;
         eventMask.SetActive(false);
+    }
+
+    public class AutoMasker : IDisposable
+    {
+        readonly UUIManager _uuiManager;
+        public AutoMasker(UUIManager manager, float maxTime = 2f)
+        {
+            _uuiManager = manager;
+            _uuiManager.MaskEvent( maxTime);
+        }
+        public void Dispose()
+        {
+            _uuiManager.UnMaskEvent();
+        }
+    }
+
+    public static AutoMasker CreateEventMasker(float maxTime = 2f)
+    {
+        var (has,m) = TryGet();
+        return !has ? null : new AutoMasker(m, maxTime);
     }
 }
